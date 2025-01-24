@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
+	"github.com/google/uuid"
 )
 
 type SampleLogService struct {
@@ -19,7 +20,7 @@ func (s *SampleLogService) Save(message string) error {
 	return s.sampleLogRepository.Save(message)
 }
 
-func (s *SampleLogService) Delete(id int) error {
+func (s *SampleLogService) Delete(id uuid.UUID) error {
 	return s.sampleLogRepository.Delete(id)
 }
 

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +25,7 @@ func (r *SampleLogRepository) Save(message string) error {
 	return nil
 }
 
-func (r *SampleLogRepository) Delete(id string) error {
+func (r *SampleLogRepository) Delete(id uuid.UUID) error {
 	return r.db.Delete(&domain.SampleLog{}, "id = ?", id).Error
 }
 

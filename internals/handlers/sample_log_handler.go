@@ -53,7 +53,8 @@ func (s *SampleLogHandler) Delete(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := s.sampleLogService.Delete(id); err != nil {
+	uuid, _ := uuid.Parse(id)
+	if err := s.sampleLogService.Delete(uuid); err != nil {
 		return c.JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.JSON(fiber.Map{"message": "Deleted"})
