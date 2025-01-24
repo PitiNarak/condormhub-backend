@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,9 +14,9 @@ func NewGreetingHandler() *GreetingHandler {
 }
 
 func (e *GreetingHandler) Greeting(c *fiber.Ctx) error {
-	err := c.Send([]byte("Hello, World!"))
-	if err != nil {
-		return err
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		env = "unknown"
 	}
-	return nil
+	return c.JSON(fiber.Map{"name": "CondormHub API", "env": env})
 }
