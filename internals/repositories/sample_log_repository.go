@@ -34,3 +34,7 @@ func (r *SampleLogRepository) GetAll() ([]domain.SampleLog, error) {
 	err := r.db.Find(&logs).Error
 	return logs, err
 }
+
+func (r *SampleLogRepository) EditMessage(id uuid.UUID, message string) error {
+	return r.db.Model(&domain.SampleLog{}).Where("id = ?", id).Update("message", message).Error
+}

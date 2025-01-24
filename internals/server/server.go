@@ -29,6 +29,7 @@ func (s *Server) Start(port string) {
 	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
 	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
 	sampleLogRoutes.Delete("/:id", s.sampleLogHandler.Delete)
+	sampleLogRoutes.Patch("/:id", s.sampleLogHandler.EditMessage)
 
 	s.app.All("/", s.greetingHandler.Greeting)
 

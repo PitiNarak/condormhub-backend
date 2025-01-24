@@ -27,3 +27,7 @@ func (s *SampleLogService) Delete(id uuid.UUID) error {
 func (s *SampleLogService) GetAll() ([]domain.SampleLog, error) {
 	return s.sampleLogRepository.GetAll()
 }
+
+func (s *SampleLogService) EditMessage(id uuid.UUID, message string) error {
+	return s.sampleLogRepository.EditMessage(id, message)
+}

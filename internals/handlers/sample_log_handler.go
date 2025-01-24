@@ -67,3 +67,37 @@ func (s *SampleLogHandler) GetAll(c *fiber.Ctx) error {
 	}
 	return c.JSON(messages)
 }
+
+func (s *SampleLogHandler) EditMessage(c *fiber.Ctx) error {
+	id := c.Params("id")
+	payload := new(domain.SampleLog)
+
+	if err := c.BodyParser(payload); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(payload); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if err := uuid.Validate(id); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	uuid, _ := uuid.Parse(id)
+	if err := s.sampleLogService.EditMessage(uuid, payload.Message); err != nil {
+		return c.JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Edited"})
+}
