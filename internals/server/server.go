@@ -1,6 +1,8 @@
 package server
 
 import (
+	"log"
+
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
 	"github.com/gofiber/fiber/v2"
@@ -35,6 +37,6 @@ func (s *Server) Start(port string) {
 
 	err := s.app.Listen(":" + port)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Listen Failed: %v", err)
 	}
 }
