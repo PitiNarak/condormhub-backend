@@ -21,6 +21,10 @@ func main() {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 
-	db.AutoMigrate(&domain.SampleLog{})
+	err = db.AutoMigrate(&domain.SampleLog{})
+	if err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
+
 	fmt.Println("Migration completed")
 }
