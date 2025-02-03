@@ -18,7 +18,7 @@ services:
       - "5050:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
-      - ./.pgadmin_config/:/pgadmin4/
+      - ./.pgadmin_config/config_local.py:/pgadmin4/config_local.py
     depends_on:
       - db
 
