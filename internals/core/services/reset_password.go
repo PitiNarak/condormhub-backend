@@ -1,10 +1,30 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/go-gomail/gomail"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+type User struct {
+	gorm.Model
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+}
+
+type reset_password_body struct {
+	Email string `json:"email"`
+}
+
+type repond_reset_password_body struct {
+	Token    string `json:"token"`
+	Password string `json:"password"`
+}
 
 func (e *EmailService) SendPasswordResetEmail(email, token string) error {
 	message := gomail.NewMessage()
@@ -22,17 +42,6 @@ func (e *EmailService) SendPasswordResetEmail(email, token string) error {
 	return dailer.DialAndSend(message)
 }
 
-type User struct {
-	gorm.Model
-	Password string `json:"password"`
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-}
-
-type reset_password_body struct {
-	Email string `json:"email"`
-}
-
 func GetUser(db *gorm.DB, email string) *User {
 	var user User
 	result := db.First(&user, "email = ?", email)
@@ -43,7 +52,28 @@ func GetUser(db *gorm.DB, email string) *User {
 	return &user
 }
 
-func ResetPassword(c *fiber.Ctx, db *gorm.DB) error {
+func ResetPassword(db *gorm.DB, id int, newPasswod string) error {
+	var user User
+	result := db.First(&user, id)
+	if result.Error != nil {
+		// log.Fatalf("Error finding user: %v", result.Error)
+		return result.Error
+	}
+	pass := []byte("mypassword")
+	hp, err := bcrypt.GenerateFromPassword(pass, 0)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hp)
+	result = db.Save(user)
+	if result.Error != nil {
+		// log.Fatalf("Error finding user: %v", result.Error)
+		return result.Error
+	}
+	return nil
+}
+
+func SendingResetPasswordEmail(c *fiber.Ctx, db *gorm.DB) error {
 	body := new(reset_password_body)
 	emailService := &EmailService{
 		Email:    "pmanoret@gmail.com",  // Your email address
@@ -57,10 +87,48 @@ func ResetPassword(c *fiber.Ctx, db *gorm.DB) error {
 	}
 	user := GetUser(db, body.Email)
 	if user != nil { //we will return oke even though user is not found
-		err := emailService.SendPasswordResetEmail(user.Email, "sample-verification-token")
+		// Create token
+		token := jwt.New(jwt.SigningMethodHS256)
+		secretKey := "secret" // Fix later
+		claims := token.Claims.(jwt.MapClaims)
+		claims["id"] = user.ID
+
+		t, err := token.SignedString([]byte(secretKey))
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		err = emailService.SendPasswordResetEmail(user.Email, t)
 		if err != nil {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
 	return c.SendStatus(fiber.StatusOK)
+}
+
+func RespondHandler(c *fiber.Ctx, db *gorm.DB) error {
+	body := new(repond_reset_password_body)
+	if err := c.BodyParser(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	tokenString := body.Token
+	secretKey := "secret"
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid token")
+	}
+
+	// Extract the claims
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID := claims["id"].(float64)
+		ResetPassword(db, int(userID), body.Password)
+		return c.SendStatus(fiber.StatusOK)
+	}
+
+	return c.Status(fiber.StatusUnauthorized).SendString("Invalid token claims")
 }
