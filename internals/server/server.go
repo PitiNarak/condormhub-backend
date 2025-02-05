@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 
+	"github.com/PitiNarak/condormhub-backend/internals/core/services"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
 	"github.com/gofiber/fiber/v2"
@@ -13,15 +14,20 @@ type Server struct {
 	app              *fiber.App
 	greetingHandler  *handlers.GreetingHandler
 	sampleLogHandler *handlers.SampleLogHandler
+	userHandler      *handlers.UserHandler
 }
 
 func NewServer(db *gorm.DB) *Server {
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
+	userRepository := repositories.NewUserRepo(db)
+	userService := services.NewUserService(userRepository)
+	userHandler := handlers.NewUserHandler(userService)
 
 	return &Server{
 		app:              fiber.New(),
 		greetingHandler:  handlers.NewGreetingHandler(),
 		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
+		userHandler:      userHandler,
 	}
 }
 
