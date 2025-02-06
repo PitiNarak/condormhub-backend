@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 
+	"github.com/PitiNarak/condormhub-backend/internals/config"
 	"github.com/go-gomail/gomail"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -28,7 +29,7 @@ type repond_reset_password_body struct {
 
 func (e *EmailService) SendPasswordResetEmail(email, token string) error {
 	message := gomail.NewMessage()
-	message.SetHeader("From", e.Email)
+	message.SetHeader("From", e.Config.Email)
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Password Reset")
 
@@ -36,7 +37,7 @@ func (e *EmailService) SendPasswordResetEmail(email, token string) error {
 	message.SetBody("text/plain", "Click the link to verify your account: http://localhost:3000/verify/"+token)
 
 	// Set up the dialer with SMTP server credentials
-	dailer := gomail.NewDialer(e.Host, e.Port, e.Email, e.Password)
+	dailer := gomail.NewDialer(e.Config.Host, e.Config.Port, e.Config.Email, e.Config.Password)
 
 	// Send the email
 	return dailer.DialAndSend(message)
@@ -75,12 +76,7 @@ func ResetPassword(db *gorm.DB, id int, newPasswod string) error {
 
 func SendingResetPasswordEmail(c *fiber.Ctx, db *gorm.DB) error {
 	body := new(reset_password_body)
-	emailService := &EmailService{
-		Email:    "pmanoret@gmail.com",  // Your email address
-		Host:     "smtp.gmail.com",      // SMTP server host
-		Port:     587,                   // SMTP server port
-		Password: "zpby yooa zfje ddvk", // SMTP email password
-	}
+	emailService := &EmailService{Config: config.Load()}
 
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
