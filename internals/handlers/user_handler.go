@@ -121,20 +121,3 @@ func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
 	}
 	return nil
 }
-
-/*
-
-
-tokenString := body.Token
-	secretKey := "secret"
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(secretKey), nil
-	})
-
-	token, err := jwt.Parse(body.Token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(h.Config.JWTSecretKey), nil
-	})
-*/
