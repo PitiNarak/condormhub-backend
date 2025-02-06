@@ -1,5 +1,7 @@
 package ports
 
+import "github.com/google/uuid"
+
 type EmailServicePort interface {
-	SendVerificationEmail(email, token string) error
+	SendVerificationEmail(email string, userID uuid.UUID) error
 }
