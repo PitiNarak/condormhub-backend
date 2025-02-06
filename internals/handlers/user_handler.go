@@ -82,9 +82,59 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON("User not found")
 	}
-	err = h.EmailService.SendVerificationEmail(user.Email, user.Id)
+	err = h.EmailService.SendResetPasswordEmail(user.Email, user.Id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to send reset password email"})
 	}
 	return nil
 }
+
+func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
+	body := new(domain.Repond_reset_password_body)
+
+	if err := c.BodyParser(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	token, err := jwt.Parse(body.Token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(h.Config.JWTSecretKey), nil
+	})
+	if err != nil || !token.Valid {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired token"})
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"erorr": "Invalid claims"})
+	}
+	userIDstr, ok := claims["user_id"].(string)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user_id"})
+	}
+
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse userId"})
+	}
+	err = h.UserService.ResetPasswordRespond(userID, body.Password)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to reset password"})
+	}
+	return nil
+}
+
+/*
+
+
+tokenString := body.Token
+	secretKey := "secret"
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secretKey), nil
+	})
+
+	token, err := jwt.Parse(body.Token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(h.Config.JWTSecretKey), nil
+	})
+*/

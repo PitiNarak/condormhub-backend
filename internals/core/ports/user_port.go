@@ -17,9 +17,12 @@ type UserService interface {
 	Create(user domain.User) (*domain.User, error)
 	VerifyUser(userID uuid.UUID) error
 	ResetPasswordCreate(email string) (domain.User, error)
+	ResetPasswordRespond(userID uuid.UUID, password string) error
 }
 
 type UserHandler interface {
 	Create(c *fiber.Ctx) error
 	VerifyEmail(c *fiber.Ctx) error
+	ResetPasswordCreate(c *fiber.Ctx) error
+	ResetPasswordRespond(c *fiber.Ctx) error
 }

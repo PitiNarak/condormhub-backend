@@ -44,7 +44,6 @@ func (e *EmailService) SendResetPasswordEmail(email string, userID uuid.UUID) er
 	if err != nil {
 		return err
 	}
-
 	message := gomail.NewMessage()
 	message.SetHeader("From", e.Config.Email)
 	message.SetHeader("To", email)
