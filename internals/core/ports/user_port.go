@@ -10,11 +10,13 @@ type UserRepository interface {
 	Create(user domain.User) error
 	GetUser(userID uuid.UUID) (domain.User, error)
 	UpdateUser(user domain.User) error
+	GetUserViaEmail(email string) (domain.User, error)
 }
 
 type UserService interface {
 	Create(user domain.User) (*domain.User, error)
 	VerifyUser(userID uuid.UUID) error
+	ResetPasswordCreate(email string) (domain.User, error)
 }
 
 type UserHandler interface {

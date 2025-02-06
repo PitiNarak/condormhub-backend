@@ -38,3 +38,24 @@ func (e *EmailService) SendVerificationEmail(email string, userID uuid.UUID) err
 
 	return dailer.DialAndSend(message)
 }
+
+func (e *EmailService) SendResetPasswordEmail(email string, userID uuid.UUID) error {
+	token, err := utils.GenerateJWT(userID, e.Config)
+	if err != nil {
+		return err
+	}
+
+	message := gomail.NewMessage()
+	message.SetHeader("From", e.Config.Email)
+	message.SetHeader("To", email)
+	message.SetHeader("Subject", "ConDormHub Reset Password")
+
+	// have not yet implement API for /verify
+	verLink := fmt.Sprintf("http://localhost:3000/verify/%s", token)
+	body := fmt.Sprintf("<html><body><p>Click the link to reset your password: </p><a href='%s'></a></body></html>", verLink)
+	message.SetBody("text/html", body)
+
+	dailer := gomail.NewDialer(e.Config.Host, e.Config.Port, e.Config.Email, e.Config.Password)
+
+	return dailer.DialAndSend(message)
+}

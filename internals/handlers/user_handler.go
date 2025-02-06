@@ -71,3 +71,20 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 
 	return nil
 }
+
+func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
+	body := new(domain.Reset_password_body)
+
+	if err := c.BodyParser(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	user, err := h.UserService.ResetPasswordCreate(body.Email)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON("User not found")
+	}
+	err = h.EmailService.SendVerificationEmail(user.Email, user.Id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to send reset password email"})
+	}
+	return nil
+}
