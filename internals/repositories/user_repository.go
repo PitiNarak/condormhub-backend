@@ -36,7 +36,7 @@ func (r *UserRepo) UpdateUser(user domain.User) error {
 	return result.Error
 }
 
-func (r *UserRepo) GetUserViaEmail(email string) (domain.User, error) {
+func (r *UserRepo) GetUserByEmail(email string) (domain.User, error) {
 	var user domain.User
 	result := r.db.Where("email = ?", email).First(&user)
 	return user, result.Error
