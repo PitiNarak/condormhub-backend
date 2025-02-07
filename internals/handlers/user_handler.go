@@ -109,7 +109,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
-	body := new(domain.RespondResetPasswordBody)
+	body := new(domain.ResponseResetPasswordBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
