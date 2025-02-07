@@ -108,7 +108,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	return nil
 }
 
-func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
+func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	body := new(domain.ResponseResetPasswordBody)
 
 	if err := c.BodyParser(body); err != nil {
@@ -144,7 +144,7 @@ func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse userId"})
 	}
-	err = h.UserService.ResetPasswordRespond(userID, body.Password)
+	err = h.UserService.ResetPasswordResponse(userID, body.Password)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to reset password"})
 	}

@@ -14,7 +14,7 @@ func (s *UserService) ResetPasswordCreate(email string) (domain.User, error) {
 	return user, nil
 }
 
-func (s *UserService) ResetPasswordRespond(userID uuid.UUID, password string) error {
+func (s *UserService) ResetPasswordResponse(userID uuid.UUID, password string) error {
 	user, err := s.UserRepo.GetUser(userID)
 	if err != nil {
 		return err

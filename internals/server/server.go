@@ -50,7 +50,7 @@ func (s *Server) Start(port string) {
 	s.app.Post("/register", s.userHandler.Create)
 	s.app.Get("/verify/:token", s.userHandler.VerifyEmail)
 	s.app.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
-	s.app.Post("/resetpasswordrespond", s.userHandler.ResetPasswordRespond)
+	s.app.Post("/resetpasswordresponse", s.userHandler.ResetPasswordResponse)
 
 	err := s.app.Listen(":" + port)
 	if err != nil {
