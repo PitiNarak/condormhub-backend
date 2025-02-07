@@ -8,11 +8,11 @@ import (
 	"github.com/google/uuid"
 )
 
-func GenerateJWT(userID uuid.UUID, config *config.Config) (string, error) {
+func GenerateJWT(userID uuid.UUID, config *config.JWTConfig) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["user_id"] = userID.String()
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(config.Expiration)).Unix()
 
 	return token.SignedString([]byte(config.JWTSecretKey))
 }

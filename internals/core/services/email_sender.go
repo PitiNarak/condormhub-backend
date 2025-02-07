@@ -11,21 +11,21 @@ import (
 )
 
 type EmailService struct {
-	Config *config.Config
+	Config *config.AppConfig
 }
 
-func NewEmailService(config *config.Config) ports.EmailServicePort {
+func NewEmailService(config *config.AppConfig) ports.EmailServicePort {
 	return &EmailService{Config: config}
 }
 
 func (e *EmailService) SendVerificationEmail(email string, userID uuid.UUID) error {
-	token, err := utils.GenerateJWT(userID, e.Config)
+	token, err := utils.GenerateJWT(userID, &e.Config.JWT)
 	if err != nil {
 		return err
 	}
 
 	message := gomail.NewMessage()
-	message.SetHeader("From", e.Config.Email)
+	message.SetHeader("From", e.Config.SMTP.Email)
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Email Verification")
 
@@ -33,18 +33,18 @@ func (e *EmailService) SendVerificationEmail(email string, userID uuid.UUID) err
 	body := fmt.Sprintf("<html><body><p>Click the link to verify your account: </p><a href='%s'>verify</a></body></html>", verLink)
 	message.SetBody("text/html", body)
 
-	dailer := gomail.NewDialer(e.Config.Host, e.Config.Port, e.Config.Email, e.Config.Password)
+	dailer := gomail.NewDialer(e.Config.SMTP.Host, e.Config.SMTP.Port, e.Config.SMTP.Email, e.Config.SMTP.Password)
 
 	return dailer.DialAndSend(message)
 }
 
 func (e *EmailService) SendResetPasswordEmail(email string, userID uuid.UUID) error {
-	token, err := utils.GenerateJWT(userID, e.Config)
+	token, err := utils.GenerateJWT(userID, &e.Config.JWT)
 	if err != nil {
 		return err
 	}
 	message := gomail.NewMessage()
-	message.SetHeader("From", e.Config.Email)
+	message.SetHeader("From", e.Config.SMTP.Email)
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Reset Password")
 
@@ -52,7 +52,7 @@ func (e *EmailService) SendResetPasswordEmail(email string, userID uuid.UUID) er
 	body := fmt.Sprintf("<html><body><p>Click the link to reset your password: </p><a href='%s'></a></body></html>", verLink)
 	message.SetBody("text/html", body)
 
-	dailer := gomail.NewDialer(e.Config.Host, e.Config.Port, e.Config.Email, e.Config.Password)
+	dailer := gomail.NewDialer(e.Config.SMTP.Host, e.Config.SMTP.Port, e.Config.SMTP.Email, e.Config.SMTP.Password)
 
 	return dailer.DialAndSend(message)
 }

@@ -7,12 +7,11 @@ import (
 )
 
 type User struct {
-	Id         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
-	Message    string    `json:"message" validate:"required"`
-	CreateAt   time.Time `gorm:"autoCreateTime" json:"create_at"`
-	UpdateAt   time.Time `gorm:"autoUpdateTime" json:"update_at"`
-	Password   string    `json:"password"`
-	Email      string    `gorm:"unique" json:"email"`
-	Name       string    `json:"name"`
-	IsVerified bool      `json:"isVerified"`
+	ID         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	CreateAt   time.Time `gorm:"autoCreateTime" json:"createAt"`
+	UpdateAt   time.Time `gorm:"autoUpdateTime" json:"updateAt"`
+	Password   string    `json:"password" validate:"required"`
+	Email      string    `gorm:"unique" json:"email" validate:"required,email"`
+	Name       string    `json:"name" validate:"required"`
+	IsVerified bool      `gorm:"default:false" json:"isVerified"`
 }

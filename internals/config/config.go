@@ -2,36 +2,39 @@ package config
 
 import (
 	"log"
-	"os"
-	"strconv"
 
+	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 )
 
-type Config struct {
-	Host         string
-	Port         int
-	Email        string
-	Password     string
-	JWTSecretKey string
+type SMTPConfig struct {
+	Host     string `env:"HOST,required"`
+	Port     int    `env:"PORT,required"`
+	Email    string `env:"EMAIL,required"`
+	Password string `env:"PASSWORD,required"`
+}
+
+type JWTConfig struct {
+	JWTSecretKey string `env:"SECRET,required"`
+	Expiration   int    `env:"EXPIRATION_HOURS,required"`
+}
+
+type AppConfig struct {
+	SMTP SMTPConfig `envPrefix:"SMTP_"`
+	JWT  JWTConfig  `envPrefix:"JWT_"`
 }
 
 // Load email config from .env file
-func Load() *Config {
+func Load() *AppConfig {
+	config := &AppConfig{}
+
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Unable to load .env file: %s", err)
 	}
 
-	port, err := strconv.Atoi(os.Getenv("SMTP_PORT"))
-	if err != nil {
-		log.Fatal("Invalid SMTP_PORT value in .env file")
+	if err := env.Parse(config); err != nil {
+		log.Fatalf("Unable to parse env vars: %s", err)
 	}
 
-	return &Config{
-		Host:         os.Getenv("SMTP_HOST"),
-		Port:         port,
-		Email:        os.Getenv("SMTP_EMAIL"),
-		Password:     os.Getenv("SMTP_PASSWORD"),
-		JWTSecretKey: os.Getenv("JWT_SECRET"),
-	}
+	return config
 }

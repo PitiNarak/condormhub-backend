@@ -23,7 +23,6 @@ func (s *UserService) Create(user *domain.User) (*domain.User, error) {
 	}
 
 	user.Password = string(hashedPassword)
-	user.IsVerified = false
 	create_err := s.UserRepo.Create(user)
 	if create_err != nil {
 		return nil, create_err
@@ -34,7 +33,7 @@ func (s *UserService) Create(user *domain.User) (*domain.User, error) {
 
 func (s *UserService) VerifyUser(userID uuid.UUID) error {
 	user, err := s.UserRepo.GetUser(userID)
-	if err != nil || user.Id == uuid.Nil {
+	if err != nil || user.ID == uuid.Nil {
 		return err
 	}
 
