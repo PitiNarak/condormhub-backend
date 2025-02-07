@@ -7,7 +7,7 @@ import (
 )
 
 func (s *UserService) ResetPasswordCreate(email string) (domain.User, error) {
-	user, err := s.UserRepo.GetUserViaEmail(email)
+	user, err := s.UserRepo.GetUserByEmail(email)
 	if err != nil {
 		return user, err
 	}

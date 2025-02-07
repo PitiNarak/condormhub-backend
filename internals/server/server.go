@@ -49,8 +49,8 @@ func (s *Server) Start(port string) {
 
 	s.app.Post("/register", s.userHandler.Create)
 	s.app.Get("/verify/:token", s.userHandler.VerifyEmail)
-	s.app.Get("/resetPassword", s.userHandler.ResetPasswordCreate)
-	s.app.Get("/resetPasswordRespond", s.userHandler.ResetPasswordRespond)
+	s.app.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
+	s.app.Get("/resetpasswordrespond", s.userHandler.ResetPasswordRespond)
 
 	err := s.app.Listen(":" + port)
 	if err != nil {

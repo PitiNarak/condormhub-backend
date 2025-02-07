@@ -83,7 +83,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
-	body := new(domain.Reset_password_body)
+	body := new(domain.ResetPasswordBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error()) //Json
@@ -100,7 +100,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
-	body := new(domain.Repond_reset_password_body)
+	body := new(domain.RespondResetPasswordBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
