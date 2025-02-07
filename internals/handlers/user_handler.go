@@ -88,6 +88,15 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error()) //Json
 	}
+	validate := validator.New()
+
+	if err := validate.Struct(body); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	user, err := h.UserService.ResetPasswordCreate(body.Email)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON("User not found")
@@ -105,6 +114,16 @@ func (h *UserHandler) ResetPasswordRespond(c *fiber.Ctx) error {
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(body); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	token, err := jwt.Parse(body.Token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(h.Config.JWT.JWTSecretKey), nil
 	})
