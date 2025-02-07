@@ -26,7 +26,7 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
 	}
 
-	user, create_err := h.UserService.Create(*user)
+	user, create_err := h.UserService.Create(user)
 	if create_err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": create_err.Error()})
 	}
@@ -76,7 +76,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	body := new(domain.Reset_password_body)
 
 	if err := c.BodyParser(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error()) //Json
 	}
 	user, err := h.UserService.ResetPasswordCreate(body.Email)
 	if err != nil {

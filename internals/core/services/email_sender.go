@@ -29,9 +29,8 @@ func (e *EmailService) SendVerificationEmail(email string, userID uuid.UUID) err
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Email Verification")
 
-	// have not yet implement API for /verify
 	verLink := fmt.Sprintf("http://localhost:3000/verify/%s", token)
-	body := fmt.Sprintf("<html><body><p>Click the link to verify your account: </p><a href='%s'></a></body></html>", verLink)
+	body := fmt.Sprintf("<html><body><p>Click the link to verify your account: </p><a href='%s'>verify</a></body></html>", verLink)
 	message.SetBody("text/html", body)
 
 	dailer := gomail.NewDialer(e.Config.Host, e.Config.Port, e.Config.Email, e.Config.Password)
@@ -49,8 +48,7 @@ func (e *EmailService) SendResetPasswordEmail(email string, userID uuid.UUID) er
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Reset Password")
 
-	// have not yet implement API for /verify
-	verLink := fmt.Sprintf("http://localhost:3000/verify/%s", token)
+	verLink := fmt.Sprintf("http://localhost:3000/resetpassword/%s", token)
 	body := fmt.Sprintf("<html><body><p>Click the link to reset your password: </p><a href='%s'></a></body></html>", verLink)
 	message.SetBody("text/html", body)
 

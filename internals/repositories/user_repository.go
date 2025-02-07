@@ -15,7 +15,7 @@ func NewUserRepo(db *gorm.DB) ports.UserRepository {
 	return &UserRepo{db: db}
 }
 
-func (r *UserRepo) Create(user domain.User) error {
+func (r *UserRepo) Create(user *domain.User) error {
 	result := r.db.Create(&user)
 	if result.Error != nil {
 		return result.Error

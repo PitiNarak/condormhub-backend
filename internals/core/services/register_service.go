@@ -15,7 +15,7 @@ func NewUserService(UserRepo ports.UserRepository) ports.UserService {
 	return &UserService{UserRepo: UserRepo}
 }
 
-func (s *UserService) Create(user domain.User) (*domain.User, error) {
+func (s *UserService) Create(user *domain.User) (*domain.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
@@ -29,7 +29,7 @@ func (s *UserService) Create(user domain.User) (*domain.User, error) {
 		return nil, create_err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func (s *UserService) VerifyUser(userID uuid.UUID) error {
