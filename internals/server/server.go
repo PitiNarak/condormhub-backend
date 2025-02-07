@@ -2,11 +2,13 @@ package server
 
 import (
 	"log"
+	"os"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/services"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
 	"github.com/gofiber/fiber/v2"
+	jwtware "github.com/gofiber/jwt/v2"
 	"gorm.io/gorm"
 )
 
@@ -38,6 +40,15 @@ func (s *Server) Start(port string) {
 	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
 	sampleLogRoutes.Delete("/:id", s.sampleLogHandler.Delete)
 	sampleLogRoutes.Patch("/:id", s.sampleLogHandler.EditMessage)
+
+	userRoutes := s.app.Group("/user")
+	userRoutes.Post("/register", s.userHandler.Create)
+
+	userRoutes.Post("/login", s.userHandler.Login)
+	s.app.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	}))
+	userRoutes.Put("/update", s.userHandler.Update)
 
 	s.app.All("/", s.greetingHandler.Greeting)
 
