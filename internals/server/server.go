@@ -16,6 +16,7 @@ type Server struct {
 	greetingHandler  *handlers.GreetingHandler
 	sampleLogHandler *handlers.SampleLogHandler
 	userHandler      *handlers.UserHandler
+	config           *config.AppConfig
 }
 
 func NewServer(db *gorm.DB) *Server {
@@ -24,7 +25,7 @@ func NewServer(db *gorm.DB) *Server {
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 	userService := services.NewUserService(userRepository)
-	emailService := services.NewEmailService(config)
+	emailService := services.NewEmailService(&config.SMTP, &config.JWT)
 	userHandler := handlers.NewUserHandler(userService, emailService, config)
 
 	return &Server{
@@ -32,6 +33,7 @@ func NewServer(db *gorm.DB) *Server {
 		greetingHandler:  handlers.NewGreetingHandler(),
 		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
 		userHandler:      userHandler,
+		config:           config,
 	}
 }
 
