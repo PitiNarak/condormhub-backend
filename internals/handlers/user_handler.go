@@ -39,7 +39,7 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 		return error_handler.InternalServerError(err, "system cannot register your account")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", map[string]string{}))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", nil))
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
@@ -49,7 +49,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		return error_handler.InternalServerError(err, "cannot verify your account")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", map[string]string{}))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
@@ -69,7 +69,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return error_handler.InternalServerError(err, "cannot sent email to reset password")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", map[string]string{}))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
 }
 
 func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
@@ -89,5 +89,5 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	if err != nil {
 		return error_handler.InternalServerError(err, "cannot reset user password")
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", map[string]string{}))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", nil))
 }
