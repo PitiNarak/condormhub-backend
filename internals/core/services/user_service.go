@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
@@ -83,7 +84,12 @@ func (s *UserService) Login(email string, password string) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["email"] = user.Email
 	claims["user_id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	intHour, convertStringErr := strconv.Atoi(os.Getenv("JWT_EXPIRATION_HOURS"))
+	if convertStringErr != nil {
+		return "", convertStringErr
+	}
+	hour := time.Duration(intHour)
+	claims["exp"] = time.Now().Add(time.Hour * hour).Unix()
 
 	// Generate encoded token
 	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))

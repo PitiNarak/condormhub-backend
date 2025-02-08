@@ -21,12 +21,12 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 	var user domain.User
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
 	}
 
 	create_err := h.UserService.Create(&user)
 	if create_err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": create_err.Error()})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"success": true})
