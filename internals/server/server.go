@@ -20,6 +20,7 @@ import (
 type Config struct {
 	Name                 string `env:"NAME"`
 	Port                 int    `env:"PORT"`
+	Env                  string `env:"ENV"`
 	MaxBodyLimitMB       int    `env:"MAX_BODY_LIMIT_MB"`
 	CorsAllowOrigins     string `env:"CORS_ALLOW_ORIGINS"`
 	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS"`
@@ -73,6 +74,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		greetingHandler:  handlers.NewGreetingHandler(),
 		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
 		userHandler:      userHandler,
+		config:           config,
 	}
 }
 
