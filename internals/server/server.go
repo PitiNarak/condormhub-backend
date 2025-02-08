@@ -106,7 +106,7 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 	s.app.Post("/register", s.userHandler.Create)
 	s.app.Get("/verify/:token", s.userHandler.VerifyEmail)
 	s.app.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
-	s.app.Post("/resetpasswordresponse", s.userHandler.ResetPasswordResponse)
+	s.app.Patch("/newpassword", s.userHandler.ResetPasswordResponse)
 
 	go func() {
 		if err := s.app.Listen(fmt.Sprintf(":%d", s.config.Port)); err != nil {
