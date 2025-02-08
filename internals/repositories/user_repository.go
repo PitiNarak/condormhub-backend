@@ -23,14 +23,15 @@ func (r *UserRepo) Create(user domain.User) error {
 	return nil
 }
 
-func (r *UserRepo) GetUserViaEmail(email string) (domain.User, error) {
+func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("email = ?", email).First(&user)
-	return user, result.Error
+
+	return &user, result.Error
 }
 
 func (r *UserRepo) Update(user domain.User) (domain.User, error) {
-	myUser, err := r.GetUserViaEmail(user.Email)
+	myUser, err := r.GetUserByEmail(user.Email)
 	if err != nil {
 		return user, err
 	}

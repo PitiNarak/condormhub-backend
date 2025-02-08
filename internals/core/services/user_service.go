@@ -35,7 +35,7 @@ func (s *UserService) Create(user domain.User) error {
 }
 
 func (s *UserService) Login(email string, password string) (string, error) {
-	user, getErr := s.UserRepo.GetUserViaEmail(email)
+	user, getErr := s.UserRepo.GetUserByEmail(email)
 	if getErr != nil {
 		return "", getErr
 	}

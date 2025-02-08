@@ -45,9 +45,11 @@ func (s *Server) Start(port string) {
 	userRoutes.Post("/register", s.userHandler.Create)
 
 	userRoutes.Post("/login", s.userHandler.Login)
+
 	s.app.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
+
 	userRoutes.Put("/update", s.userHandler.Update)
 
 	s.app.All("/", s.greetingHandler.Greeting)

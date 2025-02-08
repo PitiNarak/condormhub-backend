@@ -9,11 +9,11 @@ import (
 type User struct {
 	ID         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	Message    string    `json:"message" validate:"required"`
-	CreateAt   time.Time `gorm:"autoCreateTime" json:"create_at"`
-	UpdateAt   time.Time `gorm:"autoUpdateTime" json:"update_at"`
-	UserName   string    `json:"userName" gorm:"unique"`
-	Password   string    `json:"password"`
-	Email      string    `json:"email" gorm:"unique"`
+	CreateAt   time.Time `gorm:"autoCreateTime" json:"createAt"`
+	UpdateAt   time.Time `gorm:"autoUpdateTime" json:"updateAt"`
+	UserName   string    `json:"userName" gorm:"unique" validate:"required"`
+	Password   string    `json:"password" validate:"required"`
+	Email      string    `json:"email" gorm:"unique" validate:"required,email"`
 	FirstName  string    `json:"firstName"`
 	LastName   string    `json:"lastName"`
 	NationalID string    `json:"nationalID" `
