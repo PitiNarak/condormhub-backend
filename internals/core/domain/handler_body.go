@@ -1,7 +1,7 @@
 package domain
 
 type ResetPasswordBody struct {
-	Email string `json:"email" validate:"required"`
+	Email string `json:"email" validate:"required,email"`
 }
 
 type ResponseResetPasswordBody struct {
@@ -11,6 +11,6 @@ type ResponseResetPasswordBody struct {
 
 type UserBody struct {
 	Password string `json:"password" validate:"required"`
-	Email    string `json:"email" validate:"required"`
-	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	UserName string `json:"userName" validate:"required"`
 }
