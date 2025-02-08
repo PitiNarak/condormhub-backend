@@ -24,7 +24,7 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	create_err := h.UserService.Create(user)
+	create_err := h.UserService.Create(&user)
 	if create_err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
@@ -62,7 +62,7 @@ func (h *UserHandler) Update(c *fiber.Ctx) error {
 	}
 	gormUser := &domain.User{
 		Email:    user.Email,
-		Name:     user.Name,
+		UserName: user.UserName,
 		Password: user.Password,
 	}
 	err = h.UserService.Create(gormUser)

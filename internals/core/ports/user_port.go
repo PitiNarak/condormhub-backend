@@ -8,14 +8,14 @@ import (
 
 type UserRepository interface {
 	Create(user *domain.User) error
-	GetUser(userID uuid.UUID) (domain.User, error)
+	GetUser(userID uuid.UUID) (*domain.User, error)
 	UpdateUser(user domain.User) error
-	GetUserByEmail(email string) (domain.User, error)
+	GetUserByEmail(email string) (*domain.User, error)
 }
 
 type UserService interface {
 	Create(user *domain.User) error
-	Update(user domain.User) (domain.User, error)
+	Update(user domain.User) error
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) error
 	ResetPasswordCreate(email string) error
