@@ -3,6 +3,8 @@ package handlers
 import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
+	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,81 +18,76 @@ func NewUserHandler(UserService ports.UserService) *UserHandler {
 }
 
 func (h *UserHandler) Create(c *fiber.Ctx) error {
-	user := new(domain.User)
+	user := new(domain.UserBody)
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
+		return error_handler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(user); err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
-
-	err = h.UserService.Create(user)
+	gormUser := &domain.User{
+		Email:    user.Email,
+		Name:     user.Name,
+		Password: user.Password,
+	}
+	err = h.UserService.Create(gormUser)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return error_handler.InternalServerError(err, "system cannot register your account")
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", map[string]string{}))
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	tokenString := c.Params("token")
 
 	if err := h.UserService.VerifyUser(tokenString); err != nil {
-		return err
+		return error_handler.InternalServerError(err, "cannot verify your account")
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", map[string]string{}))
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	body := new(domain.ResetPasswordBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error()) //Json
+		return error_handler.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
 	err := h.UserService.ResetPasswordCreate(body.Email)
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return error_handler.InternalServerError(err, "cannot sent email to reset password")
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", map[string]string{}))
 }
 
 func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	body := new(domain.ResponseResetPasswordBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		return error_handler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
 	err := h.UserService.ResetPasswordResponse(body.Token, body.Password)
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return error_handler.InternalServerError(err, "cannot reset user password")
 	}
-	return nil
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", map[string]string{}))
 }
