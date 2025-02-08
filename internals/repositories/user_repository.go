@@ -50,3 +50,15 @@ func (r *UserRepo) UpdateUser(user domain.User) error {
 
 	return result.Error
 }
+
+func (r *UserRepo) Update(email string, updateInfo domain.UpdateInfo) error {
+	var user domain.User
+
+	// Find the user by email
+	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
+		return err // Return error if user not found
+	}
+	result := r.db.Model(&user).Updates(updateInfo)
+
+	return result.Error
+}

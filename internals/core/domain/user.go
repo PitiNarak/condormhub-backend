@@ -28,3 +28,11 @@ type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
+
+type UpdateInfo struct {
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	NationalID string `json:"nationalID" `
+	Gender     string `json:"gender"`
+	BirthDate  string `json:"birthDate"`
+}

@@ -62,7 +62,34 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) Update(c *fiber.Ctx) error {
-	return nil
+	var user domain.User
+	err := c.BodyParser(&user)
+	if err != nil {
+		return error_handler.BadRequestError(err, "your request is invalid")
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(user); err != nil {
+		return error_handler.BadRequestError(err, "your request body is incorrect")
+	}
+
+	updateInfo := domain.UpdateInfo{
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		NationalID: user.NationalID,
+		Gender:     user.Gender,
+		BirthDate:  user.BirthDate,
+	}
+
+	err = h.UserService.Update(user, updateInfo)
+
+	if err != nil {
+		return error_handler.InternalServerError(err, "system cannot register your account")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", nil))
+
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {

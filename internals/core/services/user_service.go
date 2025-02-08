@@ -101,8 +101,8 @@ func (s *UserService) Login(email string, password string) (string, error) {
 
 }
 
-func (s *UserService) Update(user domain.User) error {
-	err := s.UserRepo.UpdateUser(user)
+func (s *UserService) Update(user domain.User, updateInfo domain.UpdateInfo) error {
+	err := s.UserRepo.Update(user.Email, updateInfo)
 	if err != nil {
 		return err
 	}
