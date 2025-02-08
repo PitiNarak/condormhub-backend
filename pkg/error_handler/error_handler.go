@@ -3,26 +3,21 @@ package error_handler
 import "github.com/gofiber/fiber/v2"
 
 type ErrorHandler struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Err     string `json:"error"`
+	Code    int
+	Message string
+	Err     error
 }
 
 func NewErrorHandler(code int, message string, err error) *ErrorHandler {
-	errMsg := ""
-	if err != nil {
-		errMsg = err.Error()
-	}
-
 	return &ErrorHandler{
 		Code:    code,
 		Message: message,
-		Err:     errMsg,
+		Err:     err,
 	}
 }
 
 func (e *ErrorHandler) Error() string {
-	return e.Message
+	return e.Err.Error()
 }
 
 func InternalServerError(err error, msg string) *ErrorHandler {

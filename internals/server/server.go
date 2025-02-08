@@ -48,21 +48,17 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		JSONEncoder:   json.Marshal,
 		JSONDecoder:   json.Unmarshal,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			// Default internal server error response
 			code := fiber.StatusInternalServerError
 			message := "Internal Server Error"
 
-			// Check if error is of type *error_handler.ErrorHandler
 			var e *error_handler.ErrorHandler
 			if errors.As(err, &e) {
 				code = e.Code
 				message = e.Message
 			}
 
-			// Log the error with details
-			log.Printf("Error: %v, Code: %d, Message: %s", err, code, message)
+			log.Printf("Error: %v, Code: %d, Message: %s", e.Error(), code, message)
 
-			// Return JSON response
 			return c.Status(code).JSON(&http_response.HttpResponse{
 				Success: false,
 				Message: message,
