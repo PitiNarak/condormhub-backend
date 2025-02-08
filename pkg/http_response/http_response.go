@@ -5,3 +5,11 @@ type HttpResponse struct {
 	Message string `json:"message"`
 	Data    any    `json:"data"`
 }
+
+func SuccessResponse(message string, data any) *HttpResponse {
+	return &HttpResponse{
+		Success: true,
+		Message: message,
+		Data:    data,
+	}
+}
