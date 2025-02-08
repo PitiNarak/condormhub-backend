@@ -56,9 +56,9 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 
 	token, loginErr := h.UserService.Login(req.Email, req.Password)
 	if loginErr != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Login error"})
+		error_handler.InternalServerError(err, "system cannot login to your account")
 	}
-	return c.Status(200).JSON(fiber.Map{"token": token})
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token}))
 }
 
 func (h *UserHandler) Update(c *fiber.Ctx) error {
@@ -85,10 +85,10 @@ func (h *UserHandler) Update(c *fiber.Ctx) error {
 	err = h.UserService.Update(user, updateInfo)
 
 	if err != nil {
-		return error_handler.InternalServerError(err, "system cannot register your account")
+		return error_handler.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", nil))
 
 }
 
