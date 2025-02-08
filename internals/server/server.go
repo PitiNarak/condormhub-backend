@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
+	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -45,9 +48,26 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		JSONEncoder:   json.Marshal,
 		JSONDecoder:   json.Unmarshal,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			// TODO: Log error
-			log.Printf("Error: %v", err)
-			return c.SendStatus(fiber.StatusInternalServerError)
+			// Default internal server error response
+			code := fiber.StatusInternalServerError
+			message := "Internal Server Error"
+
+			// Check if error is of type *error_handler.ErrorHandler
+			var e *error_handler.ErrorHandler
+			if errors.As(err, &e) {
+				code = e.Code
+				message = e.Message
+			}
+
+			// Log the error with details
+			log.Printf("Error: %v, Code: %d, Message: %s", err, code, message)
+
+			// Return JSON response
+			return c.Status(code).JSON(&http_response.HttpResponse{
+				Success: false,
+				Message: message,
+				Data:    nil,
+			})
 		},
 	})
 
