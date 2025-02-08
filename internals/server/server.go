@@ -8,11 +8,11 @@ import (
 	"log"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/services"
-	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -81,9 +81,9 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
-	userService := services.NewUserService(userRepository)
 	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
-	userHandler := handlers.NewUserHandler(userService, emailService, &jwtConfig)
+	userService := services.NewUserService(userRepository, emailService, &jwtConfig)
+	userHandler := handlers.NewUserHandler(userService)
 
 	return &Server{
 		app:              app,

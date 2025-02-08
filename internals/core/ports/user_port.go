@@ -14,10 +14,10 @@ type UserRepository interface {
 }
 
 type UserService interface {
-	Create(user *domain.User) (*domain.User, error)
-	VerifyUser(userID uuid.UUID) error
-	ResetPasswordCreate(email string) (domain.User, error)
-	ResetPasswordResponse(userID uuid.UUID, password string) error
+	Create(user *domain.User) error
+	VerifyUser(token string) error
+	ResetPasswordCreate(email string) error
+	ResetPasswordResponse(token string, password string) error
 }
 
 type UserHandler interface {
