@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internals/config"
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -13,10 +13,10 @@ import (
 type UserHandler struct {
 	UserService  ports.UserService
 	EmailService ports.EmailServicePort
-	Config       *config.AppConfig
+	Config       *utils.JWTConfig
 }
 
-func NewUserHandler(UserService ports.UserService, emailService ports.EmailServicePort, config *config.AppConfig) *UserHandler {
+func NewUserHandler(UserService ports.UserService, emailService ports.EmailServicePort, config *utils.JWTConfig) *UserHandler {
 	return &UserHandler{UserService: UserService, EmailService: emailService, Config: config}
 }
 
@@ -53,7 +53,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	tokenString := c.Params("token")
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(h.Config.JWT.JWTSecretKey), nil
+		return []byte(h.Config.JWTSecretKey), nil
 	})
 
 	if err != nil || !token.Valid {
@@ -125,7 +125,7 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	}
 
 	token, err := jwt.Parse(body.Token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(h.Config.JWT.JWTSecretKey), nil
+		return []byte(h.Config.JWTSecretKey), nil
 	})
 	if err != nil || !token.Valid {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired token"})
