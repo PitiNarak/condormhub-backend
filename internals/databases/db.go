@@ -3,26 +3,22 @@ package databases
 import (
 	"fmt"
 	"log"
-	"os"
-	"strconv"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewDatabaseConnection() (*gorm.DB, error) {
-	host := os.Getenv("DB_HOST")
-	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		log.Fatal("failed to convert port to int")
-		return nil, err
-	}
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	sslmode := os.Getenv("DB_SSLMODE")
+type Config struct {
+	Host     string `env:"HOST"`
+	Port     int    `env:"PORT"`
+	User     string `env:"USER"`
+	Password string `env:"PASSWORD"`
+	DBName   string `env:"NAME"`
+	SSLMode  string `env:"SSLMODE"`
+}
 
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", host, port, user, password, dbname, sslmode)
+func NewDatabaseConnection(config Config) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", config.Host, config.Port, config.User, config.Password, config.DBName, config.SSLMode)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("failed to connect database")

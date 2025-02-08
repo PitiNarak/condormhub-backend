@@ -3,26 +3,25 @@ package main
 import (
 	"fmt"
 
+	"github.com/PitiNarak/condormhub-backend/internals/config"
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/databases"
 
 	"github.com/gofiber/fiber/v2/log"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Warnf("Warning: No .env file found")
-	}
+	config := config.Load()
 
-	db, err := databases.NewDatabaseConnection()
+	db, err := databases.NewDatabaseConnection(config.Database)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 
-	err = db.AutoMigrate(&domain.SampleLog{}, &domain.User{})
-	if err != nil {
+	if err := db.AutoMigrate(
+		&domain.SampleLog{},
+		&domain.User{},
+	); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}
 
