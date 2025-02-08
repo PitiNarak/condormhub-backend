@@ -65,9 +65,9 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
-	userService := services.NewUserService(userRepository)
 	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
-	userHandler := handlers.NewUserHandler(userService, emailService, &jwtConfig)
+	userService := services.NewUserService(userRepository, emailService, &jwtConfig)
+	userHandler := handlers.NewUserHandler(userService)
 
 	return &Server{
 		app:              app,

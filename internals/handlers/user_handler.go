@@ -3,21 +3,16 @@ package handlers
 import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 )
 
 type UserHandler struct {
-	UserService  ports.UserService
-	EmailService ports.EmailServicePort
-	Config       *utils.JWTConfig
+	UserService ports.UserService
 }
 
-func NewUserHandler(UserService ports.UserService, emailService ports.EmailServicePort, config *utils.JWTConfig) *UserHandler {
-	return &UserHandler{UserService: UserService, EmailService: emailService, Config: config}
+func NewUserHandler(UserService ports.UserService) *UserHandler {
+	return &UserHandler{UserService: UserService}
 }
 
 func (h *UserHandler) Create(c *fiber.Ctx) error {
@@ -36,14 +31,9 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	user, create_err := h.UserService.Create(user)
-	if create_err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": create_err.Error()})
-	}
-
-	err = h.EmailService.SendVerificationEmail(user.Email, user.ID)
+	err = h.UserService.Create(user)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to send email verification"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return nil
@@ -52,31 +42,8 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	tokenString := c.Params("token")
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(h.Config.JWTSecretKey), nil
-	})
-
-	if err != nil || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired token"})
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"erorr": "Invalid claims"})
-	}
-
-	userIDstr, ok := claims["user_id"].(string)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user_id"})
-	}
-
-	userID, err := uuid.Parse(userIDstr)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(err)
-	}
-
-	if err := h.UserService.VerifyUser(userID); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON("User not found")
+	if err := h.UserService.VerifyUser(tokenString); err != nil {
+		return err
 	}
 
 	return nil
@@ -97,14 +64,11 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		})
 	}
 
-	user, err := h.UserService.ResetPasswordCreate(body.Email)
+	err := h.UserService.ResetPasswordCreate(body.Email)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON("User not found")
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
-	err = h.EmailService.SendResetPasswordEmail(user.Email, user.ID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to send reset password email"})
-	}
+
 	return nil
 }
 
@@ -124,29 +88,9 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := jwt.Parse(body.Token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(h.Config.JWTSecretKey), nil
-	})
-	if err != nil || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired token"})
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"erorr": "Invalid claims"})
-	}
-	userIDstr, ok := claims["user_id"].(string)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid user_id"})
-	}
-
-	userID, err := uuid.Parse(userIDstr)
+	err := h.UserService.ResetPasswordResponse(body.Token, body.Password)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to parse userId"})
-	}
-	err = h.UserService.ResetPasswordResponse(userID, body.Password)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to reset password"})
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	return nil
 }
