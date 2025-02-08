@@ -15,20 +15,12 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/gofiber/fiber/v2"
-	jwtware "github.com/gofiber/jwt/v2"
-	"gorm.io/gorm"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	jwtware "github.com/gofiber/jwt/v2"
 	"gorm.io/gorm"
 )
-
-type Server struct {
-	app              *fiber.App
-	greetingHandler  *handlers.GreetingHandler
-	sampleLogHandler *handlers.SampleLogHandler
-	userHandler      *handlers.UserHandler
-}
 
 type Config struct {
 	Name                 string `env:"NAME"`
@@ -39,7 +31,6 @@ type Config struct {
 	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS"`
 	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS"`
 	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS"`
->>>>>>> origin/dev
 }
 
 type Server struct {
