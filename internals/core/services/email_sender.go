@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-gomail/gomail"
 	"github.com/google/uuid"
 )

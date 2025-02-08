@@ -7,9 +7,9 @@ import (
 	"log"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/services"
-	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"

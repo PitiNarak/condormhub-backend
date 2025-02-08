@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
