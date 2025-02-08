@@ -18,37 +18,6 @@ func NewUserHandler(UserService ports.UserService) *UserHandler {
 }
 
 func (h *UserHandler) Create(c *fiber.Ctx) error {
-	var user domain.User
-	err := c.BodyParser(&user)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
-	}
-
-	create_err := h.UserService.Create(&user)
-	if create_err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": create_err.Error()})
-	}
-
-	return c.Status(200).JSON(fiber.Map{"success": true})
-
-}
-
-func (h *UserHandler) Login(c *fiber.Ctx) error {
-	var req domain.LoginRequest
-	err := c.BodyParser(&req)
-	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	token, loginErr := h.UserService.Login(req.Email, req.Password)
-	if loginErr != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-	return c.Status(200).JSON(fiber.Map{"token": token})
-}
-
-func (h *UserHandler) Update(c *fiber.Ctx) error {
-
 	user := new(domain.UserBody)
 	err := c.BodyParser(&user)
 	if err != nil {
@@ -71,6 +40,29 @@ func (h *UserHandler) Update(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", nil))
+
+}
+
+func (h *UserHandler) Login(c *fiber.Ctx) error {
+	var req domain.LoginRequest
+	err := c.BodyParser(&req)
+	if err != nil {
+		return error_handler.BadRequestError(err, "your request is invalid")
+	}
+	validate := validator.New()
+	if err := validate.Struct(req); err != nil {
+		return error_handler.BadRequestError(err, "your request body is incorrect")
+	}
+
+	token, loginErr := h.UserService.Login(req.Email, req.Password)
+	if loginErr != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Login error"})
+	}
+	return c.Status(200).JSON(fiber.Map{"token": token})
+}
+
+func (h *UserHandler) Update(c *fiber.Ctx) error {
+	return nil
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
