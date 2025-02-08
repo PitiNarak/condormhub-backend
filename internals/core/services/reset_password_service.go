@@ -1,20 +1,39 @@
 package services
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
+	"errors"
+
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *UserService) ResetPasswordCreate(email string) (domain.User, error) {
+func (s *UserService) ResetPasswordCreate(email string) error {
 	user, err := s.UserRepo.GetUserByEmail(email)
 	if err != nil {
-		return user, err
+		return err
 	}
-	return user, nil
+	err = s.EmailService.SendResetPasswordEmail(user.Email, user.ID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (s *UserService) ResetPasswordResponse(userID uuid.UUID, password string) error {
+func (s *UserService) ResetPasswordResponse(token string, password string) error {
+	claims, err := utils.DecodeJWT(token, s.Config)
+	if err != nil {
+		return err
+	}
+	userIDstr, ok := (*claims)["user_id"].(string)
+	if !ok {
+		return errors.New("cannot get user_id")
+	}
+
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return err
+	}
 	user, err := s.UserRepo.GetUser(userID)
 	if err != nil {
 		return err
