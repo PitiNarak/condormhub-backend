@@ -1,44 +1,82 @@
 package server
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internals/config"
 	"github.com/PitiNarak/condormhub-backend/internals/core/services"
+	"github.com/PitiNarak/condormhub-backend/internals/core/utils"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
 	"github.com/PitiNarak/condormhub-backend/internals/repositories"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"gorm.io/gorm"
 )
 
+type Config struct {
+	Name                 string `env:"NAME"`
+	Port                 int    `env:"PORT"`
+	MaxBodyLimitMB       int    `env:"MAX_BODY_LIMIT_MB"`
+	CorsAllowOrigins     string `env:"CORS_ALLOW_ORIGINS"`
+	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS"`
+	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS"`
+	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS"`
+}
+
 type Server struct {
 	app              *fiber.App
+	config           Config
 	greetingHandler  *handlers.GreetingHandler
 	sampleLogHandler *handlers.SampleLogHandler
 	userHandler      *handlers.UserHandler
-	config           *config.AppConfig
 }
 
-func NewServer(db *gorm.DB) *Server {
-	config := config.Load()
+func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, db *gorm.DB) *Server {
+
+	app := fiber.New(fiber.Config{
+		AppName:       config.Name,
+		BodyLimit:     config.MaxBodyLimitMB * 1024 * 1024,
+		CaseSensitive: true,
+		JSONEncoder:   json.Marshal,
+		JSONDecoder:   json.Unmarshal,
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			// TODO: Log error
+			log.Printf("Error: %v", err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		},
+	})
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     config.CorsAllowOrigins,
+		AllowMethods:     config.CorsAllowMethods,
+		AllowHeaders:     config.CorsAllowHeaders,
+		AllowCredentials: config.CorsAllowCredentials,
+	}))
+
+	app.Use(requestid.New())
+	app.Use(logger.New(logger.Config{
+		DisableColors: true,
+	}))
 
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 	userService := services.NewUserService(userRepository)
-	emailService := services.NewEmailService(&config.SMTP, &config.JWT)
-	userHandler := handlers.NewUserHandler(userService, emailService, config)
+	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
+	userHandler := handlers.NewUserHandler(userService, emailService, &jwtConfig)
 
 	return &Server{
-		app:              fiber.New(),
+		app:              app,
 		greetingHandler:  handlers.NewGreetingHandler(),
 		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
 		userHandler:      userHandler,
-		config:           config,
 	}
 }
 
-func (s *Server) Start(port string) {
-
+func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 	sampleLogRoutes := s.app.Group("/log")
 	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
 	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
@@ -52,8 +90,21 @@ func (s *Server) Start(port string) {
 	s.app.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
 	s.app.Post("/resetpasswordresponse", s.userHandler.ResetPasswordResponse)
 
-	err := s.app.Listen(":" + port)
-	if err != nil {
-		log.Fatalf("Listen Failed: %v", err)
-	}
+	go func() {
+		if err := s.app.Listen(fmt.Sprintf(":%d", s.config.Port)); err != nil {
+			log.Panicf("Failed to start server: %v\n", err)
+			stop()
+		}
+	}()
+
+	defer func() {
+		if err := s.app.ShutdownWithContext(ctx); err != nil {
+			log.Printf("Failed to shutdown server: %v\n", err)
+		}
+		log.Println("Server stopped")
+	}()
+
+	<-ctx.Done()
+
+	log.Println("Server is shutting down...")
 }
