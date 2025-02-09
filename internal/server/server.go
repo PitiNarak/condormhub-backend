@@ -33,12 +33,13 @@ type Config struct {
 }
 
 type Server struct {
-	app              *fiber.App
-	config           Config
-	greetingHandler  *handlers.GreetingHandler
-	sampleLogHandler *handlers.SampleLogHandler
-	userHandler      *handlers.UserHandler
-	storage          *storage.Storage
+	app               *fiber.App
+	config            Config
+	greetingHandler   *handlers.GreetingHandler
+	sampleLogHandler  *handlers.SampleLogHandler
+	userHandler       *handlers.UserHandler
+	testUploadHandler *handlers.TestUploadHandler
+	storage           *storage.Storage
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -81,22 +82,24 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		DisableColors: true,
 	}))
 
+	storage := storage.NewStorage(storageConfig)
+
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 
 	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
 	userService := services.NewUserService(userRepository, emailService, &jwtConfig)
 	userHandler := handlers.NewUserHandler(userService)
-
-	storage := storage.NewStorage(storageConfig)
+	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
 	return &Server{
-		app:              app,
-		greetingHandler:  handlers.NewGreetingHandler(),
-		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
-		userHandler:      userHandler,
-		config:           config,
-		storage:          storage,
+		app:               app,
+		greetingHandler:   handlers.NewGreetingHandler(),
+		sampleLogHandler:  handlers.NewSampleLogHandler(sampleLogRepository),
+		userHandler:       userHandler,
+		config:            config,
+		testUploadHandler: testUploadHandler,
+		storage:           storage,
 	}
 }
 
@@ -129,6 +132,9 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 func (s *Server) initRoutes() {
 	// greeting
 	s.app.Get("/", s.greetingHandler.Greeting)
+
+	// test upload
+	s.app.Post("/upload", s.testUploadHandler.UploadHandler)
 
 	// sample log
 	sampleLogRoutes := s.app.Group("/log")
