@@ -78,3 +78,31 @@ func (s *Storage) DeleteFile(ctx context.Context, key string) error {
 
 	return nil
 }
+
+func (s *Storage) CopyFile(ctx context.Context, sourceKey string, destKey string) error {
+	_, err := s.client.CopyObject(ctx, &s3.CopyObjectInput{
+		Bucket:     aws.String(s.Config.BucketName),
+		CopySource: aws.String(fmt.Sprintf("%s/%s", s.Config.BucketName, sourceKey)),
+		Key:        aws.String(destKey),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Storage) MoveFile(ctx context.Context, sourceKey string, destKey string) error {
+	err := s.CopyFile(ctx, sourceKey, destKey)
+	if err != nil {
+		return err
+	}
+
+	err = s.DeleteFile(ctx, sourceKey)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
