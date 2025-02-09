@@ -22,6 +22,6 @@ func main() {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 
-	s := server.NewServer(config.Server, config.SMTP, config.JWT, db)
+	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, db)
 	s.Start(ctx, stop, config.JWT)
 }

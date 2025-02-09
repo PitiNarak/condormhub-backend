@@ -10,6 +10,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 	"github.com/PitiNarak/condormhub-backend/internal/repositories"
+	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
@@ -37,9 +38,10 @@ type Server struct {
 	greetingHandler  *handlers.GreetingHandler
 	sampleLogHandler *handlers.SampleLogHandler
 	userHandler      *handlers.UserHandler
+	storage          *storage.Storage
 }
 
-func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, db *gorm.DB) *Server {
+func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:       config.Name,
@@ -86,12 +88,15 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userService := services.NewUserService(userRepository, emailService, &jwtConfig)
 	userHandler := handlers.NewUserHandler(userService)
 
+	storage := storage.NewStorage(storageConfig)
+
 	return &Server{
 		app:              app,
 		greetingHandler:  handlers.NewGreetingHandler(),
 		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
 		userHandler:      userHandler,
 		config:           config,
+		storage:          storage,
 	}
 }
 
