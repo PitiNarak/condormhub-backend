@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
@@ -93,7 +95,10 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
-	tokenString := c.Params("token")
+	tokenString := c.Get("token")
+	if tokenString == "" {
+		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
+	}
 
 	if err := h.UserService.VerifyUser(tokenString); err != nil {
 		return error_handler.InternalServerError(err, "cannot verify your account")
@@ -134,8 +139,12 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
+	tokenString := c.Get("token")
+	if tokenString == "" {
+		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
+	}
 
-	err := h.UserService.ResetPasswordResponse(body.Token, body.Password)
+	err := h.UserService.ResetPasswordResponse(tokenString, body.Password)
 	if err != nil {
 		return error_handler.InternalServerError(err, "cannot reset user password")
 	}
