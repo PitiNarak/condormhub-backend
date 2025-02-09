@@ -97,7 +97,10 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig utils.JWTConfig) {
 
+	// init routes
 	s.initRoutes()
+
+	// start server
 	go func() {
 		if err := s.app.Listen(fmt.Sprintf(":%d", s.config.Port)); err != nil {
 			log.Panicf("Failed to start server: %v\n", err)
@@ -105,6 +108,7 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 		}
 	}()
 
+	// shutdown server at the end
 	defer func() {
 		if err := s.app.ShutdownWithContext(ctx); err != nil {
 			log.Printf("Failed to shutdown server: %v\n", err)
