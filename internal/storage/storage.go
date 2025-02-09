@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -65,22 +64,6 @@ func (s *Storage) UploadFile(ctx context.Context, key string, contextType string
 	url := fmt.Sprintf("%s/%s", s.Config.URL_PREFIX, key)
 
 	return url, nil
-}
-
-func (s *Storage) DownloadFile(ctx context.Context, key string) ([]byte, error) {
-	output, err := s.client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(s.Config.BucketName),
-		Key:    aws.String(key),
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(output.Body)
-
-	return buf.Bytes(), nil
 }
 
 func (s *Storage) DeleteFile(ctx context.Context, key string) error {
