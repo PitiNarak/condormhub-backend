@@ -10,6 +10,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 	"github.com/PitiNarak/condormhub-backend/internal/repositories"
+	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
@@ -32,14 +33,16 @@ type Config struct {
 }
 
 type Server struct {
-	app              *fiber.App
-	config           Config
-	greetingHandler  *handlers.GreetingHandler
-	sampleLogHandler *handlers.SampleLogHandler
-	userHandler      *handlers.UserHandler
+	app               *fiber.App
+	config            Config
+	greetingHandler   *handlers.GreetingHandler
+	sampleLogHandler  *handlers.SampleLogHandler
+	userHandler       *handlers.UserHandler
+	testUploadHandler *handlers.TestUploadHandler
+	storage           *storage.Storage
 }
 
-func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, db *gorm.DB) *Server {
+func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:       config.Name,
@@ -84,19 +87,24 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		DisableColors: true,
 	}))
 
+	storage := storage.NewStorage(storageConfig)
+
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 
 	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
 	userService := services.NewUserService(userRepository, emailService, &jwtConfig)
 	userHandler := handlers.NewUserHandler(userService)
+	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
 	return &Server{
-		app:              app,
-		greetingHandler:  handlers.NewGreetingHandler(),
-		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
-		userHandler:      userHandler,
-		config:           config,
+		app:               app,
+		greetingHandler:   handlers.NewGreetingHandler(),
+		sampleLogHandler:  handlers.NewSampleLogHandler(sampleLogRepository),
+		userHandler:       userHandler,
+		config:            config,
+		testUploadHandler: testUploadHandler,
+		storage:           storage,
 	}
 }
 
@@ -129,6 +137,9 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 func (s *Server) initRoutes() {
 	// greeting
 	s.app.Get("/", s.greetingHandler.Greeting)
+
+	// test upload
+	s.app.Post("/upload", s.testUploadHandler.UploadHandler)
 
 	// sample log
 	sampleLogRoutes := s.app.Group("/log")
