@@ -156,7 +156,7 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	userInfo, err := h.UserService.GetUser(getInfoRequest.Email)
+	userInfo, err := h.UserService.GetUserByEmail(getInfoRequest.Email)
 
 	if err != nil {
 		return error_handler.InternalServerError(err, "cannot get user information")
