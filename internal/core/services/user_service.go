@@ -100,3 +100,23 @@ func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
 
 	return user, nil
 }
+
+func (s *UserService) DeleteAccount(token string) error {
+	claims, err := utils.DecodeJWT(token, s.Config)
+	if err != nil {
+		return err
+	}
+	userIDstr, ok := (*claims)["user_id"].(string)
+	if !ok {
+		return errors.New("cannot get user_id")
+	}
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return err
+	}
+	err = s.UserRepo.DeleteAccount(userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

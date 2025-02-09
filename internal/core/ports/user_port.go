@@ -12,6 +12,7 @@ type UserRepository interface {
 	UpdateUser(user domain.User) error
 	Update(email string, updateInfo domain.UpdateInfo) error
 	GetUserByEmail(email string) (*domain.User, error)
+	DeleteAccount(userID uuid.UUID) error
 }
 
 type UserService interface {
@@ -22,6 +23,7 @@ type UserService interface {
 	VerifyUser(token string) error
 	ResetPasswordCreate(email string) error
 	ResetPasswordResponse(token string, password string) error
+	DeleteAccount(token string) error
 }
 
 type UserHandler interface {
@@ -32,4 +34,5 @@ type UserHandler interface {
 	VerifyEmail(c *fiber.Ctx) error
 	ResetPasswordCreate(c *fiber.Ctx) error
 	ResetPasswordResponse(c *fiber.Ctx) error
+	DeleteAccount(c *fiber.Ctx) error
 }

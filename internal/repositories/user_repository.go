@@ -62,3 +62,12 @@ func (r *UserRepo) Update(email string, updateInfo domain.UpdateInfo) error {
 
 	return result.Error
 }
+
+func (r *UserRepo) DeleteAccount(userID uuid.UUID) error {
+	var user domain.User
+	result := r.db.Delete(&user, userID)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
