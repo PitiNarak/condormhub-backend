@@ -75,11 +75,12 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	}
 
 	updateInfo := domain.UpdateInfo{
-		FirstName:  user.FirstName,
-		LastName:   user.LastName,
-		NationalID: user.NationalID,
-		Gender:     user.Gender,
-		BirthDate:  user.BirthDate,
+		FirstName:       user.FirstName,
+		LastName:        user.LastName,
+		NationalID:      user.NationalID,
+		Gender:          user.Gender,
+		BirthDate:       user.BirthDate,
+		StudentEvidence: user.StudentEvidence,
 	}
 
 	err = h.UserService.Update(user, updateInfo)
