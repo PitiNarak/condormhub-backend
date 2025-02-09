@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/services"
 	"github.com/PitiNarak/condormhub-backend/internals/handlers"
@@ -97,7 +96,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	}
 }
 
-func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
+func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig utils.JWTConfig) {
 	sampleLogRoutes := s.app.Group("/log")
 	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
 	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
@@ -110,7 +109,7 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 	userRoutes.Post("/login", s.userHandler.Login)
 
 	s.app.Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+		SigningKey: []byte(jwtConfig.JWTSecretKey),
 	}))
 
 	userRoutes.Put("/update", s.userHandler.Update)
