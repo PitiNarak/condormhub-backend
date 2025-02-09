@@ -17,7 +17,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	jwtware "github.com/gofiber/jwt/v2"
 	"gorm.io/gorm"
 )
 
@@ -107,10 +106,6 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 	userRoutes.Post("/register", s.userHandler.Create)
 
 	userRoutes.Post("/login", s.userHandler.Login)
-
-	s.app.Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte(jwtConfig.JWTSecretKey),
-	}))
 
 	userRoutes.Put("/update", s.userHandler.Update)
 
