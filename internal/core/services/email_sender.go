@@ -11,11 +11,11 @@ import (
 )
 
 type SMTPConfig struct {
-	Host     string `env:"HOST,required"`
-	Port     int    `env:"PORT,required"`
-	Email    string `env:"EMAIL,required"`
-	Password string `env:"PASSWORD,required"`
-	Hostname string `env:"LINK_HOSTNAME,required"`
+	Host         string `env:"HOST,required"`
+	Port         int    `env:"PORT,required"`
+	Email        string `env:"EMAIL,required"`
+	Password     string `env:"PASSWORD,required"`
+	LinkHostname string `env:"LINK_HOSTNAME,required"`
 }
 
 type EmailService struct {
@@ -38,7 +38,7 @@ func (e *EmailService) SendVerificationEmail(email, name string, userID uuid.UUI
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Email Verification")
 	cwd, _ := os.Getwd()
-	verLink := fmt.Sprintf(e.EmailConfig.Hostname+"/verify?token=%s", token)
+	verLink := fmt.Sprintf(e.EmailConfig.LinkHostname+"/verify?token=%s", token)
 	html, _ := utils.ReadTemplate(cwd + "/pkg/html_template/verify-compress.html")
 	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
@@ -59,7 +59,7 @@ func (e *EmailService) SendResetPasswordEmail(email, name string, userID uuid.UU
 	message.SetHeader("Subject", "ConDormHub Reset Password")
 
 	cwd, _ := os.Getwd()
-	verLink := fmt.Sprintf(e.EmailConfig.Hostname+"/newpassword/token=%s", token)
+	verLink := fmt.Sprintf(e.EmailConfig.LinkHostname+"/newpassword/token=%s", token)
 	html, _ := utils.ReadTemplate(cwd + "/pkg/html_template/reset-compress.html")
 	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
