@@ -13,7 +13,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	if err != nil {
 		return err
 	}
-	err = s.EmailService.SendResetPasswordEmail(user.Email, user.ID)
+	err = s.EmailService.SendResetPasswordEmail(user.Email, user.UserName, user.ID)
 	if err != nil {
 		return err
 	}

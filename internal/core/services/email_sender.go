@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
@@ -25,19 +26,20 @@ func NewEmailService(emailConfig *SMTPConfig, jwtConfig *utils.JWTConfig) ports.
 	return &EmailService{EmailConfig: emailConfig, JWTConfig: jwtConfig}
 }
 
-func (e *EmailService) SendVerificationEmail(email string, userID uuid.UUID) error {
+func (e *EmailService) SendVerificationEmail(email, name string, userID uuid.UUID) error {
 	token, err := utils.GenerateJWT(userID, e.JWTConfig)
 	if err != nil {
 		return err
 	}
 
 	message := gomail.NewMessage()
-	message.SetHeader("From", e.EmailConfig.Email)
+	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Email Verification")
-
-	verLink := fmt.Sprintf("http://localhost:3069/verify/%s", token)
-	body := fmt.Sprintf("<html><body><p>Click the link to verify your account: </p><a href='%s'>verify</a></body></html>", verLink)
+	cwd, _ := os.Getwd()
+	verLink := fmt.Sprintf("http://localhost:3069/verify/token=%s", token)
+	html, _ := utils.ReadTemplate(cwd + "/pkg/html_template/verify-compress.html")
+	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
 
 	dailer := gomail.NewDialer(e.EmailConfig.Host, e.EmailConfig.Port, e.EmailConfig.Email, e.EmailConfig.Password)
@@ -45,18 +47,20 @@ func (e *EmailService) SendVerificationEmail(email string, userID uuid.UUID) err
 	return dailer.DialAndSend(message)
 }
 
-func (e *EmailService) SendResetPasswordEmail(email string, userID uuid.UUID) error {
+func (e *EmailService) SendResetPasswordEmail(email, name string, userID uuid.UUID) error {
 	token, err := utils.GenerateJWT(userID, e.JWTConfig)
 	if err != nil {
 		return err
 	}
 	message := gomail.NewMessage()
-	message.SetHeader("From", e.EmailConfig.Email)
+	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Reset Password")
 
-	verLink := fmt.Sprintf("http://localhost:3069/resetpassword/%s", token)
-	body := fmt.Sprintf("<html><body><p>Click the link to reset your password: </p><a href='%s'></a></body></html>", verLink)
+	cwd, _ := os.Getwd()
+	verLink := fmt.Sprintf("http://localhost:3069/verify/token=%s", token)
+	html, _ := utils.ReadTemplate(cwd + "/pkg/html_template/reset-compress.html")
+	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
 
 	dailer := gomail.NewDialer(e.EmailConfig.Host, e.EmailConfig.Port, e.EmailConfig.Email, e.EmailConfig.Password)

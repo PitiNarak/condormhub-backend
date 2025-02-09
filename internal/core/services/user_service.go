@@ -32,7 +32,7 @@ func (s *UserService) Create(user *domain.User) error {
 	if create_err != nil {
 		return create_err
 	}
-	err = s.EmailService.SendVerificationEmail(user.Email, user.ID)
+	err = s.EmailService.SendVerificationEmail(user.Email, user.UserName, user.ID)
 	if err != nil {
 		return err
 	}
