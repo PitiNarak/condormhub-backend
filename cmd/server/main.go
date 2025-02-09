@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/PitiNarak/condormhub-backend/internals/config"
-	"github.com/PitiNarak/condormhub-backend/internals/databases"
-	"github.com/PitiNarak/condormhub-backend/internals/server"
+	"github.com/PitiNarak/condormhub-backend/internal/config"
+	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/gofiber/fiber/v2/log"
 )
 

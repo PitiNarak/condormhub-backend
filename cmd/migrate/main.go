@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/PitiNarak/condormhub-backend/internals/config"
-	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internals/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/config"
+	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/databases"
 
 	"github.com/gofiber/fiber/v2/log"
 )
