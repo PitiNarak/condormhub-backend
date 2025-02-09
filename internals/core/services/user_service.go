@@ -2,14 +2,10 @@ package services
 
 import (
 	"errors"
-	"os"
-	"strconv"
-	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -78,26 +74,13 @@ func (s *UserService) Login(email string, password string) (string, error) {
 		return "", compareErr
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
+	token, generateErr := utils.GenerateJWT(user.ID, s.Config)
 
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = user.Email
-	claims["user_id"] = user.ID
-	intHour, convertStringErr := strconv.Atoi(os.Getenv("JWT_EXPIRATION_HOURS"))
-	if convertStringErr != nil {
-		return "", convertStringErr
-	}
-	hour := time.Duration(intHour)
-	claims["exp"] = time.Now().Add(time.Hour * hour).Unix()
-
-	// Generate encoded token
-	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	if err != nil {
-		return "", err
+	if generateErr != nil {
+		return "", generateErr
 	}
 
-	return t, nil
+	return token, nil
 
 }
 
