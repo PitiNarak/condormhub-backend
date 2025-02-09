@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internals/core/services"
-	"github.com/PitiNarak/condormhub-backend/internals/handlers"
-	"github.com/PitiNarak/condormhub-backend/internals/repositories"
+	"github.com/PitiNarak/condormhub-backend/internal/core/services"
+	"github.com/PitiNarak/condormhub-backend/internal/handlers"
+	"github.com/PitiNarak/condormhub-backend/internal/repositories"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"

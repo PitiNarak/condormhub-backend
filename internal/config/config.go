@@ -3,9 +3,9 @@ package config
 import (
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internals/core/services"
-	"github.com/PitiNarak/condormhub-backend/internals/databases"
-	"github.com/PitiNarak/condormhub-backend/internals/server"
+	"github.com/PitiNarak/condormhub-backend/internal/core/services"
+	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"

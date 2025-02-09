@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/google/uuid"
 )
 
