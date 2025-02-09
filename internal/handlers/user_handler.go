@@ -61,7 +61,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token}))
 }
 
-func (h *UserHandler) Update(c *fiber.Ctx) error {
+func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	var user domain.User
 	err := c.BodyParser(&user)
 	if err != nil {
