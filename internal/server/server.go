@@ -55,9 +55,14 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 			if errors.As(err, &e) {
 				code = e.Code
 				message = e.Message
+			} else {
+				message = err.Error()
 			}
 
-			log.Printf("Error: %v, Code: %d, Message: %s", e.Error(), code, message)
+			if e != nil && e.Err != nil {
+				log.Printf("Error: %v, Code: %d, Message: %s", e.Error(), code, message)
+			}
+			log.Printf("Error: %s, Code: %d, Message: %s", err.Error(), code, message)
 
 			return c.Status(code).JSON(&http_response.HttpResponse{
 				Success: false,
