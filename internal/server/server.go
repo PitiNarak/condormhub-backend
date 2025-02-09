@@ -156,4 +156,5 @@ func (s *Server) initRoutes() {
 	userRoutes.Get("/verify/", s.userHandler.VerifyEmail)
 	userRoutes.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
 	userRoutes.Patch("/newpassword", s.userHandler.ResetPasswordResponse)
+	userRoutes.Get("/me", s.userHandler.GetUserInfo)
 }

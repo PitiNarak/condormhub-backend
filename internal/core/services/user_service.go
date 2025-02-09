@@ -91,3 +91,12 @@ func (s *UserService) Update(user domain.User, updateInfo domain.UpdateInfo) err
 	}
 	return nil
 }
+
+func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
+	user, err := s.UserRepo.GetUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

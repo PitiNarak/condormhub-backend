@@ -16,6 +16,7 @@ type UserRepository interface {
 
 type UserService interface {
 	Create(user *domain.User) error
+	GetUserByEmail(email string) (*domain.User, error)
 	Update(user domain.User, updateInfo domain.UpdateInfo) error
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) error
@@ -25,6 +26,7 @@ type UserService interface {
 
 type UserHandler interface {
 	Create(c *fiber.Ctx) error
+	GetUserInfo(c *fiber.Ctx) error
 	Update(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
 	VerifyEmail(c *fiber.Ctx) error
