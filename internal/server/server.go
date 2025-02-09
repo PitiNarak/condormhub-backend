@@ -40,6 +40,7 @@ type Server struct {
 	userHandler       *handlers.UserHandler
 	testUploadHandler *handlers.TestUploadHandler
 	storage           *storage.Storage
+	jwtUtils          *utils.JWTUtils
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -64,8 +65,9 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 			if e != nil && e.Err != nil {
 				log.Printf("Error: %v, Code: %d, Message: %s", e.Error(), code, message)
+			} else {
+				log.Printf("Error: %s, Code: %d, Message: %s", err.Error(), code, message)
 			}
-			log.Printf("Error: %s, Code: %d, Message: %s", err.Error(), code, message)
 
 			return c.Status(code).JSON(&http_response.HttpResponse{
 				Success: false,
@@ -97,6 +99,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
+	jwtUtils := utils.NewJWTUtils(&jwtConfig)
 	return &Server{
 		app:               app,
 		greetingHandler:   handlers.NewGreetingHandler(),
@@ -105,6 +108,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		config:            config,
 		testUploadHandler: testUploadHandler,
 		storage:           storage,
+		jwtUtils:          jwtUtils,
 	}
 }
 
