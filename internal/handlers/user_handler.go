@@ -142,3 +142,40 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", nil))
 }
+
+func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
+	var getInfoRequest domain.GetInfoRequest
+	err := c.BodyParser(&getInfoRequest)
+	if err != nil {
+		return error_handler.BadRequestError(err, "your request is invalid")
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(getInfoRequest); err != nil {
+		return error_handler.BadRequestError(err, "your request body is incorrect")
+	}
+
+	userInfo, err := h.UserService.GetUser(getInfoRequest.Email)
+
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot get user information")
+	}
+
+	publicUserInfo := domain.UserInfo{
+		UserName:          userInfo.UserName,
+		Email:             userInfo.Email,
+		FirstName:         userInfo.FirstName,
+		LastName:          userInfo.LastName,
+		NationalID:        userInfo.NationalID,
+		Gender:            userInfo.Gender,
+		BirthDate:         userInfo.BirthDate,
+		IsVerified:        userInfo.IsVerified,
+		Role:              userInfo.Role,
+		StudentEvidence:   userInfo.StudentEvidence,
+		IsStudentVerified: userInfo.IsStudentVerified,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", publicUserInfo))
+
+}
