@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/url"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -52,7 +51,7 @@ func NewStorage(storageConfig Config) *Storage {
 }
 
 func (s *Storage) UploadFile(ctx context.Context, key string, contextType string, file io.Reader) (string, error) {
-	output, err := s.client.PutObject(ctx, &s3.PutObjectInput{
+	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:      aws.String(s.Config.BucketName),
 		Key:         aws.String(key),
 		ContentType: &contextType,
@@ -63,9 +62,7 @@ func (s *Storage) UploadFile(ctx context.Context, key string, contextType string
 		return "", err
 	}
 
-	url := fmt.Sprintf("https://%s.%s.r2.cf2.rackcdn.com/%s", s.Config.BucketName, s.Config.AccountID, url.PathEscape(key))
-
-	fmt.Println(output)
+	url := fmt.Sprintf("%s/%s", s.Config.URL_PREFIX, key)
 
 	return url, nil
 }
