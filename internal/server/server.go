@@ -96,26 +96,8 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 }
 
 func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig utils.JWTConfig) {
-	sampleLogRoutes := s.app.Group("/log")
-	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
-	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
-	sampleLogRoutes.Delete("/:id", s.sampleLogHandler.Delete)
-	sampleLogRoutes.Patch("/:id", s.sampleLogHandler.EditMessage)
 
-	userRoutes := s.app.Group("/user")
-	userRoutes.Post("/register", s.userHandler.Create)
-
-	userRoutes.Post("/login", s.userHandler.Login)
-
-	userRoutes.Put("/update", s.userHandler.Update)
-
-	s.app.All("/", s.greetingHandler.Greeting)
-
-	s.app.Post("/register", s.userHandler.Create)
-	s.app.Get("/verify/:token", s.userHandler.VerifyEmail)
-	s.app.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
-	s.app.Patch("/newpassword", s.userHandler.ResetPasswordResponse)
-
+	s.initRoutes()
 	go func() {
 		if err := s.app.Listen(fmt.Sprintf(":%d", s.config.Port)); err != nil {
 			log.Panicf("Failed to start server: %v\n", err)
@@ -133,4 +115,25 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 	<-ctx.Done()
 
 	log.Println("Server is shutting down...")
+}
+
+func (s *Server) initRoutes() {
+	// greeting
+	s.app.Get("/", s.greetingHandler.Greeting)
+
+	// sample log
+	sampleLogRoutes := s.app.Group("/log")
+	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
+	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
+	sampleLogRoutes.Delete("/:id", s.sampleLogHandler.Delete)
+	sampleLogRoutes.Patch("/:id", s.sampleLogHandler.EditMessage)
+
+	// user
+	userRoutes := s.app.Group("/user")
+	userRoutes.Post("/register", s.userHandler.Create)
+	userRoutes.Post("/login", s.userHandler.Login)
+	userRoutes.Patch("/update", s.userHandler.UpdateUserInformation)
+	userRoutes.Get("/verify/:token", s.userHandler.VerifyEmail)
+	userRoutes.Get("/resetpassword", s.userHandler.ResetPasswordCreate)
+	userRoutes.Patch("/newpassword", s.userHandler.ResetPasswordResponse)
 }
