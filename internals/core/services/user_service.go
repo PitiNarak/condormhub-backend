@@ -60,5 +60,34 @@ func (s *UserService) VerifyUser(token string) error {
 	}
 
 	user.IsVerified = true
-	return s.UserRepo.UpdateUser(user)
+	return s.UserRepo.UpdateUser(*user)
+}
+
+func (s *UserService) Login(email string, password string) (string, error) {
+	user, getErr := s.UserRepo.GetUserByEmail(email)
+	if getErr != nil {
+		return "", getErr
+	}
+
+	compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if compareErr != nil {
+		return "", compareErr
+	}
+
+	token, generateErr := utils.GenerateJWT(user.ID, s.Config)
+
+	if generateErr != nil {
+		return "", generateErr
+	}
+
+	return token, nil
+
+}
+
+func (s *UserService) Update(user domain.User, updateInfo domain.UpdateInfo) error {
+	err := s.UserRepo.Update(user.Email, updateInfo)
+	if err != nil {
+		return err
+	}
+	return nil
 }

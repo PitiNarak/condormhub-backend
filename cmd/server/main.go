@@ -23,5 +23,5 @@ func main() {
 	}
 
 	s := server.NewServer(config.Server, config.SMTP, config.JWT, db)
-	s.Start(ctx, stop)
+	s.Start(ctx, stop, config.JWT)
 }

@@ -43,7 +43,7 @@ func (s *UserService) ResetPasswordResponse(token string, password string) error
 		return err
 	}
 	user.Password = string(hashedPassword)
-	err = s.UserRepo.UpdateUser(user)
+	err = s.UserRepo.UpdateUser(*user)
 	if err != nil {
 		return err
 	}

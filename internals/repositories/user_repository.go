@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internals/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internals/core/ports"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -24,10 +25,24 @@ func (r *UserRepo) Create(user *domain.User) error {
 	return nil
 }
 
-func (r *UserRepo) GetUser(userID uuid.UUID) (domain.User, error) {
+func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
+	var user domain.User
+	result := r.db.Where("email = ?", email).First(&user)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, result.Error
+}
+
+func (r *UserRepo) GetUser(userID uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("id = ?", userID).First(&user)
-	return user, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, result.Error
 }
 
 func (r *UserRepo) UpdateUser(user domain.User) error {
@@ -36,8 +51,14 @@ func (r *UserRepo) UpdateUser(user domain.User) error {
 	return result.Error
 }
 
-func (r *UserRepo) GetUserByEmail(email string) (domain.User, error) {
+func (r *UserRepo) Update(email string, updateInfo domain.UpdateInfo) error {
 	var user domain.User
-	result := r.db.Where("email = ?", email).First(&user)
-	return user, result.Error
+
+	// Find the user by email
+	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
+		return err // Return error if user not found
+	}
+	result := r.db.Model(&user).Updates(updateInfo)
+
+	return result.Error
 }
