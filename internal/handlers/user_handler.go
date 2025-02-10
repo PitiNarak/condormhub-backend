@@ -65,7 +65,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
-	var requestBody *dto.UserRequestBody
+	var requestBody *dto.UserInformationRequestBody
 
 	user := c.Locals("user").(*domain.User)
 	if user == nil {

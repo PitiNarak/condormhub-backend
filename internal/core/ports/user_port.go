@@ -10,7 +10,7 @@ import (
 type UserRepository interface {
 	Create(user *domain.User) error
 	GetUser(userID uuid.UUID) (*domain.User, error)
-	UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) error
+	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error
 	UpdateUser(user domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
 }
@@ -18,7 +18,7 @@ type UserRepository interface {
 type UserService interface {
 	Create(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
-	UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) (*domain.User, error)
+	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) error
 	ResetPasswordCreate(email string) error

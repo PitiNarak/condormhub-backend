@@ -53,7 +53,7 @@ func (r *UserRepo) UpdateUser(user domain.User) error {
 	return result.Error
 }
 
-func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) error {
+func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error {
 	err := r.db.Model(&domain.User{}).Where("id = ?", userID).Updates(data).Error
 	if err != nil {
 		return error_handler.InternalServerError(err, "Failed to update user information")

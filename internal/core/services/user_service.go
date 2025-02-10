@@ -85,7 +85,7 @@ func (s *UserService) Login(email string, password string) (string, error) {
 
 }
 
-func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) (*domain.User, error) {
+func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error) {
 	if data.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 		if err != nil {

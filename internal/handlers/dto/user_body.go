@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type UserRequestBody struct {
+type UserInformationRequestBody struct {
 	Username        string    `json:"username" gorm:"unique"`
 	Password        string    `json:"password" validate:"omitempty,min=8"`
 	FirstName       string    `json:"firstName"`
