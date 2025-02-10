@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/repositories"
@@ -30,7 +31,7 @@ func (a *AuthMiddleware) Auth(ctx *fiber.Ctx) error {
 		return error_handler.UnauthorizedError(errors.New("request without authorization header"), "Authorization header is required")
 	}
 
-	if len(authHeader) < 7 || authHeader[:6] != "Bearer" {
+	if !strings.HasPrefix(authHeader, "Bearer ") {
 		return error_handler.UnauthorizedError(errors.New("invalid authorization header"), "Authorization header is invalid")
 	}
 
