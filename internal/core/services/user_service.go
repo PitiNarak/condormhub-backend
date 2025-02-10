@@ -13,14 +13,14 @@ import (
 )
 
 type UserService struct {
-	UserRepo     ports.UserRepository
-	EmailService ports.EmailServicePort
-	Config       *utils.JWTConfig
+	userRepo     ports.UserRepository
+	emailService ports.EmailServicePort
+	config       *utils.JWTConfig
 	jwtUtils     *utils.JWTUtils
 }
 
 func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils, config *utils.JWTConfig) ports.UserService {
-	return &UserService{UserRepo: UserRepo, EmailService: EmailService, Config: config, jwtUtils: jwtUtils}
+	return &UserService{userRepo: UserRepo, emailService: EmailService, config: config, jwtUtils: jwtUtils}
 }
 
 func (s *UserService) Create(user *domain.User) error {
@@ -31,11 +31,11 @@ func (s *UserService) Create(user *domain.User) error {
 	}
 
 	user.Password = string(hashedPassword)
-	create_err := s.UserRepo.Create(user)
+	create_err := s.userRepo.Create(user)
 	if create_err != nil {
 		return create_err
 	}
-	err = s.EmailService.SendVerificationEmail(user.Email, user.Username, user.ID)
+	err = s.emailService.SendVerificationEmail(user.Email, user.Username, user.ID)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (s *UserService) Create(user *domain.User) error {
 }
 
 func (s *UserService) VerifyUser(token string) error {
-	claims, err := utils.DecodeJWT(token, s.Config)
+	claims, err := utils.DecodeJWT(token, s.config)
 	if err != nil {
 		return err
 	}
@@ -57,17 +57,17 @@ func (s *UserService) VerifyUser(token string) error {
 	if err != nil {
 		return err
 	}
-	user, err := s.UserRepo.GetUser(userID)
+	user, err := s.userRepo.GetUser(userID)
 	if err != nil || user.ID == uuid.Nil {
 		return err
 	}
 
 	user.IsVerified = true
-	return s.UserRepo.UpdateUser(*user)
+	return s.userRepo.UpdateUser(*user)
 }
 
 func (s *UserService) Login(email string, password string) (string, error) {
-	user, getErr := s.UserRepo.GetUserByEmail(email)
+	user, getErr := s.userRepo.GetUserByEmail(email)
 	if getErr != nil {
 		return "", getErr
 	}
@@ -94,12 +94,12 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 		data.Password = string(hashedPassword)
 	}
 
-	err := s.UserRepo.UpdateInformation(userID, data)
+	err := s.userRepo.UpdateInformation(userID, data)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo, err := s.UserRepo.GetUser(userID)
+	userInfo, err := s.userRepo.GetUser(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 }
 
 func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
-	user, err := s.UserRepo.GetUserByEmail(email)
+	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
 		return nil, err
 	}

@@ -107,7 +107,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
-	body := new(domain.ResetPasswordBody)
+	body := new(dto.ResetPasswordRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
@@ -120,7 +120,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 
 	err := h.UserService.ResetPasswordCreate(body.Email)
 	if err != nil {
-		return error_handler.InternalServerError(err, "cannot sent email to reset password")
+		return err
 	}
 
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))

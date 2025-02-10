@@ -1,6 +1,9 @@
 package error_handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+)
 
 type ErrorHandler struct {
 	Code    int
@@ -17,6 +20,11 @@ func NewErrorHandler(code int, message string, err error) *ErrorHandler {
 }
 
 func (e *ErrorHandler) Error() string {
+	// handle pass nil error
+	if e.Err == nil {
+		log.Warnf("your error is nil. Passed error message: %s", e.Message)
+		return e.Message
+	}
 	return e.Err.Error()
 }
 

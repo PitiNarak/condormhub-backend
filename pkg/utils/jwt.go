@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 )
@@ -55,7 +56,11 @@ func (j *JWTUtils) GenerateJWT(userID uuid.UUID) (string, error) {
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return jwtToken.SignedString([]byte(j.Config.JWTSecretKey))
+	tokenString, err := jwtToken.SignedString([]byte(j.Config.JWTSecretKey))
+	if err != nil {
+		return "", error_handler.InternalServerError(err, "cannot generate token")
+	}
+	return tokenString, nil
 }
 
 func (j *JWTUtils) DecodeJWT(inputToken string) (*JWTClaims, error) {
