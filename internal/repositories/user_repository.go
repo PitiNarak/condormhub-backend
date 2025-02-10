@@ -38,11 +38,11 @@ func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepo) GetUser(userID uuid.UUID) (*domain.User, error) {
+func (r *UserRepo) GetUserByID(userID uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("id = ?", userID).First(&user)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, error_handler.InternalServerError(result.Error, "user not found")
 	}
 	return &user, result.Error
 }

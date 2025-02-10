@@ -57,7 +57,7 @@ func (s *UserService) VerifyUser(token string) error {
 	if err != nil {
 		return err
 	}
-	user, err := s.userRepo.GetUser(userID)
+	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil || user.ID == uuid.Nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 		return nil, err
 	}
 
-	userInfo, err := s.userRepo.GetUser(userID)
+	userInfo, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -114,4 +114,50 @@ func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *UserService) ResetPasswordCreate(email string) error {
+	user, err := s.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return err
+	}
+	userID, err := uuid.Parse(user.ID.String())
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot sent email")
+	}
+	token, err := s.jwtUtils.GenerateJWT(userID)
+	if err != nil {
+		return err
+	}
+	err = s.emailService.SendResetPasswordEmail(user.Email, user.Username, token)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UserService) ResetPasswordResponse(token string, password string) error {
+	claims, err := s.jwtUtils.DecodeJWT(token)
+	if err != nil {
+		return err
+	}
+	userIDstr := claims.UserID
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return error_handler.InternalServerError(err, "Cannot parse uuid")
+	}
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hashedPassword)
+	err = s.userRepo.UpdateUser(*user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
