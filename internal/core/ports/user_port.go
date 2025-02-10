@@ -18,6 +18,7 @@ type UserRepository interface {
 type UserService interface {
 	Create(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
+	GetUserByID(userID uuid.UUID) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) error

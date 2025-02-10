@@ -42,9 +42,9 @@ func (r *UserRepo) GetUser(userID uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("id = ?", userID).First(&user)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, error_handler.InternalServerError(result.Error, "Error retrieving user data.")
 	}
-	return &user, result.Error
+	return &user, nil
 }
 
 func (r *UserRepo) UpdateUser(user domain.User) error {

@@ -10,6 +10,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -151,22 +152,23 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
-	var getInfoRequest domain.GetInfoRequest
-	err := c.BodyParser(&getInfoRequest)
-	if err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+	user := c.Locals("user")
+	if user == nil {
+		return error_handler.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
-	validate := validator.New()
+	userIDData := c.Locals("userID").(string)
 
-	if err := validate.Struct(getInfoRequest); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+	// Convert the string to uuid.UUID
+	userID, err := uuid.Parse(userIDData)
+	if err != nil {
+		return error_handler.UnauthorizedError(errors.New("invalid UUID format"), "your request is unauthorized")
 	}
 
-	userInfo, err := h.UserService.GetUserByEmail(getInfoRequest.Email)
+	userInfo, err := h.UserService.GetUserByID(userID)
 
 	if err != nil {
-		return error_handler.InternalServerError(err, "cannot get user information")
+		return err
 	}
 
 	publicUserInfo := domain.UserInfo{

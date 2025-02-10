@@ -115,3 +115,12 @@ func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
 
 	return user, nil
 }
+
+func (s *UserService) GetUserByID(userID uuid.UUID) (*domain.User, error) {
+	user, err := s.userRepo.GetUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
