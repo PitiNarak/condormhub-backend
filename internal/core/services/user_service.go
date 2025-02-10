@@ -14,10 +14,11 @@ type UserService struct {
 	UserRepo     ports.UserRepository
 	EmailService ports.EmailServicePort
 	Config       *utils.JWTConfig
+	jwtUtils     *utils.JWTUtils
 }
 
-func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, config *utils.JWTConfig) ports.UserService {
-	return &UserService{UserRepo: UserRepo, EmailService: EmailService, Config: config}
+func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils, config *utils.JWTConfig) ports.UserService {
+	return &UserService{UserRepo: UserRepo, EmailService: EmailService, Config: config, jwtUtils: jwtUtils}
 }
 
 func (s *UserService) Create(user *domain.User) error {
@@ -73,9 +74,7 @@ func (s *UserService) Login(email string, password string) (string, error) {
 	if compareErr != nil {
 		return "", compareErr
 	}
-
-	token, generateErr := utils.GenerateJWT(user.ID, s.Config)
-
+	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
 	if generateErr != nil {
 		return "", generateErr
 	}
