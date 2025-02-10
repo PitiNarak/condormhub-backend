@@ -32,5 +32,5 @@ type UserHandler interface {
 	VerifyEmail(c *fiber.Ctx) error
 	ResetPasswordCreate(c *fiber.Ctx) error
 	GetUserInfo(c *fiber.Ctx) error
-	ResetPasswordResponse(c *fiber.Ctx) error
+	ResetPassword(c *fiber.Ctx) error
 }
