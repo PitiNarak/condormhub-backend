@@ -41,22 +41,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	userRes := domain.UserInfo{
-		UserName:           gormUser.UserName,
-		Email:              gormUser.Email,
-		FirstName:          gormUser.FirstName,
-		LastName:           gormUser.LastName,
-		NationalID:         gormUser.NationalID,
-		Gender:             gormUser.Gender,
-		BirthDate:          gormUser.BirthDate,
-		IsVerified:         gormUser.IsVerified,
-		Role:               gormUser.Role,
-		StudentEvidence:    gormUser.StudentEvidence,
-		IsStudentVerified:  gormUser.IsStudentVerified,
-		FilledPersonalInfo: gormUser.FilledPersonalInfo,
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token, "user": userRes}))
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token, "user": gormUser}))
 
 }
 
