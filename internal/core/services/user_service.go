@@ -21,23 +21,29 @@ func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServi
 	return &UserService{UserRepo: UserRepo, EmailService: EmailService, Config: config, jwtUtils: jwtUtils}
 }
 
-func (s *UserService) Create(user *domain.User) error {
+func (s *UserService) Create(user *domain.User) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	user.Password = string(hashedPassword)
 	create_err := s.UserRepo.Create(user)
 	if create_err != nil {
-		return create_err
+		return "", create_err
 	}
-	err = s.EmailService.SendVerificationEmail(user.Email, user.UserName, user.ID)
+
+	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
+	if generateErr != nil {
+		return "", generateErr
+	}
+
+	err = s.EmailService.SendVerificationEmail(user.Email, user.UserName, token)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return token, nil
 }
 
 func (s *UserService) VerifyUser(token string) error {

@@ -19,7 +19,7 @@ func NewUserHandler(UserService ports.UserService) ports.UserHandler {
 	return &UserHandler{UserService: UserService}
 }
 
-func (h *UserHandler) Create(c *fiber.Ctx) error {
+func (h *UserHandler) Register(c *fiber.Ctx) error {
 	user := new(domain.UserBody)
 	err := c.BodyParser(&user)
 	if err != nil {
@@ -36,12 +36,27 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 		UserName: user.UserName,
 		Password: user.Password,
 	}
-	err = h.UserService.Create(gormUser)
+	token, err := h.UserService.Create(gormUser)
 	if err != nil {
-		return error_handler.InternalServerError(err, "system cannot register your account")
+		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", nil))
+	userRes := domain.UserInfo{
+		UserName:           gormUser.UserName,
+		Email:              gormUser.Email,
+		FirstName:          gormUser.FirstName,
+		LastName:           gormUser.LastName,
+		NationalID:         gormUser.NationalID,
+		Gender:             gormUser.Gender,
+		BirthDate:          gormUser.BirthDate,
+		IsVerified:         gormUser.IsVerified,
+		Role:               gormUser.Role,
+		StudentEvidence:    gormUser.StudentEvidence,
+		IsStudentVerified:  gormUser.IsStudentVerified,
+		FilledPersonalInfo: gormUser.FilledPersonalInfo,
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token, "user": userRes}))
 
 }
 

@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -19,7 +20,7 @@ func NewUserRepo(db *gorm.DB) ports.UserRepository {
 func (r *UserRepo) Create(user *domain.User) error {
 	result := r.db.Create(&user)
 	if result.Error != nil {
-		return result.Error
+		return error_handler.InternalServerError(result.Error, "Failed to save user to database")
 	}
 
 	return nil
