@@ -17,6 +17,10 @@ func NewErrorHandler(code int, message string, err error) *ErrorHandler {
 }
 
 func (e *ErrorHandler) Error() string {
+	// handle pass nil error
+	if e.Err == nil {
+		return e.Message
+	}
 	return e.Err.Error()
 }
 
