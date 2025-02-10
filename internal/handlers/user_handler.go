@@ -12,11 +12,11 @@ import (
 )
 
 type UserHandler struct {
-	UserService ports.UserService
+	userService ports.UserService
 }
 
 func NewUserHandler(UserService ports.UserService) ports.UserHandler {
-	return &UserHandler{UserService: UserService}
+	return &UserHandler{userService: UserService}
 }
 
 func (h *UserHandler) Register(c *fiber.Ctx) error {
@@ -36,7 +36,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		UserName: user.UserName,
 		Password: user.Password,
 	}
-	token, err := h.UserService.Create(gormUser)
+	token, err := h.userService.Create(gormUser)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	token, loginErr := h.UserService.Login(req.Email, req.Password)
+	token, loginErr := h.userService.Login(req.Email, req.Password)
 	if loginErr != nil {
 		error_handler.InternalServerError(err, "system cannot login to your account")
 	}
@@ -85,7 +85,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		StudentEvidence: user.StudentEvidence,
 	}
 
-	err = h.UserService.Update(user, updateInfo)
+	err = h.userService.Update(user, updateInfo)
 
 	if err != nil {
 		return error_handler.InternalServerError(err, "system cannot update your account information")
@@ -101,7 +101,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	if err := h.UserService.VerifyUser(tokenString); err != nil {
+	if err := h.userService.VerifyUser(tokenString); err != nil {
 		return error_handler.InternalServerError(err, "cannot verify your account")
 	}
 
@@ -120,7 +120,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	err := h.UserService.ResetPasswordCreate(body.Email)
+	err := h.userService.ResetPasswordCreate(body.Email)
 	if err != nil {
 		return error_handler.InternalServerError(err, "cannot sent email to reset password")
 	}
@@ -145,7 +145,7 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	err := h.UserService.ResetPasswordResponse(tokenString, body.Password)
+	err := h.userService.ResetPasswordResponse(tokenString, body.Password)
 	if err != nil {
 		return error_handler.InternalServerError(err, "cannot reset user password")
 	}
@@ -165,7 +165,7 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	userInfo, err := h.UserService.GetUserByEmail(getInfoRequest.Email)
+	userInfo, err := h.userService.GetUserByEmail(getInfoRequest.Email)
 
 	if err != nil {
 		return error_handler.InternalServerError(err, "cannot get user information")
