@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -30,10 +31,10 @@ func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
 	result := r.db.Where("email = ?", email).First(&user)
 
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, error_handler.NotFoundError(result.Error, "user not found")
 	}
 
-	return &user, result.Error
+	return &user, nil
 }
 
 func (r *UserRepo) GetUser(userID uuid.UUID) (*domain.User, error) {

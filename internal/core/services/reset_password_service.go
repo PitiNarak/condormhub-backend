@@ -3,17 +3,26 @@ package services
 import (
 	"errors"
 
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *UserService) ResetPasswordCreate(email string) error {
-	user, err := s.UserRepo.GetUserByEmail(email)
+	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
 		return err
 	}
-	err = s.EmailService.SendResetPasswordEmail(user.Email, user.UserName, user.ID)
+	userID, err := uuid.Parse(user.ID.String())
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot sent email")
+	}
+	token, err := s.jwtUtils.GenerateJWT(userID)
+	if err != nil {
+		return err
+	}
+	err = s.emailService.SendResetPasswordEmail(user.Email, user.UserName, token)
 	if err != nil {
 		return err
 	}
@@ -21,7 +30,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 }
 
 func (s *UserService) ResetPasswordResponse(token string, password string) error {
-	claims, err := utils.DecodeJWT(token, s.Config)
+	claims, err := utils.DecodeJWT(token, s.config)
 	if err != nil {
 		return err
 	}
@@ -34,7 +43,7 @@ func (s *UserService) ResetPasswordResponse(token string, password string) error
 	if err != nil {
 		return err
 	}
-	user, err := s.UserRepo.GetUser(userID)
+	user, err := s.userRepo.GetUser(userID)
 	if err != nil {
 		return err
 	}
@@ -43,7 +52,7 @@ func (s *UserService) ResetPasswordResponse(token string, password string) error
 		return err
 	}
 	user.Password = string(hashedPassword)
-	err = s.UserRepo.UpdateUser(*user)
+	err = s.userRepo.UpdateUser(*user)
 	if err != nil {
 		return err
 	}
