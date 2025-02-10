@@ -34,7 +34,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	}
 	gormUser := &domain.User{
 		Email:    user.Email,
-		UserName: user.UserName,
+		Username: user.UserName,
 		Password: user.Password,
 	}
 	token, err := h.userService.Create(gormUser)
@@ -65,34 +65,31 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
-	var user domain.User
-	err := c.BodyParser(&user)
+	var requestBody *dto.UserInformationRequestBody
+
+	user := c.Locals("user").(*domain.User)
+	if user == nil {
+		return error_handler.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+	}
+
+	err := c.BodyParser(&requestBody)
 	if err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
-	if err := validate.Struct(user); err != nil {
+	if err := validate.Struct(requestBody); err != nil {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	updateInfo := domain.UpdateInfo{
-		FirstName:       user.FirstName,
-		LastName:        user.LastName,
-		NationalID:      user.NationalID,
-		Gender:          user.Gender,
-		BirthDate:       user.BirthDate,
-		StudentEvidence: user.StudentEvidence,
-	}
-
-	err = h.userService.Update(user, updateInfo)
+	userInfo, err := h.userService.UpdateInformation(user.ID, *requestBody)
 
 	if err != nil {
 		return error_handler.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", userInfo))
 
 }
 
@@ -110,7 +107,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
-	body := new(dto.ResetPasswordBody)
+	body := new(dto.ResetPasswordRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
@@ -123,7 +120,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 
 	err := h.userService.ResetPasswordCreate(body.Email)
 	if err != nil {
-		return error_handler.InternalServerError(err, "cannot sent email to reset password")
+		return err
 	}
 
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
@@ -154,38 +151,7 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
-	var getInfoRequest domain.GetInfoRequest
-	err := c.BodyParser(&getInfoRequest)
-	if err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
-	}
-
-	validate := validator.New()
-
-	if err := validate.Struct(getInfoRequest); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
-	}
-
-	userInfo, err := h.userService.GetUserByEmail(getInfoRequest.Email)
-
-	if err != nil {
-		return error_handler.InternalServerError(err, "cannot get user information")
-	}
-
-	publicUserInfo := domain.UserInfo{
-		UserName:          userInfo.UserName,
-		Email:             userInfo.Email,
-		FirstName:         userInfo.FirstName,
-		LastName:          userInfo.LastName,
-		NationalID:        userInfo.NationalID,
-		Gender:            userInfo.Gender,
-		BirthDate:         userInfo.BirthDate,
-		IsVerified:        userInfo.IsVerified,
-		Role:              userInfo.Role,
-		StudentEvidence:   userInfo.StudentEvidence,
-		IsStudentVerified: userInfo.IsStudentVerified,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", publicUserInfo))
+	user := c.Locals("user").(*domain.User)
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", user))
 
 }

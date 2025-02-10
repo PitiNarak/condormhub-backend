@@ -29,4 +29,5 @@ bin/
 
 .DS_Store
 #temp directory for running locally
-tmpDir/ 
+tmpDir/
+tmp/
