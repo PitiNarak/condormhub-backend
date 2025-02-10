@@ -13,15 +13,15 @@ import (
 )
 
 type UserHandler struct {
-	UserService ports.UserService
+	userService ports.UserService
 }
 
 func NewUserHandler(UserService ports.UserService) ports.UserHandler {
-	return &UserHandler{UserService: UserService}
+	return &UserHandler{userService: UserService}
 }
 
-func (h *UserHandler) Create(c *fiber.Ctx) error {
-	user := new(domain.UserBody)
+func (h *UserHandler) Register(c *fiber.Ctx) error {
+	user := new(dto.RegisterRequestBody)
 	err := c.BodyParser(&user)
 	if err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
@@ -37,12 +37,12 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 		Username: user.UserName,
 		Password: user.Password,
 	}
-	err = h.UserService.Create(gormUser)
+	token, err := h.userService.Create(gormUser)
 	if err != nil {
-		return error_handler.InternalServerError(err, "system cannot register your account")
+		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", nil))
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token, "user": gormUser}))
 
 }
 
@@ -57,7 +57,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	token, loginErr := h.UserService.Login(req.Email, req.Password)
+	token, loginErr := h.userService.Login(req.Email, req.Password)
 	if loginErr != nil {
 		error_handler.InternalServerError(err, "system cannot login to your account")
 	}
@@ -83,7 +83,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	userInfo, err := h.UserService.UpdateInformation(user.ID, *requestBody)
+	userInfo, err := h.userService.UpdateInformation(user.ID, *requestBody)
 
 	if err != nil {
 		return error_handler.InternalServerError(err, "system cannot update your account information")
@@ -99,7 +99,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	if err := h.UserService.VerifyUser(tokenString); err != nil {
+	if err := h.userService.VerifyUser(tokenString); err != nil {
 		return error_handler.InternalServerError(err, "cannot verify your account")
 	}
 
@@ -118,7 +118,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	err := h.UserService.ResetPasswordCreate(body.Email)
+	err := h.userService.ResetPasswordCreate(body.Email)
 	if err != nil {
 		return err
 	}
@@ -143,7 +143,7 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	user, err := h.UserService.ResetPasswordResponse(tokenString, body.Password)
+	user, err := h.userService.ResetPasswordResponse(tokenString, body.Password)
 	if err != nil {
 		return err
 	}
@@ -151,38 +151,7 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
-	var getInfoRequest domain.GetInfoRequest
-	err := c.BodyParser(&getInfoRequest)
-	if err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
-	}
-
-	validate := validator.New()
-
-	if err := validate.Struct(getInfoRequest); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
-	}
-
-	userInfo, err := h.UserService.GetUserByEmail(getInfoRequest.Email)
-
-	if err != nil {
-		return error_handler.InternalServerError(err, "cannot get user information")
-	}
-
-	publicUserInfo := domain.UserInfo{
-		UserName:          userInfo.Username,
-		Email:             userInfo.Email,
-		FirstName:         userInfo.FirstName,
-		LastName:          userInfo.LastName,
-		NationalID:        userInfo.NationalID,
-		Gender:            userInfo.Gender,
-		BirthDate:         userInfo.BirthDate,
-		IsVerified:        userInfo.IsVerified,
-		Role:              userInfo.Role,
-		StudentEvidence:   userInfo.StudentEvidence,
-		IsStudentVerified: userInfo.IsStudentVerified,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", publicUserInfo))
+	user := c.Locals("user").(*domain.User)
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", user))
 
 }

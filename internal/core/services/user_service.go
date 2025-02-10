@@ -23,23 +23,29 @@ func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServi
 	return &UserService{userRepo: UserRepo, emailService: EmailService, config: config, jwtUtils: jwtUtils}
 }
 
-func (s *UserService) Create(user *domain.User) error {
+func (s *UserService) Create(user *domain.User) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	user.Password = string(hashedPassword)
 	create_err := s.userRepo.Create(user)
 	if create_err != nil {
-		return create_err
+		return "", create_err
 	}
-	err = s.emailService.SendVerificationEmail(user.Email, user.Username, user.ID)
+
+	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
+	if generateErr != nil {
+		return "", generateErr
+	}
+
+	err = s.emailService.SendVerificationEmail(user.Email, user.Username, token)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return token, nil
 }
 
 func (s *UserService) VerifyUser(token string) error {
@@ -136,6 +142,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	return nil
 }
 
+<<<<<<< HEAD
 func (s *UserService) ResetPasswordResponse(token string, password string) (*domain.User, error) {
 	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
@@ -160,4 +167,34 @@ func (s *UserService) ResetPasswordResponse(token string, password string) (*dom
 		return new(domain.User), err
 	}
 	return user, nil
+=======
+func (s *UserService) ResetPasswordResponse(token string, password string) error {
+	claims, err := utils.DecodeJWT(token, s.config)
+	if err != nil {
+		return err
+	}
+	userIDstr, ok := (*claims)["user_id"].(string)
+	if !ok {
+		return errors.New("cannot get user_id")
+	}
+
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return err
+	}
+	user, err := s.userRepo.GetUser(userID)
+	if err != nil {
+		return err
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hashedPassword)
+	err = s.userRepo.UpdateUser(*user)
+	if err != nil {
+		return err
+	}
+	return nil
+>>>>>>> dev
 }
