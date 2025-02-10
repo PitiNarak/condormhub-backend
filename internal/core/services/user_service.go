@@ -5,6 +5,8 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -33,7 +35,7 @@ func (s *UserService) Create(user *domain.User) error {
 	if create_err != nil {
 		return create_err
 	}
-	err = s.EmailService.SendVerificationEmail(user.Email, user.UserName, user.ID)
+	err = s.EmailService.SendVerificationEmail(user.Email, user.Username, user.ID)
 	if err != nil {
 		return err
 	}
@@ -83,12 +85,26 @@ func (s *UserService) Login(email string, password string) (string, error) {
 
 }
 
-func (s *UserService) Update(user domain.User, updateInfo domain.UpdateInfo) error {
-	err := s.UserRepo.Update(user.Email, updateInfo)
-	if err != nil {
-		return err
+func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) (*domain.User, error) {
+	if data.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, error_handler.InternalServerError(err, "Failed to hash password")
+		}
+		data.Password = string(hashedPassword)
 	}
-	return nil
+
+	err := s.UserRepo.UpdateInformation(userID, data)
+	if err != nil {
+		return nil, err
+	}
+
+	userInfo, err := s.UserRepo.GetUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return userInfo, nil
 }
 
 func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {

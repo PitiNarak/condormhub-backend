@@ -2,6 +2,7 @@ package ports
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -9,15 +10,15 @@ import (
 type UserRepository interface {
 	Create(user *domain.User) error
 	GetUser(userID uuid.UUID) (*domain.User, error)
+	UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) error
 	UpdateUser(user domain.User) error
-	Update(email string, updateInfo domain.UpdateInfo) error
 	GetUserByEmail(email string) (*domain.User, error)
 }
 
 type UserService interface {
 	Create(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
-	Update(user domain.User, updateInfo domain.UpdateInfo) error
+	UpdateInformation(userID uuid.UUID, data dto.UserRequestBody) (*domain.User, error)
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) error
 	ResetPasswordCreate(email string) error

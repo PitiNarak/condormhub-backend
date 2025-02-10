@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
@@ -33,7 +34,7 @@ func (h *UserHandler) Create(c *fiber.Ctx) error {
 	}
 	gormUser := &domain.User{
 		Email:    user.Email,
-		UserName: user.UserName,
+		Username: user.UserName,
 		Password: user.Password,
 	}
 	err = h.UserService.Create(gormUser)
@@ -64,34 +65,31 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
-	var user domain.User
-	err := c.BodyParser(&user)
+	var requestBody *dto.UserRequestBody
+
+	user := c.Locals("user").(*domain.User)
+	if user == nil {
+		return error_handler.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+	}
+
+	err := c.BodyParser(&requestBody)
 	if err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
-	if err := validate.Struct(user); err != nil {
+	if err := validate.Struct(requestBody); err != nil {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	updateInfo := domain.UpdateInfo{
-		FirstName:       user.FirstName,
-		LastName:        user.LastName,
-		NationalID:      user.NationalID,
-		Gender:          user.Gender,
-		BirthDate:       user.BirthDate,
-		StudentEvidence: user.StudentEvidence,
-	}
-
-	err = h.UserService.Update(user, updateInfo)
+	userInfo, err := h.UserService.UpdateInformation(user.ID, *requestBody)
 
 	if err != nil {
 		return error_handler.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", userInfo))
 
 }
 
@@ -172,7 +170,7 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	}
 
 	publicUserInfo := domain.UserInfo{
-		UserName:          userInfo.UserName,
+		UserName:          userInfo.Username,
 		Email:             userInfo.Email,
 		FirstName:         userInfo.FirstName,
 		LastName:          userInfo.LastName,
