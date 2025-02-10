@@ -10,7 +10,7 @@ import (
 )
 
 func (s *UserService) ResetPasswordCreate(email string) error {
-	user, err := s.UserRepo.GetUserByEmail(email)
+	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	if err != nil {
 		return err
 	}
-	err = s.EmailService.SendResetPasswordEmail(user.Email, user.UserName, token)
+	err = s.emailService.SendResetPasswordEmail(user.Email, user.UserName, token)
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 }
 
 func (s *UserService) ResetPasswordResponse(token string, password string) error {
-	claims, err := utils.DecodeJWT(token, s.Config)
+	claims, err := utils.DecodeJWT(token, s.config)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (s *UserService) ResetPasswordResponse(token string, password string) error
 	if err != nil {
 		return err
 	}
-	user, err := s.UserRepo.GetUser(userID)
+	user, err := s.userRepo.GetUser(userID)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (s *UserService) ResetPasswordResponse(token string, password string) error
 		return err
 	}
 	user.Password = string(hashedPassword)
-	err = s.UserRepo.UpdateUser(*user)
+	err = s.userRepo.UpdateUser(*user)
 	if err != nil {
 		return err
 	}

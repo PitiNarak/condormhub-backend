@@ -110,7 +110,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
-	body := new(dto.ResetPasswordBody)
+	body := new(dto.ResetPasswordRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
