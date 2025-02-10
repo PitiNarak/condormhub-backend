@@ -38,7 +38,7 @@ type GetInfoRequest struct {
 }
 
 type UserInfo struct {
-	UserName           string `json:"userName" gorm:"unique" validate:"required"`
+	UserName           string `json:"username" gorm:"unique" validate:"required"`
 	Email              string `json:"email" gorm:"unique" validate:"required,email"`
 	FirstName          string `json:"firstName"`
 	LastName           string `json:"lastName"`

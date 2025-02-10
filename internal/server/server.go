@@ -98,7 +98,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 
-	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
+	emailService := services.NewEmailService(&smtpConfig, jwtUtils)
 	userService := services.NewUserService(userRepository, emailService, jwtUtils, &jwtConfig)
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
@@ -159,11 +159,15 @@ func (s *Server) initRoutes() {
 
 	// user
 	userRoutes := s.app.Group("/user")
-	userRoutes.Post("/register", s.userHandler.Create)
+	userRoutes.Get("/verify", s.userHandler.VerifyEmail)
+	userRoutes.Get("/me", s.authMiddleware.Auth, s.userHandler.GetUserInfo)
+
 	userRoutes.Post("/login", s.userHandler.Login)
-	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
-	userRoutes.Get("/verify/", s.userHandler.VerifyEmail)
 	userRoutes.Post("/resetpassword", s.userHandler.ResetPasswordCreate)
+
+	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
 	userRoutes.Patch("/newpassword", s.userHandler.ResetPasswordResponse)
-	userRoutes.Get("/me", s.userHandler.GetUserInfo)
+
+	authRoutes := s.app.Group("/auth")
+	authRoutes.Post("/register", s.userHandler.Register)
 }

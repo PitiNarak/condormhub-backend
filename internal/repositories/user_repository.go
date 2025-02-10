@@ -19,9 +19,16 @@ func NewUserRepo(db *gorm.DB) ports.UserRepository {
 }
 
 func (r *UserRepo) Create(user *domain.User) error {
-	result := r.db.Create(&user)
-	if result.Error != nil {
-		return error_handler.InternalServerError(result.Error, "Failed to save user to database")
+
+	exitsUser := r.db.Model(&domain.User{}).Where("username = ?", user.Username).First(&domain.User{})
+	if exitsUser.RowsAffected > 0 {
+		return error_handler.BadRequestError(nil, "username already exists")
+	}
+
+	err := r.db.Create(&user).Error
+
+	if err != nil {
+		return error_handler.InternalServerError(err, "Failed to save user to database")
 	}
 
 	return nil
