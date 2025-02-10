@@ -30,8 +30,11 @@ func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("email = ?", email).First(&user)
 
-	if result.Error != nil {
-		return nil, result.Error
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, error_handler.NotFoundError(err, "User not found with the provided email.")
+		}
+		return nil, error_handler.InternalServerError(err, "Error retrieving user data.")
 	}
 
 	return &user, result.Error

@@ -27,11 +27,6 @@ type User struct {
 	IsStudentVerified bool   `gorm:"default:false" json:"isStudentVerified"`
 }
 
-type LoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}
-
 type GetInfoRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`

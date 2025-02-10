@@ -47,7 +47,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) Login(c *fiber.Ctx) error {
-	var req domain.LoginRequest
+	var req dto.LoginRequestBody
 	err := c.BodyParser(&req)
 	if err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
@@ -57,11 +57,12 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	token, loginErr := h.userService.Login(req.Email, req.Password)
+	user, token, loginErr := h.userService.Login(req.Email, req.Password)
 	if loginErr != nil {
-		error_handler.InternalServerError(err, "system cannot login to your account")
+		return loginErr
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token}))
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Login successful", fiber.Map{"token": token, "user": user}))
 }
 
 func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {

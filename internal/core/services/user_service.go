@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -70,22 +71,22 @@ func (s *UserService) VerifyUser(token string) error {
 	return s.UserRepo.UpdateUser(*user)
 }
 
-func (s *UserService) Login(email string, password string) (string, error) {
+func (s *UserService) Login(email string, password string) (*domain.User, string, error) {
 	user, getErr := s.UserRepo.GetUserByEmail(email)
 	if getErr != nil {
-		return "", getErr
+		return nil, "", getErr
 	}
 
 	compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if compareErr != nil {
-		return "", compareErr
+		return nil, "", error_handler.UnauthorizedError(compareErr, "Invalid email or password.")
 	}
 	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
 	if generateErr != nil {
-		return "", generateErr
+		return nil, "", generateErr
 	}
 
-	return token, nil
+	return user, token, nil
 
 }
 

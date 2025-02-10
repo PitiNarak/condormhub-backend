@@ -18,7 +18,7 @@ type UserService interface {
 	Create(user *domain.User) (string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	Update(user domain.User, updateInfo domain.UpdateInfo) error
-	Login(email string, password string) (string, error)
+	Login(email string, password string) (*domain.User, string, error)
 	VerifyUser(token string) error
 	ResetPasswordCreate(email string) error
 	ResetPasswordResponse(token string, password string) error
