@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -11,7 +12,7 @@ type UserRepo struct {
 	db *gorm.DB
 }
 
-func NewUserRepo(db *gorm.DB) *UserRepo {
+func NewUserRepo(db *gorm.DB) ports.UserRepository {
 	return &UserRepo{db: db}
 }
 
