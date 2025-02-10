@@ -44,6 +44,7 @@ func (e *EmailService) SendVerificationEmail(email, name string, token string) e
 }
 
 func (e *EmailService) SendResetPasswordEmail(email, name string, token string) error {
+	fmt.Println(token)
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
