@@ -9,6 +9,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers"
+	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
 	"github.com/PitiNarak/condormhub-backend/internal/repositories"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
@@ -41,6 +42,7 @@ type Server struct {
 	testUploadHandler *handlers.TestUploadHandler
 	storage           *storage.Storage
 	jwtUtils          *utils.JWTUtils
+	authMiddleware    *middlewares.AuthMiddleware
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -89,17 +91,18 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		DisableColors: true,
 	}))
 
+	jwtUtils := utils.NewJWTUtils(&jwtConfig)
 	storage := storage.NewStorage(storageConfig)
 
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 
 	emailService := services.NewEmailService(&smtpConfig, &jwtConfig)
-	userService := services.NewUserService(userRepository, emailService, &jwtConfig)
+	userService := services.NewUserService(userRepository, emailService, jwtUtils, &jwtConfig)
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
-	jwtUtils := utils.NewJWTUtils(&jwtConfig)
+	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
 		app:               app,
 		greetingHandler:   handlers.NewGreetingHandler(),
@@ -109,6 +112,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		testUploadHandler: testUploadHandler,
 		storage:           storage,
 		jwtUtils:          jwtUtils,
+		authMiddleware:    authMiddleware,
 	}
 }
 
@@ -140,7 +144,7 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 
 func (s *Server) initRoutes() {
 	// greeting
-	s.app.Get("/", s.greetingHandler.Greeting)
+	s.app.Get("/", s.authMiddleware.Auth, s.greetingHandler.Greeting)
 
 	// test upload
 	s.app.Post("/upload", s.testUploadHandler.UploadHandler)
