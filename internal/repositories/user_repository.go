@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ func NewUserRepo(db *gorm.DB) ports.UserRepository {
 func (r *UserRepo) Create(user *domain.User) error {
 	result := r.db.Create(&user)
 	if result.Error != nil {
-		return result.Error
+		return error_handler.InternalServerError(result.Error, "Failed to save user to database")
 	}
 
 	return nil
@@ -52,14 +53,11 @@ func (r *UserRepo) UpdateUser(user domain.User) error {
 	return result.Error
 }
 
-func (r *UserRepo) Update(email string, updateInfo domain.UpdateInfo) error {
-	var user domain.User
-
-	// Find the user by email
-	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
-		return err // Return error if user not found
+func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error {
+	err := r.db.Model(&domain.User{}).Where("id = ?", userID).Updates(data).Error
+	if err != nil {
+		return error_handler.InternalServerError(err, "Failed to update user information")
 	}
-	result := r.db.Model(&user).Updates(updateInfo)
 
-	return result.Error
+	return nil
 }
