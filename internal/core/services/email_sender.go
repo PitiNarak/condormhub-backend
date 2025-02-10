@@ -68,7 +68,8 @@ func (e *EmailService) SendResetPasswordEmail(email, name string, token string) 
 	message.SetBody("text/html", body)
 
 	dailer := gomail.NewDialer(e.EmailConfig.Host, e.EmailConfig.Port, e.EmailConfig.Email, e.EmailConfig.Password)
-	if dailer != nil {
+	err = dailer.DialAndSend(message)
+	if err != nil {
 		return error_handler.InternalServerError(err, "cannot sent email")
 	}
 
