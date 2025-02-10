@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-gomail/gomail"
 	"github.com/google/uuid"
@@ -48,23 +49,28 @@ func (e *EmailService) SendVerificationEmail(email, name string, userID uuid.UUI
 	return dailer.DialAndSend(message)
 }
 
-func (e *EmailService) SendResetPasswordEmail(email, name string, userID uuid.UUID) error {
-	token, err := utils.GenerateJWT(userID, e.JWTConfig)
-	if err != nil {
-		return err
-	}
+func (e *EmailService) SendResetPasswordEmail(email, name string, token string) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Reset Password")
 
-	cwd, _ := os.Getwd()
+	cwd, err := os.Getwd()
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot get current path")
+	}
 	verLink := fmt.Sprintf(e.EmailConfig.LinkHostname+"/newpassword/token=%s", token)
-	html, _ := utils.ReadTemplate(cwd + "/pkg/html_template/reset-compress.html")
+	html, err := utils.ReadTemplate(cwd + "/pkg/html_template/reset-compress.html")
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot load html template")
+	}
 	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
 
 	dailer := gomail.NewDialer(e.EmailConfig.Host, e.EmailConfig.Port, e.EmailConfig.Email, e.EmailConfig.Password)
+	if dailer != nil {
+		return error_handler.InternalServerError(err, "cannot sent email")
+	}
 
-	return dailer.DialAndSend(message)
+	return nil
 }

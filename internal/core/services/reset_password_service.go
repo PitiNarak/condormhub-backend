@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -13,7 +14,15 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	if err != nil {
 		return err
 	}
-	err = s.EmailService.SendResetPasswordEmail(user.Email, user.UserName, user.ID)
+	userID, err := uuid.Parse(user.ID.String())
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot sent email")
+	}
+	token, err := s.jwtUtils.GenerateJWT(userID)
+	if err != nil {
+		return err
+	}
+	err = s.EmailService.SendResetPasswordEmail(user.Email, user.UserName, token)
 	if err != nil {
 		return err
 	}
