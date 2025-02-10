@@ -27,12 +27,7 @@ func NewEmailService(emailConfig *SMTPConfig, jwtConfig *utils.JWTConfig) ports.
 	return &EmailService{EmailConfig: emailConfig, JWTConfig: jwtConfig}
 }
 
-func (e *EmailService) SendVerificationEmail(email, name string, userID uuid.UUID) error {
-	token, err := utils.GenerateJWT(userID, e.JWTConfig)
-	if err != nil {
-		return err
-	}
-
+func (e *EmailService) SendVerificationEmail(email, name string, token string) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)

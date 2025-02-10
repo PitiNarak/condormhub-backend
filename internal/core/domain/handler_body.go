@@ -11,5 +11,5 @@ type ResponseResetPasswordBody struct {
 type UserBody struct {
 	Password string `json:"password" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
-	UserName string `json:"userName" validate:"required"`
+	UserName string `json:"username" validate:"required"`
 }
