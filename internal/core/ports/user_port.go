@@ -11,7 +11,7 @@ type UserRepository interface {
 	Create(user *domain.User) error
 	GetUserByID(userID uuid.UUID) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error
-	UpdateUser(user domain.User) error
+	UpdateUser(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
 }
 
@@ -22,7 +22,7 @@ type UserService interface {
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) error
 	ResetPasswordCreate(email string) error
-	ResetPasswordResponse(token string, password string) error
+	ResetPasswordResponse(token string, password string) (*domain.User, error)
 }
 
 type UserHandler interface {

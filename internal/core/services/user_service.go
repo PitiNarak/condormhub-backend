@@ -63,7 +63,7 @@ func (s *UserService) VerifyUser(token string) error {
 	}
 
 	user.IsVerified = true
-	return s.userRepo.UpdateUser(*user)
+	return s.userRepo.UpdateUser(user)
 }
 
 func (s *UserService) Login(email string, password string) (string, error) {
@@ -136,28 +136,28 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	return nil
 }
 
-func (s *UserService) ResetPasswordResponse(token string, password string) error {
+func (s *UserService) ResetPasswordResponse(token string, password string) (*domain.User, error) {
 	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
 	userIDstr := claims.UserID
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return error_handler.InternalServerError(err, "Cannot parse uuid")
+		return new(domain.User), error_handler.InternalServerError(err, "Cannot parse uuid")
 	}
 	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return new(domain.User), error_handler.BadRequestError(err, "Password cannot be hashed")
 	}
 	user.Password = string(hashedPassword)
-	err = s.userRepo.UpdateUser(*user)
+	err = s.userRepo.UpdateUser(user)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
-	return nil
+	return user, nil
 }

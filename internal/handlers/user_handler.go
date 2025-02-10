@@ -143,11 +143,11 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	err := h.UserService.ResetPasswordResponse(tokenString, body.Password)
+	user, err := h.UserService.ResetPasswordResponse(tokenString, body.Password)
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", user))
 }
 
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
