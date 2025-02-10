@@ -26,10 +26,10 @@ type UserService interface {
 
 type UserHandler interface {
 	Create(c *fiber.Ctx) error
-	GetUserInfo(c *fiber.Ctx) error
-	Update(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
+	UpdateUserInformation(c *fiber.Ctx) error
 	VerifyEmail(c *fiber.Ctx) error
 	ResetPasswordCreate(c *fiber.Ctx) error
+	GetUserInfo(c *fiber.Ctx) error
 	ResetPasswordResponse(c *fiber.Ctx) error
 }

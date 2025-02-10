@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
@@ -38,7 +39,7 @@ type Server struct {
 	config            Config
 	greetingHandler   *handlers.GreetingHandler
 	sampleLogHandler  *handlers.SampleLogHandler
-	userHandler       *handlers.UserHandler
+	userHandler       ports.UserHandler
 	testUploadHandler *handlers.TestUploadHandler
 	storage           *storage.Storage
 	jwtUtils          *utils.JWTUtils
