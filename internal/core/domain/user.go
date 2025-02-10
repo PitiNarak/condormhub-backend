@@ -6,6 +6,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type Role string
+
+const (
+	AdminRole  Role = "ADMIN"
+	UserRole   Role = "USER"
+	LesseeRole Role = "LESSEE"
+	LesserRole Role = "LESSOR"
+)
+
 type User struct {
 	ID                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	CreateAt           time.Time `gorm:"autoCreateTime" json:"createAt"`
@@ -19,7 +28,7 @@ type User struct {
 	Gender             string    `json:"gender"`
 	BirthDate          string    `json:"birthDate"`
 	IsVerified         bool      `gorm:"default:false" json:"isVerified"`
-	Role               string    `json:"role"`
+	Role               Role      `gorm:"default:USER" json:"role"`
 	FilledPersonalInfo bool      `gorm:"default:false" json:"filledPersonalInfo"`
 
 	// studentEvidence
