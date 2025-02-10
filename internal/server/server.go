@@ -144,7 +144,7 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 
 func (s *Server) initRoutes() {
 	// greeting
-	s.app.Get("/", s.authMiddleware.Auth, s.greetingHandler.Greeting)
+	s.app.Get("/", s.greetingHandler.Greeting)
 
 	// test upload
 	s.app.Post("/upload", s.testUploadHandler.UploadHandler)
