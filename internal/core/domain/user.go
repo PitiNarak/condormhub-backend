@@ -54,7 +54,7 @@ type UserInfo struct {
 	Gender             string `json:"gender"`
 	BirthDate          string `json:"birthDate"`
 	IsVerified         bool   `gorm:"default:false" json:"isVerified"`
-	Role               string `json:"role"`
+	Role               Role   `json:"role"`
 	StudentEvidence    string `json:"studentEvidence"`
 	IsStudentVerified  bool   `gorm:"default:false" json:"isStudentVerified"`
 	FilledPersonalInfo bool   `gorm:"default:false" json:"filledPersonalInfo"`
@@ -66,6 +66,6 @@ type UpdateInfo struct {
 	NationalID      string `json:"nationalID" `
 	Gender          string `json:"gender"`
 	BirthDate       string `json:"birthDate"`
-	Role            string `json:"role"`
+	Role            Role   `json:"role"`
 	StudentEvidence string `json:"studentEvidence"`
 }
