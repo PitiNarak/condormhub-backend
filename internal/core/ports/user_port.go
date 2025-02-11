@@ -22,7 +22,7 @@ type UserService interface {
 	Login(email string, password string) (string, error)
 	VerifyUser(token string) (string, *domain.User, error)
 	ResetPasswordCreate(email string) error
-	ResetPasswordResponse(token string, password string) (*domain.User, error)
+	ResetPassword(token string, password string) (*domain.User, error)
 }
 
 type UserHandler interface {
