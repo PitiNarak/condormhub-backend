@@ -34,9 +34,3 @@ type User struct {
 	StudentEvidence   string `json:"studentEvidence"`
 	IsStudentVerified bool   `gorm:"default:false" json:"isStudentVerified"`
 }
-
-// Deprecated: move to dto instead
-type LoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}

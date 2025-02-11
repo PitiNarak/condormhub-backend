@@ -19,7 +19,7 @@ type UserService interface {
 	Create(user *domain.User) (string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
-	Login(email string, password string) (string, error)
+	Login(email string, password string) (*domain.User, string, error)
 	VerifyUser(token string) (string, *domain.User, error)
 	ResetPasswordCreate(email string) error
 	ResetPasswordResponse(token string, password string) (*domain.User, error)

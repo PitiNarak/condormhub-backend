@@ -76,22 +76,22 @@ func (s *UserService) VerifyUser(token string) (string, *domain.User, error) {
 	return token, user, nil
 }
 
-func (s *UserService) Login(email string, password string) (string, error) {
+func (s *UserService) Login(email string, password string) (*domain.User, string, error) {
 	user, getErr := s.userRepo.GetUserByEmail(email)
 	if getErr != nil {
-		return "", getErr
+		return nil, "", getErr
 	}
 
 	compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if compareErr != nil {
-		return "", compareErr
+		return nil, "", error_handler.UnauthorizedError(compareErr, "Invalid email or password.")
 	}
 	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
 	if generateErr != nil {
-		return "", generateErr
+		return nil, "", generateErr
 	}
 
-	return token, nil
+	return user, token, nil
 
 }
 
