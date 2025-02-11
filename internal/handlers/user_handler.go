@@ -95,20 +95,26 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
-	tokenString := c.Get("token")
-	if tokenString == "" {
-		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
+	body := new(dto.VerifyRequestBody)
+
+	if err := c.BodyParser(body); err != nil {
+		return error_handler.BadRequestError(err, "your request is invalid")
+	}
+	validate := validator.New()
+
+	if err := validate.Struct(body); err != nil {
+		return error_handler.BadRequestError(err, "your request body is incorrect")
+	}
+	accessToken, user, err := h.userService.VerifyUser(body.Token)
+	if err != nil {
+		return err
 	}
 
-	if err := h.userService.VerifyUser(tokenString); err != nil {
-		return error_handler.InternalServerError(err, "cannot verify your account")
-	}
-
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", fiber.Map{"accessToken": accessToken, "userInformation": user}))
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
-	body := new(dto.ResetPasswordRequestBody)
+	body := new(dto.ResetPasswordCreateRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
@@ -127,8 +133,8 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
 }
 
-func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
-	body := new(dto.ResponseResetPasswordBody)
+func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
+	body := new(dto.ResetPasswordRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return error_handler.BadRequestError(err, "your request is invalid")
@@ -139,16 +145,19 @@ func (h *UserHandler) ResetPasswordResponse(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return error_handler.BadRequestError(err, "your request body is incorrect")
 	}
-	tokenString := c.Get("token")
+	tokenString := body.Token
 	if tokenString == "" {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	err := h.userService.ResetPasswordResponse(tokenString, body.Password)
+	user, err := h.userService.ResetPasswordResponse(tokenString, body.Password)
 	if err != nil {
-		return error_handler.InternalServerError(err, "cannot reset user password")
+		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", fiber.Map{
+		"userInformation": user,
+		"accessToken":     tokenString,
+	}))
 }
 
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
