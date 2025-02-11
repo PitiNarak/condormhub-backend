@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 
 	"github.com/google/uuid"
@@ -18,9 +19,16 @@ func NewUserRepo(db *gorm.DB) ports.UserRepository {
 }
 
 func (r *UserRepo) Create(user *domain.User) error {
-	result := r.db.Create(&user)
-	if result.Error != nil {
-		return error_handler.InternalServerError(result.Error, "Failed to save user to database")
+
+	exitsUser := r.db.Model(&domain.User{}).Where("username = ?", user.Username).First(&domain.User{})
+	if exitsUser.RowsAffected > 0 {
+		return error_handler.BadRequestError(nil, "username already exists")
+	}
+
+	err := r.db.Create(&user).Error
+
+	if err != nil {
+		return error_handler.InternalServerError(err, "Failed to save user to database")
 	}
 
 	return nil
@@ -30,14 +38,11 @@ func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("email = ?", email).First(&user)
 
-	if err := result.Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, error_handler.NotFoundError(err, "User not found with the provided email.")
-		}
-		return nil, error_handler.InternalServerError(err, "Error retrieving user data.")
+	if result.Error != nil {
+		return nil, error_handler.NotFoundError(result.Error, "user not found")
 	}
 
-	return &user, result.Error
+	return &user, nil
 }
 
 func (r *UserRepo) GetUser(userID uuid.UUID) (*domain.User, error) {
@@ -55,14 +60,11 @@ func (r *UserRepo) UpdateUser(user domain.User) error {
 	return result.Error
 }
 
-func (r *UserRepo) Update(email string, updateInfo domain.UpdateInfo) error {
-	var user domain.User
-
-	// Find the user by email
-	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
-		return err // Return error if user not found
+func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error {
+	err := r.db.Model(&domain.User{}).Where("id = ?", userID).Updates(data).Error
+	if err != nil {
+		return error_handler.InternalServerError(err, "Failed to update user information")
 	}
-	result := r.db.Model(&user).Updates(updateInfo)
 
-	return result.Error
+	return nil
 }

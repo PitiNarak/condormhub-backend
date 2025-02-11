@@ -10,7 +10,7 @@ type User struct {
 	ID                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	CreateAt           time.Time `gorm:"autoCreateTime" json:"createAt"`
 	UpdateAt           time.Time `gorm:"autoUpdateTime" json:"updateAt"`
-	UserName           string    `json:"username" gorm:"unique" validate:"required"`
+	Username           string    `json:"username" gorm:"unique" validate:"required"`
 	Password           string    `json:"-" validate:"required,min=8"`
 	Email              string    `json:"email" gorm:"unique" validate:"required,email"`
 	FirstName          string    `json:"firstName"`
