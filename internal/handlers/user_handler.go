@@ -154,8 +154,8 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", fiber.Map{
-		"user":        user,
-		"accessToken": tokenString,
+		"userInformation": user,
+		"accessToken":     tokenString,
 	}))
 }
 
