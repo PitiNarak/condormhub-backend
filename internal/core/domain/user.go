@@ -15,9 +15,9 @@ const (
 )
 
 type User struct {
-	ID                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
-	CreateAt           time.Time `gorm:"autoCreateTime" json:"createAt"`
-	UpdateAt           time.Time `gorm:"autoUpdateTime" json:"updateAt"`
+	ID                 uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt           time.Time `json:"createAt" gorm:"autoCreateTime"`
+	UpdateAt           time.Time `json:"updateAt" gorm:"autoUpdateTime"`
 	Username           string    `json:"username" gorm:"unique" validate:"required"`
 	Password           string    `json:"-" validate:"required,min=8"`
 	Email              string    `json:"email" gorm:"unique" validate:"required,email"`
@@ -25,12 +25,12 @@ type User struct {
 	Lastname           string    `json:"lastname"`
 	NationalID         string    `json:"nationalID" `
 	Gender             string    `json:"gender"`
-	BirthDate          time.Time `json:"birthDate"`
-	IsVerified         bool      `gorm:"default:false" json:"isVerified"`
-	Role               Role      `gorm:"default:null" json:"role"`
-	FilledPersonalInfo bool      `gorm:"default:false" json:"filledPersonalInfo"`
+	BirthDate          time.Time `json:"birthDate" gorm:"type:DATE;default:null"`
+	IsVerified         bool      `json:"isVerified" gorm:"default:false"`
+	Role               Role      `json:"role" gorm:"default:null"`
+	FilledPersonalInfo bool      `json:"filledPersonalInfo" gorm:"default:false"`
 
 	// studentEvidence
 	StudentEvidence   string `json:"studentEvidence"`
-	IsStudentVerified bool   `gorm:"default:false" json:"isStudentVerified"`
+	IsStudentVerified bool   `json:"isStudentVerified" gorm:"default:false"`
 }
