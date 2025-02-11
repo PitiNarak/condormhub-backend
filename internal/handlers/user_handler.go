@@ -188,7 +188,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 // @Success 200 {object} http_response.HttpResponse{data=nil} "email is sent to user successfully"
 // @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
 // @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot resend verification email"
-// @Router /user/verify [post]
+// @Router /user/resetpassword [post]
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordCreateRequestBody)
 
@@ -219,7 +219,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 // @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "password reset successfully"
 // @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
 // @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot reset password"
-// @Router /user/reset [post]
+// @Router /user/newpassword [post]
 func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordRequestBody)
 

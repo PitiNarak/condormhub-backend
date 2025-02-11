@@ -324,12 +324,21 @@ paths:
                 data:
                   type: object
               type: object
+        "500":
+          description: system cannot get user information
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
       security:
       - Bearer: []
       summary: Get user information
       tags:
       - user
-  /user/reset:
+  /user/newpassword:
     post:
       consumes:
       - application/json
@@ -372,6 +381,51 @@ paths:
                   type: object
               type: object
       summary: Reset password
+      tags:
+      - user
+  /user/resetpassword:
+    post:
+      consumes:
+      - application/json
+      description: Resend verification email
+      parameters:
+      - description: token
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ResetPasswordCreateRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: email is sent to user successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: system cannot resend verification email
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Resend verification email
       tags:
       - user
   /user/verify:
@@ -426,51 +480,6 @@ paths:
                   type: object
               type: object
       summary: Verify email
-      tags:
-      - user
-  /user/verify/resend:
-    post:
-      consumes:
-      - application/json
-      description: Resend verification email
-      parameters:
-      - description: token
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ResetPasswordCreateRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: email is sent to user successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
-            - properties:
-                data:
-                  type: object
-              type: object
-        "400":
-          description: your request is invalid
-          schema:
-            allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
-            - properties:
-                data:
-                  type: object
-              type: object
-        "500":
-          description: system cannot resend verification email
-          schema:
-            allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
-            - properties:
-                data:
-                  type: object
-              type: object
-      summary: Resend verification email
       tags:
       - user
 securityDefinitions:
