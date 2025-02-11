@@ -109,22 +109,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		return err
 	}
 
-	userInfo := dto.ResponseVerifyBody{
-		Username:           user.Username,
-		Email:              user.Email,
-		FirstName:          user.FirstName,
-		LastName:           user.LastName,
-		NationalID:         user.LastName,
-		Gender:             user.Gender,
-		BirthDate:          user.BirthDate,
-		IsVerified:         user.IsVerified,
-		Role:               user.Role,
-		FilledPersonalInfo: user.FilledPersonalInfo,
-		StudentEvidence:    user.StudentEvidence,
-		IsStudentVerified:  user.IsStudentVerified,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", fiber.Map{"accessToken": accessToken, "userInformation": userInfo}))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", fiber.Map{"accessToken": accessToken, "userInformation": user}))
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
