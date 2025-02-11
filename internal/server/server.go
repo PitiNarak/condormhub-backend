@@ -20,6 +20,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/swagger"
 	"gorm.io/gorm"
 )
 
@@ -146,6 +147,9 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 func (s *Server) initRoutes() {
 	// greeting
 	s.app.Get("/", s.greetingHandler.Greeting)
+
+	// swagger
+	s.app.Get("/swagger/*", swagger.HandlerDefault)
 
 	// test upload
 	s.app.Post("/upload", s.testUploadHandler.UploadHandler)
