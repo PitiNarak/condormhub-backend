@@ -167,7 +167,18 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
-	tokenString := c.Get("token")
+	body := new(dto.DeleteAccountRequestBody)
+
+	if err := c.BodyParser(body); err != nil {
+		return error_handler.BadRequestError(err, "your request is invalid")
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(body); err != nil {
+		return error_handler.BadRequestError(err, "your request body is incorrect")
+	}
+	tokenString := body.Token
 	if tokenString == "" {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}

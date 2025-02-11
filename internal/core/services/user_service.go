@@ -173,17 +173,14 @@ func (s *UserService) ResetPassword(token string, password string) (*domain.User
 }
 
 func (s *UserService) DeleteAccount(token string) error {
-	claims, err := utils.DecodeJWT(token, s.config)
+	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
 		return err
 	}
-	userIDstr, ok := (*claims)["user_id"].(string)
-	if !ok {
-		return errors.New("cannot get user_id")
-	}
+	userIDstr := claims.GetUserID()
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return err
+		return error_handler.InternalServerError(err, "Cannot parse uuid")
 	}
 	err = s.userRepo.DeleteAccount(userID)
 	if err != nil {
