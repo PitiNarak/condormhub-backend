@@ -94,16 +94,22 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
-	tokenString := c.Get("token")
-	if tokenString == "" {
-		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
+	body := new(dto.VerifyRequestBody)
+
+	if err := c.BodyParser(body); err != nil {
+		return error_handler.BadRequestError(err, "your request is invalid")
+	}
+	validate := validator.New()
+
+	if err := validate.Struct(body); err != nil {
+		return error_handler.BadRequestError(err, "your request body is incorrect")
+	}
+	accessToken, user, err := h.userService.VerifyUser(body.Token)
+	if err != nil {
+		return err
 	}
 
-	if err := h.userService.VerifyUser(tokenString); err != nil {
-		return error_handler.InternalServerError(err, "cannot verify your account")
-	}
-
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", fiber.Map{"accessToken": accessToken, "userInformation": user}))
 }
 
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
