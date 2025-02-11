@@ -8,7 +8,6 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
-	"github.com/fatih/structs"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -148,9 +147,10 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	userMap := structs.Map(user)
-	userMap["token"] = tokenString
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", userMap))
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("password reset successfully", fiber.Map{
+		"user":        user,
+		"accessToken": tokenString,
+	}))
 }
 
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
