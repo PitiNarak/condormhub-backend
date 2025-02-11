@@ -146,7 +146,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	return nil
 }
 
-func (s *UserService) ResetPasswordResponse(token string, password string) (*domain.User, error) {
+func (s *UserService) ResetPassword(token string, password string) (*domain.User, error) {
 	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
 		return new(domain.User), err
