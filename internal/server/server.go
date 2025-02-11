@@ -99,7 +99,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userRepository := repositories.NewUserRepo(db)
 
 	emailService := services.NewEmailService(&smtpConfig, jwtUtils)
-	userService := services.NewUserService(userRepository, emailService, jwtUtils, &jwtConfig)
+	userService := services.NewUserService(userRepository, emailService, jwtUtils)
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 

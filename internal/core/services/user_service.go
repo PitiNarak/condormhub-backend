@@ -16,12 +16,11 @@ import (
 type UserService struct {
 	userRepo     ports.UserRepository
 	emailService ports.EmailServicePort
-	config       *utils.JWTConfig
 	jwtUtils     *utils.JWTUtils
 }
 
-func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils, config *utils.JWTConfig) ports.UserService {
-	return &UserService{userRepo: UserRepo, emailService: EmailService, config: config, jwtUtils: jwtUtils}
+func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils) ports.UserService {
+	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils}
 }
 
 func (s *UserService) Create(user *domain.User) (string, error) {
