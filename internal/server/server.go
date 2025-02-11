@@ -167,7 +167,7 @@ func (s *Server) initRoutes() {
 
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
 	userRoutes.Patch("/newpassword", s.userHandler.ResetPasswordResponse)
-
+	userRoutes.Delete("/deleteaccount", s.userHandler.DeleteAccount)
 	authRoutes := s.app.Group("/auth")
 	authRoutes.Post("/register", s.userHandler.Register)
 }

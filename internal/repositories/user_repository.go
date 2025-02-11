@@ -68,3 +68,12 @@ func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationR
 
 	return nil
 }
+
+func (r *UserRepo) DeleteAccount(userID uuid.UUID) error {
+	var user domain.User
+	result := r.db.Delete(&user, userID)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
