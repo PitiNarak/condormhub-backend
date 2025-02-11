@@ -8,3 +8,7 @@ type ResetPasswordRequestBody struct {
 	Token    string `json:"token" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
+
+type VerifyRequestBody struct {
+	Token string `json:"token" validate:"required"`
+}
