@@ -10,9 +10,8 @@ type Role string
 
 const (
 	AdminRole  Role = "ADMIN"
-	UserRole   Role = "USER"
 	LesseeRole Role = "LESSEE"
-	LesserRole Role = "LESSOR"
+	LessorRole Role = "LESSOR"
 )
 
 type User struct {
@@ -28,7 +27,7 @@ type User struct {
 	Gender             string    `json:"gender"`
 	BirthDate          string    `json:"birthDate"`
 	IsVerified         bool      `gorm:"default:false" json:"isVerified"`
-	Role               Role      `gorm:"default:USER" json:"role"`
+	Role               Role      `gorm:"default:null" json:"role"`
 	FilledPersonalInfo bool      `gorm:"default:false" json:"filledPersonalInfo"`
 
 	// studentEvidence
