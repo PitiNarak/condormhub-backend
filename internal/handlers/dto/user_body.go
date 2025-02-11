@@ -2,12 +2,17 @@ package dto
 
 import "time"
 
-type ResetPasswordBody struct {
+type ResetPasswordCreateRequestBody struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
-type ResponseResetPasswordBody struct {
+type ResetPasswordRequestBody struct {
+	Token    string `json:"token" validate:"required"`
 	Password string `json:"password" validate:"required"`
+}
+
+type VerifyRequestBody struct {
+	Token string `json:"token" validate:"required"`
 }
 
 type UserInformationRequestBody struct {

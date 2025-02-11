@@ -62,14 +62,14 @@ func (s *UserService) VerifyUser(token string) (string, *domain.User, error) {
 	if err != nil {
 		return "", nil, error_handler.UnauthorizedError(err, "Invalid user ID")
 	}
-	user, err := s.userRepo.GetUser(userID)
+	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil || user.ID == uuid.Nil {
 		return "", nil, err
 	}
 
 	user.IsVerified = true
 
-	updateErr := s.userRepo.UpdateUser(*user)
+	updateErr := s.userRepo.UpdateUser(user)
 	if updateErr != nil {
 		return "", nil, updateErr
 	}
@@ -109,7 +109,7 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 		return nil, err
 	}
 
-	userInfo, err := s.userRepo.GetUser(userID)
+	userInfo, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -146,32 +146,28 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	return nil
 }
 
-func (s *UserService) ResetPasswordResponse(token string, password string) error {
-	claims, err := utils.DecodeJWT(token, s.config)
+func (s *UserService) ResetPasswordResponse(token string, password string) (*domain.User, error) {
+	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
-	userIDstr, ok := (*claims)["user_id"].(string)
-	if !ok {
-		return errors.New("cannot get user_id")
-	}
-
+	userIDstr := claims.UserID
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return err
+		return new(domain.User), error_handler.InternalServerError(err, "Cannot parse uuid")
 	}
-	user, err := s.userRepo.GetUser(userID)
+	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return new(domain.User), error_handler.BadRequestError(err, "Password cannot be hashed")
 	}
 	user.Password = string(hashedPassword)
-	err = s.userRepo.UpdateUser(*user)
+	err = s.userRepo.UpdateUser(user)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
-	return nil
+	return user, nil
 }

@@ -50,7 +50,7 @@ func (a *AuthMiddleware) Auth(ctx *fiber.Ctx) error {
 		return error_handler.UnauthorizedError(err, "Invalid user ID")
 	}
 
-	user, err := a.userRepo.GetUser(uuid)
+	user, err := a.userRepo.GetUserByID(uuid)
 	if err != nil {
 		return error_handler.UnauthorizedError(err, "User not found")
 	}

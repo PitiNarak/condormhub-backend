@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -72,12 +71,12 @@ func (j *JWTUtils) DecodeJWT(inputToken string) (*JWTClaims, error) {
 	})
 
 	if err != nil || !token.Valid {
-		return new(JWTClaims), errors.New("parse token failed")
+		return new(JWTClaims), error_handler.UnauthorizedError(err, "parse token failed")
 	}
 
 	claims, ok := token.Claims.(*JWTClaims)
 	if !ok || !token.Valid {
-		return new(JWTClaims), errors.New("invalid token")
+		return new(JWTClaims), error_handler.UnauthorizedError(err, "invalid token")
 	}
 
 	return claims, nil
