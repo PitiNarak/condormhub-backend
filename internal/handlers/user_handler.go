@@ -20,6 +20,17 @@ func NewUserHandler(UserService ports.UserService) ports.UserHandler {
 	return &UserHandler{userService: UserService}
 }
 
+// Register godoc
+// @Summary Register new user
+// @Description Register new user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user body dto.RegisterRequestBody true "user information"
+// @Success 201  {object}  http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "user successfully registered"
+// @Failure 400  {object}  http_response.HttpResponse{data=nil} "your request is invalid"
+// @Failure 500  {object}  http_response.HttpResponse{data=nil} "system cannot register user"
+// @Router /auth/register [post]
 func (h *UserHandler) Register(c *fiber.Ctx) error {
 	user := new(dto.RegisterRequestBody)
 	err := c.BodyParser(&user)
@@ -37,15 +48,34 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		Username: user.UserName,
 		Password: user.Password,
 	}
+
 	token, err := h.userService.Create(gormUser)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", fiber.Map{"token": token, "user": gormUser}))
+	response := dto.TokenWithUserInformationResponseBody{
+		AccessToken:     token,
+		UserInformation: *gormUser,
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", response))
 
 }
 
+// Login godoc
+// @Summary Login user
+// @Description Login user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user body dto.LoginRequestBody true "user information"
+// @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "user successfully logged in"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 404 {object} http_response.HttpResponse{data=nil} "user not found"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot login user"
+// @Router /auth/login [post]
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 	var req dto.LoginRequestBody
 	err := c.BodyParser(&req)
@@ -62,9 +92,27 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return loginErr
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Login successful", fiber.Map{"token": token, "user": user}))
+	response := dto.TokenWithUserInformationResponseBody{
+		AccessToken:     token,
+		UserInformation: *user,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Login successful", response))
 }
 
+// UpdateUserInformation godoc
+// @Summary Update user information
+// @Description Update user information
+// @Tags user
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param user body dto.UserInformationRequestBody true "user information"
+// @Success 200 {object} http_response.HttpResponse{data=domain.User} "user successfully updated account information"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot update your account information"
+// @Router /user [patch]
 func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	var requestBody *dto.UserInformationRequestBody
 
@@ -94,6 +142,18 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 
 }
 
+// VerifyEmail godoc
+// @Summary Verify email
+// @Description Verify email
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body dto.VerifyRequestBody true "token"
+// @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "email is verified successfully"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot verify your email"
+// @Router /user/verify [post]
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	body := new(dto.VerifyRequestBody)
 
@@ -110,9 +170,25 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", fiber.Map{"accessToken": accessToken, "userInformation": user}))
+	response := dto.TokenWithUserInformationResponseBody{
+		AccessToken:     accessToken,
+		UserInformation: *user,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", response))
 }
 
+// ResendVerificationEmail godoc
+// @Summary Resend verification email
+// @Description Resend verification email
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body dto.ResetPasswordCreateRequestBody true "token"
+// @Success 200 {object} http_response.HttpResponse{data=nil} "email is sent to user successfully"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot resend verification email"
+// @Router /user/verify [post]
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordCreateRequestBody)
 
@@ -133,6 +209,17 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
 }
 
+// ResetPassword godoc
+// @Summary Reset password
+// @Description Reset password
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body dto.ResetPasswordRequestBody true "token"
+// @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "password reset successfully"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot reset password"
+// @Router /user/reset [post]
 func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordRequestBody)
 
@@ -160,6 +247,17 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	}))
 }
 
+// GetUserInfo godoc
+// @Summary Get user information
+// @Description Get user information
+// @Tags user
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Success 200 {object} http_response.HttpResponse{data=domain.User} "get user information successfully"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot get user information"
+// @Router /user/me [get]
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", user))
