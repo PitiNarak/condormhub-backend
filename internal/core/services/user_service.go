@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -48,28 +49,32 @@ func (s *UserService) Create(user *domain.User) (string, error) {
 	return token, nil
 }
 
-func (s *UserService) VerifyUser(token string) error {
-	claims, err := utils.DecodeJWT(token, s.config)
+func (s *UserService) VerifyUser(token string) (string, *domain.User, error) {
+	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
-		return err
+		return "", nil, error_handler.UnauthorizedError(err, "Invalid token")
 	}
 
-	userIDstr, ok := (*claims)["user_id"].(string)
-	if !ok {
-		return errors.New("cannot get user_id")
+	if claims.GetExp() < time.Now().Unix() {
+		return "", nil, error_handler.UnauthorizedError(errors.New("token expired"), "Token is expired")
 	}
 
-	userID, err := uuid.Parse(userIDstr)
+	userID, err := uuid.Parse(claims.GetUserID())
 	if err != nil {
-		return err
+		return "", nil, error_handler.UnauthorizedError(err, "Invalid user ID")
 	}
 	user, err := s.userRepo.GetUser(userID)
 	if err != nil || user.ID == uuid.Nil {
-		return err
+		return "", nil, err
 	}
 
 	user.IsVerified = true
-	return s.userRepo.UpdateUser(*user)
+
+	updateErr := s.userRepo.UpdateUser(*user)
+	if updateErr != nil {
+		return "", nil, updateErr
+	}
+	return token, user, nil
 }
 
 func (s *UserService) Login(email string, password string) (string, error) {
