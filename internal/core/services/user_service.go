@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -15,12 +16,11 @@ import (
 type UserService struct {
 	userRepo     ports.UserRepository
 	emailService ports.EmailServicePort
-	config       *utils.JWTConfig
 	jwtUtils     *utils.JWTUtils
 }
 
-func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils, config *utils.JWTConfig) ports.UserService {
-	return &UserService{userRepo: UserRepo, emailService: EmailService, config: config, jwtUtils: jwtUtils}
+func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils) ports.UserService {
+	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils}
 }
 
 func (s *UserService) Create(user *domain.User) (string, error) {
@@ -48,46 +48,50 @@ func (s *UserService) Create(user *domain.User) (string, error) {
 	return token, nil
 }
 
-func (s *UserService) VerifyUser(token string) error {
-	claims, err := utils.DecodeJWT(token, s.config)
+func (s *UserService) VerifyUser(token string) (string, *domain.User, error) {
+	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
-		return err
+		return "", nil, error_handler.UnauthorizedError(err, "Invalid token")
 	}
 
-	userIDstr, ok := (*claims)["user_id"].(string)
-	if !ok {
-		return errors.New("cannot get user_id")
+	if claims.GetExp() < time.Now().Unix() {
+		return "", nil, error_handler.UnauthorizedError(errors.New("token expired"), "Token is expired")
 	}
 
-	userID, err := uuid.Parse(userIDstr)
+	userID, err := uuid.Parse(claims.GetUserID())
 	if err != nil {
-		return err
+		return "", nil, error_handler.UnauthorizedError(err, "Invalid user ID")
 	}
-	user, err := s.userRepo.GetUser(userID)
+	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil || user.ID == uuid.Nil {
-		return err
+		return "", nil, err
 	}
 
 	user.IsVerified = true
-	return s.userRepo.UpdateUser(*user)
+
+	updateErr := s.userRepo.UpdateUser(user)
+	if updateErr != nil {
+		return "", nil, updateErr
+	}
+	return token, user, nil
 }
 
-func (s *UserService) Login(email string, password string) (string, error) {
+func (s *UserService) Login(email string, password string) (*domain.User, string, error) {
 	user, getErr := s.userRepo.GetUserByEmail(email)
 	if getErr != nil {
-		return "", getErr
+		return nil, "", getErr
 	}
 
 	compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if compareErr != nil {
-		return "", compareErr
+		return nil, "", error_handler.UnauthorizedError(compareErr, "Invalid email or password.")
 	}
 	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
 	if generateErr != nil {
-		return "", generateErr
+		return nil, "", generateErr
 	}
 
-	return token, nil
+	return user, token, nil
 
 }
 
@@ -105,7 +109,7 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 		return nil, err
 	}
 
-	userInfo, err := s.userRepo.GetUser(userID)
+	userInfo, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -142,34 +146,30 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	return nil
 }
 
-func (s *UserService) ResetPasswordResponse(token string, password string) error {
-	claims, err := utils.DecodeJWT(token, s.config)
+func (s *UserService) ResetPassword(token string, password string) (*domain.User, error) {
+	claims, err := s.jwtUtils.DecodeJWT(token)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
-	userIDstr, ok := (*claims)["user_id"].(string)
-	if !ok {
-		return errors.New("cannot get user_id")
-	}
-
+	userIDstr := claims.UserID
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return err
+		return new(domain.User), error_handler.InternalServerError(err, "Cannot parse uuid")
 	}
-	user, err := s.userRepo.GetUser(userID)
+	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return new(domain.User), error_handler.BadRequestError(err, "Password cannot be hashed")
 	}
 	user.Password = string(hashedPassword)
-	err = s.userRepo.UpdateUser(*user)
+	err = s.userRepo.UpdateUser(user)
 	if err != nil {
-		return err
+		return new(domain.User), err
 	}
-	return nil
+	return user, nil
 }
 
 func (s *UserService) DeleteAccount(token string) error {

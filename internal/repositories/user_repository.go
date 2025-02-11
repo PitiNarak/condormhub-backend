@@ -39,25 +39,27 @@ func (r *UserRepo) GetUserByEmail(email string) (*domain.User, error) {
 	result := r.db.Where("email = ?", email).First(&user)
 
 	if result.Error != nil {
-		return nil, error_handler.NotFoundError(result.Error, "user not found")
+		return nil, error_handler.NotFoundError(result.Error, "User not found")
 	}
 
 	return &user, nil
 }
 
-func (r *UserRepo) GetUser(userID uuid.UUID) (*domain.User, error) {
+func (r *UserRepo) GetUserByID(userID uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("id = ?", userID).First(&user)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, error_handler.InternalServerError(result.Error, "User not found")
 	}
 	return &user, result.Error
 }
 
-func (r *UserRepo) UpdateUser(user domain.User) error {
+func (r *UserRepo) UpdateUser(user *domain.User) error {
 	result := r.db.Model(&user).Updates(user)
-
-	return result.Error
+	if result.Error != nil {
+		return error_handler.InternalServerError(result.Error, "Failed to update database")
+	}
+	return nil
 }
 
 func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error {

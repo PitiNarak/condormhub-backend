@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -72,40 +71,13 @@ func (j *JWTUtils) DecodeJWT(inputToken string) (*JWTClaims, error) {
 	})
 
 	if err != nil || !token.Valid {
-		return new(JWTClaims), errors.New("parse token failed")
+		return new(JWTClaims), error_handler.UnauthorizedError(err, "parse token failed")
 	}
 
 	claims, ok := token.Claims.(*JWTClaims)
 	if !ok || !token.Valid {
-		return new(JWTClaims), errors.New("invalid token")
+		return new(JWTClaims), error_handler.UnauthorizedError(err, "invalid token")
 	}
 
 	return claims, nil
-}
-
-// Deprecated: Use JWTUtils.DecodeJWT instead.
-func GenerateJWT(userID uuid.UUID, config *JWTConfig) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["user_id"] = userID.String()
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(config.Expiration)).Unix()
-
-	return token.SignedString([]byte(config.JWTSecretKey))
-}
-
-// Deprecated: Use JWTUtils.DecodeJWT instead.
-func DecodeJWT(inputToken string, config *JWTConfig) (*jwt.MapClaims, error) {
-	token, err := jwt.Parse(inputToken, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.JWTSecretKey), nil
-	})
-
-	if err != nil || !token.Valid {
-		return new(jwt.MapClaims), err
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return new(jwt.MapClaims), err
-	}
-	return &claims, nil
 }

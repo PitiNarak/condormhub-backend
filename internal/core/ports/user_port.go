@@ -9,9 +9,9 @@ import (
 
 type UserRepository interface {
 	Create(user *domain.User) error
-	GetUser(userID uuid.UUID) (*domain.User, error)
+	GetUserByID(userID uuid.UUID) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error
-	UpdateUser(user domain.User) error
+	UpdateUser(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
 	DeleteAccount(userID uuid.UUID) error
 }
@@ -20,10 +20,10 @@ type UserService interface {
 	Create(user *domain.User) (string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
-	Login(email string, password string) (string, error)
-	VerifyUser(token string) error
+	Login(email string, password string) (*domain.User, string, error)
+	VerifyUser(token string) (string, *domain.User, error)
 	ResetPasswordCreate(email string) error
-	ResetPasswordResponse(token string, password string) error
+	ResetPassword(token string, password string) (*domain.User, error)
 	DeleteAccount(token string) error
 }
 
@@ -34,6 +34,6 @@ type UserHandler interface {
 	VerifyEmail(c *fiber.Ctx) error
 	ResetPasswordCreate(c *fiber.Ctx) error
 	GetUserInfo(c *fiber.Ctx) error
-	ResetPasswordResponse(c *fiber.Ctx) error
+	ResetPassword(c *fiber.Ctx) error
 	DeleteAccount(c *fiber.Ctx) error
 }
