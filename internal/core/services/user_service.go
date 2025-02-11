@@ -173,7 +173,7 @@ func (s *UserService) ResetPasswordResponse(token string, password string) error
 }
 
 func (s *UserService) DeleteAccount(token string) error {
-	claims, err := utils.DecodeJWT(token, s.Config)
+	claims, err := utils.DecodeJWT(token, s.config)
 	if err != nil {
 		return err
 	}
@@ -185,7 +185,7 @@ func (s *UserService) DeleteAccount(token string) error {
 	if err != nil {
 		return err
 	}
-	err = s.UserRepo.DeleteAccount(userID)
+	err = s.userRepo.DeleteAccount(userID)
 	if err != nil {
 		return err
 	}
