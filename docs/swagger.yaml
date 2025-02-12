@@ -298,6 +298,46 @@ paths:
       summary: Update user information
       tags:
       - user
+  /user/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: account successfully deleted
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete a user account
+      tags:
+      - user
   /user/me:
     get:
       consumes:
