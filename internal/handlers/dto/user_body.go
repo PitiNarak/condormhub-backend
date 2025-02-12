@@ -15,10 +15,6 @@ type VerifyRequestBody struct {
 	Token string `json:"token" validate:"required"`
 }
 
-type DeleteAccountRequestBody struct {
-	Token string `json:"token" validate:"required"`
-}
-
 type UserInformationRequestBody struct {
 	Username        string    `json:"username" gorm:"unique"`
 	Password        string    `json:"password" validate:"omitempty,min=8"`

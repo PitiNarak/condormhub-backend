@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -265,18 +266,17 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
-	body := new(dto.DeleteAccountRequestBody)
+	authHeader := c.Get("Authorization")
 
-	if err := c.BodyParser(body); err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+	if authHeader == "" {
+		return error_handler.UnauthorizedError(errors.New("request without authorization header"), "Authorization header is required")
 	}
 
-	validate := validator.New()
-
-	if err := validate.Struct(body); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		return error_handler.UnauthorizedError(errors.New("invalid authorization header"), "Authorization header is invalid")
 	}
-	tokenString := body.Token
+
+	tokenString := authHeader[7:]
 	if tokenString == "" {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
