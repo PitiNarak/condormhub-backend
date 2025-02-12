@@ -10,6 +10,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -262,4 +263,19 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get user information successfully", user))
 
+}
+
+func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
+	userIDstr := c.Locals("userID").(string)
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return error_handler.InternalServerError(err, "Cannot parse uuid")
+	}
+
+	err = h.userService.DeleteAccount(userID)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("account successfully deleted", nil))
 }

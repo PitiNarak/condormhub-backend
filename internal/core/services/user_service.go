@@ -171,3 +171,11 @@ func (s *UserService) ResetPassword(token string, password string) (*domain.User
 	}
 	return user, nil
 }
+
+func (s *UserService) DeleteAccount(userID uuid.UUID) error {
+	err := s.userRepo.DeleteAccount(userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
