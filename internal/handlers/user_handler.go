@@ -267,11 +267,6 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 
 func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 	userIDstr := c.Locals("userID").(string)
-
-	if userIDstr == "" {
-		return error_handler.UnauthorizedError(errors.New("request without authorization header"), "Authorization header is required")
-	}
-
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
 		return error_handler.InternalServerError(err, "Cannot parse uuid")
