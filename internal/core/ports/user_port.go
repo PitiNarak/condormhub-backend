@@ -24,7 +24,7 @@ type UserService interface {
 	VerifyUser(token string) (string, *domain.User, error)
 	ResetPasswordCreate(email string) error
 	ResetPassword(token string, password string) (*domain.User, error)
-	DeleteAccount(token string) error
+	DeleteAccount(userID uuid.UUID) error
 }
 
 type UserHandler interface {

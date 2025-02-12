@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -11,6 +10,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -266,22 +266,18 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
-	authHeader := c.Get("Authorization")
+	userIDstr := c.Locals("userID").(string)
 
-	if authHeader == "" {
+	if userIDstr == "" {
 		return error_handler.UnauthorizedError(errors.New("request without authorization header"), "Authorization header is required")
 	}
 
-	if !strings.HasPrefix(authHeader, "Bearer ") {
-		return error_handler.UnauthorizedError(errors.New("invalid authorization header"), "Authorization header is invalid")
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return error_handler.InternalServerError(err, "Cannot parse uuid")
 	}
 
-	tokenString := authHeader[7:]
-	if tokenString == "" {
-		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
-	}
-
-	err := h.userService.DeleteAccount(tokenString)
+	err = h.userService.DeleteAccount(userID)
 	if err != nil {
 		return err
 	}

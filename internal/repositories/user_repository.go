@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"errors"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
@@ -78,9 +76,6 @@ func (r *UserRepo) DeleteAccount(userID uuid.UUID) error {
 	result := r.db.Delete(&user, userID)
 	if result.Error != nil {
 		return error_handler.InternalServerError(result.Error, "Cannot delete user")
-	}
-	if result.RowsAffected == 0 {
-		return error_handler.InternalServerError(errors.New("User not found"), "Cannot delete user")
 	}
 	return nil
 }
