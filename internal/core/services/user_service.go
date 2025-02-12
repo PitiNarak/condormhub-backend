@@ -104,7 +104,32 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 		data.Password = string(hashedPassword)
 	}
 
-	err := s.userRepo.UpdateInformation(userID, data)
+	var updateData domain.User
+
+	updateData.Username = data.Username
+	updateData.Firstname = data.Firstname
+	updateData.Lastname = data.Lastname
+	updateData.NationalID = data.NationalID
+	updateData.Gender = data.Gender
+	updateData.BirthDate = data.BirthDate
+	updateData.StudentEvidence = data.StudentEvidence
+
+	// Reset Lifestyle fields before assigning new values
+	updateData.Lifestyle1 = nil
+	updateData.Lifestyle2 = nil
+	updateData.Lifestyle3 = nil
+
+	if len(data.Lifestyles) > 0 {
+		updateData.Lifestyle1 = &data.Lifestyles[0]
+	}
+	if len(data.Lifestyles) > 1 {
+		updateData.Lifestyle2 = &data.Lifestyles[1]
+	}
+	if len(data.Lifestyles) > 2 {
+		updateData.Lifestyle3 = &data.Lifestyles[2]
+	}
+
+	err := s.userRepo.UpdateInformation(userID, updateData)
 	if err != nil {
 		return nil, err
 	}

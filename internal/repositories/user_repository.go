@@ -3,7 +3,6 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 
 	"github.com/google/uuid"
@@ -62,7 +61,7 @@ func (r *UserRepo) UpdateUser(user *domain.User) error {
 	return nil
 }
 
-func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error {
+func (r *UserRepo) UpdateInformation(userID uuid.UUID, data domain.User) error {
 	err := r.db.Model(&domain.User{}).Where("id = ?", userID).Updates(data).Error
 	if err != nil {
 		return error_handler.InternalServerError(err, "failed to update user information")
