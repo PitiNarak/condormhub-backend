@@ -281,8 +281,9 @@ func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	if err := h.userService.DeleteAccount(tokenString); err != nil {
-		return error_handler.InternalServerError(err, "cannot delete your account")
+	err := h.userService.DeleteAccount(tokenString)
+	if err != nil {
+		return err
 	}
 
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("account successfully deleted", nil))
