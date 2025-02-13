@@ -1,6 +1,10 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+)
 
 type ResetPasswordCreateRequestBody struct {
 	Email string `json:"email" validate:"required,email"`
@@ -16,12 +20,13 @@ type VerifyRequestBody struct {
 }
 
 type UserInformationRequestBody struct {
-	Username        string    `json:"username" gorm:"unique"`
-	Password        string    `json:"password" validate:"omitempty,min=8"`
-	Firstname       string    `json:"firstname"`
-	Lastname        string    `json:"lastname"`
-	NationalID      string    `json:"nationalID"`
-	Gender          string    `json:"gender"`
-	BirthDate       time.Time `json:"birthDate"`
-	StudentEvidence string    `json:"studentEvidence"`
+	Username        string             `json:"username" gorm:"unique"`
+	Password        string             `json:"password" validate:"omitempty,min=8"`
+	Firstname       string             `json:"firstname"`
+	Lastname        string             `json:"lastname"`
+	NationalID      string             `json:"nationalID"`
+	Gender          string             `json:"gender"`
+	BirthDate       time.Time          `json:"birthDate"`
+	StudentEvidence string             `json:"studentEvidence"`
+	Lifestyles      []domain.Lifestyle `json:"lifestyles" gorm:"default:null"`
 }
