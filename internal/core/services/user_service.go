@@ -185,7 +185,7 @@ func (s *UserService) ResetPassword(token string, password string) (*domain.User
 	if err != nil {
 		return new(domain.User), err
 	}
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return new(domain.User), error_handler.BadRequestError(err, "password cannot be hashed")
 	}
