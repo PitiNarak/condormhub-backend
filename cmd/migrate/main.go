@@ -18,6 +18,8 @@ func main() {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 
+	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+
 	if err := db.AutoMigrate(
 		&domain.SampleLog{},
 		&domain.User{},
