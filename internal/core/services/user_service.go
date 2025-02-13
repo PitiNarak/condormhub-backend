@@ -107,6 +107,7 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 	var updateData domain.User
 
 	updateData.Username = data.Username
+	updateData.Password = data.Password
 	updateData.Firstname = data.Firstname
 	updateData.Lastname = data.Lastname
 	updateData.NationalID = data.NationalID
