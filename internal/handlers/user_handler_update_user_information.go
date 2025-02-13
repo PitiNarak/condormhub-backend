@@ -7,7 +7,8 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
-	"github.com/go-playground/validator"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -38,6 +39,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	}
 
 	validate := validator.New()
+	validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
 
 	if err := validate.Struct(requestBody); err != nil {
 		return error_handler.BadRequestError(err, "your request body is incorrect")

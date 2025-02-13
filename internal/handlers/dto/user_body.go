@@ -28,5 +28,5 @@ type UserInformationRequestBody struct {
 	Gender          string             `json:"gender"`
 	BirthDate       time.Time          `json:"birthDate"`
 	StudentEvidence string             `json:"studentEvidence"`
-	Lifestyles      []domain.Lifestyle `json:"lifestyles" gorm:"default:null"`
+	Lifestyles      []domain.Lifestyle `json:"lifestyles" validate:"lifestyle" gorm:"default:null"`
 }

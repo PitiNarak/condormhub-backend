@@ -64,6 +64,61 @@ const (
 	SelfEmployed Lifestyle = "Self-Employed"
 )
 
+// Set of valid lifestyle values (for quick lookup)
+var validLifestyles = map[Lifestyle]struct{}{
+	Active:   {},
+	Creative: {},
+	Social:   {},
+	Relaxed:  {},
+
+	Football:      {},
+	Basketball:    {},
+	Tennis:        {},
+	Swimming:      {},
+	Running:       {},
+	Cycling:       {},
+	Badminton:     {},
+	Yoga:          {},
+	GymAndFitness: {},
+
+	Music:          {},
+	Dancing:        {},
+	Photography:    {},
+	Painting:       {},
+	Gaming:         {},
+	Reading:        {},
+	Writing:        {},
+	DIYAndCrafting: {},
+	Cooking:        {},
+
+	Extrovert: {},
+	Introvert: {},
+	NightOwl:  {},
+	EarlyBird: {},
+
+	Traveler:    {},
+	Backpacker:  {},
+	NatureLover: {},
+	Camping:     {},
+	BeachLover:  {},
+
+	DogLover: {},
+	CatLover: {},
+
+	Freelancer:   {},
+	Entrepreneur: {},
+	OfficeWorker: {},
+	RemoteWorker: {},
+	Student:      {},
+	SelfEmployed: {},
+}
+
+// IsValid checks if the lifestyle value is in the valid set.
+func (l Lifestyle) IsValid() bool {
+	_, exists := validLifestyles[l]
+	return exists
+}
+
 type User struct {
 	ID                 uuid.UUID  `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	CreateAt           time.Time  `json:"createAt" gorm:"autoCreateTime"`
