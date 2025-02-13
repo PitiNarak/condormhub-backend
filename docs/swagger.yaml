@@ -1,4 +1,86 @@
 definitions:
+  domain.Lifestyle:
+    enum:
+    - Active
+    - Creative
+    - Social
+    - Relaxed
+    - Football
+    - Basketball
+    - Tennis
+    - Swimming
+    - Running
+    - Cycling
+    - Badminton
+    - Yoga
+    - Gym & Fitness
+    - Music
+    - Dancing
+    - Photography
+    - Painting
+    - Gaming
+    - Reading
+    - Writing
+    - DIY & Crafting
+    - Cooking
+    - Extrovert
+    - Introvert
+    - Night Owl
+    - Early Bird
+    - Traveler
+    - Backpacker
+    - Nature Lover
+    - Camping
+    - Beach Lover
+    - Dog Lover
+    - Cat Lover
+    - Freelancer
+    - Entrepreneur
+    - Office Worker
+    - Remote Worker
+    - Student
+    - Self-Employed
+    type: string
+    x-enum-varnames:
+    - Active
+    - Creative
+    - Social
+    - Relaxed
+    - Football
+    - Basketball
+    - Tennis
+    - Swimming
+    - Running
+    - Cycling
+    - Badminton
+    - Yoga
+    - GymAndFitness
+    - Music
+    - Dancing
+    - Photography
+    - Painting
+    - Gaming
+    - Reading
+    - Writing
+    - DIYAndCrafting
+    - Cooking
+    - Extrovert
+    - Introvert
+    - NightOwl
+    - EarlyBird
+    - Traveler
+    - Backpacker
+    - NatureLover
+    - Camping
+    - BeachLover
+    - DogLover
+    - CatLover
+    - Freelancer
+    - Entrepreneur
+    - OfficeWorker
+    - RemoteWorker
+    - Student
+    - SelfEmployed
   domain.Role:
     enum:
     - ADMIN
@@ -31,6 +113,12 @@ definitions:
         type: boolean
       lastname:
         type: string
+      lifestyle1:
+        $ref: '#/definitions/domain.Lifestyle'
+      lifestyle2:
+        $ref: '#/definitions/domain.Lifestyle'
+      lifestyle3:
+        $ref: '#/definitions/domain.Lifestyle'
       nationalID:
         type: string
       role:
@@ -103,6 +191,10 @@ definitions:
         type: string
       lastname:
         type: string
+      lifestyles:
+        items:
+          $ref: '#/definitions/domain.Lifestyle'
+        type: array
       nationalID:
         type: string
       password:

@@ -738,6 +738,91 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Lifestyle": {
+            "type": "string",
+            "enum": [
+                "Active",
+                "Creative",
+                "Social",
+                "Relaxed",
+                "Football",
+                "Basketball",
+                "Tennis",
+                "Swimming",
+                "Running",
+                "Cycling",
+                "Badminton",
+                "Yoga",
+                "Gym \u0026 Fitness",
+                "Music",
+                "Dancing",
+                "Photography",
+                "Painting",
+                "Gaming",
+                "Reading",
+                "Writing",
+                "DIY \u0026 Crafting",
+                "Cooking",
+                "Extrovert",
+                "Introvert",
+                "Night Owl",
+                "Early Bird",
+                "Traveler",
+                "Backpacker",
+                "Nature Lover",
+                "Camping",
+                "Beach Lover",
+                "Dog Lover",
+                "Cat Lover",
+                "Freelancer",
+                "Entrepreneur",
+                "Office Worker",
+                "Remote Worker",
+                "Student",
+                "Self-Employed"
+            ],
+            "x-enum-varnames": [
+                "Active",
+                "Creative",
+                "Social",
+                "Relaxed",
+                "Football",
+                "Basketball",
+                "Tennis",
+                "Swimming",
+                "Running",
+                "Cycling",
+                "Badminton",
+                "Yoga",
+                "GymAndFitness",
+                "Music",
+                "Dancing",
+                "Photography",
+                "Painting",
+                "Gaming",
+                "Reading",
+                "Writing",
+                "DIYAndCrafting",
+                "Cooking",
+                "Extrovert",
+                "Introvert",
+                "NightOwl",
+                "EarlyBird",
+                "Traveler",
+                "Backpacker",
+                "NatureLover",
+                "Camping",
+                "BeachLover",
+                "DogLover",
+                "CatLover",
+                "Freelancer",
+                "Entrepreneur",
+                "OfficeWorker",
+                "RemoteWorker",
+                "Student",
+                "SelfEmployed"
+            ]
+        },
         "domain.Role": {
             "type": "string",
             "enum": [
@@ -787,6 +872,15 @@ const docTemplate = `{
                 },
                 "lastname": {
                     "type": "string"
+                },
+                "lifestyle1": {
+                    "$ref": "#/definitions/domain.Lifestyle"
+                },
+                "lifestyle2": {
+                    "$ref": "#/definitions/domain.Lifestyle"
+                },
+                "lifestyle3": {
+                    "$ref": "#/definitions/domain.Lifestyle"
                 },
                 "nationalID": {
                     "type": "string"
@@ -891,6 +985,12 @@ const docTemplate = `{
                 },
                 "lastname": {
                     "type": "string"
+                },
+                "lifestyles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lifestyle"
+                    }
                 },
                 "nationalID": {
                     "type": "string"
