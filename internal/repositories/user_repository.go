@@ -19,9 +19,9 @@ func NewUserRepo(db *gorm.DB) ports.UserRepository {
 
 func (r *UserRepo) Create(user *domain.User) error {
 
-	exitsUser := r.db.Model(&domain.User{}).Where("username = ?", user.Username).First(&domain.User{})
+	exitsUser := r.db.Model(&domain.User{}).Where("username = ?", user.Username).Or("email = ?", user.Email).First(&domain.User{})
 	if exitsUser.RowsAffected > 0 {
-		return error_handler.BadRequestError(nil, "username already exists")
+		return error_handler.BadRequestError(nil, "username already exists or email already exists")
 	}
 
 	err := r.db.Create(&user).Error
