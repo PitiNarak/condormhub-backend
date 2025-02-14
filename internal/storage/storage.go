@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -12,17 +13,26 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+type BucketType string
+
+const (
+	PublicBucket  BucketType = "public"
+	PrivateBucket BucketType = "private"
+)
+
 type Config struct {
-	BucketName      string `env:"BUCKET_NAME"`
-	AccountID       string `env:"ACCOUNT_ID"`
-	AccessKeyID     string `env:"ACCESS_KEY_ID"`
-	AccessKeySecret string `env:"ACCESS_KEY_SECRET"`
-	URL_PREFIX      string `env:"URL_PREFIX"`
+	BucketName        string `env:"BUCKET_NAME"`
+	PrivateBucketName string `env:"PRIVATE_BUCKET_NAME"`
+	AccountID         string `env:"ACCOUNT_ID"`
+	AccessKeyID       string `env:"ACCESS_KEY_ID"`
+	AccessKeySecret   string `env:"ACCESS_KEY_SECRET"`
+	URL_PREFIX        string `env:"URL_PREFIX"`
 }
 
 type Storage struct {
-	client *s3.Client
-	Config Config
+	client        *s3.Client
+	preSignClient *s3.PresignClient
+	Config        Config
 }
 
 func NewClient(storageConfig Config) *s3.Client {
@@ -43,27 +53,34 @@ func NewClient(storageConfig Config) *s3.Client {
 }
 
 func NewStorage(storageConfig Config) *Storage {
+	client := NewClient(storageConfig)
 	return &Storage{
-		client: NewClient(storageConfig),
-		Config: storageConfig,
+		client:        client,
+		Config:        storageConfig,
+		preSignClient: s3.NewPresignClient(client),
 	}
 }
 
-func (s *Storage) UploadFile(ctx context.Context, key string, contextType string, file io.Reader) (string, error) {
+func (s *Storage) UploadFile(ctx context.Context, key string, contentType string, file io.Reader, bucket BucketType) error {
+	var bucketName string
+	if bucket == PublicBucket {
+		bucketName = s.Config.BucketName
+	} else {
+		bucketName = s.Config.PrivateBucketName
+	}
+
 	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(s.Config.BucketName),
+		Bucket:      aws.String(bucketName),
 		Key:         aws.String(key),
-		ContentType: &contextType,
+		ContentType: &contentType,
 		Body:        file,
 	})
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	url := fmt.Sprintf("%s/%s", s.Config.URL_PREFIX, key)
-
-	return url, nil
+	return nil
 }
 
 func (s *Storage) DeleteFile(ctx context.Context, key string) error {
@@ -105,4 +122,21 @@ func (s *Storage) MoveFile(ctx context.Context, sourceKey string, destKey string
 	}
 
 	return nil
+}
+
+func (s *Storage) GetSignedUrl(ctx context.Context, key string, expires time.Duration) (string, error) {
+	req, err := s.preSignClient.PresignGetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(s.Config.BucketName),
+		Key:    aws.String(key),
+	}, s3.WithPresignExpires(expires))
+
+	if err != nil {
+		return "", err
+	}
+
+	return req.URL, nil
+}
+
+func (s *Storage) GetPublicUrl(key string) string {
+	return fmt.Sprintf("%s/%s/%s", s.Config.URL_PREFIX, s.Config.BucketName, key)
 }
