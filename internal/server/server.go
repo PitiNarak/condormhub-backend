@@ -154,6 +154,7 @@ func (s *Server) initRoutes() {
 	// upload file example
 	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
 	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
+	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
 
 	// sample log
 	sampleLogRoutes := s.app.Group("/log")

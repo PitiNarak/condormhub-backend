@@ -78,3 +78,13 @@ func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("upload success", fiber.Map{"url": url}))
 }
+
+func (e *TestUploadHandler) GetSignedUrlHandler(c *fiber.Ctx) error {
+	fileKey := c.Params("*")
+	url, err := e.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
+	if err != nil {
+		return error_handler.InternalServerError(err, "error getting signed url")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get signed url success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
+}
