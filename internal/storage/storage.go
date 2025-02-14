@@ -86,9 +86,9 @@ func (s *Storage) UploadFile(ctx context.Context, key string, contentType string
 	return nil
 }
 
-func (s *Storage) DeleteFile(ctx context.Context, key string) error {
+func (s *Storage) DeleteFile(ctx context.Context, key string, bucketType BucketType) error {
 	_, err := s.client.DeleteObject(ctx, &s3.DeleteObjectInput{
-		Bucket: aws.String(s.Config.BucketName),
+		Bucket: aws.String(s.getBucketName(bucketType)),
 		Key:    aws.String(key),
 	})
 
@@ -99,10 +99,10 @@ func (s *Storage) DeleteFile(ctx context.Context, key string) error {
 	return nil
 }
 
-func (s *Storage) CopyFile(ctx context.Context, sourceKey string, destKey string) error {
+func (s *Storage) CopyFile(ctx context.Context, sourceKey string, destKey string, bucketType BucketType) error {
 	_, err := s.client.CopyObject(ctx, &s3.CopyObjectInput{
-		Bucket:     aws.String(s.Config.BucketName),
-		CopySource: aws.String(fmt.Sprintf("%s/%s", s.Config.BucketName, sourceKey)),
+		Bucket:     aws.String(s.getBucketName(bucketType)),
+		CopySource: aws.String(sourceKey),
 		Key:        aws.String(destKey),
 	})
 
@@ -113,13 +113,13 @@ func (s *Storage) CopyFile(ctx context.Context, sourceKey string, destKey string
 	return nil
 }
 
-func (s *Storage) MoveFile(ctx context.Context, sourceKey string, destKey string) error {
-	err := s.CopyFile(ctx, sourceKey, destKey)
+func (s *Storage) MoveFile(ctx context.Context, sourceKey string, destKey string, bucketType BucketType) error {
+	err := s.CopyFile(ctx, sourceKey, destKey, bucketType)
 	if err != nil {
 		return err
 	}
 
-	err = s.DeleteFile(ctx, sourceKey)
+	err = s.DeleteFile(ctx, sourceKey, bucketType)
 	if err != nil {
 		return err
 	}
