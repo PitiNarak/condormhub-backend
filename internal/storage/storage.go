@@ -31,11 +31,11 @@ type Config struct {
 
 type Storage struct {
 	client        *s3.Client
-	preSignClient *s3.PresignClient
+	presignClient *s3.PresignClient
 	Config        Config
 }
 
-func NewClient(storageConfig Config) *s3.Client {
+func newClient(storageConfig Config) *s3.Client {
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(storageConfig.AccessKeyID, storageConfig.AccessKeySecret, "")),
 		config.WithRegion("auto"),
@@ -53,24 +53,27 @@ func NewClient(storageConfig Config) *s3.Client {
 }
 
 func NewStorage(storageConfig Config) *Storage {
-	client := NewClient(storageConfig)
+	client := newClient(storageConfig)
+	presignClient := s3.NewPresignClient(client)
+
 	return &Storage{
 		client:        client,
 		Config:        storageConfig,
-		preSignClient: s3.NewPresignClient(client),
+		presignClient: presignClient,
 	}
 }
 
-func (s *Storage) UploadFile(ctx context.Context, key string, contentType string, file io.Reader, bucket BucketType) error {
-	var bucketName string
+func (s *Storage) getBucketName(bucket BucketType) string {
 	if bucket == PublicBucket {
-		bucketName = s.Config.BucketName
+		return s.Config.BucketName
 	} else {
-		bucketName = s.Config.PrivateBucketName
+		return s.Config.PrivateBucketName
 	}
+}
 
+func (s *Storage) UploadFile(ctx context.Context, key string, contentType string, file io.Reader, bucketType BucketType) error {
 	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(bucketName),
+		Bucket:      aws.String(s.getBucketName(bucketType)),
 		Key:         aws.String(key),
 		ContentType: &contentType,
 		Body:        file,
@@ -125,7 +128,7 @@ func (s *Storage) MoveFile(ctx context.Context, sourceKey string, destKey string
 }
 
 func (s *Storage) GetSignedUrl(ctx context.Context, key string, expires time.Duration) (string, error) {
-	req, err := s.preSignClient.PresignGetObject(ctx, &s3.GetObjectInput{
+	req, err := s.presignClient.PresignGetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(s.Config.PrivateBucketName),
 		Key:    aws.String(key),
 	}, s3.WithPresignExpires(expires))
