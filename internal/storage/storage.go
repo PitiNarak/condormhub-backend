@@ -126,7 +126,7 @@ func (s *Storage) MoveFile(ctx context.Context, sourceKey string, destKey string
 
 func (s *Storage) GetSignedUrl(ctx context.Context, key string, expires time.Duration) (string, error) {
 	req, err := s.preSignClient.PresignGetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(s.Config.BucketName),
+		Bucket: aws.String(s.Config.PrivateBucketName),
 		Key:    aws.String(key),
 	}, s3.WithPresignExpires(expires))
 
