@@ -151,8 +151,9 @@ func (s *Server) initRoutes() {
 	// swagger
 	s.app.Get("/swagger/*", swagger.HandlerDefault)
 
-	// test upload
-	s.app.Post("/upload", s.testUploadHandler.UploadHandler)
+	// upload file example
+	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
+	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
 
 	// sample log
 	sampleLogRoutes := s.app.Group("/log")
