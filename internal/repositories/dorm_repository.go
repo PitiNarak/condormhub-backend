@@ -46,8 +46,8 @@ func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	return dorm, nil
 }
 
-func (d *DormRepository) Update(dorm *domain.Dorm) error {
-	existingDorm, err := d.GetByID(dorm.ID)
+func (d *DormRepository) Update(id uuid.UUID, dorm *domain.Dorm) error {
+	existingDorm, err := d.GetByID(id)
 	if err != nil {
 		return error_handler.NotFoundError(err, "Dorm not found")
 	}

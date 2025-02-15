@@ -26,8 +26,8 @@ func (s *DormService) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	return s.dormRepo.GetByID(id)
 }
 
-func (s *DormService) Update(dorm *domain.Dorm) error {
-	return s.dormRepo.Update(dorm)
+func (s *DormService) Update(id uuid.UUID, dorm *domain.Dorm) error {
+	return s.dormRepo.Update(id, dorm)
 }
 
 func (s *DormService) Delete(id uuid.UUID) error {
