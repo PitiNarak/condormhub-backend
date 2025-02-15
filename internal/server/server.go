@@ -45,6 +45,7 @@ type Server struct {
 	storage           *storage.Storage
 	jwtUtils          *utils.JWTUtils
 	authMiddleware    *middlewares.AuthMiddleware
+	dormHandler       ports.DormHandler
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -104,6 +105,10 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
+	dormRepository := repositories.NewDormRepository(db)
+	dormService := services.NewDormService(dormRepository)
+	dormHandler := handlers.NewDormHandler(dormService)
+
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
 		app:               app,
@@ -115,6 +120,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		storage:           storage,
 		jwtUtils:          jwtUtils,
 		authMiddleware:    authMiddleware,
+		dormHandler:       dormHandler,
 	}
 }
 
@@ -177,4 +183,12 @@ func (s *Server) initRoutes() {
 	authRoutes := s.app.Group("/auth")
 	authRoutes.Post("/register", s.userHandler.Register)
 	authRoutes.Post("/login", s.userHandler.Login)
+
+	// dorm
+	dormRoutes := s.app.Group("/dorms")
+	dormRoutes.Post("/", s.authMiddleware.Auth, s.dormHandler.Create)
+	dormRoutes.Get("/", s.authMiddleware.Auth, s.dormHandler.GetAll)
+	dormRoutes.Get("/:id", s.authMiddleware.Auth, s.dormHandler.GetByID)
+	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.dormHandler.Update)
+	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.dormHandler.Delete)
 }
