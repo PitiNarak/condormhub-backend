@@ -25,6 +25,12 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "Your request is invalid")
 	}
 
+	userIDstr := c.Locals("userID").(string)
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return error_handler.InternalServerError(err, "Can not parse UUID")
+	}
+
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
 		return error_handler.BadRequestError(err, "Your request body is invalid")
@@ -32,7 +38,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 
 	dorm := &domain.Dorm{
 		Name:        reqBody.Name,
-		OwnerID:     reqBody.OwnerID,
+		OwnerID:     userID,
 		Size:        reqBody.Size,
 		Bedrooms:    reqBody.Bedrooms,
 		Bathrooms:   reqBody.Bathrooms,
@@ -104,6 +110,12 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "Your request is invalid")
 	}
 
+	userIDstr := c.Locals("userID").(string)
+	userID, err := uuid.Parse(userIDstr)
+	if err != nil {
+		return error_handler.InternalServerError(err, "cannot parse uuid")
+	}
+
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
 		return error_handler.BadRequestError(err, "Your request body is invalid")
@@ -120,7 +132,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 
 	dorm := &domain.Dorm{
 		Name:        reqBody.Name,
-		OwnerID:     reqBody.OwnerID,
+		OwnerID:     userID,
 		Size:        reqBody.Size,
 		Bedrooms:    reqBody.Bedrooms,
 		Bathrooms:   reqBody.Bathrooms,
