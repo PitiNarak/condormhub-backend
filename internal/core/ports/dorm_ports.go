@@ -12,3 +12,11 @@ type DormRepository interface {
 	Update(dorm *domain.Dorm) error
 	Delete(id uuid.UUID) error
 }
+
+type DormService interface {
+	Create(dorm *domain.Dorm) error
+	GetAll() ([]domain.Dorm, error)
+	GetByID(id uuid.UUID) (*domain.Dorm, error)
+	Update(dorm *domain.Dorm) error
+	Delete(id uuid.UUID) error
+}
