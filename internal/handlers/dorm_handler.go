@@ -23,10 +23,12 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Summary Create a new dorm
 // @Description Add a new room to the database with the given details
 // @Tags dorms
+// @Security Bearer
 // @Accept json
 // @Produce json
 // @Param dorm body dto.DormRequestBody true "Dorm information"
 // @Success 201  {object}  http_response.HttpResponse{data=domain.Dorm} "Dorm successfully created"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 400  {object}  http_response.HttpResponse{data=nil} "Your request is invalid"
 // @Failure 500  {object}  http_response.HttpResponse{data=nil} "Failed to save dorm"
 // @Router /dorms [post]
@@ -70,10 +72,12 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Summary Delete a dorm
 // @Description Removes a dorm from the database based on the give ID
 // @Tags dorms
+// @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
 // @Success 200 {object} http_response.HttpResponse{data=nil} "Dorm successfully deleted"
 // @Failure 400 {object} http_response.HttpResponse{data=nil} "Incorrect UUID format"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} http_response.HttpResponse{data=nil} "Dorm not found"
 // @Failure 500 {object} http_response.HttpResponse{data=nil} "Failed to delete dorm"
 // @Router /dorms/{id} [delete]
@@ -106,8 +110,10 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms
 // @Description Retrieve a list of all dorms
 // @Tags dorms
+// @Security Bearer
 // @Produce json
 // @Success 200 {object} http_response.HttpResponse{data=[]domain.Dorm} "All dorms retrieved successfully"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 500 {object} http_response.HttpResponse{data=nil} "Failed to retrieve dorms"
 // @Router /dorms [get]
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
@@ -122,10 +128,12 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 // @Summary Get a dorm by ID
 // @Description Retrieve a specific dorm based on its ID
 // @Tags dorms
+// @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
 // @Success 200 {object} http_response.HttpResponse{data=domain.Dorm} "Dorm data successfully retrieved"
 // @Failure 400 {object} http_response.HttpResponse{data=nil} "Incorrect UUID format"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} http_response.HttpResponse{data=nil} "Dorm not found"
 // @Failure 500 {object} http_response.HttpResponse{data=nil} "Server failed to retrieve dorm"
 // @Router /dorms/{id} [get]
@@ -153,12 +161,14 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Summary Update an existing dorm
 // @Description Modifies an existing room's details based on the given ID
 // @Tags dorms
+// @Security Bearer
 // @Accept json
 // @Produce json
 // @Param id path string true "DormID"
 // @Param dorm body dto.DormRequestBody true "Updated Room Data"
 // @Success 200 {object} http_response.HttpResponse{data=domain.Dorm} "Dorm data updated successfully"
 // @Failure 400 {object} http_response.HttpResponse{data=nil} "Invalid Request"
+// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} http_response.HttpResponse{data=nil} "Dorm not found"
 // @Failure 500 {object} http_response.HttpResponse{data=nil} "Server failed to update dorm"
 // @Router /dorms/{id} [patch]

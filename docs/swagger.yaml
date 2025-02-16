@@ -422,6 +422,15 @@ paths:
                     $ref: '#/definitions/domain.Dorm'
                   type: array
               type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Failed to retrieve dorms
           schema:
@@ -431,6 +440,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Get all dorms
       tags:
       - dorms
@@ -466,6 +477,15 @@ paths:
                 data:
                   type: object
               type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Failed to save dorm
           schema:
@@ -475,6 +495,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Create a new dorm
       tags:
       - dorms
@@ -508,6 +530,15 @@ paths:
                 data:
                   type: object
               type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "404":
           description: Dorm not found
           schema:
@@ -526,6 +557,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Delete a dorm
       tags:
       - dorms
@@ -558,6 +591,15 @@ paths:
                 data:
                   type: object
               type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "404":
           description: Dorm not found
           schema:
@@ -576,6 +618,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Get a dorm by ID
       tags:
       - dorms
@@ -616,6 +660,15 @@ paths:
                 data:
                   type: object
               type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "404":
           description: Dorm not found
           schema:
@@ -634,6 +687,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Update an existing dorm
       tags:
       - dorms

@@ -217,6 +217,11 @@ const docTemplate = `{
         },
         "/dorms": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of all dorms",
                 "produces": [
                     "application/json"
@@ -247,6 +252,24 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "500": {
                         "description": "Failed to retrieve dorms",
                         "schema": {
@@ -268,6 +291,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Add a new room to the database with the given details",
                 "consumes": [
                     "application/json"
@@ -327,6 +355,24 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "500": {
                         "description": "Failed to save dorm",
                         "schema": {
@@ -350,6 +396,11 @@ const docTemplate = `{
         },
         "/dorms/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a specific dorm based on its ID",
                 "produces": [
                     "application/json"
@@ -388,6 +439,24 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
                         "schema": {
                             "allOf": [
                                 {
@@ -443,6 +512,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Removes a dorm from the database based on the give ID",
                 "produces": [
                     "application/json"
@@ -481,6 +555,24 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
                         "schema": {
                             "allOf": [
                                 {
@@ -536,6 +628,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Modifies an existing room's details based on the given ID",
                 "consumes": [
                     "application/json"
@@ -586,6 +683,24 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
                         "schema": {
                             "allOf": [
                                 {
