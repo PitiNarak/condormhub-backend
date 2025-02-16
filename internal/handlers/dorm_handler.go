@@ -67,6 +67,11 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return error_handler.InternalServerError(err, "Can not parse UUID")
 	}
 
+	_, err = d.dormService.GetByID(dormID)
+	if err != nil {
+		return err
+	}
+
 	err = d.dormService.Delete(dormID)
 	if err != nil {
 		return err
