@@ -19,6 +19,17 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 	return &DormHandler{dormService: service}
 }
 
+// Register godoc
+// @Summary Create a new dorm
+// @Description Add a new room to the database with the given details
+// @Tags dorms
+// @Accept json
+// @Produce json
+// @Param dorm body dto.DormRequestBody true "Dorm information"
+// @Success 201  {object}  http_response.HttpResponse{data=domain.Dorm} "Dorm successfully created"
+// @Failure 400  {object}  http_response.HttpResponse{data=nil} "Your request is invalid"
+// @Failure 500  {object}  http_response.HttpResponse{data=nil} "Failed to save dorm"
+// @Router /dorms [post]
 func (d *DormHandler) Create(c *fiber.Ctx) error {
 	reqBody := new(dto.DormRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
@@ -55,6 +66,17 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Dorm successfully created", dorm))
 }
 
+// Delete godoc
+// @Summary Delete a dorm
+// @Description Removes a dorm from the database based on the give ID
+// @Tags dorms
+// @Produce json
+// @Param id path string true "DormID"
+// @Success 200 {object} http_response.HttpResponse{data=nil} "Dorm successfully deleted"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "Incorrect UUID format"
+// @Failure 404 {object} http_response.HttpResponse{data=nil} "Dorm not found"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "Failed to delete dorm"
+// @Router /dorms/{id} [delete]
 func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -80,6 +102,14 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm successfully deleted", nil))
 }
 
+// GetAll godoc
+// @Summary Get all dorms
+// @Description Retrieve a list of all dorms
+// @Tags dorms
+// @Produce json
+// @Success 200 {object} http_response.HttpResponse{data=[]domain.Dorm} "All dorms retrieved successfully"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "Failed to retrieve dorms"
+// @Router /dorms [get]
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	dorms, err := d.dormService.GetAll()
 	if err != nil {
@@ -88,6 +118,17 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("All dorms retrieved successfully", dorms))
 }
 
+// GetByID godoc
+// @Summary Get a dorm by ID
+// @Description Retrieve a specific dorm based on its ID
+// @Tags dorms
+// @Produce json
+// @Param id path string true "DormID"
+// @Success 200 {object} http_response.HttpResponse{data=domain.Dorm} "Dorm data successfully retrieved"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "Incorrect UUID format"
+// @Failure 404 {object} http_response.HttpResponse{data=nil} "Dorm not found"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "Server failed to retrieve dorm"
+// @Router /dorms/{id} [get]
 func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -108,6 +149,19 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data successfully retrieved", dorm))
 }
 
+// Update godoc
+// @Summary Update an existing dorm
+// @Description Modifies an existing room's details based on the given ID
+// @Tags dorms
+// @Accept json
+// @Produce json
+// @Param id path string true "DormID"
+// @Param dorm body dto.DormRequestBody true "Updated Room Data"
+// @Success 200 {object} http_response.HttpResponse{data=domain.Dorm} "Dorm data updated successfully"
+// @Failure 400 {object} http_response.HttpResponse{data=nil} "Invalid Request"
+// @Failure 404 {object} http_response.HttpResponse{data=nil} "Dorm not found"
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "Server failed to update dorm"
+// @Router /dorms/{id} [patch]
 func (d *DormHandler) Update(c *fiber.Ctx) error {
 	id := c.Params("id")
 	reqBody := new(dto.DormRequestBody)
