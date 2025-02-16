@@ -1,4 +1,46 @@
 definitions:
+  domain.Dorm:
+    properties:
+      bathrooms:
+        minimum: 0
+        type: integer
+      bedrooms:
+        minimum: 0
+        type: integer
+      createAt:
+        type: string
+      description:
+        type: string
+      district:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      ownerId:
+        type: string
+      price:
+        type: number
+      province:
+        type: string
+      rating:
+        maximum: 5
+        minimum: 0
+        type: number
+      size:
+        type: number
+      updateAt:
+        type: string
+    required:
+    - bathrooms
+    - bedrooms
+    - district
+    - name
+    - ownerId
+    - price
+    - province
+    - size
+    type: object
   domain.Lifestyle:
     enum:
     - Active
@@ -133,6 +175,35 @@ definitions:
     required:
     - email
     - username
+    type: object
+  dto.DormRequestBody:
+    properties:
+      bathrooms:
+        minimum: 0
+        type: integer
+      bedrooms:
+        minimum: 0
+        type: integer
+      description:
+        type: string
+      district:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      province:
+        type: string
+      size:
+        type: number
+    required:
+    - bathrooms
+    - bedrooms
+    - district
+    - name
+    - price
+    - province
+    - size
     type: object
   dto.LoginRequestBody:
     properties:
@@ -334,6 +405,238 @@ paths:
       summary: Register new user
       tags:
       - auth
+  /dorms:
+    get:
+      description: Retrieve a list of all dorms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All dorms retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Dorm'
+                  type: array
+              type: object
+        "500":
+          description: Failed to retrieve dorms
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get all dorms
+      tags:
+      - dorms
+    post:
+      consumes:
+      - application/json
+      description: Add a new room to the database with the given details
+      parameters:
+      - description: Dorm information
+        in: body
+        name: dorm
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DormRequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Dorm successfully created
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Dorm'
+              type: object
+        "400":
+          description: Your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Failed to save dorm
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Create a new dorm
+      tags:
+      - dorms
+  /dorms/{id}:
+    delete:
+      description: Removes a dorm from the database based on the give ID
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dorm successfully deleted
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Incorrect UUID format
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Dorm not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Failed to delete dorm
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Delete a dorm
+      tags:
+      - dorms
+    get:
+      description: Retrieve a specific dorm based on its ID
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dorm data successfully retrieved
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Dorm'
+              type: object
+        "400":
+          description: Incorrect UUID format
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Dorm not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Server failed to retrieve dorm
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get a dorm by ID
+      tags:
+      - dorms
+    patch:
+      consumes:
+      - application/json
+      description: Modifies an existing room's details based on the given ID
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Room Data
+        in: body
+        name: dorm
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DormRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dorm data updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Dorm'
+              type: object
+        "400":
+          description: Invalid Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Dorm not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Server failed to update dorm
+          schema:
+            allOf:
+            - $ref: '#/definitions/http_response.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Update an existing dorm
+      tags:
+      - dorms
   /user:
     patch:
       consumes:
