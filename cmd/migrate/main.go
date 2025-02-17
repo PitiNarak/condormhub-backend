@@ -23,6 +23,7 @@ func main() {
 	if err := db.AutoMigrate(
 		&domain.SampleLog{},
 		&domain.User{},
+		&domain.Dorm{},
 	); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}
