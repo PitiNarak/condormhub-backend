@@ -217,11 +217,6 @@ const docTemplate = `{
         },
         "/dorms": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieve a list of all dorms",
                 "produces": [
                     "application/json"

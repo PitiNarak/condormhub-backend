@@ -110,7 +110,6 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms
 // @Description Retrieve a list of all dorms
 // @Tags dorms
-// @Security Bearer
 // @Produce json
 // @Success 200 {object} http_response.HttpResponse{data=[]domain.Dorm} "All dorms retrieved successfully"
 // @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"

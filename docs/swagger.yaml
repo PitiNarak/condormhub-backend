@@ -440,8 +440,6 @@ paths:
                 data:
                   type: object
               type: object
-      security:
-      - Bearer: []
       summary: Get all dorms
       tags:
       - dorms
