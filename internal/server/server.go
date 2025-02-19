@@ -15,6 +15,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -41,13 +42,14 @@ type Server struct {
 	greetingHandler   *handlers.GreetingHandler
 	sampleLogHandler  *handlers.SampleLogHandler
 	userHandler       ports.UserHandler
+	orderHandler      ports.OrderHandler
 	testUploadHandler *handlers.TestUploadHandler
 	storage           *storage.Storage
 	jwtUtils          *utils.JWTUtils
 	authMiddleware    *middlewares.AuthMiddleware
 }
 
-func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
+func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:       config.Name,
@@ -104,12 +106,17 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
+	orderRepo := repositories.NewOrderRepository(db)
+	orderService := services.NewOrderService(orderRepo, &stripeConfig)
+	orderHandler := handlers.NewOrderHandler(orderService)
+
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
 		app:               app,
 		greetingHandler:   handlers.NewGreetingHandler(),
 		sampleLogHandler:  handlers.NewSampleLogHandler(sampleLogRepository),
 		userHandler:       userHandler,
+		orderHandler:      orderHandler,
 		config:            config,
 		testUploadHandler: testUploadHandler,
 		storage:           storage,
@@ -177,4 +184,9 @@ func (s *Server) initRoutes() {
 	authRoutes := s.app.Group("/auth")
 	authRoutes.Post("/register", s.userHandler.Register)
 	authRoutes.Post("/login", s.userHandler.Login)
+
+	// order
+	orderRoutes := s.app.Group("/order")
+	orderRoutes.Post("/", s.authMiddleware.Auth, s.orderHandler.CreateOrder)
+	orderRoutes.Post("/webhook", s.orderHandler.Webhook)
 }
