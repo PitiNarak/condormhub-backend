@@ -21,7 +21,53 @@ func New(config Config) *Stripe {
 	return &Stripe{config: config}
 }
 
-func (s *Stripe) CreateSession(params *stripe.CheckoutSessionParams) (*stripe.CheckoutSession, error) {
+func (s *Stripe) createSession(params *stripe.CheckoutSessionParams) (*stripe.CheckoutSession, error) {
 	stripe.Key = s.config.StripeSecretKey
 	return session.New(params)
+}
+
+func (s *Stripe) CreateOneTimePaymentSession(productName string, price int64, customerEmail string) (*stripe.CheckoutSession, error) {
+	stripeParams := &stripe.CheckoutSessionParams{
+		Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
+		LineItems: []*stripe.CheckoutSessionLineItemParams{
+			{
+				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+					Currency: stripe.String("thb"),
+					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+						Name: stripe.String(productName),
+					},
+					UnitAmount: stripe.Int64(price * 100),
+				},
+				Quantity: stripe.Int64(1),
+			},
+		},
+		CustomerEmail: stripe.String(customerEmail),
+		SuccessURL:    stripe.String(s.config.StripeSuccessURL),
+		CancelURL:     stripe.String(s.config.StripeCancelURL),
+	}
+
+	return s.createSession(stripeParams)
+}
+
+func (s *Stripe) CreateSubscriptionSession(productName string, price int64, customerEmail string) (*stripe.CheckoutSession, error) {
+	stripeParams := &stripe.CheckoutSessionParams{
+		Mode: stripe.String(string(stripe.CheckoutSessionModeSubscription)),
+		LineItems: []*stripe.CheckoutSessionLineItemParams{
+			{
+				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+					Currency: stripe.String("thb"),
+					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+						Name: stripe.String(productName),
+					},
+					UnitAmount: stripe.Int64(price * 100),
+				},
+				Quantity: stripe.Int64(1),
+			},
+		},
+		CustomerEmail: stripe.String(customerEmail),
+		SuccessURL:    stripe.String(s.config.StripeSuccessURL),
+		CancelURL:     stripe.String(s.config.StripeCancelURL),
+	}
+
+	return s.createSession(stripeParams)
 }
