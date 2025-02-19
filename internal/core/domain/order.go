@@ -22,9 +22,10 @@ type Order struct {
 	Price         int64                        `json:"price"`
 	SessionStatus stripe.CheckoutSessionStatus `json:"status" gorm:"default:'open'"`
 	Type          OrderType                    `json:"type"`
-	LessorID      uuid.UUID                    `json:"-"`
+	LessorID      uuid.UUID                    `json:"lessorID"`
 	Lessor        *User                        `json:"lessor" gorm:"foreignKey:LessorID"`
-	LesseeID      uuid.UUID                    `json:"-"`
+	LesseeID      uuid.UUID                    `json:"lesseeID"`
 	Lessee        *User                        `json:"lessee" gorm:"foreignKey:LesseeID"`
-	DormitoryID   uuid.UUID                    `json:"dormitoryId"` // TODO: add property struct
+	DormitoryID   uuid.UUID                    `json:"dormitoryID"` // TODO: add dormitory struct
+	CheckoutUrl   string                       `json:"checkoutUrl"`
 }
