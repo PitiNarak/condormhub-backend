@@ -26,5 +26,5 @@ type Order struct {
 	Lessor        *User                        `json:"lessor" gorm:"foreignKey:LessorID"`
 	LesseeID      uuid.UUID                    `json:"-"`
 	Lessee        *User                        `json:"lessee" gorm:"foreignKey:LesseeID"`
-	PropertyID    uuid.UUID                    `json:"propertyId"` // TODO: add property struct
+	DormitoryID   uuid.UUID                    `json:"dormitoryId"` // TODO: add property struct
 }
