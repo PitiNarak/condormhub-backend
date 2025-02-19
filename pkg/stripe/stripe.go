@@ -8,6 +8,7 @@ import (
 type Config struct {
 	StripePublishableKey string `env:"PUBLISHABLE_KEY"`
 	StripeSecretKey      string `env:"SECRET_KEY"`
+	StripeSignatureKey   string `env:"SIGNATURE_KEY"`
 	StripeSuccessURL     string `env:"SUCCESS_URL"`
 	StripeCancelURL      string `env:"CANCEL_URL"`
 }
