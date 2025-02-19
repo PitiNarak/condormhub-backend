@@ -9,65 +9,42 @@ import (
 	stripePkg "github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v81"
-	"github.com/stripe/stripe-go/v81/checkout/session"
 )
 
 type OrderService struct {
-	orderRepo    ports.OrderRepository
-	stripeConfig *stripePkg.Config
+	orderRepo ports.OrderRepository
+	stripe    *stripePkg.Stripe
 }
 
-func NewOrderService(orderRepo ports.OrderRepository, config *stripePkg.Config) ports.OrderService {
-	return &OrderService{orderRepo: orderRepo, stripeConfig: config}
+func NewOrderService(orderRepo ports.OrderRepository, stripe *stripePkg.Stripe) ports.OrderService {
+	return &OrderService{orderRepo: orderRepo, stripe: stripe}
 }
 
-func (s *OrderService) CreateOrder(orderType domain.OrderType, dormitoryID uuid.UUID, lessorID uuid.UUID, lesseeID uuid.UUID) (*domain.Order, *error_handler.ErrorHandler) {
-	stripe.Key = s.stripeConfig.StripeSecretKey
+func (s *OrderService) CreateOrder(orderType domain.OrderType, dormitoryID uuid.UUID, lessorID uuid.UUID, lessee *domain.User) (*domain.Order, *string, *error_handler.ErrorHandler) {
 
 	// implement logic to get dorm name and price from dormitoryID
 	dormName := "TEMPORARY_DORM_NAME"
 	var price int64 = 4000
-
-	stripeParams := &stripe.CheckoutSessionParams{
-		Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
-		LineItems: []*stripe.CheckoutSessionLineItemParams{
-			{
-				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
-					Currency: stripe.String("thb"),
-					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
-						Name: stripe.String(dormName),
-					},
-					UnitAmount: stripe.Int64(price * 100),
-				},
-				Quantity: stripe.Int64(1),
-			},
-		},
-		CustomerEmail: stripe.String("sern.dev@gmail.com"),
-		SuccessURL:    stripe.String("https://example.com/success"),
-		CancelURL:     stripe.String("https://example.com/cancel"),
-	}
-
-	stripeSession, stripeErr := session.New(stripeParams)
-	if stripeErr != nil {
-		return nil, error_handler.InternalServerError(stripeErr, "Failed to create Stripe session")
+	session, err := s.stripe.CreateOneTimePaymentSession(dormName, price, lessee.Email)
+	if err != nil {
+		return nil, nil, error_handler.InternalServerError(err, "Failed to create Stripe session")
 	}
 
 	order := domain.Order{
 		Type:        orderType,
 		Price:       price,
-		SessionID:   stripeSession.ID,
+		SessionID:   session.ID,
 		DormitoryID: dormitoryID,
 		LessorID:    lessorID,
-		LesseeID:    lesseeID,
-		CheckoutUrl: stripeSession.URL,
+		LesseeID:    lessee.ID,
 	}
 
-	err := s.orderRepo.Create(&order)
-	if err != nil {
-		return nil, err
+	repoError := s.orderRepo.Create(&order)
+	if repoError != nil {
+		return nil, nil, repoError
 	}
 
-	return &order, nil
+	return &order, &session.URL, nil
 }
 
 func (s *OrderService) UpdateOrderStatus(event stripe.Event) *error_handler.ErrorHandler {

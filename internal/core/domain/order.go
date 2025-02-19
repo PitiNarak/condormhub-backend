@@ -27,5 +27,4 @@ type Order struct {
 	LesseeID      uuid.UUID                    `json:"lesseeID"`
 	Lessee        *User                        `json:"lessee" gorm:"foreignKey:LesseeID"`
 	DormitoryID   uuid.UUID                    `json:"dormitoryID"` // TODO: add dormitory struct
-	CheckoutUrl   string                       `json:"checkoutUrl"`
 }

@@ -106,8 +106,9 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
+	stripe := stripe.New(stripeConfig)
 	orderRepo := repositories.NewOrderRepository(db)
-	orderService := services.NewOrderService(orderRepo, &stripeConfig)
+	orderService := services.NewOrderService(orderRepo, stripe)
 	orderHandler := handlers.NewOrderHandler(orderService, &stripeConfig)
 
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)

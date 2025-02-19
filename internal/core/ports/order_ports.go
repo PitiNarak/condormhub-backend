@@ -14,7 +14,7 @@ type OrderHandler interface {
 }
 
 type OrderService interface {
-	CreateOrder(orderType domain.OrderType, dormitoryID uuid.UUID, lessorID uuid.UUID, lesseeID uuid.UUID) (*domain.Order, *error_handler.ErrorHandler)
+	CreateOrder(orderType domain.OrderType, dormitoryID uuid.UUID, lessorID uuid.UUID, lessee *domain.User) (*domain.Order, *string, *error_handler.ErrorHandler)
 	UpdateOrderStatus(event stripe.Event) *error_handler.ErrorHandler
 }
 

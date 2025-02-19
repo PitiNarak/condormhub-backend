@@ -21,17 +21,21 @@ func NewOrderHandler(orderService ports.OrderService, stripeConfig *stripe.Confi
 }
 
 func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
-	var reqBody *dto.OrderBody
+	var reqBody *dto.OrderRequestBody
 	if err := c.BodyParser(&reqBody); err != nil {
 		return error_handler.BadRequestError(err, "Failed to parse request body")
 	}
 
-	order, err := h.orderService.CreateOrder(domain.InsuranceOrder, reqBody.DormitoryID, reqBody.LessorID, reqBody.LesseeID)
+	user := c.Locals("user").(*domain.User)
+	order, url, err := h.orderService.CreateOrder(domain.InsuranceOrder, reqBody.DormitoryID, reqBody.LessorID, user)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Order created successfully", order))
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Order created successfully", dto.CreateOrderResponseBody{
+		Order:       *order,
+		CheckoutUrl: *url,
+	}))
 }
 
 func (h *OrderHandler) Webhook(c *fiber.Ctx) error {
