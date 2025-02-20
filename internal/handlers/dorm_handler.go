@@ -127,7 +127,6 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 // @Summary Get a dorm by ID
 // @Description Retrieve a specific dorm based on its ID
 // @Tags dorms
-// @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
 // @Success 200 {object} http_response.HttpResponse{data=domain.Dorm} "Dorm data successfully retrieved"

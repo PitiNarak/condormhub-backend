@@ -616,8 +616,6 @@ paths:
                 data:
                   type: object
               type: object
-      security:
-      - Bearer: []
       summary: Get a dorm by ID
       tags:
       - dorms

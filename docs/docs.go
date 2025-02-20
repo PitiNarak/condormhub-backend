@@ -391,11 +391,6 @@ const docTemplate = `{
         },
         "/dorms/{id}": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieve a specific dorm based on its ID",
                 "produces": [
                     "application/json"
