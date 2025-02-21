@@ -32,7 +32,7 @@ func (d *DormRepository) Delete(id uuid.UUID) error {
 
 func (d *DormRepository) GetAll() ([]domain.Dorm, error) {
 	var dorms []domain.Dorm
-	if err := d.db.Find(&dorms).Error; err != nil {
+	if err := d.db.Preload("Owner").Find(&dorms).Error; err != nil {
 		return nil, error_handler.InternalServerError(err, "Failed to retrieve dorms")
 	}
 	return dorms, nil
@@ -40,7 +40,7 @@ func (d *DormRepository) GetAll() ([]domain.Dorm, error) {
 
 func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	dorm := new(domain.Dorm)
-	if err := d.db.First(dorm, id).Error; err != nil {
+	if err := d.db.Preload("Owner").First(dorm, id).Error; err != nil {
 		return nil, error_handler.NotFoundError(err, "Dorm not found")
 	}
 	return dorm, nil

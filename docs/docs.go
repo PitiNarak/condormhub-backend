@@ -1327,6 +1327,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "owner": {
+                    "$ref": "#/definitions/domain.User"
+                },
                 "ownerId": {
                     "type": "string"
                 },

@@ -33,6 +33,8 @@ definitions:
         type: string
       name:
         type: string
+      owner:
+        $ref: '#/definitions/domain.User'
       ownerId:
         type: string
       price:

@@ -69,7 +69,12 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Dorm successfully created", dorm))
+	res, err := d.dormService.GetByID(dorm.ID)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Dorm successfully created", res))
 }
 
 // Delete godoc
@@ -222,5 +227,10 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data updated successfully", dorm))
+	res, err := d.dormService.GetByID(dormID)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data updated successfully", res))
 }
