@@ -202,12 +202,17 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	}
 
 	dorm := &domain.Dorm{
-		Name:        reqBody.Name,
-		OwnerID:     userID,
-		Size:        reqBody.Size,
-		Bedrooms:    reqBody.Bedrooms,
-		Bathrooms:   reqBody.Bathrooms,
-		Address:     reqBody.Address,
+		Name:      reqBody.Name,
+		OwnerID:   userID,
+		Size:      reqBody.Size,
+		Bedrooms:  reqBody.Bedrooms,
+		Bathrooms: reqBody.Bathrooms,
+		Address: domain.Address{
+			District:    reqBody.Address.District,
+			Subdistrict: reqBody.Address.Subdistrict,
+			Province:    reqBody.Address.Province,
+			Zipcode:     reqBody.Address.Zipcode,
+		},
 		Price:       reqBody.Price,
 		Description: reqBody.Description,
 	}
