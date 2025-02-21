@@ -1269,19 +1269,44 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Address": {
+            "type": "object",
+            "required": [
+                "district",
+                "province",
+                "subdistrict",
+                "zipcode"
+            ],
+            "properties": {
+                "district": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "subdistrict": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Dorm": {
             "type": "object",
             "required": [
+                "address",
                 "bathrooms",
                 "bedrooms",
-                "district",
                 "name",
                 "ownerId",
                 "price",
-                "province",
                 "size"
             ],
             "properties": {
+                "address": {
+                    "$ref": "#/definitions/domain.Address"
+                },
                 "bathrooms": {
                     "type": "integer",
                     "minimum": 0
@@ -1296,9 +1321,6 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "district": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
@@ -1310,9 +1332,6 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
-                },
-                "province": {
-                    "type": "string"
                 },
                 "rating": {
                     "type": "number",
@@ -1492,15 +1511,37 @@ const docTemplate = `{
         "dto.DormRequestBody": {
             "type": "object",
             "required": [
+                "address",
                 "bathrooms",
                 "bedrooms",
-                "district",
                 "name",
                 "price",
-                "province",
                 "size"
             ],
             "properties": {
+                "address": {
+                    "type": "object",
+                    "required": [
+                        "district",
+                        "province",
+                        "subdistrict",
+                        "zipcode"
+                    ],
+                    "properties": {
+                        "district": {
+                            "type": "string"
+                        },
+                        "province": {
+                            "type": "string"
+                        },
+                        "subdistrict": {
+                            "type": "string"
+                        },
+                        "zipcode": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "bathrooms": {
                     "type": "integer",
                     "minimum": 0
@@ -1512,17 +1553,11 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "district": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
-                },
-                "province": {
-                    "type": "string"
                 },
                 "size": {
                     "type": "number"

@@ -50,13 +50,17 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 	}
 
 	dorm := &domain.Dorm{
-		Name:        reqBody.Name,
-		OwnerID:     userID,
-		Size:        reqBody.Size,
-		Bedrooms:    reqBody.Bedrooms,
-		Bathrooms:   reqBody.Bathrooms,
-		Province:    reqBody.Province,
-		District:    reqBody.District,
+		Name:      reqBody.Name,
+		OwnerID:   userID,
+		Size:      reqBody.Size,
+		Bedrooms:  reqBody.Bedrooms,
+		Bathrooms: reqBody.Bathrooms,
+		Address: domain.Address{
+			District:    reqBody.Address.District,
+			Subdistrict: reqBody.Address.Subdistrict,
+			Province:    reqBody.Address.Province,
+			Zipcode:     reqBody.Address.Zipcode,
+		},
 		Price:       reqBody.Price,
 		Description: reqBody.Description,
 	}
@@ -203,8 +207,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		Size:        reqBody.Size,
 		Bedrooms:    reqBody.Bedrooms,
 		Bathrooms:   reqBody.Bathrooms,
-		Province:    reqBody.Province,
-		District:    reqBody.District,
+		Address:     reqBody.Address,
 		Price:       reqBody.Price,
 		Description: reqBody.Description,
 	}

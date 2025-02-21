@@ -1,6 +1,24 @@
 definitions:
+  domain.Address:
+    properties:
+      district:
+        type: string
+      province:
+        type: string
+      subdistrict:
+        type: string
+      zipcode:
+        type: string
+    required:
+    - district
+    - province
+    - subdistrict
+    - zipcode
+    type: object
   domain.Dorm:
     properties:
+      address:
+        $ref: '#/definitions/domain.Address'
       bathrooms:
         minimum: 0
         type: integer
@@ -11,8 +29,6 @@ definitions:
         type: string
       description:
         type: string
-      district:
-        type: string
       id:
         type: string
       name:
@@ -21,8 +37,6 @@ definitions:
         type: string
       price:
         type: number
-      province:
-        type: string
       rating:
         maximum: 5
         minimum: 0
@@ -32,13 +46,12 @@ definitions:
       updateAt:
         type: string
     required:
+    - address
     - bathrooms
     - bedrooms
-    - district
     - name
     - ownerId
     - price
-    - province
     - size
     type: object
   domain.Lifestyle:
@@ -178,6 +191,22 @@ definitions:
     type: object
   dto.DormRequestBody:
     properties:
+      address:
+        properties:
+          district:
+            type: string
+          province:
+            type: string
+          subdistrict:
+            type: string
+          zipcode:
+            type: string
+        required:
+        - district
+        - province
+        - subdistrict
+        - zipcode
+        type: object
       bathrooms:
         minimum: 0
         type: integer
@@ -186,23 +215,18 @@ definitions:
         type: integer
       description:
         type: string
-      district:
-        type: string
       name:
         type: string
       price:
         type: number
-      province:
-        type: string
       size:
         type: number
     required:
+    - address
     - bathrooms
     - bedrooms
-    - district
     - name
     - price
-    - province
     - size
     type: object
   dto.LoginRequestBody:
