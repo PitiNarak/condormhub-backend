@@ -17,7 +17,7 @@ type TransactionService struct {
 	stripe    *stripePkg.Stripe
 }
 
-func NewOrderService(tsxRepo ports.TransactionRepository, orderRepo ports.OrderRepository, stripe *stripePkg.Stripe) ports.TransactionService {
+func NewTransactionService(tsxRepo ports.TransactionRepository, orderRepo ports.OrderRepository, stripe *stripePkg.Stripe) ports.TransactionService {
 	return &TransactionService{
 		tsxRepo:   tsxRepo,
 		orderRepo: orderRepo,

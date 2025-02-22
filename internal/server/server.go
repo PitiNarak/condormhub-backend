@@ -37,12 +37,12 @@ type Config struct {
 }
 
 type Server struct {
-	app               *fiber.App
-	config            Config
-	greetingHandler   *handlers.GreetingHandler
-	sampleLogHandler  *handlers.SampleLogHandler
-	userHandler       ports.UserHandler
-	orderHandler      ports.OrderHandler
+	app              *fiber.App
+	config           Config
+	greetingHandler  *handlers.GreetingHandler
+	sampleLogHandler *handlers.SampleLogHandler
+	userHandler      ports.UserHandler
+	// orderHandler      ports.TransactionHandler
 	testUploadHandler *handlers.TestUploadHandler
 	storage           *storage.Storage
 	jwtUtils          *utils.JWTUtils
@@ -107,21 +107,22 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	userHandler := handlers.NewUserHandler(userService)
 	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
-	stripe := stripe.New(stripeConfig)
-	orderRepo := repositories.NewOrderRepository(db)
-	orderService := services.NewOrderService(orderRepo, stripe)
-	orderHandler := handlers.NewOrderHandler(orderService, &stripeConfig)
+	// stripe := stripe.New(stripeConfig)
 	dormRepository := repositories.NewDormRepository(db)
 	dormService := services.NewDormService(dormRepository)
 	dormHandler := handlers.NewDormHandler(dormService)
 
+	// tsxRepo := repositories.NewTransactionRepository(db)
+	// tsxService := services.NewTransactionService(tsxRepo, dormRepository, stripe)
+	// tsxHandler := handlers.NewTransactionHandler(tsxService, &stripeConfig)
+
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
-		app:               app,
-		greetingHandler:   handlers.NewGreetingHandler(),
-		sampleLogHandler:  handlers.NewSampleLogHandler(sampleLogRepository),
-		userHandler:       userHandler,
-		orderHandler:      orderHandler,
+		app:              app,
+		greetingHandler:  handlers.NewGreetingHandler(),
+		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
+		userHandler:      userHandler,
+		// orderHandler:      tsxHandler,
 		config:            config,
 		testUploadHandler: testUploadHandler,
 		storage:           storage,
@@ -192,9 +193,9 @@ func (s *Server) initRoutes() {
 	authRoutes.Post("/login", s.userHandler.Login)
 
 	// order
-	orderRoutes := s.app.Group("/order")
-	orderRoutes.Post("/", s.authMiddleware.Auth, s.orderHandler.CreateOrder)
-	orderRoutes.Post("/webhook", s.orderHandler.Webhook)
+	// orderRoutes := s.app.Group("/order")
+	// orderRoutes.Post("/", s.authMiddleware.Auth, s.orderHandler.CreateOrder)
+	// orderRoutes.Post("/webhook", s.orderHandler.Webhook)
 	// dorm
 	dormRoutes := s.app.Group("/dorms")
 	dormRoutes.Post("/", s.authMiddleware.Auth, s.dormHandler.Create)

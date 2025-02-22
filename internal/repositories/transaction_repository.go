@@ -11,7 +11,7 @@ type TransactionRepository struct {
 	db *gorm.DB
 }
 
-func NewOrderRepository(db *gorm.DB) ports.TransactionRepository {
+func NewTransactionRepository(db *gorm.DB) ports.TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
