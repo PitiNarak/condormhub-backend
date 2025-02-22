@@ -1,6 +1,8 @@
 package ports
 
 import (
+	"context"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/gofiber/fiber/v2"
@@ -17,13 +19,13 @@ type UserRepository interface {
 }
 
 type UserService interface {
-	Create(user *domain.User) (string, error)
+	Create(ctx context.Context, user *domain.User) (string, string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
-	Login(email string, password string) (*domain.User, string, error)
-	VerifyUser(token string) (string, *domain.User, error)
-	ResetPasswordCreate(email string) error
-	ResetPassword(token string, password string) (*domain.User, error)
+	Login(context.Context, string, string) (*domain.User, string, string, error)
+	VerifyUser(context.Context, string) (string, *domain.User, error)
+	ResetPasswordCreate(context.Context, string) error
+	ResetPassword(context.Context, string, string) (*domain.User, error)
 	DeleteAccount(userID uuid.UUID) error
 }
 

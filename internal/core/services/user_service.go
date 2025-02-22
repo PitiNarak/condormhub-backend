@@ -1,8 +1,8 @@
 package services
 
 import (
+	"context"
 	"errors"
-	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -23,45 +23,46 @@ func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServi
 	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils}
 }
 
-func (s *UserService) Create(user *domain.User) (string, error) {
+func (s *UserService) Create(ctx context.Context, user *domain.User) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	user.Password = string(hashedPassword)
 	create_err := s.userRepo.Create(user)
 	if create_err != nil {
-		return "", create_err
+		return "", "", create_err
 	}
 
-	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
-	if generateErr != nil {
-		return "", generateErr
-	}
-
-	err = s.emailService.SendVerificationEmail(user.Email, user.Username, token)
+	accessToken, refreshToken, err := s.jwtUtils.GenerateKeyPair(ctx, user.ID)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return token, nil
+
+	verifyToken, err := s.jwtUtils.GenerateVerificationToken(ctx, user.ID)
+	if err != nil {
+		return "", "", err
+	}
+
+	err = s.emailService.SendVerificationEmail(user.Email, user.Username, verifyToken)
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, refreshToken, nil
 }
 
-func (s *UserService) VerifyUser(token string) (string, *domain.User, error) {
-	claims, err := s.jwtUtils.DecodeJWT(token)
+func (s *UserService) VerifyUser(ctx context.Context, token string) (string, *domain.User, error) {
+	userID, err := s.jwtUtils.VerifyResetPasswordToken(ctx, token)
 	if err != nil {
-		return "", nil, errorHandler.UnauthorizedError(err, "invalid token")
+		return "", nil, err
 	}
 
-	if claims.GetExp() < time.Now().Unix() {
+	if userID == uuid.Nil {
 		return "", nil, errorHandler.UnauthorizedError(errors.New("token expired"), "token is expired")
 	}
 
-	userID, err := uuid.Parse(claims.GetUserID())
-	if err != nil {
-		return "", nil, errorHandler.UnauthorizedError(err, "invalid user ID")
-	}
 	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil || user.ID == uuid.Nil {
 		return "", nil, err
@@ -73,25 +74,27 @@ func (s *UserService) VerifyUser(token string) (string, *domain.User, error) {
 	if updateErr != nil {
 		return "", nil, updateErr
 	}
+
+	s.jwtUtils.DeleteResetPasswordToken(ctx, userID)
 	return token, user, nil
 }
 
-func (s *UserService) Login(email string, password string) (*domain.User, string, error) {
+func (s *UserService) Login(ctx context.Context, email string, password string) (*domain.User, string, string, error) {
 	user, getErr := s.userRepo.GetUserByEmail(email)
 	if getErr != nil {
-		return nil, "", getErr
+		return nil, "", "", getErr
 	}
 
 	compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if compareErr != nil {
-		return nil, "", errorHandler.UnauthorizedError(compareErr, "invalid email or password.")
+		return nil, "", "", errorHandler.UnauthorizedError(compareErr, "invalid email or password.")
 	}
-	token, generateErr := s.jwtUtils.GenerateJWT(user.ID)
+	accessToken, refreshToken, generateErr := s.jwtUtils.GenerateKeyPair(ctx, user.ID)
 	if generateErr != nil {
-		return nil, "", generateErr
+		return nil, "", "", generateErr
 	}
 
-	return user, token, nil
+	return user, accessToken, refreshToken, nil
 
 }
 
@@ -152,7 +155,7 @@ func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
 	return user, nil
 }
 
-func (s *UserService) ResetPasswordCreate(email string) error {
+func (s *UserService) ResetPasswordCreate(ctx context.Context, email string) error {
 	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
 		return err
@@ -161,7 +164,7 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	if err != nil {
 		return errorHandler.InternalServerError(err, "cannot sent email")
 	}
-	token, err := s.jwtUtils.GenerateJWT(userID)
+	token, err := s.jwtUtils.GenerateResetPasswordToken(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -172,29 +175,34 @@ func (s *UserService) ResetPasswordCreate(email string) error {
 	return nil
 }
 
-func (s *UserService) ResetPassword(token string, password string) (*domain.User, error) {
-	claims, err := s.jwtUtils.DecodeJWT(token)
+func (s *UserService) ResetPassword(ctx context.Context, token string, password string) (*domain.User, error) {
+	userID, err := s.jwtUtils.VerifyResetPasswordToken(ctx, token)
 	if err != nil {
 		return new(domain.User), err
 	}
-	userIDstr := claims.UserID
-	userID, err := uuid.Parse(userIDstr)
-	if err != nil {
-		return new(domain.User), errorHandler.InternalServerError(err, "cannot parse uuid")
+
+	if userID == uuid.Nil {
+		return new(domain.User), errorHandler.UnauthorizedError(errors.New("token expired"), "token is expired")
 	}
+
 	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
 		return new(domain.User), err
 	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return new(domain.User), errorHandler.BadRequestError(err, "password cannot be hashed")
 	}
+
 	user.Password = string(hashedPassword)
+
 	err = s.userRepo.UpdateUser(user)
 	if err != nil {
 		return new(domain.User), err
 	}
+
+	s.jwtUtils.DeleteResetPasswordToken(ctx, userID)
 	return user, nil
 }
 
