@@ -47,6 +47,7 @@ type Server struct {
 	storage           *storage.Storage
 	jwtUtils          *utils.JWTUtils
 	authMiddleware    *middlewares.AuthMiddleware
+	dormHandler       ports.DormHandler
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, db *gorm.DB) *Server {
@@ -110,6 +111,9 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	orderRepo := repositories.NewOrderRepository(db)
 	orderService := services.NewOrderService(orderRepo, stripe)
 	orderHandler := handlers.NewOrderHandler(orderService, &stripeConfig)
+	dormRepository := repositories.NewDormRepository(db)
+	dormService := services.NewDormService(dormRepository)
+	dormHandler := handlers.NewDormHandler(dormService)
 
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
@@ -123,6 +127,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		storage:           storage,
 		jwtUtils:          jwtUtils,
 		authMiddleware:    authMiddleware,
+		dormHandler:       dormHandler,
 	}
 }
 
@@ -190,4 +195,11 @@ func (s *Server) initRoutes() {
 	orderRoutes := s.app.Group("/order")
 	orderRoutes.Post("/", s.authMiddleware.Auth, s.orderHandler.CreateOrder)
 	orderRoutes.Post("/webhook", s.orderHandler.Webhook)
+	// dorm
+	dormRoutes := s.app.Group("/dorms")
+	dormRoutes.Post("/", s.authMiddleware.Auth, s.dormHandler.Create)
+	dormRoutes.Get("/", s.dormHandler.GetAll)
+	dormRoutes.Get("/:id", s.dormHandler.GetByID)
+	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.dormHandler.Update)
+	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.dormHandler.Delete)
 }
