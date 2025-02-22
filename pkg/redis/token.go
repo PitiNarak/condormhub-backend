@@ -52,7 +52,7 @@ func (r *Redis) GetRefreshToken(ctx context.Context, userId uuid.UUID) (string, 
 	return refreshToken, nil
 }
 
-func (r *Redis) DeleteToken(ctx context.Context, userId uuid.UUID) error {
+func (r *Redis) DeleteAccessTokenAndRefreshToken(ctx context.Context, userId uuid.UUID) error {
 	accessTokenKey := fmt.Sprintf("access_token:%s", userId)
 
 	err := r.client.Del(ctx, accessTokenKey).Err()
