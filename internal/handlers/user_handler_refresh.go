@@ -9,18 +9,18 @@ import (
 )
 
 // Login godoc
-// @Summary Login user
-// @Description Login user
+// @Summary Refresh user
+// @Description Refresh user
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param user body dto.LoginRequestBody true "user information"
-// @Success 200 {object} http_response.HttpResponse{data=dto.TokenResponseBody} "user successfully logged in"
+// @Param user body dto.RefreshTokenRequestBody true "user information"
+// @Success 200 {object} http_response.HttpResponse{data=dto.TokenResponseBody} "user successfully Refresh in"
 // @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid"
 // @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} http_response.HttpResponse{data=nil} "user not found"
-// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot login user"
-// @Router /auth/login [post]
+// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot refresh user"
+// @Router /auth/refresh [post]
 func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
 	var req dto.RefreshTokenRequestBody
 	err := c.BodyParser(&req)
