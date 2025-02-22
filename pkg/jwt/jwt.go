@@ -212,6 +212,14 @@ func (j *JWTUtils) VerifyResetPasswordToken(ctx context.Context, resetToken stri
 	return userID, nil
 }
 
+func (j *JWTUtils) DeleteResetPasswordToken(ctx context.Context, userID uuid.UUID) error {
+	err := j.Redis.DeleteResetToken(ctx, userID)
+	if err != nil {
+		return errorHandler.InternalServerError(err, "cannot delete reset token")
+	}
+	return nil
+}
+
 func (j *JWTUtils) GenerateVerificationToken(ctx context.Context, userID uuid.UUID) (string, error) {
 	verificationToken, err := j.GenerateJWT(userID, 24)
 	if err != nil {
@@ -245,4 +253,12 @@ func (j *JWTUtils) VerifyVerificationToken(ctx context.Context, verificationToke
 	}
 
 	return userID, nil
+}
+
+func (j *JWTUtils) DeleteVerificationToken(ctx context.Context, userID uuid.UUID) error {
+	err := j.Redis.DeleteVerificationToken(ctx, userID)
+	if err != nil {
+		return errorHandler.InternalServerError(err, "cannot delete verification token")
+	}
+	return nil
 }
