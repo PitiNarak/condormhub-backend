@@ -1,6 +1,9 @@
 package error_handler
 
 import (
+	"errors"
+
+	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
@@ -54,4 +57,29 @@ func ConflictError(err error, msg string) *ErrorHandler {
 
 func UnprocessableEntityError(err error, msg string) *ErrorHandler {
 	return NewErrorHandler(fiber.StatusUnprocessableEntity, msg, err)
+}
+
+func Handler(c *fiber.Ctx, err error) error {
+	code := fiber.StatusInternalServerError
+	message := "Internal Server Error"
+
+	var e *ErrorHandler
+	if errors.As(err, &e) {
+		code = e.Code
+		message = e.Message
+	} else {
+		message = err.Error()
+	}
+
+	if e != nil && e.Err != nil {
+		log.Errorf("Error: %v, Code: %d, Message: %s", e.Error(), code, message)
+	} else {
+		log.Errorf("Error: %s, Code: %d, Message: %s", err.Error(), code, message)
+	}
+
+	return c.Status(code).JSON(&http_response.HttpResponse{
+		Success: false,
+		Message: message,
+		Data:    nil,
+	})
 }
