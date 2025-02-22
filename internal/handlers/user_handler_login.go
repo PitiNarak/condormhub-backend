@@ -32,13 +32,14 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	user, token, loginErr := h.userService.Login(req.Email, req.Password)
+	user, accessToken, refreshToken, loginErr := h.userService.Login(c.Context(), req.Email, req.Password)
 	if loginErr != nil {
 		return loginErr
 	}
 
 	response := dto.TokenWithUserInformationResponseBody{
-		AccessToken:     token,
+		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: *user,
 	}
 

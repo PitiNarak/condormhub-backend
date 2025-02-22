@@ -15,5 +15,6 @@ type LoginRequestBody struct {
 
 type TokenWithUserInformationResponseBody struct {
 	AccessToken     string      `json:"accessToken"`
+	RefreshToken    string      `json:"refreshToken"`
 	UserInformation domain.User `json:"userInformation"`
 }
