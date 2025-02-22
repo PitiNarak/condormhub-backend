@@ -40,6 +40,8 @@ type Server struct {
 	jwtUtils       *utils.JWTUtils
 	authMiddleware *middlewares.AuthMiddleware
 	handler        handler
+	service        service
+	repository     repository
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -114,6 +116,15 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 			user:          userHandler,
 			exampleUpload: testUploadHandler,
 			dorm:          dormHandler,
+		},
+		service: service{
+			email: emailService,
+			user:  userService,
+			dorm:  dormService,
+		},
+		repository: repository{
+			user: userRepository,
+			dorm: dormRepository,
 		},
 	}
 }
