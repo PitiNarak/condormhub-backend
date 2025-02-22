@@ -130,3 +130,38 @@ func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (strin
 
 	return accessToken, nil
 }
+
+func (j *JWTUtils) GenerateResetPasswordToken(ctx context.Context, userID uuid.UUID) (string, error) {
+	resetToken, err := j.GenerateJWT(userID, j.Config.AccessTokenExpiration)
+	if err != nil {
+		return "", err
+	}
+	err = j.Redis.SetResetToken(ctx, userID, resetToken, time.Hour*24)
+	if err != nil {
+		return "", errorHandler.InternalServerError(err, "cannot set reset token")
+	}
+	return resetToken, nil
+}
+
+func (j *JWTUtils) VerifyResetPasswordToken(ctx context.Context, resetToken string) (uuid.UUID, error) {
+	claims, err := j.DecodeJWT(resetToken)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	userID, err := uuid.Parse(claims.UserID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+	}
+
+	token, err := j.Redis.GetResetToken(ctx, userID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get reset token")
+	}
+
+	if token != resetToken {
+		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid reset token")
+	}
+
+	return userID, nil
+}
