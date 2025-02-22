@@ -108,6 +108,52 @@ func (j *JWTUtils) GenerateKeyPair(ctx context.Context, userID uuid.UUID) (strin
 	return accessToken, refreshToken, nil
 }
 
+func (j *JWTUtils) VerifyAccessToken(ctx context.Context, accessToken string) (uuid.UUID, error) {
+	claims, err := j.DecodeJWT(accessToken)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	userID, err := uuid.Parse(claims.UserID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+	}
+
+	token, err := j.Redis.GetAccessToken(ctx, userID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get access token")
+	}
+
+	if token != accessToken {
+		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid access token")
+	}
+
+	return userID, nil
+}
+
+func (j *JWTUtils) VerifyRefreshToken(ctx context.Context, refreshToken string) (uuid.UUID, error) {
+	claims, err := j.DecodeJWT(refreshToken)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	userID, err := uuid.Parse(claims.UserID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+	}
+
+	token, err := j.Redis.GetRefreshToken(ctx, userID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get refresh token")
+	}
+
+	if token != refreshToken {
+		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid refresh token")
+	}
+
+	return userID, nil
+}
+
 func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (string, error) {
 	claims, err := j.DecodeJWT(refreshToken)
 	if err != nil {
