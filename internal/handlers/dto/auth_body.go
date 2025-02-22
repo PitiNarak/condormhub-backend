@@ -13,8 +13,17 @@ type LoginRequestBody struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type RefreshTokenRequestBody struct {
+	RefreshToken string `json:"refreshToken" validate:"required"`
+}
+
 type TokenWithUserInformationResponseBody struct {
 	AccessToken     string      `json:"accessToken"`
 	RefreshToken    string      `json:"refreshToken"`
 	UserInformation domain.User `json:"userInformation"`
+}
+
+type TokenResponseBody struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }
