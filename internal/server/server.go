@@ -159,17 +159,7 @@ func (s *Server) initRoutes() {
 	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
 	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
 
-	// user
-	userRoutes := s.app.Group("/user")
-
-	userRoutes.Get("/me", s.authMiddleware.Auth, s.userHandler.GetUserInfo)
-
-	userRoutes.Post("/verify", s.userHandler.VerifyEmail)
-	userRoutes.Post("/resetpassword", s.userHandler.ResetPasswordCreate)
-	userRoutes.Post("/newpassword", s.authMiddleware.Auth, s.userHandler.ResetPassword)
-	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
-	userRoutes.Delete("/", s.authMiddleware.Auth, s.userHandler.DeleteAccount)
-
+	s.initUserRoutes()
 	s.initAuthRoutes()
 	s.initDormRoutes()
 }

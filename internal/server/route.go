@@ -15,3 +15,15 @@ func (s *Server) initAuthRoutes() {
 	authRoutes.Post("/register", s.userHandler.Register)
 	authRoutes.Post("/login", s.userHandler.Login)
 }
+
+func (s *Server) initUserRoutes() {
+	userRoutes := s.app.Group("/user")
+
+	userRoutes.Get("/me", s.authMiddleware.Auth, s.userHandler.GetUserInfo)
+
+	userRoutes.Post("/verify", s.userHandler.VerifyEmail)
+	userRoutes.Post("/resetpassword", s.userHandler.ResetPasswordCreate)
+	userRoutes.Post("/newpassword", s.authMiddleware.Auth, s.userHandler.ResetPassword)
+	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
+	userRoutes.Delete("/", s.authMiddleware.Auth, s.userHandler.DeleteAccount)
+}
