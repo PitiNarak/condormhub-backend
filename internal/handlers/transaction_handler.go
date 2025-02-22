@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
@@ -12,28 +11,26 @@ import (
 )
 
 type TransactionHandler struct {
-	orderService ports.TransactionService
+	tsxService   ports.TransactionService
 	stripeConfig *stripe.Config
 }
 
 func NewTransactionHandler(orderService ports.TransactionService, stripeConfig *stripe.Config) ports.TransactionHandler {
-	return &TransactionHandler{orderService: orderService, stripeConfig: stripeConfig}
+	return &TransactionHandler{tsxService: orderService, stripeConfig: stripeConfig}
 }
 
-func (h *TransactionHandler) CreateOrder(c *fiber.Ctx) error {
-	var reqBody *dto.OrderRequestBody
+func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
+	var reqBody *dto.TransactionRequestBody
 	if err := c.BodyParser(&reqBody); err != nil {
 		return error_handler.BadRequestError(err, "Failed to parse request body")
 	}
 
-	user := c.Locals("user").(*domain.User)
-	order, url, err := h.orderService.CreateOrder(domain.InsuranceOrderType, reqBody.DormitoryID, user)
+	_, url, err := h.tsxService.CreateTransaction(reqBody.OrderID)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Order created successfully", dto.CreateOrderResponseBody{
-		Order:       *order,
+	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Order created successfully", dto.CreateTransactionResponseBody{
 		CheckoutUrl: *url,
 	}))
 }
@@ -48,7 +45,7 @@ func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
 		return error_handler.BadRequestError(err, "Failed to construct event")
 	}
 
-	updateErr := h.orderService.UpdateOrderStatus(event)
+	updateErr := h.tsxService.UpdateTransactionStatus(event)
 	if updateErr != nil {
 		return err
 	}
