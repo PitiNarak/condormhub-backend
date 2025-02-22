@@ -37,10 +37,11 @@ type Config struct {
 }
 
 type Server struct {
-	app             *fiber.App
-	config          Config
-	greetingHandler *handlers.GreetingHandler
-	userHandler     ports.UserHandler
+	app              *fiber.App
+	config           Config
+	greetingHandler  *handlers.GreetingHandler
+	sampleLogHandler *handlers.SampleLogHandler
+	userHandler      ports.UserHandler
 	// orderHandler      ports.TransactionHandler
 	testUploadHandler *handlers.TestUploadHandler
 	storage           *storage.Storage
@@ -98,6 +99,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	jwtUtils := utils.NewJWTUtils(&jwtConfig)
 	storage := storage.NewStorage(storageConfig)
 
+	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 
 	emailService := services.NewEmailService(&smtpConfig, jwtUtils)
@@ -116,9 +118,10 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
-		app:             app,
-		greetingHandler: handlers.NewGreetingHandler(),
-		userHandler:     userHandler,
+		app:              app,
+		greetingHandler:  handlers.NewGreetingHandler(),
+		sampleLogHandler: handlers.NewSampleLogHandler(sampleLogRepository),
+		userHandler:      userHandler,
 		// orderHandler:      tsxHandler,
 		config:            config,
 		testUploadHandler: testUploadHandler,
@@ -166,6 +169,13 @@ func (s *Server) initRoutes() {
 	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
 	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
 	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
+
+	// sample log
+	sampleLogRoutes := s.app.Group("/log")
+	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
+	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
+	sampleLogRoutes.Delete("/:id", s.sampleLogHandler.Delete)
+	sampleLogRoutes.Patch("/:id", s.sampleLogHandler.EditMessage)
 
 	// user
 	userRoutes := s.app.Group("/user")
