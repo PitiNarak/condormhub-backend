@@ -91,6 +91,17 @@ func (r *Redis) GetVerificationToken(ctx context.Context, userID uuid.UUID) (str
 	return token, nil
 }
 
+func (r *Redis) DeleteVerificationToken(ctx context.Context, userID uuid.UUID) error {
+	verificationTokenKey := fmt.Sprintf("verification_token:%s", userID)
+
+	err := r.client.Del(ctx, verificationTokenKey).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *Redis) SetResetToken(ctx context.Context, userID uuid.UUID, token string, ttl time.Duration) error {
 	resetTokenKey := fmt.Sprintf("reset_token:%s", userID)
 
@@ -111,4 +122,15 @@ func (r *Redis) GetResetToken(ctx context.Context, userID uuid.UUID) (string, er
 	}
 
 	return token, nil
+}
+
+func (r *Redis) DeleteResetToken(ctx context.Context, userID uuid.UUID) error {
+	resetTokenKey := fmt.Sprintf("reset_token:%s", userID)
+
+	err := r.client.Del(ctx, resetTokenKey).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
