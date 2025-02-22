@@ -75,7 +75,10 @@ func (s *UserService) VerifyUser(ctx context.Context, token string) (string, *do
 		return "", nil, updateErr
 	}
 
-	s.jwtUtils.DeleteVerificationToken(ctx, userID)
+	if err := s.jwtUtils.DeleteVerificationToken(ctx, userID); err != nil {
+		return "", nil, err
+	}
+
 	return token, user, nil
 }
 
@@ -210,7 +213,10 @@ func (s *UserService) ResetPassword(ctx context.Context, token string, password 
 		return new(domain.User), err
 	}
 
-	s.jwtUtils.DeleteResetPasswordToken(ctx, userID)
+	if err := s.jwtUtils.DeleteResetPasswordToken(ctx, userID); err != nil {
+		return new(domain.User), err
+	}
+
 	return user, nil
 }
 
