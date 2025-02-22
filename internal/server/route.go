@@ -2,20 +2,23 @@ package server
 
 import "github.com/gofiber/swagger"
 
-func (s *Server) initDormRoutes() {
-	// dorm
-	dormRoutes := s.app.Group("/dorms")
-	dormRoutes.Post("/", s.authMiddleware.Auth, s.handler.dorm.Create)
-	dormRoutes.Get("/", s.handler.dorm.GetAll)
-	dormRoutes.Get("/:id", s.handler.dorm.GetByID)
-	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.dorm.Update)
-	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.dorm.Delete)
+func (s *Server) initRoutes() {
+	// greeting
+	s.app.Get("/", s.handler.greeting.Greeting)
+
+	// swagger
+	s.app.Get("/swagger/*", swagger.HandlerDefault)
+
+	s.initExampleUploadRoutes()
+	s.initUserRoutes()
+	s.initAuthRoutes()
+	s.initDormRoutes()
 }
 
-func (s *Server) initAuthRoutes() {
-	authRoutes := s.app.Group("/auth")
-	authRoutes.Post("/register", s.handler.user.Register)
-	authRoutes.Post("/login", s.handler.user.Login)
+func (s *Server) initExampleUploadRoutes() {
+	s.app.Post("/upload/public", s.handler.exampleUpload.UploadToPublicBucketHandler)
+	s.app.Post("/upload/private", s.handler.exampleUpload.UploadToPrivateBucketHandler)
+	s.app.Get("/signedurl/*", s.handler.exampleUpload.GetSignedUrlHandler)
 }
 
 func (s *Server) initUserRoutes() {
@@ -30,21 +33,18 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
 }
 
-func (s *Server) initExampleUploadRoutes() {
-	s.app.Post("/upload/public", s.handler.exampleUpload.UploadToPublicBucketHandler)
-	s.app.Post("/upload/private", s.handler.exampleUpload.UploadToPrivateBucketHandler)
-	s.app.Get("/signedurl/*", s.handler.exampleUpload.GetSignedUrlHandler)
+func (s *Server) initAuthRoutes() {
+	authRoutes := s.app.Group("/auth")
+	authRoutes.Post("/register", s.handler.user.Register)
+	authRoutes.Post("/login", s.handler.user.Login)
 }
 
-func (s *Server) initRoutes() {
-	// greeting
-	s.app.Get("/", s.handler.greeting.Greeting)
-
-	// swagger
-	s.app.Get("/swagger/*", swagger.HandlerDefault)
-
-	s.initExampleUploadRoutes()
-	s.initUserRoutes()
-	s.initAuthRoutes()
-	s.initDormRoutes()
+func (s *Server) initDormRoutes() {
+	// dorm
+	dormRoutes := s.app.Group("/dorms")
+	dormRoutes.Post("/", s.authMiddleware.Auth, s.handler.dorm.Create)
+	dormRoutes.Get("/", s.handler.dorm.GetAll)
+	dormRoutes.Get("/:id", s.handler.dorm.GetByID)
+	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.dorm.Update)
+	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.dorm.Delete)
 }
