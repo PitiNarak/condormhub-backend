@@ -202,7 +202,7 @@ func (j *JWTUtils) VerifyResetPasswordToken(ctx context.Context, resetToken stri
 
 	token, err := j.Redis.GetResetToken(ctx, userID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get reset token")
+		return uuid.Nil, errorHandler.UnauthorizedError(err, "token is expired or token is used")
 	}
 
 	if token != resetToken {
@@ -245,7 +245,7 @@ func (j *JWTUtils) VerifyVerificationToken(ctx context.Context, verificationToke
 
 	token, err := j.Redis.GetVerificationToken(ctx, userID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get verification token")
+		return uuid.Nil, errorHandler.UnauthorizedError(err, "token is expired or token is used")
 	}
 
 	if token != verificationToken {
