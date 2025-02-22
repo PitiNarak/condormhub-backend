@@ -9,7 +9,6 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
-	"github.com/PitiNarak/condormhub-backend/internal/repositories"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
@@ -38,6 +37,7 @@ type Server struct {
 	storage        *storage.Storage
 	jwtUtils       *utils.JWTUtils
 	authMiddleware *middlewares.AuthMiddleware
+	db             *gorm.DB
 	smtpConfig     *services.SMTPConfig
 	handler        *handler
 	service        *service
@@ -78,43 +78,25 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		},
 	})
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     config.CorsAllowOrigins,
-		AllowMethods:     config.CorsAllowMethods,
-		AllowHeaders:     config.CorsAllowHeaders,
-		AllowCredentials: config.CorsAllowCredentials,
-	}))
-
-	app.Use(requestid.New())
-	app.Use(logger.New(logger.Config{
-		DisableColors: true,
-	}))
-
 	jwtUtils := utils.NewJWTUtils(&jwtConfig)
 	storage := storage.NewStorage(storageConfig)
 
-	userRepository := repositories.NewUserRepo(db)
-
-	dormRepository := repositories.NewDormRepository(db)
-
-	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
-		app:            app,
-		config:         config,
-		storage:        storage,
-		jwtUtils:       jwtUtils,
-		authMiddleware: authMiddleware,
-		smtpConfig:     &smtpConfig,
-		repository: &repository{
-			user: userRepository,
-			dorm: dormRepository,
-		},
+		app:        app,
+		config:     config,
+		storage:    storage,
+		jwtUtils:   jwtUtils,
+		db:         db,
+		smtpConfig: &smtpConfig,
 	}
 }
 
 func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 
-	// init routes
+	s.initServerMiddleware()
+	s.initRepository()
+	s.initAuthMiddleware()
+
 	s.initService()
 	s.initHandler()
 	s.initRoutes()
@@ -138,4 +120,23 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 	<-ctx.Done()
 
 	log.Println("Server is shutting down...")
+}
+
+func (s *Server) initServerMiddleware() {
+	s.app.Use(cors.New(cors.Config{
+		AllowOrigins:     s.config.CorsAllowOrigins,
+		AllowMethods:     s.config.CorsAllowMethods,
+		AllowHeaders:     s.config.CorsAllowHeaders,
+		AllowCredentials: s.config.CorsAllowCredentials,
+	}))
+
+	s.app.Use(requestid.New())
+	s.app.Use(logger.New(logger.Config{
+		DisableColors: true,
+	}))
+
+}
+
+func (s *Server) initAuthMiddleware() {
+	s.authMiddleware = middlewares.NewAuthMiddleware(s.jwtUtils, s.repository.user)
 }
