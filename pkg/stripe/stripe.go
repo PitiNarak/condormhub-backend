@@ -60,6 +60,9 @@ func (s *Stripe) CreateSubscriptionSession(productName string, price int64, cust
 						Name: stripe.String(productName),
 					},
 					UnitAmount: stripe.Int64(price * 100),
+					Recurring: &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
+						Interval: stripe.String(string(stripe.PriceRecurringIntervalMonth)),
+					},
 				},
 				Quantity: stripe.Int64(1),
 			},
