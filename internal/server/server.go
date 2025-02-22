@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
@@ -35,15 +34,12 @@ type Config struct {
 }
 
 type Server struct {
-	app               *fiber.App
-	config            Config
-	greetingHandler   *handlers.GreetingHandler
-	userHandler       ports.UserHandler
-	testUploadHandler *handlers.TestUploadHandler
-	storage           *storage.Storage
-	jwtUtils          *utils.JWTUtils
-	authMiddleware    *middlewares.AuthMiddleware
-	dormHandler       ports.DormHandler
+	app            *fiber.App
+	config         Config
+	storage        *storage.Storage
+	jwtUtils       *utils.JWTUtils
+	authMiddleware *middlewares.AuthMiddleware
+	handler        Handler
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -108,15 +104,17 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
-		app:               app,
-		greetingHandler:   handlers.NewGreetingHandler(),
-		userHandler:       userHandler,
-		config:            config,
-		testUploadHandler: testUploadHandler,
-		storage:           storage,
-		jwtUtils:          jwtUtils,
-		authMiddleware:    authMiddleware,
-		dormHandler:       dormHandler,
+		app:            app,
+		config:         config,
+		storage:        storage,
+		jwtUtils:       jwtUtils,
+		authMiddleware: authMiddleware,
+		handler: Handler{
+			greeting:      handlers.NewGreetingHandler(),
+			user:          userHandler,
+			exampleUpload: testUploadHandler,
+			dorm:          dormHandler,
+		},
 	}
 }
 
