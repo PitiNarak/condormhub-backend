@@ -4,8 +4,8 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -35,18 +35,18 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 func (d *DormHandler) Create(c *fiber.Ctx) error {
 	reqBody := new(dto.DormRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
-		return error_handler.BadRequestError(err, "Your request is invalid")
+		return errorHandler.BadRequestError(err, "Your request is invalid")
 	}
 
 	userIDstr := c.Locals("userID").(string)
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return error_handler.InternalServerError(err, "Can not parse UUID")
+		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
-		return error_handler.BadRequestError(err, "Your request body is invalid")
+		return errorHandler.BadRequestError(err, "Your request body is invalid")
 	}
 
 	dorm := &domain.Dorm{
@@ -74,7 +74,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Dorm successfully created", res))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Dorm successfully created", res))
 }
 
 // Delete godoc
@@ -94,12 +94,12 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := uuid.Validate(id); err != nil {
-		return error_handler.BadRequestError(err, "Incorrect UUID format")
+		return errorHandler.BadRequestError(err, "Incorrect UUID format")
 	}
 
 	dormID, err := uuid.Parse(id)
 	if err != nil {
-		return error_handler.InternalServerError(err, "Can not parse UUID")
+		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
 
 	_, err = d.dormService.GetByID(dormID)
@@ -112,7 +112,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm successfully deleted", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm successfully deleted", nil))
 }
 
 // GetAll godoc
@@ -129,7 +129,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("All dorms retrieved successfully", dorms))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("All dorms retrieved successfully", dorms))
 }
 
 // GetByID godoc
@@ -148,12 +148,12 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := uuid.Validate(id); err != nil {
-		return error_handler.BadRequestError(err, "Incorrect UUID format")
+		return errorHandler.BadRequestError(err, "Incorrect UUID format")
 	}
 
 	dormID, err := uuid.Parse(id)
 	if err != nil {
-		return error_handler.InternalServerError(err, "Can not parse UUID")
+		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
 
 	dorm, err := d.dormService.GetByID(dormID)
@@ -161,7 +161,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data successfully retrieved", dorm))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data successfully retrieved", dorm))
 }
 
 // Update godoc
@@ -183,27 +183,27 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	id := c.Params("id")
 	reqBody := new(dto.DormRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
-		return error_handler.BadRequestError(err, "Your request is invalid")
+		return errorHandler.BadRequestError(err, "Your request is invalid")
 	}
 
 	userIDstr := c.Locals("userID").(string)
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return error_handler.InternalServerError(err, "cannot parse uuid")
+		return errorHandler.InternalServerError(err, "cannot parse uuid")
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
-		return error_handler.BadRequestError(err, "Your request body is invalid")
+		return errorHandler.BadRequestError(err, "Your request body is invalid")
 	}
 
 	if err := uuid.Validate(id); err != nil {
-		return error_handler.BadRequestError(err, "Incorrect UUID format")
+		return errorHandler.BadRequestError(err, "Incorrect UUID format")
 	}
 
 	dormID, err := uuid.Parse(id)
 	if err != nil {
-		return error_handler.InternalServerError(err, "Can not parse UUID")
+		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
 
 	dorm := &domain.Dorm{
@@ -232,5 +232,5 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data updated successfully", res))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data updated successfully", res))
 }

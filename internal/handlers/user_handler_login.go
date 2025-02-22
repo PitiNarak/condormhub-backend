@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -25,11 +25,11 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	var req dto.LoginRequestBody
 	err := c.BodyParser(&req)
 	if err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+		return errorHandler.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 	if err := validate.Struct(req); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 
 	user, token, loginErr := h.userService.Login(req.Email, req.Password)
@@ -42,5 +42,5 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		UserInformation: *user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Login successful", response))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Login successful", response))
 }
