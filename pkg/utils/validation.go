@@ -7,7 +7,7 @@ import (
 
 // Custom validator for Lifestyles
 func ValidateLifestyles(fl validator.FieldLevel) bool {
-	lifestyles, ok := fl.Field().Interface().([]domain.Lifestyle)
+	lifestyles, ok := fl.Field().Interface().(domain.LifestyleArray)
 	if !ok {
 		return false
 	}
