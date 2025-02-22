@@ -23,6 +23,7 @@ type UserService interface {
 	GetUserByEmail(email string) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(context.Context, string, string) (*domain.User, string, string, error)
+	RefreshToken(ctx context.Context, refreshToken string) (string, string, error)
 	VerifyUser(context.Context, string) (string, *domain.User, error)
 	ResetPasswordCreate(context.Context, string) error
 	ResetPassword(context.Context, string, string) (*domain.User, error)
