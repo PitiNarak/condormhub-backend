@@ -49,11 +49,11 @@ func (j *JWTClaims) GetIat() int64 {
 	return j.IssuedAt.Unix()
 }
 
-func (j *JWTUtils) GenerateJWT(userID uuid.UUID) (string, error) {
+func (j *JWTUtils) GenerateJWT(userID uuid.UUID, exp int) (string, error) {
 	claims := &JWTClaims{
 		UserID: userID.String(),
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(j.Config.AccessTokenExpiration))),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(exp))),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
@@ -87,7 +87,7 @@ func (j *JWTUtils) DecodeJWT(inputToken string) (*JWTClaims, error) {
 }
 
 func (j *JWTUtils) GenerateKeyPair(ctx context.Context, userID uuid.UUID) (string, string, error) {
-	accessToken, err := j.GenerateJWT(userID)
+	accessToken, err := j.GenerateJWT(userID, j.Config.AccessTokenExpiration)
 	if err != nil {
 		return "", "", err
 	}
@@ -96,7 +96,7 @@ func (j *JWTUtils) GenerateKeyPair(ctx context.Context, userID uuid.UUID) (strin
 		return "", "", errorHandler.InternalServerError(err, "cannot set access token")
 	}
 
-	refreshToken, err := j.GenerateJWT(userID)
+	refreshToken, err := j.GenerateJWT(userID, j.Config.RefreshTokenExpiration)
 	if err != nil {
 		return "", "", err
 	}
@@ -119,7 +119,7 @@ func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (strin
 		return "", errorHandler.InternalServerError(err, "cannot parse user id")
 	}
 
-	accessToken, err := j.GenerateJWT(userID)
+	accessToken, err := j.GenerateJWT(userID, j.Config.AccessTokenExpiration)
 	if err != nil {
 		return "", err
 	}
