@@ -6,7 +6,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -49,6 +49,6 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", userInfo))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("user successfully updated account information", userInfo))
 
 }

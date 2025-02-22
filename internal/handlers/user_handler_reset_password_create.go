@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,5 +36,5 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is sent to user successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is sent to user successfully", nil))
 }

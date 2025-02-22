@@ -3,7 +3,7 @@ package errorHandler
 import (
 	"errors"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
@@ -77,7 +77,7 @@ func Handler(c *fiber.Ctx, err error) error {
 		log.Errorf("Error: %s, Code: %d, Message: %s", err.Error(), code, message)
 	}
 
-	return c.Status(code).JSON(&http_response.HttpResponse{
+	return c.Status(code).JSON(&httpResponse.HttpResponse{
 		Success: false,
 		Message: message,
 		Data:    nil,

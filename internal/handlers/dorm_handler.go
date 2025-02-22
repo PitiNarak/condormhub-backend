@@ -5,7 +5,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -74,7 +74,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("Dorm successfully created", res))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Dorm successfully created", res))
 }
 
 // Delete godoc
@@ -112,7 +112,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm successfully deleted", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm successfully deleted", nil))
 }
 
 // GetAll godoc
@@ -129,7 +129,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("All dorms retrieved successfully", dorms))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("All dorms retrieved successfully", dorms))
 }
 
 // GetByID godoc
@@ -161,7 +161,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data successfully retrieved", dorm))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data successfully retrieved", dorm))
 }
 
 // Update godoc
@@ -232,5 +232,5 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Dorm data updated successfully", res))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data updated successfully", res))
 }

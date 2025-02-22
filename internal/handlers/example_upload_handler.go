@@ -7,7 +7,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -49,7 +49,7 @@ func (e *TestUploadHandler) UploadToPrivateBucketHandler(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("upload success", http_response.SuccessResponse("upload success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)})))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", httpResponse.SuccessResponse("upload success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)})))
 }
 
 func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
@@ -76,7 +76,7 @@ func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
 
 	url := e.storage.GetPublicUrl(fileKey)
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("upload success", fiber.Map{"url": url}))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", fiber.Map{"url": url}))
 }
 
 func (e *TestUploadHandler) GetSignedUrlHandler(c *fiber.Ctx) error {
@@ -86,5 +86,5 @@ func (e *TestUploadHandler) GetSignedUrlHandler(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("get signed url success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get signed url success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
 }

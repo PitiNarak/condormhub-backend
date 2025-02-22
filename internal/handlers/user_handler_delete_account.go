@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -30,5 +30,5 @@ func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("account successfully deleted", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("account successfully deleted", nil))
 }
