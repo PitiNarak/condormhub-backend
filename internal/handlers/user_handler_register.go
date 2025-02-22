@@ -16,9 +16,9 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.RegisterRequestBody true "user information"
-// @Success 201  {object}  http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "user successfully registered"
-// @Failure 400  {object}  http_response.HttpResponse{data=nil} "your request is invalid"
-// @Failure 500  {object}  http_response.HttpResponse{data=nil} "system cannot register user"
+// @Success 201  {object}  httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "user successfully registered"
+// @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "your request is invalid"
+// @Failure 500  {object}  httpResponse.HttpResponse{data=nil} "system cannot register user"
 // @Router /auth/register [post]
 func (h *UserHandler) Register(c *fiber.Ctx) error {
 	user := new(dto.RegisterRequestBody)

@@ -15,11 +15,11 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.RefreshTokenRequestBody true "user information"
-// @Success 200 {object} http_response.HttpResponse{data=dto.TokenResponseBody} "user successfully Refresh in"
-// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid"
-// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
-// @Failure 404 {object} http_response.HttpResponse{data=nil} "user not found"
-// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot refresh user"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenResponseBody} "user successfully Refresh in"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil} "user not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot refresh user"
 // @Router /auth/refresh [post]
 func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
 	var req dto.RefreshTokenRequestBody
