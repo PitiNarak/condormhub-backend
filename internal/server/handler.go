@@ -5,7 +5,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 )
 
-type Handler struct {
+type handler struct {
 	greeting      *handlers.GreetingHandler
 	user          ports.UserHandler
 	exampleUpload *handlers.TestUploadHandler

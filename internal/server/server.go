@@ -39,7 +39,7 @@ type Server struct {
 	storage        *storage.Storage
 	jwtUtils       *utils.JWTUtils
 	authMiddleware *middlewares.AuthMiddleware
-	handler        Handler
+	handler        handler
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -109,7 +109,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		storage:        storage,
 		jwtUtils:       jwtUtils,
 		authMiddleware: authMiddleware,
-		handler: Handler{
+		handler: handler{
 			greeting:      handlers.NewGreetingHandler(),
 			user:          userHandler,
 			exampleUpload: testUploadHandler,
