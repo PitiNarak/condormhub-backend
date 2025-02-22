@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
 	"github.com/PitiNarak/condormhub-backend/internal/repositories"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
@@ -97,12 +96,9 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 	emailService := services.NewEmailService(&smtpConfig, jwtUtils)
 	userService := services.NewUserService(userRepository, emailService, jwtUtils)
-	userHandler := handlers.NewUserHandler(userService)
-	testUploadHandler := handlers.NewTestUploadHandler(storage)
 
 	dormRepository := repositories.NewDormRepository(db)
 	dormService := services.NewDormService(dormRepository)
-	dormHandler := handlers.NewDormHandler(dormService)
 
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
@@ -111,12 +107,6 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		storage:        storage,
 		jwtUtils:       jwtUtils,
 		authMiddleware: authMiddleware,
-		handler: &handler{
-			greeting:      handlers.NewGreetingHandler(),
-			user:          userHandler,
-			exampleUpload: testUploadHandler,
-			dorm:          dormHandler,
-		},
 		service: &service{
 			email: emailService,
 			user:  userService,
@@ -132,6 +122,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig utils.JWTConfig) {
 
 	// init routes
+	s.initHandler()
 	s.initRoutes()
 
 	// start server
