@@ -7,17 +7,17 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
+	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
 type AuthMiddleware struct {
-	jwtUtils *utils.JWTUtils
+	jwtUtils *jwt.JWTUtils
 	userRepo ports.UserRepository
 }
 
-func NewAuthMiddleware(jwtUtils *utils.JWTUtils, userRepo ports.UserRepository) *AuthMiddleware {
+func NewAuthMiddleware(jwtUtils *jwt.JWTUtils, userRepo ports.UserRepository) *AuthMiddleware {
 	return &AuthMiddleware{
 		jwtUtils: jwtUtils,
 		userRepo: userRepo,

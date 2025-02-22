@@ -8,7 +8,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
+	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -16,10 +16,10 @@ import (
 type UserService struct {
 	userRepo     ports.UserRepository
 	emailService ports.EmailServicePort
-	jwtUtils     *utils.JWTUtils
+	jwtUtils     *jwt.JWTUtils
 }
 
-func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *utils.JWTUtils) ports.UserService {
+func NewUserService(UserRepo ports.UserRepository, EmailService ports.EmailServicePort, jwtUtils *jwt.JWTUtils) ports.UserService {
 	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils}
 }
 
