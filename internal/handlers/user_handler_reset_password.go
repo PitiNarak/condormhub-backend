@@ -38,7 +38,7 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	user, err := h.userService.ResetPassword(tokenString, body.Password)
+	user, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
 	if err != nil {
 		return err
 	}

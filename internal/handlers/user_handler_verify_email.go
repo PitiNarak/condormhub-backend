@@ -31,7 +31,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
-	accessToken, user, err := h.userService.VerifyUser(body.Token)
+	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}

@@ -54,7 +54,7 @@ func (s *UserService) Create(ctx context.Context, user *domain.User) (string, st
 }
 
 func (s *UserService) VerifyUser(ctx context.Context, token string) (string, *domain.User, error) {
-	userID, err := s.jwtUtils.VerifyResetPasswordToken(ctx, token)
+	userID, err := s.jwtUtils.VerifyVerificationToken(ctx, token)
 	if err != nil {
 		return "", nil, err
 	}
@@ -75,7 +75,7 @@ func (s *UserService) VerifyUser(ctx context.Context, token string) (string, *do
 		return "", nil, updateErr
 	}
 
-	s.jwtUtils.DeleteResetPasswordToken(ctx, userID)
+	s.jwtUtils.DeleteVerificationToken(ctx, userID)
 	return token, user, nil
 }
 
