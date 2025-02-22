@@ -33,6 +33,7 @@ type UserService interface {
 type UserHandler interface {
 	Register(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
+	RefreshToken(c *fiber.Ctx) error
 	UpdateUserInformation(c *fiber.Ctx) error
 	VerifyEmail(c *fiber.Ctx) error
 	ResetPasswordCreate(c *fiber.Ctx) error
