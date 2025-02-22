@@ -4,7 +4,9 @@ import "github.com/google/uuid"
 
 type LeasingHistory struct {
 	ID       uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	DormID   uuid.UUID `json:"dormId" `
-	LesseeID uuid.UUID `json:"lesseeId" `
+	DormID   uuid.UUID `json:"dorm_id" gorm:"type:uuid;not null"`
+	Dorm     Dorm      `json:"dorm" gorm:"foreignKey:DormID;references:ID"`
+	LesseeID uuid.UUID `json:"lessee_id" gorm:"type:uuid;not null"`
+	Lessee   User      `json:"lessee" gorm:"foreignKey:LesseeID;references:ID"`
 	Orders   []Order   `json:"orders" gorm:"foreignKey:LeasingHistoryID"`
 }
