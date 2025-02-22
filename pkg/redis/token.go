@@ -8,10 +8,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *Redis) SetAccessToken(ctx context.Context, userId uuid.UUID, accessToken string) error {
+func (r *Redis) SetAccessToken(ctx context.Context, userId uuid.UUID, accessToken string, ttl time.Duration) error {
 	accessTokenKey := fmt.Sprintf("access_token:%s", userId)
 
-	err := r.client.Set(ctx, accessTokenKey, accessToken, time.Hour*time.Duration(r.config.AccessTokenExpireHrs)).Err()
+	err := r.client.Set(ctx, accessTokenKey, accessToken, ttl).Err()
 	if err != nil {
 		return err
 	}
@@ -19,10 +19,10 @@ func (r *Redis) SetAccessToken(ctx context.Context, userId uuid.UUID, accessToke
 	return nil
 }
 
-func (r *Redis) SetRefreshToken(ctx context.Context, userId uuid.UUID, refreshToken string) error {
+func (r *Redis) SetRefreshToken(ctx context.Context, userId uuid.UUID, refreshToken string, ttl time.Duration) error {
 	refreshTokenKey := fmt.Sprintf("refresh_token:%s", userId)
 
-	err := r.client.Set(ctx, refreshTokenKey, refreshToken, time.Hour*time.Duration(r.config.RefreshTokenExpireHrs)).Err()
+	err := r.client.Set(ctx, refreshTokenKey, refreshToken, ttl).Err()
 	if err != nil {
 		return err
 	}
