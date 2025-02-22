@@ -33,5 +33,5 @@ type LeasingHistory struct {
 	ID       uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	DormID   uuid.UUID `json:"ownerId" `
 	LeeseeID uuid.UUID `json:"leeseeId" `
-	Orders   []Order   `gorm:"foreignKey:LeasingHistoryID"`
+	Orders   []Order   `json:"orders" gorm:"foreignKey:LeasingHistoryID"`
 }
