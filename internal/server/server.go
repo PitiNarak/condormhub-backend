@@ -154,11 +154,7 @@ func (s *Server) initRoutes() {
 	// swagger
 	s.app.Get("/swagger/*", swagger.HandlerDefault)
 
-	// upload file example
-	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
-	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
-	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
-
+	s.initExampleUploadRoutes()
 	s.initUserRoutes()
 	s.initAuthRoutes()
 	s.initDormRoutes()

@@ -27,3 +27,9 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.userHandler.DeleteAccount)
 }
+
+func (s *Server) initExampleUploadRoutes() {
+	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
+	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
+	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
+}
