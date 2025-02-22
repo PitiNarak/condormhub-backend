@@ -12,6 +12,7 @@ type LeasingHistoryRepository interface {
 	Create(LeasingHistory *domain.LeasingHistory) error
 	Update(LeasingHistory *domain.LeasingHistory) error
 	Delete(id uuid.UUID) error
+	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
 	GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error)
 	GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error)
 	AddNewOrder(id uuid.UUID, order *domain.Order) error

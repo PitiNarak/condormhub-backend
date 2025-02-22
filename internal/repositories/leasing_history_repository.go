@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -18,8 +19,20 @@ func NewLeasingHistoryRepository(db *gorm.DB) ports.LeasingHistoryRepository {
 }
 
 func (d *LeasingHistoryRepository) Create(LeasingHistory *domain.LeasingHistory) error {
+	if err := d.db.Create(LeasingHistory).Error; err != nil {
+		return error_handler.InternalServerError(err, "failed to save leasing history to database")
+	}
 	return nil
 }
+
+func (d *LeasingHistoryRepository) GetByID(id uuid.UUID) (*domain.LeasingHistory, error) {
+	leasingHistory := new(domain.LeasingHistory)
+	if err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").First(leasingHistory, id).Error; err != nil {
+		return nil, error_handler.NotFoundError(err, "leasing history not found")
+	}
+	return leasingHistory, nil
+}
+
 func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory) error {
 	return nil
 }
