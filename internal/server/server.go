@@ -47,11 +47,12 @@ type Server struct {
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
-		AppName:       config.Name,
-		BodyLimit:     config.MaxBodyLimitMB * 1024 * 1024,
-		CaseSensitive: true,
-		JSONEncoder:   json.Marshal,
-		JSONDecoder:   json.Unmarshal,
+		AppName:               config.Name,
+		BodyLimit:             config.MaxBodyLimitMB * 1024 * 1024,
+		CaseSensitive:         true,
+		JSONEncoder:           json.Marshal,
+		JSONDecoder:           json.Unmarshal,
+		DisableStartupMessage: true,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
 			message := "Internal Server Error"
