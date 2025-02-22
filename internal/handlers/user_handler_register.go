@@ -3,8 +3,8 @@ package handlers
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,13 +24,13 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	user := new(dto.RegisterRequestBody)
 	err := c.BodyParser(&user)
 	if err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+		return errorHandler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(user); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 	gormUser := &domain.User{
 		Email:    user.Email,
@@ -48,6 +48,6 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		UserInformation: *gormUser,
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(http_response.SuccessResponse("user successfully registered", response))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("user successfully registered", response))
 
 }

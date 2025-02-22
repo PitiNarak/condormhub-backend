@@ -3,24 +3,18 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
-	"github.com/PitiNarak/condormhub-backend/internal/repositories"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/gofiber/swagger"
 	"gorm.io/gorm"
 )
 
@@ -36,6 +30,7 @@ type Config struct {
 }
 
 type Server struct {
+<<<<<<< HEAD
 	app                   *fiber.App
 	config                Config
 	greetingHandler       *handlers.GreetingHandler
@@ -47,57 +42,36 @@ type Server struct {
 	authMiddleware        *middlewares.AuthMiddleware
 	dormHandler           ports.DormHandler
 	leasingHistoryHandler ports.LeasingHistoryHandler
+=======
+	app            *fiber.App
+	config         Config
+	storage        *storage.Storage
+	jwtUtils       *utils.JWTUtils
+	authMiddleware *middlewares.AuthMiddleware
+	db             *gorm.DB
+	smtpConfig     *services.SMTPConfig
+	handler        *handler
+	service        *service
+	repository     *repository
+>>>>>>> dev
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
-		AppName:       config.Name,
-		BodyLimit:     config.MaxBodyLimitMB * 1024 * 1024,
-		CaseSensitive: true,
-		JSONEncoder:   json.Marshal,
-		JSONDecoder:   json.Unmarshal,
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			code := fiber.StatusInternalServerError
-			message := "Internal Server Error"
-
-			var e *error_handler.ErrorHandler
-			if errors.As(err, &e) {
-				code = e.Code
-				message = e.Message
-			} else {
-				message = err.Error()
-			}
-
-			if e != nil && e.Err != nil {
-				log.Printf("Error: %v, Code: %d, Message: %s", e.Error(), code, message)
-			} else {
-				log.Printf("Error: %s, Code: %d, Message: %s", err.Error(), code, message)
-			}
-
-			return c.Status(code).JSON(&http_response.HttpResponse{
-				Success: false,
-				Message: message,
-				Data:    nil,
-			})
-		},
+		AppName:               config.Name,
+		BodyLimit:             config.MaxBodyLimitMB * 1024 * 1024,
+		CaseSensitive:         true,
+		JSONEncoder:           json.Marshal,
+		JSONDecoder:           json.Unmarshal,
+		DisableStartupMessage: true,
+		ErrorHandler:          errorHandler.Handler,
 	})
-
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     config.CorsAllowOrigins,
-		AllowMethods:     config.CorsAllowMethods,
-		AllowHeaders:     config.CorsAllowHeaders,
-		AllowCredentials: config.CorsAllowCredentials,
-	}))
-
-	app.Use(requestid.New())
-	app.Use(logger.New(logger.Config{
-		DisableColors: true,
-	}))
 
 	jwtUtils := utils.NewJWTUtils(&jwtConfig)
 	storage := storage.NewStorage(storageConfig)
 
+<<<<<<< HEAD
 	sampleLogRepository := repositories.NewSampleLogRepository(db)
 	userRepository := repositories.NewUserRepo(db)
 
@@ -127,12 +101,26 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		authMiddleware:        authMiddleware,
 		dormHandler:           dormHandler,
 		leasingHistoryHandler: leasingHistoryHandler,
+=======
+	return &Server{
+		app:        app,
+		config:     config,
+		storage:    storage,
+		jwtUtils:   jwtUtils,
+		db:         db,
+		smtpConfig: &smtpConfig,
+>>>>>>> dev
 	}
 }
 
-func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig utils.JWTConfig) {
+func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 
-	// init routes
+	s.initServerMiddleware()
+	s.initRepository()
+	s.initAuthMiddleware()
+
+	s.initService()
+	s.initHandler()
 	s.initRoutes()
 
 	// start server
@@ -156,45 +144,21 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 	log.Println("Server is shutting down...")
 }
 
-func (s *Server) initRoutes() {
-	// greeting
-	s.app.Get("/", s.greetingHandler.Greeting)
+func (s *Server) initServerMiddleware() {
+	s.app.Use(cors.New(cors.Config{
+		AllowOrigins:     s.config.CorsAllowOrigins,
+		AllowMethods:     s.config.CorsAllowMethods,
+		AllowHeaders:     s.config.CorsAllowHeaders,
+		AllowCredentials: s.config.CorsAllowCredentials,
+	}))
 
-	// swagger
-	s.app.Get("/swagger/*", swagger.HandlerDefault)
+	s.app.Use(requestid.New())
+	s.app.Use(logger.New(logger.Config{
+		DisableColors: true,
+	}))
 
-	// upload file example
-	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
-	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
-	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
+}
 
-	// sample log
-	sampleLogRoutes := s.app.Group("/log")
-	sampleLogRoutes.Get("/", s.sampleLogHandler.GetAll)
-	sampleLogRoutes.Post("/", s.sampleLogHandler.Save)
-	sampleLogRoutes.Delete("/:id", s.sampleLogHandler.Delete)
-	sampleLogRoutes.Patch("/:id", s.sampleLogHandler.EditMessage)
-
-	// user
-	userRoutes := s.app.Group("/user")
-
-	userRoutes.Get("/me", s.authMiddleware.Auth, s.userHandler.GetUserInfo)
-
-	userRoutes.Post("/verify", s.userHandler.VerifyEmail)
-	userRoutes.Post("/resetpassword", s.userHandler.ResetPasswordCreate)
-	userRoutes.Post("/newpassword", s.authMiddleware.Auth, s.userHandler.ResetPassword)
-	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
-	userRoutes.Delete("/", s.authMiddleware.Auth, s.userHandler.DeleteAccount)
-
-	authRoutes := s.app.Group("/auth")
-	authRoutes.Post("/register", s.userHandler.Register)
-	authRoutes.Post("/login", s.userHandler.Login)
-
-	// dorm
-	dormRoutes := s.app.Group("/dorms")
-	dormRoutes.Post("/", s.authMiddleware.Auth, s.dormHandler.Create)
-	dormRoutes.Get("/", s.dormHandler.GetAll)
-	dormRoutes.Get("/:id", s.dormHandler.GetByID)
-	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.dormHandler.Update)
-	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.dormHandler.Delete)
+func (s *Server) initAuthMiddleware() {
+	s.authMiddleware = middlewares.NewAuthMiddleware(s.jwtUtils, s.repository.user)
 }
