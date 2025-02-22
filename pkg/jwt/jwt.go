@@ -178,7 +178,7 @@ func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (strin
 }
 
 func (j *JWTUtils) GenerateResetPasswordToken(ctx context.Context, userID uuid.UUID) (string, error) {
-	resetToken, err := j.GenerateJWT(userID, j.Config.AccessTokenExpiration)
+	resetToken, err := j.GenerateJWT(userID, 24)
 	if err != nil {
 		return "", err
 	}
