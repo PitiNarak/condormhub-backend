@@ -170,9 +170,6 @@ func (s *Server) initRoutes() {
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.userHandler.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.userHandler.DeleteAccount)
 
-	authRoutes := s.app.Group("/auth")
-	authRoutes.Post("/register", s.userHandler.Register)
-	authRoutes.Post("/login", s.userHandler.Login)
-
+	s.initAuthRoutes()
 	s.initDormRoutes()
 }

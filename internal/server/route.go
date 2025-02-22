@@ -9,3 +9,9 @@ func (s *Server) initDormRoutes() {
 	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.dormHandler.Update)
 	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.dormHandler.Delete)
 }
+
+func (s *Server) initAuthRoutes() {
+	authRoutes := s.app.Group("/auth")
+	authRoutes.Post("/register", s.userHandler.Register)
+	authRoutes.Post("/login", s.userHandler.Login)
+}
