@@ -38,13 +38,14 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		Password: user.Password,
 	}
 
-	token, err := h.userService.Create(gormUser)
+	accessToken, refreshToken, err := h.userService.Create(c.Context(), gormUser)
 	if err != nil {
 		return err
 	}
 
 	response := dto.TokenWithUserInformationResponseBody{
-		AccessToken:     token,
+		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: *gormUser,
 	}
 
