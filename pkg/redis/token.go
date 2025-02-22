@@ -101,3 +101,14 @@ func (r *Redis) SetResetToken(ctx context.Context, userID uuid.UUID, token strin
 
 	return nil
 }
+
+func (r *Redis) GetResetToken(ctx context.Context, userID uuid.UUID) (string, error) {
+	resetTokenKey := fmt.Sprintf("reset_token:%s", userID)
+
+	token, err := r.client.Get(ctx, resetTokenKey).Result()
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
