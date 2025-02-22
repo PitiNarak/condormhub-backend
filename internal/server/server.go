@@ -38,6 +38,7 @@ type Server struct {
 	storage        *storage.Storage
 	jwtUtils       *utils.JWTUtils
 	authMiddleware *middlewares.AuthMiddleware
+	smtpConfig     *services.SMTPConfig
 	handler        *handler
 	service        *service
 	repository     *repository
@@ -94,11 +95,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 
 	userRepository := repositories.NewUserRepo(db)
 
-	emailService := services.NewEmailService(&smtpConfig, jwtUtils)
-	userService := services.NewUserService(userRepository, emailService, jwtUtils)
-
 	dormRepository := repositories.NewDormRepository(db)
-	dormService := services.NewDormService(dormRepository)
 
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
@@ -107,11 +104,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		storage:        storage,
 		jwtUtils:       jwtUtils,
 		authMiddleware: authMiddleware,
-		service: &service{
-			email: emailService,
-			user:  userService,
-			dorm:  dormService,
-		},
+		smtpConfig:     &smtpConfig,
 		repository: &repository{
 			user: userRepository,
 			dorm: dormRepository,
@@ -119,9 +112,10 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	}
 }
 
-func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig utils.JWTConfig) {
+func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 
 	// init routes
+	s.initService()
 	s.initHandler()
 	s.initRoutes()
 
