@@ -24,6 +24,8 @@ func main() {
 		&domain.SampleLog{},
 		&domain.User{},
 		&domain.Dorm{},
+		&domain.LeasingHistory{},
+		&domain.Order{},
 	); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

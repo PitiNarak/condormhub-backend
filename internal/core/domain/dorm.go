@@ -28,3 +28,10 @@ type Address struct {
 	Province    string `json:"province" validate:"required"`
 	Zipcode     string `json:"zipcode" validate:"required,numeric,len=5"`
 }
+
+type LeasingHistory struct {
+	ID       uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	DormID   uuid.UUID `json:"ownerId" `
+	LeeseeID uuid.UUID `json:"leeseeId" `
+	Orders   []Order   `gorm:"foreignKey:LeasingHistoryID"`
+}
