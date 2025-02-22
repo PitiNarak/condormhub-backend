@@ -36,16 +36,17 @@ type Config struct {
 }
 
 type Server struct {
-	app               *fiber.App
-	config            Config
-	greetingHandler   *handlers.GreetingHandler
-	sampleLogHandler  *handlers.SampleLogHandler
-	userHandler       ports.UserHandler
-	testUploadHandler *handlers.TestUploadHandler
-	storage           *storage.Storage
-	jwtUtils          *utils.JWTUtils
-	authMiddleware    *middlewares.AuthMiddleware
-	dormHandler       ports.DormHandler
+	app                   *fiber.App
+	config                Config
+	greetingHandler       *handlers.GreetingHandler
+	sampleLogHandler      *handlers.SampleLogHandler
+	userHandler           ports.UserHandler
+	testUploadHandler     *handlers.TestUploadHandler
+	storage               *storage.Storage
+	jwtUtils              *utils.JWTUtils
+	authMiddleware        *middlewares.AuthMiddleware
+	dormHandler           ports.DormHandler
+	leasingHistoryHandler ports.LeasingHistoryHandler
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
@@ -109,18 +110,23 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 	dormService := services.NewDormService(dormRepository)
 	dormHandler := handlers.NewDormHandler(dormService)
 
+	leasingHistoryRepository := repositories.NewLeasingHistoryRepository(db)
+	leasingHistoryService := services.NewLeasingHistoryService(leasingHistoryRepository)
+	leasingHistoryHandler := handlers.NewLeasingHistoryHandler(leasingHistoryService)
+
 	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
 	return &Server{
-		app:               app,
-		greetingHandler:   handlers.NewGreetingHandler(),
-		sampleLogHandler:  handlers.NewSampleLogHandler(sampleLogRepository),
-		userHandler:       userHandler,
-		config:            config,
-		testUploadHandler: testUploadHandler,
-		storage:           storage,
-		jwtUtils:          jwtUtils,
-		authMiddleware:    authMiddleware,
-		dormHandler:       dormHandler,
+		app:                   app,
+		greetingHandler:       handlers.NewGreetingHandler(),
+		sampleLogHandler:      handlers.NewSampleLogHandler(sampleLogRepository),
+		userHandler:           userHandler,
+		config:                config,
+		testUploadHandler:     testUploadHandler,
+		storage:               storage,
+		jwtUtils:              jwtUtils,
+		authMiddleware:        authMiddleware,
+		dormHandler:           dormHandler,
+		leasingHistoryHandler: leasingHistoryHandler,
 	}
 }
 
