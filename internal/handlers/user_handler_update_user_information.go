@@ -5,7 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -29,24 +29,24 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*domain.User)
 	if user == nil {
-		return error_handler.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+		return errorHandler.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
 	err := c.BodyParser(&requestBody)
 	if err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+		return errorHandler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(requestBody); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 
 	userInfo, err := h.userService.UpdateInformation(user.ID, *requestBody)
 
 	if err != nil {
-		return error_handler.InternalServerError(err, "system cannot update your account information")
+		return errorHandler.InternalServerError(err, "system cannot update your account information")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("user successfully updated account information", userInfo))

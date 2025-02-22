@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -23,12 +23,12 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordCreateRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+		return errorHandler.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 
 	err := h.userService.ResetPasswordCreate(body.Email)

@@ -9,7 +9,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/services"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -51,7 +51,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		JSONEncoder:           json.Marshal,
 		JSONDecoder:           json.Unmarshal,
 		DisableStartupMessage: true,
-		ErrorHandler:          error_handler.Handler,
+		ErrorHandler:          errorHandler.Handler,
 	})
 
 	jwtUtils := utils.NewJWTUtils(&jwtConfig)

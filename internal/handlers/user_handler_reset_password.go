@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -25,17 +25,17 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+		return errorHandler.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 	tokenString := body.Token
 	if tokenString == "" {
-		return error_handler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
+		return errorHandler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
 	user, err := h.userService.ResetPassword(tokenString, body.Password)
