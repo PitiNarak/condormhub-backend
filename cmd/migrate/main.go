@@ -21,7 +21,6 @@ func main() {
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 
 	if err := db.AutoMigrate(
-		&domain.SampleLog{},
 		&domain.User{},
 		// &domain.Transaction{},
 		&domain.Dorm{},
