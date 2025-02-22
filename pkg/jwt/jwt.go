@@ -154,27 +154,22 @@ func (j *JWTUtils) VerifyRefreshToken(ctx context.Context, refreshToken string) 
 	return userID, nil
 }
 
-func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (string, error) {
-	claims, err := j.DecodeJWT(refreshToken)
+func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (string, string, error) {
+	userID, err := j.VerifyRefreshToken(ctx, refreshToken)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	userID, err := uuid.Parse(claims.UserID)
+	accessToken, refreshToken, err := j.GenerateKeyPair(ctx, userID)
 	if err != nil {
-		return "", errorHandler.InternalServerError(err, "cannot parse user id")
-	}
-
-	accessToken, err := j.GenerateJWT(userID, j.Config.AccessTokenExpiration)
-	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	err = j.Redis.SetAccessToken(ctx, userID, accessToken, time.Hour*time.Duration(j.Config.AccessTokenExpiration))
 	if err != nil {
-		return "", errorHandler.InternalServerError(err, "cannot set access token")
+		return "", "", errorHandler.InternalServerError(err, "cannot set access token")
 	}
 
-	return accessToken, nil
+	return accessToken, refreshToken, nil
 }
 
 func (j *JWTUtils) GenerateResetPasswordToken(ctx context.Context, userID uuid.UUID) (string, error) {

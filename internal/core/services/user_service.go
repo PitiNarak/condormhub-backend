@@ -98,6 +98,14 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 
 }
 
+func (s *UserService) RefreshToken(ctx context.Context, refreshToken string) (string, string, error) {
+	accessToken, newRefreshToken, err := s.jwtUtils.RefreshToken(ctx, refreshToken)
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, newRefreshToken, nil
+}
+
 func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error) {
 	if data.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
