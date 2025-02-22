@@ -20,7 +20,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/gofiber/swagger"
 	"gorm.io/gorm"
 )
 
@@ -145,17 +144,4 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc, jwtConfig u
 	<-ctx.Done()
 
 	log.Println("Server is shutting down...")
-}
-
-func (s *Server) initRoutes() {
-	// greeting
-	s.app.Get("/", s.greetingHandler.Greeting)
-
-	// swagger
-	s.app.Get("/swagger/*", swagger.HandlerDefault)
-
-	s.initExampleUploadRoutes()
-	s.initUserRoutes()
-	s.initAuthRoutes()
-	s.initDormRoutes()
 }

@@ -1,5 +1,7 @@
 package server
 
+import "github.com/gofiber/swagger"
+
 func (s *Server) initDormRoutes() {
 	// dorm
 	dormRoutes := s.app.Group("/dorms")
@@ -32,4 +34,17 @@ func (s *Server) initExampleUploadRoutes() {
 	s.app.Post("/upload/public", s.testUploadHandler.UploadToPublicBucketHandler)
 	s.app.Post("/upload/private", s.testUploadHandler.UploadToPrivateBucketHandler)
 	s.app.Get("/signedurl/*", s.testUploadHandler.GetSignedUrlHandler)
+}
+
+func (s *Server) initRoutes() {
+	// greeting
+	s.app.Get("/", s.greetingHandler.Greeting)
+
+	// swagger
+	s.app.Get("/swagger/*", swagger.HandlerDefault)
+
+	s.initExampleUploadRoutes()
+	s.initUserRoutes()
+	s.initAuthRoutes()
+	s.initDormRoutes()
 }
