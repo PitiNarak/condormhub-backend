@@ -211,3 +211,38 @@ func (j *JWTUtils) VerifyResetPasswordToken(ctx context.Context, resetToken stri
 
 	return userID, nil
 }
+
+func (j *JWTUtils) GenerateVerificationToken(ctx context.Context, userID uuid.UUID) (string, error) {
+	verificationToken, err := j.GenerateJWT(userID, 24)
+	if err != nil {
+		return "", err
+	}
+	err = j.Redis.SetVerificationToken(ctx, userID, verificationToken, time.Hour*24)
+	if err != nil {
+		return "", errorHandler.InternalServerError(err, "cannot set verification token")
+	}
+	return verificationToken, nil
+}
+
+func (j *JWTUtils) VerifyVerificationToken(ctx context.Context, verificationToken string) (uuid.UUID, error) {
+	claims, err := j.DecodeJWT(verificationToken)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	userID, err := uuid.Parse(claims.UserID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+	}
+
+	token, err := j.Redis.GetVerificationToken(ctx, userID)
+	if err != nil {
+		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get verification token")
+	}
+
+	if token != verificationToken {
+		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid verification token")
+	}
+
+	return userID, nil
+}
