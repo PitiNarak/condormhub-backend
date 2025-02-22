@@ -12,7 +12,6 @@ type Config struct {
 
 type Redis struct {
 	client *redis.Client
-	config Config
 }
 
 func New(config Config) (*Redis, error) {
