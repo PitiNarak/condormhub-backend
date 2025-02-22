@@ -31,7 +31,7 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	err := h.userService.ResetPasswordCreate(body.Email)
+	err := h.userService.ResetPasswordCreate(c.Context(), body.Email)
 	if err != nil {
 		return err
 	}
