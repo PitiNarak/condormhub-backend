@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v81"
 )
 
@@ -13,5 +14,5 @@ type Transaction struct {
 	UpdateAt      time.Time                    `json:"updateAt" gorm:"autoUpdateTime"`
 	Price         int64                        `json:"price"`
 	Order         Order                        `json:"order" gorm:"foreignKey:TransactionID"`
-	OrderID       string                       `json:"orderID"`
+	OrderID       uuid.UUID                    `json:"orderID"`
 }

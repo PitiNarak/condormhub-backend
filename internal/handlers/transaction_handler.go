@@ -11,23 +11,23 @@ import (
 	"github.com/stripe/stripe-go/v81/webhook"
 )
 
-type OrderHandler struct {
-	orderService ports.OrderService
+type TransactionHandler struct {
+	orderService ports.TransactionService
 	stripeConfig *stripe.Config
 }
 
-func NewOrderHandler(orderService ports.OrderService, stripeConfig *stripe.Config) ports.OrderHandler {
-	return &OrderHandler{orderService: orderService, stripeConfig: stripeConfig}
+func NewTransactionHandler(orderService ports.TransactionService, stripeConfig *stripe.Config) ports.TransactionHandler {
+	return &TransactionHandler{orderService: orderService, stripeConfig: stripeConfig}
 }
 
-func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
+func (h *TransactionHandler) CreateOrder(c *fiber.Ctx) error {
 	var reqBody *dto.OrderRequestBody
 	if err := c.BodyParser(&reqBody); err != nil {
 		return error_handler.BadRequestError(err, "Failed to parse request body")
 	}
 
 	user := c.Locals("user").(*domain.User)
-	order, url, err := h.orderService.CreateOrder(domain.InsuranceOrder, reqBody.DormitoryID, reqBody.LessorID, user)
+	order, url, err := h.orderService.CreateOrder(domain.InsuranceOrderType, reqBody.DormitoryID, user)
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	}))
 }
 
-func (h *OrderHandler) Webhook(c *fiber.Ctx) error {
+func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
 	payload := c.Body()
 
 	event, err := webhook.ConstructEventWithOptions(payload, c.Get("Stripe-Signature"), h.stripeConfig.StripeSignatureKey, webhook.ConstructEventOptions{
