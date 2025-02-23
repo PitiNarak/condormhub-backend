@@ -16,23 +16,6 @@ func NewLeasingHistoryHandler(service ports.LeasingHistoryService) ports.Leasing
 	return &LeasingHistoryHandler{service: service}
 }
 
-func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
-	userID := c.Locals("userID").(uuid.UUID)
-	id := c.Params("id")
-	if err := uuid.Validate(id); err != nil {
-		return errorHandler.BadRequestError(err, "Incorrect UUID format")
-	}
-
-	dormID, err := uuid.Parse(id)
-	if err != nil {
-		return errorHandler.InternalServerError(err, "Can not parse UUID")
-	}
-	leasingHistory, err := h.service.Create(userID, dormID)
-	if err != nil {
-		return err
-	}
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully deleted", leasingHistory))
-}
 func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
