@@ -20,7 +20,7 @@ type LeasingHistoryRepository interface {
 }
 
 type LeasingHistoryService interface {
-	Create(LeasingHistory *domain.LeasingHistory) error
+	Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error)
 	Update(LeasingHistory *domain.LeasingHistory) error
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error)

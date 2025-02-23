@@ -27,7 +27,7 @@ func (d *LeasingHistoryRepository) Create(LeasingHistory *domain.LeasingHistory)
 
 func (d *LeasingHistoryRepository) GetByID(id uuid.UUID) (*domain.LeasingHistory, error) {
 	leasingHistory := new(domain.LeasingHistory)
-	if err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").First(leasingHistory, id).Error; err != nil {
+	if err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").First(leasingHistory, id).Error; err != nil {
 		return nil, errorHandler.NotFoundError(err, "leasing history not found")
 	}
 	return leasingHistory, nil

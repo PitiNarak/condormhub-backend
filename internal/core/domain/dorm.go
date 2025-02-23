@@ -12,7 +12,7 @@ type Dorm struct {
 	UpdateAt    time.Time `json:"updateAt" gorm:"autoUpdateTime"`
 	Name        string    `json:"name" validate:"required"`
 	OwnerID     uuid.UUID `json:"ownerId" validate:"required"`
-	Owner       User      `json:"owner"`
+	Owner       User      `json:"owner" gorm:"foreignKey:OwnerID;references:ID"`
 	Size        float64   `json:"size" validate:"required,gt=0"`
 	Bedrooms    int       `json:"bedrooms" validate:"required,gte=0"`
 	Bathrooms   int       `json:"bathrooms" validate:"required,gte=0"`
