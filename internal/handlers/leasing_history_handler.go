@@ -37,7 +37,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Leasing history successfully deleted", leasingHistory))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully deleted", leasingHistory))
 }
 func (h *LeasingHistoryHandler) Update(c *fiber.Ctx) error {
 	return nil
@@ -46,7 +46,12 @@ func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	return nil
 }
 func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
-	return nil
+	userID := c.Locals("userID").(uuid.UUID)
+	leasingHistory, err := h.service.GetByUserID(userID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory))
 }
 func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	return nil

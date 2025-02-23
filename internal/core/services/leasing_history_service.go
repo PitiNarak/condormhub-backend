@@ -36,7 +36,11 @@ func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
 	return nil
 }
 func (s *LeasingHistoryService) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	return []domain.LeasingHistory{}, nil
+	leasingHistory, err := s.repo.GetByUserID(id)
+	if err != nil {
+		return nil, err
+	}
+	return leasingHistory, nil
 }
 func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
 	return []domain.LeasingHistory{}, nil

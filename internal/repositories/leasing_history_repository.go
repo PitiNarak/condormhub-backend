@@ -40,7 +40,14 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	return []domain.LeasingHistory{}, nil
+	var leasingHistory []domain.LeasingHistory
+	err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").
+		Where("lessee_id = ?", id).Find(&leasingHistory).Error
+
+	if err != nil {
+		return nil, errorHandler.NotFoundError(err, "leasing history not found")
+	}
+	return leasingHistory, nil
 }
 func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
 	return []domain.LeasingHistory{}, nil

@@ -55,4 +55,5 @@ func (s *Server) initLeasingHistoryRoutes() {
 	// dorm
 	dormRoutes := s.app.Group("/history")
 	dormRoutes.Post("/", s.authMiddleware.Auth, s.handler.leasingHistory.Create)
+	dormRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 }
