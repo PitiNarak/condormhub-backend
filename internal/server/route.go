@@ -37,6 +37,7 @@ func (s *Server) initAuthRoutes() {
 	authRoutes := s.app.Group("/auth")
 	authRoutes.Post("/register", s.handler.user.Register)
 	authRoutes.Post("/login", s.handler.user.Login)
+	authRoutes.Post("/refresh", s.handler.user.RefreshToken)
 }
 
 func (s *Server) initDormRoutes() {

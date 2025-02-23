@@ -17,9 +17,9 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.ResetPasswordRequestBody true "token"
-// @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "password reset successfully"
-// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
-// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot reset password"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "password reset successfully"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot reset password"
 // @Router /user/newpassword [post]
 func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordRequestBody)
@@ -38,7 +38,7 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	user, err := h.userService.ResetPassword(tokenString, body.Password)
+	user, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
 	if err != nil {
 		return err
 	}

@@ -45,7 +45,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -63,7 +63,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -81,7 +81,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -99,7 +99,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -117,7 +117,125 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Refresh user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh user",
+                "parameters": [
+                    {
+                        "description": "user information",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RefreshTokenRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user successfully Refresh in",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.TokenResponseBody"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "user not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "system cannot refresh user",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -163,7 +281,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -181,7 +299,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -199,7 +317,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -231,7 +349,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -252,7 +370,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -270,7 +388,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -319,7 +437,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -337,7 +455,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -355,7 +473,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -373,7 +491,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -414,7 +532,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -432,7 +550,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -450,7 +568,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -468,7 +586,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -486,7 +604,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -530,7 +648,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -548,7 +666,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -566,7 +684,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -584,7 +702,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -602,7 +720,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -658,7 +776,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -676,7 +794,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -694,7 +812,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -712,7 +830,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -730,7 +848,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -781,7 +899,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -799,7 +917,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -817,7 +935,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -835,7 +953,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -875,7 +993,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -893,7 +1011,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -911,7 +1029,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -951,7 +1069,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -969,7 +1087,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -987,7 +1105,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1033,7 +1151,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1051,7 +1169,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1069,7 +1187,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1115,7 +1233,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1133,7 +1251,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1151,7 +1269,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1197,7 +1315,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1215,7 +1333,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1233,7 +1351,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1251,7 +1369,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1582,6 +1700,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.RefreshTokenRequestBody": {
+            "type": "object",
+            "required": [
+                "refreshToken"
+            ],
+            "properties": {
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.RegisterRequestBody": {
             "type": "object",
             "required": [
@@ -1627,10 +1756,24 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TokenResponseBody": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.TokenWithUserInformationResponseBody": {
             "type": "object",
             "properties": {
                 "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
                     "type": "string"
                 },
                 "userInformation": {
@@ -1685,7 +1828,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http_response.HttpResponse": {
+        "httpResponse.HttpResponse": {
             "type": "object",
             "properties": {
                 "data": {},

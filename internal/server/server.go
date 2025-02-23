@@ -10,7 +10,8 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
+	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
+	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -46,8 +47,9 @@ type Server struct {
 	app            *fiber.App
 	config         Config
 	storage        *storage.Storage
-	jwtUtils       *utils.JWTUtils
+	jwtUtils       *jwt.JWTUtils
 	authMiddleware *middlewares.AuthMiddleware
+	redis          *redis.Redis
 	db             *gorm.DB
 	smtpConfig     *services.SMTPConfig
 	handler        *handler
@@ -56,7 +58,7 @@ type Server struct {
 >>>>>>> dev
 }
 
-func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JWTConfig, storageConfig storage.Config, db *gorm.DB) *Server {
+func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, redis *redis.Redis, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:               config.Name,
@@ -68,7 +70,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		ErrorHandler:          errorHandler.Handler,
 	})
 
-	jwtUtils := utils.NewJWTUtils(&jwtConfig)
+	jwtUtils := jwt.NewJWTUtils(&jwtConfig, redis)
 	storage := storage.NewStorage(storageConfig)
 
 <<<<<<< HEAD
@@ -108,6 +110,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig utils.JW
 		storage:    storage,
 		jwtUtils:   jwtUtils,
 		db:         db,
+		redis:      redis,
 		smtpConfig: &smtpConfig,
 >>>>>>> dev
 	}

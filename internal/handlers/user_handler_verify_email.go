@@ -15,10 +15,10 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.VerifyRequestBody true "token"
-// @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "email is verified successfully"
-// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
-// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
-// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot verify your email"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "email is verified successfully"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot verify your email"
 // @Router /user/verify [post]
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	body := new(dto.VerifyRequestBody)
@@ -31,7 +31,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
-	accessToken, user, err := h.userService.VerifyUser(body.Token)
+	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}

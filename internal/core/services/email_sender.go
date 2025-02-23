@@ -6,6 +6,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-gomail/gomail"
 )
@@ -20,10 +21,10 @@ type SMTPConfig struct {
 
 type EmailService struct {
 	emailConfig *SMTPConfig
-	jwtUtils    *utils.JWTUtils
+	jwtUtils    *jwt.JWTUtils
 }
 
-func NewEmailService(emailConfig *SMTPConfig, jwtUtils *utils.JWTUtils) ports.EmailServicePort {
+func NewEmailService(emailConfig *SMTPConfig, jwtUtils *jwt.JWTUtils) ports.EmailServicePort {
 	return &EmailService{emailConfig: emailConfig, jwtUtils: jwtUtils}
 }
 

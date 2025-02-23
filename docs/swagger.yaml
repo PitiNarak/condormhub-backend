@@ -241,6 +241,13 @@ definitions:
     - email
     - password
     type: object
+  dto.RefreshTokenRequestBody:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
   dto.RegisterRequestBody:
     properties:
       email:
@@ -271,9 +278,18 @@ definitions:
     - password
     - token
     type: object
+  dto.TokenResponseBody:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
   dto.TokenWithUserInformationResponseBody:
     properties:
       accessToken:
+        type: string
+      refreshToken:
         type: string
       userInformation:
         $ref: '#/definitions/domain.User'
@@ -309,7 +325,7 @@ definitions:
     required:
     - token
     type: object
-  http_response.HttpResponse:
+  httpResponse.HttpResponse:
     properties:
       data: {}
       message:
@@ -342,7 +358,7 @@ paths:
           description: user successfully logged in
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
@@ -351,7 +367,7 @@ paths:
           description: your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -360,7 +376,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -369,7 +385,7 @@ paths:
           description: user not found
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -378,12 +394,75 @@ paths:
           description: system cannot login user
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
               type: object
       summary: Login user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh user
+      parameters:
+      - description: user information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: user successfully Refresh in
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TokenResponseBody'
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: user not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: system cannot refresh user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Refresh user
       tags:
       - auth
   /auth/register:
@@ -405,7 +484,7 @@ paths:
           description: user successfully registered
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
@@ -414,7 +493,7 @@ paths:
           description: your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -423,7 +502,7 @@ paths:
           description: system cannot register user
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -441,7 +520,7 @@ paths:
           description: All dorms retrieved successfully
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   items:
@@ -452,7 +531,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -461,7 +540,7 @@ paths:
           description: Failed to retrieve dorms
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -487,7 +566,7 @@ paths:
           description: Dorm successfully created
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.Dorm'
@@ -496,7 +575,7 @@ paths:
           description: Your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -505,7 +584,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -514,7 +593,7 @@ paths:
           description: Failed to save dorm
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -540,7 +619,7 @@ paths:
           description: Dorm successfully deleted
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -549,7 +628,7 @@ paths:
           description: Incorrect UUID format
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -558,7 +637,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -567,7 +646,7 @@ paths:
           description: Dorm not found
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -576,7 +655,7 @@ paths:
           description: Failed to delete dorm
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -601,7 +680,7 @@ paths:
           description: Dorm data successfully retrieved
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.Dorm'
@@ -610,7 +689,7 @@ paths:
           description: Incorrect UUID format
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -619,7 +698,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -628,7 +707,7 @@ paths:
           description: Dorm not found
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -637,7 +716,7 @@ paths:
           description: Server failed to retrieve dorm
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -668,7 +747,7 @@ paths:
           description: Dorm data updated successfully
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.Dorm'
@@ -677,7 +756,7 @@ paths:
           description: Invalid Request
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -686,7 +765,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -695,7 +774,7 @@ paths:
           description: Dorm not found
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -704,7 +783,7 @@ paths:
           description: Server failed to update dorm
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -733,7 +812,7 @@ paths:
           description: user successfully updated account information
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.User'
@@ -742,7 +821,7 @@ paths:
           description: your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -751,7 +830,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -760,7 +839,7 @@ paths:
           description: system cannot update your account information
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -782,7 +861,7 @@ paths:
           description: account successfully deleted
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -791,7 +870,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -800,7 +879,7 @@ paths:
           description: cannot parse uuid or cannot delete user
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -822,7 +901,7 @@ paths:
           description: get user information successfully
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/domain.User'
@@ -831,7 +910,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -840,7 +919,7 @@ paths:
           description: system cannot get user information
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -869,7 +948,7 @@ paths:
           description: password reset successfully
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
@@ -878,7 +957,7 @@ paths:
           description: your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -887,7 +966,7 @@ paths:
           description: system cannot reset password
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -914,7 +993,7 @@ paths:
           description: email is sent to user successfully
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -923,7 +1002,7 @@ paths:
           description: your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -932,7 +1011,7 @@ paths:
           description: system cannot resend verification email
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -959,7 +1038,7 @@ paths:
           description: email is verified successfully
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
@@ -968,7 +1047,7 @@ paths:
           description: your request is invalid
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -977,7 +1056,7 @@ paths:
           description: your request is unauthorized
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
@@ -986,7 +1065,7 @@ paths:
           description: system cannot verify your email
           schema:
             allOf:
-            - $ref: '#/definitions/http_response.HttpResponse'
+            - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
                 data:
                   type: object
