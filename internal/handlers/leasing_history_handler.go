@@ -39,9 +39,6 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully deleted", leasingHistory))
 }
-func (h *LeasingHistoryHandler) Update(c *fiber.Ctx) error {
-	return nil
-}
 func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	return nil
 }
@@ -70,6 +67,6 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory))
 }
-func (h *LeasingHistoryHandler) PatchEndTimestamp(c *fiber.Ctx) error {
+func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 	return nil
 }

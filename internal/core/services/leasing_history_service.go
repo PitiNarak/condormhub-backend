@@ -29,9 +29,6 @@ func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*dom
 	}
 	return leasingHistory, nil
 }
-func (s *LeasingHistoryService) Update(LeasingHistory *domain.LeasingHistory) error {
-	return nil
-}
 func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
 	return nil
 }
@@ -49,6 +46,6 @@ func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHisto
 	}
 	return leasingHistory, nil
 }
-func (s *LeasingHistoryService) PatchEndTimestamp(id uuid.UUID, endTime time.Time) error {
+func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
 	return nil
 }

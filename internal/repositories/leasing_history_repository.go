@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"time"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
@@ -34,6 +32,14 @@ func (d *LeasingHistoryRepository) GetByID(id uuid.UUID) (*domain.LeasingHistory
 }
 
 func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory) error {
+	existingHistory, err := d.GetByID(LeasingHistory.ID)
+	if err != nil {
+		return errorHandler.NotFoundError(err, "History not found")
+	}
+	err = d.db.Model(existingHistory).Updates(LeasingHistory).Error
+	if err != nil {
+		return errorHandler.InternalServerError(err, "Failed to update room")
+	}
 	return nil
 }
 func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
@@ -58,7 +64,4 @@ func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID) ([]domain.LeasingHi
 		return nil, errorHandler.NotFoundError(err, "leasing history not found")
 	}
 	return leasingHistory, nil
-}
-func (d *LeasingHistoryRepository) PatchEndTimestamp(id uuid.UUID, endTime time.Time) error {
-	return nil
 }
