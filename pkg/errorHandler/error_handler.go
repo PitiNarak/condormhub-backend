@@ -61,7 +61,7 @@ func UnprocessableEntityError(err error, msg string) *ErrorHandler {
 
 func Handler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
-	message := "Internal Server Error"
+	var message string
 
 	var e *ErrorHandler
 	if errors.As(err, &e) {

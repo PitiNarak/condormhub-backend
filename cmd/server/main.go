@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	_ "github.com/PitiNarak/condormhub-backend/docs"
+	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 
 	"github.com/PitiNarak/condormhub-backend/internal/config"
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
@@ -32,6 +33,11 @@ func main() {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 
-	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, db)
+	redis, err := redis.New(config.Redis)
+	if err != nil {
+		log.Fatalf("Redis connection failed: %v", err)
+	}
+
+	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, redis, db)
 	s.Start(ctx, stop)
 }
