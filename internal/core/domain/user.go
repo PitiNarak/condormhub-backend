@@ -3,6 +3,7 @@ package domain
 import (
 	"database/sql/driver"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -135,16 +136,22 @@ func (l *LifestyleArray) Scan(value interface{}) error {
 	// Handle the case where the value is a string (PostgreSQL array format)
 	str, ok := value.(string)
 	if ok {
-		// Remove the surrounding curly braces and split by comma
-		str = str[1 : len(str)-1] // Removing the {} characters
-		// Split by commas to extract each element
-		elements := strings.Split(str, ",")
-		// Trim spaces from each element and convert to Lifestyle enum
+		// Remove surrounding curly braces
+		str = str[1 : len(str)-1] // Removes `{}`
+
+		// Use regex to correctly split elements handling quotes
+		re := regexp.MustCompile(`"([^"]*)"|([^,]+)`)
+		matches := re.FindAllStringSubmatch(str, -1)
+
 		var lifestyles []Lifestyle
-		for _, elem := range elements {
-			elem = strings.TrimSpace(elem) // Removing any extra spaces
-			lifestyles = append(lifestyles, Lifestyle(elem))
+		for _, match := range matches {
+			if match[1] != "" {
+				lifestyles = append(lifestyles, Lifestyle(match[1])) // Remove surrounding quotes
+			} else {
+				lifestyles = append(lifestyles, Lifestyle(match[2]))
+			}
 		}
+
 		*l = lifestyles
 		return nil
 	}
