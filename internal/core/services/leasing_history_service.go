@@ -52,5 +52,14 @@ func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHisto
 	return leasingHistory, nil
 }
 func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
+	leasingHistory, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	leasingHistory.End = time.Now()
+	err = s.historyRepo.Update(leasingHistory)
+	if err != nil {
+		return err
+	}
 	return nil
 }
