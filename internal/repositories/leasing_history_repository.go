@@ -43,6 +43,9 @@ func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory)
 	return nil
 }
 func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
+	if err := d.db.Delete(&domain.LeasingHistory{}, id).Error; err != nil {
+		return errorHandler.InternalServerError(err, "Failed to delete leasing history")
+	}
 	return nil
 }
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {

@@ -57,4 +57,5 @@ func (s *Server) initLeasingHistoryRoutes() {
 	dormRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 	dormRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
 	dormRoutes.Post("/end/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
+	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
 }

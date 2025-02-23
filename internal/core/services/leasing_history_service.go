@@ -35,6 +35,10 @@ func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*dom
 	return leasingHistory, nil
 }
 func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
+	err := s.historyRepo.Delete(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 func (s *LeasingHistoryService) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {
