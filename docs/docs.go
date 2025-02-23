@@ -873,14 +873,11 @@ const docTemplate = `{
                 "lastname": {
                     "type": "string"
                 },
-                "lifestyle1": {
-                    "$ref": "#/definitions/domain.Lifestyle"
-                },
-                "lifestyle2": {
-                    "$ref": "#/definitions/domain.Lifestyle"
-                },
-                "lifestyle3": {
-                    "$ref": "#/definitions/domain.Lifestyle"
+                "lifestyles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lifestyle"
+                    }
                 },
                 "nationalID": {
                     "type": "string"
