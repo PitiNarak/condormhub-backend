@@ -28,7 +28,7 @@ func (s *Server) initUserRoutes() {
 
 	userRoutes.Post("/verify", s.handler.user.VerifyEmail)
 	userRoutes.Post("/resetpassword", s.handler.user.ResetPasswordCreate)
-	userRoutes.Post("/newpassword", s.authMiddleware.Auth, s.handler.user.ResetPassword)
+	userRoutes.Post("/newpassword", s.handler.user.ResetPassword)
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.handler.user.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
 }
