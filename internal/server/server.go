@@ -31,19 +31,6 @@ type Config struct {
 }
 
 type Server struct {
-<<<<<<< HEAD
-	app                   *fiber.App
-	config                Config
-	greetingHandler       *handlers.GreetingHandler
-	sampleLogHandler      *handlers.SampleLogHandler
-	userHandler           ports.UserHandler
-	testUploadHandler     *handlers.TestUploadHandler
-	storage               *storage.Storage
-	jwtUtils              *utils.JWTUtils
-	authMiddleware        *middlewares.AuthMiddleware
-	dormHandler           ports.DormHandler
-	leasingHistoryHandler ports.LeasingHistoryHandler
-=======
 	app            *fiber.App
 	config         Config
 	storage        *storage.Storage
@@ -55,7 +42,6 @@ type Server struct {
 	handler        *handler
 	service        *service
 	repository     *repository
->>>>>>> dev
 }
 
 func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, redis *redis.Redis, db *gorm.DB) *Server {
@@ -73,37 +59,6 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTC
 	jwtUtils := jwt.NewJWTUtils(&jwtConfig, redis)
 	storage := storage.NewStorage(storageConfig)
 
-<<<<<<< HEAD
-	sampleLogRepository := repositories.NewSampleLogRepository(db)
-	userRepository := repositories.NewUserRepo(db)
-
-	emailService := services.NewEmailService(&smtpConfig, jwtUtils)
-	userService := services.NewUserService(userRepository, emailService, jwtUtils)
-	userHandler := handlers.NewUserHandler(userService)
-	testUploadHandler := handlers.NewTestUploadHandler(storage)
-
-	dormRepository := repositories.NewDormRepository(db)
-	dormService := services.NewDormService(dormRepository)
-	dormHandler := handlers.NewDormHandler(dormService)
-
-	leasingHistoryRepository := repositories.NewLeasingHistoryRepository(db)
-	leasingHistoryService := services.NewLeasingHistoryService(leasingHistoryRepository)
-	leasingHistoryHandler := handlers.NewLeasingHistoryHandler(leasingHistoryService)
-
-	authMiddleware := middlewares.NewAuthMiddleware(jwtUtils, userRepository)
-	return &Server{
-		app:                   app,
-		greetingHandler:       handlers.NewGreetingHandler(),
-		sampleLogHandler:      handlers.NewSampleLogHandler(sampleLogRepository),
-		userHandler:           userHandler,
-		config:                config,
-		testUploadHandler:     testUploadHandler,
-		storage:               storage,
-		jwtUtils:              jwtUtils,
-		authMiddleware:        authMiddleware,
-		dormHandler:           dormHandler,
-		leasingHistoryHandler: leasingHistoryHandler,
-=======
 	return &Server{
 		app:        app,
 		config:     config,
@@ -112,7 +67,6 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTC
 		db:         db,
 		redis:      redis,
 		smtpConfig: &smtpConfig,
->>>>>>> dev
 	}
 }
 

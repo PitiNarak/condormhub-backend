@@ -13,7 +13,6 @@ type repository struct {
 func (s *Server) initRepository() {
 	user := repositories.NewUserRepo(s.db)
 	dorm := repositories.NewDormRepository(s.db)
-
 	s.repository = &repository{
 		user: user,
 		dorm: dorm,
