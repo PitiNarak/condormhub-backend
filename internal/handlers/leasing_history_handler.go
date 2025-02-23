@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
-	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -19,19 +17,15 @@ func NewLeasingHistoryHandler(service ports.LeasingHistoryService) ports.Leasing
 }
 
 func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
-	reqBody := new(dto.LeasingHistoryCreateRequestBody)
-	if err := c.BodyParser(reqBody); err != nil {
-		return errorHandler.BadRequestError(err, "Your request is invalid")
-	}
-	validate := validator.New()
-	if err := validate.Struct(reqBody); err != nil {
-		return errorHandler.BadRequestError(err, "Your request body is invalid")
-	}
 	userID := c.Locals("userID").(uuid.UUID)
-	dormIDstr := reqBody.DormID
-	dormID, err := uuid.Parse(dormIDstr)
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return errorHandler.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	dormID, err := uuid.Parse(id)
 	if err != nil {
-		return errorHandler.BadRequestError(err, "Can not parse dormID")
+		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
 	leasingHistory, err := h.service.Create(userID, dormID)
 	if err != nil {
