@@ -41,9 +41,6 @@ func (s *LeasingHistoryService) GetByUserID(id uuid.UUID) ([]domain.LeasingHisto
 func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
 	return []domain.LeasingHistory{}, nil
 }
-func (s *LeasingHistoryService) AddNewOrder(id uuid.UUID, order *domain.Order) error {
-	return nil
-}
 func (s *LeasingHistoryService) PatchEndTimestamp(id uuid.UUID, endTime time.Time) error {
 	return nil
 }

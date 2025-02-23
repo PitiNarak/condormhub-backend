@@ -15,7 +15,6 @@ type LeasingHistoryRepository interface {
 	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
 	GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error)
 	GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error)
-	AddNewOrder(id uuid.UUID, order *domain.Order) error
 	PatchEndTimestamp(id uuid.UUID, endTime time.Time) error
 }
 
@@ -25,7 +24,6 @@ type LeasingHistoryService interface {
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error)
 	GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error)
-	AddNewOrder(id uuid.UUID, order *domain.Order) error
 	PatchEndTimestamp(id uuid.UUID, endTime time.Time) error
 }
 
@@ -35,6 +33,5 @@ type LeasingHistoryHandler interface {
 	Delete(c *fiber.Ctx) error
 	GetByUserID(c *fiber.Ctx) error
 	GetByDormID(c *fiber.Ctx) error
-	AddNewOrder(c *fiber.Ctx) error
 	PatchEndTimestamp(c *fiber.Ctx) error
 }
