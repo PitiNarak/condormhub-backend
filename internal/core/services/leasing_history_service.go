@@ -9,21 +9,26 @@ import (
 )
 
 type LeasingHistoryService struct {
-	repo ports.LeasingHistoryRepository
+	historyRepo ports.LeasingHistoryRepository
+	dormRepo    ports.DormRepository
 }
 
-func NewLeasingHistoryService(repo ports.LeasingHistoryRepository) ports.LeasingHistoryService {
-	return &LeasingHistoryService{repo: repo}
+func NewLeasingHistoryService(historyRepo ports.LeasingHistoryRepository, dormRepo ports.DormRepository) ports.LeasingHistoryService {
+	return &LeasingHistoryService{historyRepo: historyRepo, dormRepo: dormRepo}
 }
 
 func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error) {
-	createTime := time.Now()
-	leasingHistory := &domain.LeasingHistory{DormID: dormID, LesseeID: userID, Start: createTime}
-	err := s.repo.Create(leasingHistory)
+	_, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
 		return &domain.LeasingHistory{}, err
 	}
-	leasingHistory, err = s.repo.GetByID(leasingHistory.ID)
+	createTime := time.Now()
+	leasingHistory := &domain.LeasingHistory{DormID: dormID, LesseeID: userID, Start: createTime}
+	err = s.historyRepo.Create(leasingHistory)
+	if err != nil {
+		return &domain.LeasingHistory{}, err
+	}
+	leasingHistory, err = s.historyRepo.GetByID(leasingHistory.ID)
 	if err != nil {
 		return &domain.LeasingHistory{}, err
 	}
@@ -33,14 +38,14 @@ func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
 	return nil
 }
 func (s *LeasingHistoryService) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	leasingHistory, err := s.repo.GetByUserID(id)
+	leasingHistory, err := s.historyRepo.GetByUserID(id)
 	if err != nil {
 		return nil, err
 	}
 	return leasingHistory, nil
 }
 func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	leasingHistory, err := s.repo.GetByDormID(id)
+	leasingHistory, err := s.historyRepo.GetByDormID(id)
 	if err != nil {
 		return nil, err
 	}
