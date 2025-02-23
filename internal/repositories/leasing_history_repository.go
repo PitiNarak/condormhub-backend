@@ -50,7 +50,14 @@ func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID) ([]domain.LeasingHi
 	return leasingHistory, nil
 }
 func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	return []domain.LeasingHistory{}, nil
+	var leasingHistory []domain.LeasingHistory
+	err := d.db.Preload("Dorm").Preload("Dorm.Owner").
+		Where("dorm_id = ?", id).Find(&leasingHistory).Error
+
+	if err != nil {
+		return nil, errorHandler.NotFoundError(err, "leasing history not found")
+	}
+	return leasingHistory, nil
 }
 func (d *LeasingHistoryRepository) PatchEndTimestamp(id uuid.UUID, endTime time.Time) error {
 	return nil

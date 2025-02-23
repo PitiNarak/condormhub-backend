@@ -43,7 +43,11 @@ func (s *LeasingHistoryService) GetByUserID(id uuid.UUID) ([]domain.LeasingHisto
 	return leasingHistory, nil
 }
 func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	return []domain.LeasingHistory{}, nil
+	leasingHistory, err := s.repo.GetByDormID(id)
+	if err != nil {
+		return nil, err
+	}
+	return leasingHistory, nil
 }
 func (s *LeasingHistoryService) PatchEndTimestamp(id uuid.UUID, endTime time.Time) error {
 	return nil

@@ -54,7 +54,21 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory))
 }
 func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
-	return nil
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return errorHandler.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return errorHandler.InternalServerError(err, "Can not parse UUID")
+	}
+	leasingHistory, err := h.service.GetByDormID(dormID)
+	if err != nil {
+		return err
+	}
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory))
 }
 func (h *LeasingHistoryHandler) PatchEndTimestamp(c *fiber.Ctx) error {
 	return nil
