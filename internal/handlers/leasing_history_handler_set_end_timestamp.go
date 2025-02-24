@@ -12,7 +12,6 @@ import (
 // @Description Delete a leasing history in the database
 // @Tags history
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param id path string true "LeasingHistoryId"
 // @Success 200  {object}  httpResponse.HttpResponse{data=nil} "Set end timestamp successfully"

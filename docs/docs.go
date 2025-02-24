@@ -866,6 +866,11 @@ const docTemplate = `{
         },
         "/history/bydorm/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of all leasing history by userid",
                 "produces": [
                     "application/json"
@@ -988,9 +993,6 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Delete a leasing history in the database",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1103,6 +1105,11 @@ const docTemplate = `{
         },
         "/history/me": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of all leasing history by userid",
                 "produces": [
                     "application/json"

@@ -11,6 +11,7 @@ import (
 // @Summary Get all leasing history by userid
 // @Description Retrieve a list of all leasing history by userid
 // @Tags history
+// @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
 // @Success 200 {object} httpResponse.HttpResponse{data=[]domain.LeasingHistory} "Retrive history successfully"

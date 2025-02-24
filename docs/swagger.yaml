@@ -1001,13 +1001,13 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Get all leasing history by userid
       tags:
       - history
   /history/end/{id}:
     post:
-      consumes:
-      - application/json
       description: Delete a leasing history in the database
       parameters:
       - description: LeasingHistoryId
@@ -1103,6 +1103,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - Bearer: []
       summary: Get all leasing history by userid
       tags:
       - history

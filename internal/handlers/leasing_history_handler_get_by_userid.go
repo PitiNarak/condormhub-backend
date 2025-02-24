@@ -10,6 +10,7 @@ import (
 // @Summary Get all leasing history by userid
 // @Description Retrieve a list of all leasing history by userid
 // @Tags history
+// @Security Bearer
 // @Produce json
 // @Success 200 {object} httpResponse.HttpResponse{data=[]domain.LeasingHistory} "Retrive history successfully"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
