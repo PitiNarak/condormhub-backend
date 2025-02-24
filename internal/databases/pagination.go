@@ -1,4 +1,4 @@
-package pagination
+package databases
 
 import (
 	"errors"

@@ -3,8 +3,8 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/databases"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/pagination"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -52,7 +52,7 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
 	query := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id)
-	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, query, limit, page, "start")
+	scope, totalPage, totalRows, err := databases.Paginate(leasingHistory, query, limit, page, "start")
 	if err != nil {
 		return nil, 0, 0, err
 	}
@@ -65,7 +65,7 @@ func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([
 func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
 	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
-	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, query, limit, page, "start")
+	scope, totalPage, totalRows, err := databases.Paginate(leasingHistory, query, limit, page, "start")
 	if err != nil {
 		return nil, 0, 0, err
 	}
