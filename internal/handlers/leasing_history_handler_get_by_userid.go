@@ -29,16 +29,16 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
 	}
 	limit, err := strconv.Atoi(limitStr)
-	if err != nil {
-		return errorHandler.BadRequestError(errors.New("limit parameter is not integer"), "limit parameter is not integer")
+	if err != nil || limit <= 0 {
+		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
 	}
 	pageStr, ok := params["page"]
 	if !ok {
 		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
 	}
 	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		return errorHandler.BadRequestError(errors.New("page parameter is not integer"), "page parameter is not integer")
+	if err != nil || page <= 0 {
+		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
 	}
 	leasingHistory, totalPage, totalRows, err := h.service.GetByUserID(userID, limit, page)
 	if err != nil {

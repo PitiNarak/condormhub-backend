@@ -51,7 +51,7 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 }
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, d.db, limit, page, "")
+	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, d.db, limit, page, "start desc")
 	if err != nil {
 		return nil, 0, 0, err
 	}
