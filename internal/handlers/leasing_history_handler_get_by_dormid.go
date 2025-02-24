@@ -18,8 +18,10 @@ import (
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
+// @Param limit query string true "Number of history to be retirved"
+// @Param page query string true "Page to retrive"
 // @Success 200 {object} httpResponse.HttpResponse{data=[]domain.LeasingHistory} "Retrive history successfully"
-// @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
+// @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "leasing history not found"
 // @Failure 500  {object}  httpResponse.HttpResponse{data=nil} "Can not parse UUID"

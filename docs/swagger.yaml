@@ -951,6 +951,16 @@ paths:
         name: id
         required: true
         type: string
+      - description: Number of history to be retirved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrive
+        in: query
+        name: page
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -966,7 +976,8 @@ paths:
                   type: array
               type: object
         "400":
-          description: Incorrect UUID format
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect or page exceeded
           schema:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
@@ -1071,6 +1082,17 @@ paths:
   /history/me:
     get:
       description: Retrieve a list of all leasing history by userid
+      parameters:
+      - description: Number of history to be retirved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrive
+        in: query
+        name: page
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1084,6 +1106,16 @@ paths:
                   items:
                     $ref: '#/definitions/domain.LeasingHistory'
                   type: array
+              type: object
+        "400":
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect or page exceeded
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
               type: object
         "401":
           description: your request is unauthorized

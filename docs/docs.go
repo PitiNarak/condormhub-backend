@@ -886,6 +886,20 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Number of history to be retirved",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page to retrive",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -911,7 +925,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Incorrect UUID format",
+                        "description": "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded",
                         "schema": {
                             "allOf": [
                                 {
@@ -1118,6 +1132,22 @@ const docTemplate = `{
                     "history"
                 ],
                 "summary": "Get all leasing history by userid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Number of history to be retirved",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page to retrive",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Retrive history successfully",
@@ -1134,6 +1164,24 @@ const docTemplate = `{
                                             "items": {
                                                 "$ref": "#/definitions/domain.LeasingHistory"
                                             }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
                                         }
                                     }
                                 }
