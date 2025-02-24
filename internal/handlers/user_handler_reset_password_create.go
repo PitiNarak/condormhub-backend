@@ -36,5 +36,5 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is sent to user successfully", nil, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is sent to user successfully", nil))
 }

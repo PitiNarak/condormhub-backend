@@ -42,5 +42,5 @@ func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
 		RefreshToken: refreshToken,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("refresh successful", response, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("refresh successful", response))
 }

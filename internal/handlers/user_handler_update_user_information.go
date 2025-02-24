@@ -49,6 +49,6 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("user successfully updated account information", userInfo, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("user successfully updated account information", userInfo))
 
 }

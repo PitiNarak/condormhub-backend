@@ -59,5 +59,5 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 		Limit:       limit,
 		Total:       totalRows,
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory, response))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessPageResponse("Retrive history successfully", leasingHistory, response))
 }

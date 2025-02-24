@@ -35,5 +35,5 @@ func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Delete successfully", nil, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Delete successfully", nil))
 }

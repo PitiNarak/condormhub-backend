@@ -49,6 +49,6 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		UserInformation: *gormUser,
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("user successfully registered", response, nil))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("user successfully registered", response))
 
 }

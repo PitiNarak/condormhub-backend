@@ -43,5 +43,5 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		UserInformation: *user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Login successful", response, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Login successful", response))
 }

@@ -41,5 +41,5 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		UserInformation: *user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is verified successfully", response, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is verified successfully", response))
 }

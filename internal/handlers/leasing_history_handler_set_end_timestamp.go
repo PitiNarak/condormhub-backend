@@ -35,5 +35,5 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Set end timestamp successfully", nil, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Set end timestamp successfully", nil))
 }

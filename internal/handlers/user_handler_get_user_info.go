@@ -19,6 +19,6 @@ import (
 // @Router /user/me [get]
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get user information successfully", user, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get user information successfully", user))
 
 }

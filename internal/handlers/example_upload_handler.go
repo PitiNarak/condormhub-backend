@@ -49,7 +49,7 @@ func (e *TestUploadHandler) UploadToPrivateBucketHandler(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", httpResponse.SuccessResponse("upload success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}, nil), nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", httpResponse.SuccessResponse("upload success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)})))
 }
 
 func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
@@ -76,7 +76,7 @@ func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
 
 	url := e.storage.GetPublicUrl(fileKey)
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", fiber.Map{"url": url}, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", fiber.Map{"url": url}))
 }
 
 func (e *TestUploadHandler) GetSignedUrlHandler(c *fiber.Ctx) error {
@@ -86,5 +86,5 @@ func (e *TestUploadHandler) GetSignedUrlHandler(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get signed url success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}, nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get signed url success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
 }

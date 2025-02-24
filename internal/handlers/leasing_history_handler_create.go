@@ -35,5 +35,5 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully created", leasingHistory, nil))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully created", leasingHistory))
 }
