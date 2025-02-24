@@ -172,6 +172,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Success 200 {object} httpResponse.HttpResponse{data=domain.Dorm} "Dorm data updated successfully"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "Invalid Request"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 403 {object} httpResponse.HttpResponse{data=nil} "Not the owner"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found"
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "Server failed to update dorm"
 // @Router /dorms/{id} [patch]

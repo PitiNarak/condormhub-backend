@@ -825,6 +825,24 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "403": {
+                        "description": "Not the owner",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "404": {
                         "description": "Dorm not found",
                         "schema": {

@@ -770,6 +770,15 @@ paths:
                 data:
                   type: object
               type: object
+        "403":
+          description: Not the owner
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "404":
           description: Dorm not found
           schema:
