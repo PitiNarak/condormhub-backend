@@ -45,7 +45,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -63,7 +63,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -81,7 +81,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -99,7 +99,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -117,7 +117,125 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Refresh user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh user",
+                "parameters": [
+                    {
+                        "description": "user information",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RefreshTokenRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user successfully Refresh in",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.TokenResponseBody"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "user not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "system cannot refresh user",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -163,7 +281,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -181,7 +299,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -199,7 +317,538 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/dorms": {
+            "get": {
+                "description": "Retrieve a list of all dorms",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dorms"
+                ],
+                "summary": "Get all dorms",
+                "responses": {
+                    "200": {
+                        "description": "All dorms retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.Dorm"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to retrieve dorms",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new room to the database with the given details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dorms"
+                ],
+                "summary": "Create a new dorm",
+                "parameters": [
+                    {
+                        "description": "Dorm information",
+                        "name": "dorm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DormRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Dorm successfully created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Dorm"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Your request is invalid",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to save dorm",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/dorms/{id}": {
+            "get": {
+                "description": "Retrieve a specific dorm based on its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dorms"
+                ],
+                "summary": "Get a dorm by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DormID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dorm data successfully retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Dorm"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Dorm not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Server failed to retrieve dorm",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Removes a dorm from the database based on the give ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dorms"
+                ],
+                "summary": "Delete a dorm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DormID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dorm successfully deleted",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Dorm not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete dorm",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Modifies an existing room's details based on the given ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dorms"
+                ],
+                "summary": "Update an existing dorm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DormID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated Room Data",
+                        "name": "dorm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DormRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dorm data updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Dorm"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Dorm not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Server failed to update dorm",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -250,7 +899,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -268,7 +917,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -286,7 +935,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -304,7 +953,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -344,7 +993,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -362,7 +1011,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -380,7 +1029,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -420,7 +1069,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -438,7 +1087,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -456,7 +1105,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -502,7 +1151,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -520,7 +1169,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -538,7 +1187,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -584,7 +1233,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -602,7 +1251,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -620,7 +1269,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -666,7 +1315,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -684,7 +1333,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -702,7 +1351,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -720,7 +1369,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/http_response.HttpResponse"
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
                                 },
                                 {
                                     "type": "object",
@@ -738,6 +1387,86 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Address": {
+            "type": "object",
+            "required": [
+                "district",
+                "province",
+                "subdistrict",
+                "zipcode"
+            ],
+            "properties": {
+                "district": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "subdistrict": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Dorm": {
+            "type": "object",
+            "required": [
+                "address",
+                "bathrooms",
+                "bedrooms",
+                "name",
+                "ownerId",
+                "price",
+                "size"
+            ],
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/domain.Address"
+                },
+                "bathrooms": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "bedrooms": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "createAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "ownerId": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number",
+                    "maximum": 5,
+                    "minimum": 0
+                },
+                "size": {
+                    "type": "number"
+                },
+                "updateAt": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Lifestyle": {
             "type": "string",
             "enum": [
@@ -897,6 +1626,62 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DormRequestBody": {
+            "type": "object",
+            "required": [
+                "address",
+                "bathrooms",
+                "bedrooms",
+                "name",
+                "price",
+                "size"
+            ],
+            "properties": {
+                "address": {
+                    "type": "object",
+                    "required": [
+                        "district",
+                        "province",
+                        "subdistrict",
+                        "zipcode"
+                    ],
+                    "properties": {
+                        "district": {
+                            "type": "string"
+                        },
+                        "province": {
+                            "type": "string"
+                        },
+                        "subdistrict": {
+                            "type": "string"
+                        },
+                        "zipcode": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "bathrooms": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "bedrooms": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "size": {
+                    "type": "number"
+                }
+            }
+        },
         "dto.LoginRequestBody": {
             "type": "object",
             "required": [
@@ -908,6 +1693,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RefreshTokenRequestBody": {
+            "type": "object",
+            "required": [
+                "refreshToken"
+            ],
+            "properties": {
+                "refreshToken": {
                     "type": "string"
                 }
             }
@@ -957,10 +1753,24 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TokenResponseBody": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.TokenWithUserInformationResponseBody": {
             "type": "object",
             "properties": {
                 "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
                     "type": "string"
                 },
                 "userInformation": {
@@ -1015,7 +1825,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http_response.HttpResponse": {
+        "httpResponse.HttpResponse": {
             "type": "object",
             "properties": {
                 "data": {},

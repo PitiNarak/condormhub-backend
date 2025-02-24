@@ -19,7 +19,7 @@ func CreateEnum(db *gorm.DB) {
 			"Creative",
 			"Social",
 			"Relaxed",
-		
+
 			"Football",
 			"Basketball",
 			"Tennis",
@@ -29,7 +29,7 @@ func CreateEnum(db *gorm.DB) {
 			"Badminton",
 			"Yoga",
 			"Gym & Fitness",
-		
+
 			"Music",
 			"Dancing",
 			"Photography",
@@ -39,21 +39,21 @@ func CreateEnum(db *gorm.DB) {
 			"Writing",
 			"DIY & Crafting",
 			"Cooking",
-		
+
 			"Extrovert",
 			"Introvert",
 			"Night Owl",
 			"Early Bird",
-		
+
 			"Traveler",
 			"Backpacker",
 			"Nature Lover",
 			"Camping",
 			"Beach Lover",
-		
+
 			"Dog Lover",
 			"Cat Lover",
-		
+
 			"Freelancer",
 			"Entrepreneur",
 			"Office Worker",
@@ -75,10 +75,14 @@ func main() {
 	}
 
 	CreateEnum(db)
+	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 
 	if err := db.AutoMigrate(
 		&domain.SampleLog{},
 		&domain.User{},
+		&domain.Dorm{},
+		&domain.LeasingHistory{},
+		&domain.Order{},
 	); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

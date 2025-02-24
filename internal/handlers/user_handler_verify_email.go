@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/error_handler"
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,23 +15,23 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.VerifyRequestBody true "token"
-// @Success 200 {object} http_response.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "email is verified successfully"
-// @Failure 400 {object} http_response.HttpResponse{data=nil} "your request is invalid
-// @Failure 401 {object} http_response.HttpResponse{data=nil} "your request is unauthorized"
-// @Failure 500 {object} http_response.HttpResponse{data=nil} "system cannot verify your email"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "email is verified successfully"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot verify your email"
 // @Router /user/verify [post]
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	body := new(dto.VerifyRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return error_handler.BadRequestError(err, "your request is invalid")
+		return errorHandler.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		return error_handler.BadRequestError(err, "your request body is incorrect")
+		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
-	accessToken, user, err := h.userService.VerifyUser(body.Token)
+	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}
@@ -41,5 +41,5 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		UserInformation: *user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("email is verified successfully", response))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is verified successfully", response))
 }

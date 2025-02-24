@@ -9,20 +9,20 @@ import (
 )
 
 // Login godoc
-// @Summary Login user
-// @Description Login user
+// @Summary Refresh user
+// @Description Refresh user
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param user body dto.LoginRequestBody true "user information"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "user successfully logged in"
+// @Param user body dto.RefreshTokenRequestBody true "user information"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenResponseBody} "user successfully Refresh in"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "user not found"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot login user"
-// @Router /auth/login [post]
-func (h *UserHandler) Login(c *fiber.Ctx) error {
-	var req dto.LoginRequestBody
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot refresh user"
+// @Router /auth/refresh [post]
+func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
+	var req dto.RefreshTokenRequestBody
 	err := c.BodyParser(&req)
 	if err != nil {
 		return errorHandler.BadRequestError(err, "your request is invalid")
@@ -32,16 +32,15 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")
 	}
 
-	user, accessToken, refreshToken, loginErr := h.userService.Login(c.Context(), req.Email, req.Password)
+	accessToken, refreshToken, loginErr := h.userService.RefreshToken(c.Context(), req.RefreshToken)
 	if loginErr != nil {
 		return loginErr
 	}
 
-	response := dto.TokenWithUserInformationResponseBody{
-		AccessToken:     accessToken,
-		RefreshToken:    refreshToken,
-		UserInformation: *user,
+	response := dto.TokenResponseBody{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Login successful", response))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("refresh successful", response))
 }
