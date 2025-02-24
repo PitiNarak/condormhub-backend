@@ -50,11 +50,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -72,6 +72,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -91,6 +94,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -109,6 +115,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -126,6 +135,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -171,11 +183,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -193,6 +205,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -212,6 +227,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -230,6 +248,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -247,6 +268,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -292,11 +316,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -315,6 +339,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -332,6 +359,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -363,14 +393,14 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/domain.Dorm"
                                             }
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -389,6 +419,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -406,6 +439,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -454,11 +490,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/domain.Dorm"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -476,6 +512,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -495,6 +534,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -512,6 +554,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -552,11 +597,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/domain.Dorm"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -574,6 +619,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -593,6 +641,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -611,6 +662,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -628,6 +682,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -671,10 +728,10 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
+                                        "data": {
                                             "type": "object"
                                         },
-                                        "data": {
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -694,6 +751,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -711,6 +771,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -730,6 +793,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -747,6 +813,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -802,11 +871,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/domain.Dorm"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -824,6 +893,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -843,6 +915,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -861,6 +936,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -878,6 +956,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -937,14 +1018,14 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "$ref": "#/definitions/dto.PaginationResponseBody"
-                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/domain.LeasingHistory"
                                             }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/dto.PaginationResponseBody"
                                         }
                                     }
                                 }
@@ -962,6 +1043,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -981,6 +1065,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -999,6 +1086,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1016,6 +1106,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1061,10 +1154,10 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
+                                        "data": {
                                             "type": "object"
                                         },
-                                        "data": {
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1084,6 +1177,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1101,6 +1197,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1120,6 +1219,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1137,6 +1239,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1189,14 +1294,14 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "$ref": "#/definitions/dto.PaginationResponseBody"
-                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/domain.LeasingHistory"
                                             }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/dto.PaginationResponseBody"
                                         }
                                     }
                                 }
@@ -1214,6 +1319,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1233,6 +1341,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1250,6 +1361,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1295,11 +1409,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/domain.LeasingHistory"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1317,6 +1431,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1336,6 +1453,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1354,6 +1474,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1371,6 +1494,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1414,10 +1540,10 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
+                                        "data": {
                                             "type": "object"
                                         },
-                                        "data": {
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1437,6 +1563,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1454,6 +1583,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1473,6 +1605,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1490,6 +1625,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1540,11 +1678,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/domain.User"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1562,6 +1700,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1581,6 +1722,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1598,6 +1742,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1637,10 +1784,10 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
+                                        "data": {
                                             "type": "object"
                                         },
-                                        "data": {
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1660,6 +1807,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1677,6 +1827,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1716,11 +1869,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/domain.User"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1739,6 +1892,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1756,6 +1912,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1801,11 +1960,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1824,6 +1983,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1841,6 +2003,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1886,10 +2051,10 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
+                                        "data": {
                                             "type": "object"
                                         },
-                                        "data": {
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1909,6 +2074,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1926,6 +2094,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1971,11 +2142,11 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " pagination": {
-                                            "type": "object"
-                                        },
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1993,6 +2164,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -2012,6 +2186,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -2029,6 +2206,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -2402,12 +2582,6 @@ const docTemplate = `{
                 },
                 "lastPage": {
                     "type": "integer"
-                },
-                "leasingHistory": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.LeasingHistory"
-                    }
                 },
                 "limit": {
                     "type": "integer"

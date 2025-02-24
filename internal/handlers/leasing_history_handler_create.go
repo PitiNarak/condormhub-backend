@@ -14,11 +14,11 @@ import (
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 201  {object}  httpResponse.HttpResponse{data=domain.LeasingHistory, pagination=nil} "Dorm successfully created"
-// @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found or leasing history not found"
-// @Failure 500  {object}  httpResponse.HttpResponse{data=nil} "Can not parse UUID or failed to save leasing history to database"
+// @Success 201  {object}  httpResponse.HttpResponse{data=domain.LeasingHistory,pagination=nil} "Dorm successfully created"
+// @Failure 400  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Incorrect UUID format"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "Dorm not found or leasing history not found"
+// @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID or failed to save leasing history to database"
 // @Router /history/{id} [post]
 func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
