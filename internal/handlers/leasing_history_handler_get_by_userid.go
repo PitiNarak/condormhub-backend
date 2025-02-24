@@ -48,11 +48,10 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 		return err
 	}
 	response := dto.PaginationResponseBody{
-		Currentpage:    page,
-		Lastpage:       totalPage,
-		Limit:          limit,
-		Total:          totalRows,
-		LeasingHistory: leasingHistory,
+		Currentpage: page,
+		Lastpage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
 	}
 	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory, response))
 }
