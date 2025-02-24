@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"math"
+	"strconv"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
@@ -116,16 +119,33 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Description Retrieve a list of all dorms
 // @Tags dorms
 // @Produce json
-// @Success 200 {object} httpResponse.HttpResponse{data=[]domain.Dorm} "All dorms retrieved successfully"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
+// @Param page query int false "Page number (default: 1)"
+// @Param limit query int false "Number of dorms per page (default: 10)"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.PaginatedDormResponseBody} "All dorms retrieved successfully"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil} "Invalid query parameters"
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "Failed to retrieve dorms"
 // @Router /dorms [get]
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
-	dorms, err := d.dormService.GetAll()
+	page, err := strconv.Atoi(c.Query("page", "1"))
+	if err != nil || page < 1 {
+		return errorHandler.BadRequestError(err, "Invalid page number")
+	}
+
+	limit, err := strconv.Atoi(c.Query("limit", "10"))
+	if err != nil || limit < 1 {
+		return errorHandler.BadRequestError(err, "Invalid limit value")
+	}
+
+	offset := (page - 1) * limit
+
+	dorms, total, err := d.dormService.GetAll(limit, offset)
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("All dorms retrieved successfully", dorms))
+
+	lastPage := int(math.Ceil(float64(total) / float64(limit)))
+
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("All dorms retrieved successfully", dto.PaginatedDormResponseBody{Data: dorms, Pagination: dto.Pagination{CurrentPage: page, LastPage: lastPage, Limit: limit, Total: total}}))
 }
 
 // GetByID godoc

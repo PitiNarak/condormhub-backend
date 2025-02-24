@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/PitiNarak/condormhub-backend/internal/core/domain"
+
 type DormRequestBody struct {
 	Name      string  `json:"name" validate:"required"`
 	Size      float64 `json:"size" validate:"required,gt=0"`
@@ -13,4 +15,9 @@ type DormRequestBody struct {
 	} `json:"address" validate:"required"`
 	Price       float64 `json:"price" validate:"required,gt=0"`
 	Description string  `json:"description"`
+}
+
+type PaginatedDormResponseBody struct {
+	Data       []domain.Dorm `json:"data"`
+	Pagination Pagination    `json:"pagination"`
 }

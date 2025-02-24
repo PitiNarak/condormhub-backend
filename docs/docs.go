@@ -343,6 +343,20 @@ const docTemplate = `{
                     "dorms"
                 ],
                 "summary": "Get all dorms",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of dorms per page (default: 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "All dorms retrieved successfully",
@@ -355,18 +369,15 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.Dorm"
-                                            }
+                                            "$ref": "#/definitions/dto.PaginatedDormResponseBody"
                                         }
                                     }
                                 }
                             ]
                         }
                     },
-                    "401": {
-                        "description": "your request is unauthorized",
+                    "400": {
+                        "description": "Invalid query parameters",
                         "schema": {
                             "allOf": [
                                 {
@@ -1715,6 +1726,37 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.PaginatedDormResponseBody": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Dorm"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.Pagination"
+                }
+            }
+        },
+        "dto.Pagination": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "lastPage": {
+                    "type": "integer"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

@@ -32,12 +32,19 @@ func (d *DormRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (d *DormRepository) GetAll() ([]domain.Dorm, error) {
+func (d *DormRepository) GetAll(limit, offset int) ([]domain.Dorm, int64, error) {
 	var dorms []domain.Dorm
-	if err := d.db.Preload("Owner").Find(&dorms).Error; err != nil {
-		return nil, errorHandler.InternalServerError(err, "Failed to retrieve dorms")
+	var total int64
+
+	if err := d.db.Model(&domain.Dorm{}).Count(&total).Error; err != nil {
+		return nil, 0, errorHandler.InternalServerError(err, "Failed to count total dorms")
 	}
-	return dorms, nil
+
+	if err := d.db.Preload("Owner").Limit(limit).Offset(offset).Find(&dorms).Error; err != nil {
+		return nil, 0, errorHandler.InternalServerError(err, "Failed to retrieve dorms")
+	}
+
+	return dorms, total, nil
 }
 
 func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
