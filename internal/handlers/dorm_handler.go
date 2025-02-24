@@ -156,7 +156,6 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 // @Param id path string true "DormID"
 // @Success 200 {object} httpResponse.HttpResponse{data=domain.Dorm} "Dorm data successfully retrieved"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found"
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "Server failed to retrieve dorm"
 // @Router /dorms/{id} [get]

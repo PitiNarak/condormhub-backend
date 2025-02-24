@@ -574,24 +574,6 @@ const docTemplate = `{
                             ]
                         }
                     },
-                    "401": {
-                        "description": "your request is unauthorized",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
                     "404": {
                         "description": "Dorm not found",
                         "schema": {
