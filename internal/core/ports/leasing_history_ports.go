@@ -12,14 +12,14 @@ type LeasingHistoryRepository interface {
 	Delete(id uuid.UUID) error
 	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
-	GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error)
+	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 }
 
 type LeasingHistoryService interface {
 	Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error)
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
-	GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error)
+	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	SetEndTimestamp(id uuid.UUID) error
 }
 

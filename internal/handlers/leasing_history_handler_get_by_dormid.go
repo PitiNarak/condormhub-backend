@@ -1,6 +1,10 @@
 package handlers
 
 import (
+	"errors"
+	"strconv"
+
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/gofiber/fiber/v2"
@@ -22,18 +26,37 @@ import (
 // @Router /history/bydorm/{id} [get]
 func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	id := c.Params("id")
-
-	if err := uuid.Validate(id); err != nil {
-		return errorHandler.BadRequestError(err, "Incorrect UUID format")
-	}
-
 	dormID, err := uuid.Parse(id)
 	if err != nil {
 		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
-	leasingHistory, err := h.service.GetByDormID(dormID)
+	params := c.Queries()
+	limitStr, ok := params["limit"]
+	if !ok {
+		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	pageStr, ok := params["page"]
+	if !ok {
+		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page <= 0 {
+		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+	leasingHistory, totalPage, totalRows, err := h.service.GetByDormID(dormID, limit, page)
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory))
+	response := dto.GetLeasingHistoryResponseBody{
+		Currentpage:    page,
+		Lastpage:       totalPage,
+		Limit:          limit,
+		Total:          totalRows,
+		LeasingHistory: leasingHistory,
+	}
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", response))
 }

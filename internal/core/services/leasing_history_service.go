@@ -48,12 +48,12 @@ func (s *LeasingHistoryService) GetByUserID(id uuid.UUID, limit, page int) ([]do
 	}
 	return leasingHistory, totalPage, totalRows, nil
 }
-func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	leasingHistory, err := s.historyRepo.GetByDormID(id)
+func (s *LeasingHistoryService) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
+	leasingHistory, totalPage, totalRows, err := s.historyRepo.GetByDormID(id, limit, page)
 	if err != nil {
-		return nil, err
+		return nil, totalPage, totalRows, err
 	}
-	return leasingHistory, nil
+	return leasingHistory, totalPage, totalRows, nil
 }
 func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
 	leasingHistory, err := s.historyRepo.GetByID(id)

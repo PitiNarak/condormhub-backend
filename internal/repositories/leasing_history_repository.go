@@ -51,23 +51,27 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 }
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, d.db, limit, page, "start desc")
+	query := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id)
+	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, query, limit, page, "start")
 	if err != nil {
 		return nil, 0, 0, err
 	}
-	err = d.db.Scopes(scope).Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id).Find(&leasingHistory).Error
+	err = query.Scopes(scope).Find(&leasingHistory).Error
 	if err != nil {
 		return nil, 0, 0, errorHandler.NotFoundError(err, "leasing history not found")
 	}
 	return leasingHistory, totalPage, totalRows, nil
 }
-func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
+func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	err := d.db.Preload("Dorm").Preload("Dorm.Owner").
-		Where("dorm_id = ?", id).Find(&leasingHistory).Error
-
+	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
+	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, query, limit, page, "start")
 	if err != nil {
-		return nil, errorHandler.NotFoundError(err, "leasing history not found")
+		return nil, 0, 0, err
 	}
-	return leasingHistory, nil
+	err = query.Scopes(scope).Find(&leasingHistory).Error
+	if err != nil {
+		return nil, 0, 0, errorHandler.NotFoundError(err, "leasing history not found")
+	}
+	return leasingHistory, totalPage, totalRows, nil
 }
