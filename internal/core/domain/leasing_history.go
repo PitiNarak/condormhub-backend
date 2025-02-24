@@ -14,5 +14,5 @@ type LeasingHistory struct {
 	Lessee   User      `json:"lessee" gorm:"foreignKey:LesseeID;references:ID"`
 	Orders   []Order   `json:"orders" gorm:"foreignKey:LeasingHistoryID"`
 	Start    time.Time `json:"start"`
-	End      time.Time `json:"end"`
+	End      time.Time `json:"end" gorm:"default:null"`
 }

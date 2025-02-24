@@ -6,10 +6,11 @@ import (
 )
 
 type handler struct {
-	greeting      *handlers.GreetingHandler
-	user          ports.UserHandler
-	exampleUpload *handlers.TestUploadHandler
-	dorm          ports.DormHandler
+	greeting       *handlers.GreetingHandler
+	user           ports.UserHandler
+	exampleUpload  *handlers.TestUploadHandler
+	dorm           ports.DormHandler
+	leasingHistory ports.LeasingHistoryHandler
 }
 
 func (s *Server) initHandler() {
@@ -17,11 +18,13 @@ func (s *Server) initHandler() {
 	user := handlers.NewUserHandler(s.service.user)
 	exampleUpload := handlers.NewTestUploadHandler(s.storage)
 	dorm := handlers.NewDormHandler(s.service.dorm)
+	leasingHistory := handlers.NewLeasingHistoryHandler(s.service.leasingHistory)
 
 	s.handler = &handler{
-		greeting:      greeting,
-		user:          user,
-		exampleUpload: exampleUpload,
-		dorm:          dorm,
+		greeting:       greeting,
+		user:           user,
+		exampleUpload:  exampleUpload,
+		dorm:           dorm,
+		leasingHistory: leasingHistory,
 	}
 }

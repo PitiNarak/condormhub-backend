@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.VerifyRequestBody true "token"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "email is verified successfully"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody, pagination=nil} "email is verified successfully"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot verify your email"
@@ -41,5 +41,5 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 		UserInformation: *user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is verified successfully", response))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is verified successfully", response, nil))
 }

@@ -56,6 +56,27 @@ definitions:
     - price
     - size
     type: object
+  domain.LeasingHistory:
+    properties:
+      dorm:
+        $ref: '#/definitions/domain.Dorm'
+      dorm_id:
+        type: string
+      end:
+        type: string
+      id:
+        type: string
+      lessee:
+        $ref: '#/definitions/domain.User'
+      lessee_id:
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/domain.Order'
+        type: array
+      start:
+        type: string
+    type: object
   domain.Lifestyle:
     enum:
     - Active
@@ -138,6 +159,11 @@ definitions:
     - RemoteWorker
     - Student
     - SelfEmployed
+  domain.Order:
+    properties:
+      leasingHistoryID:
+        type: string
+    type: object
   domain.Role:
     enum:
     - ADMIN
@@ -241,6 +267,21 @@ definitions:
     - email
     - password
     type: object
+  dto.PaginationResponseBody:
+    properties:
+      currentPage:
+        type: integer
+      lastPage:
+        type: integer
+      leasingHistory:
+        items:
+          $ref: '#/definitions/domain.LeasingHistory'
+        type: array
+      limit:
+        type: integer
+      total:
+        type: integer
+    type: object
   dto.RefreshTokenRequestBody:
     properties:
       refreshToken:
@@ -330,6 +371,7 @@ definitions:
       data: {}
       message:
         type: string
+      pagination: {}
       success:
         type: boolean
     type: object
@@ -360,6 +402,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
@@ -423,6 +467,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenResponseBody'
               type: object
@@ -486,6 +532,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
@@ -522,6 +570,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   items:
                     $ref: '#/definitions/domain.Dorm'
@@ -568,6 +618,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.Dorm'
               type: object
@@ -621,6 +673,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -682,6 +736,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.Dorm'
               type: object
@@ -749,6 +805,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.Dorm'
               type: object
@@ -793,6 +851,337 @@ paths:
       summary: Update an existing dorm
       tags:
       - dorms
+  /history/{id}:
+    delete:
+      description: Delete a leasing history in the database
+      parameters:
+      - description: LeasingHistoryId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                ' pagination':
+                  type: object
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Incorrect UUID format
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Can not parse UUID or Failed to delete leasing history
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete a leasing history
+      tags:
+      - history
+    post:
+      description: Add a new leasing history to the database
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Dorm successfully created
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                ' pagination':
+                  type: object
+                data:
+                  $ref: '#/definitions/domain.LeasingHistory'
+              type: object
+        "400":
+          description: Incorrect UUID format
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Dorm not found or leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Can not parse UUID or failed to save leasing history to database
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Create a new leasing history
+      tags:
+      - history
+  /history/bydorm/{id}:
+    get:
+      description: Retrieve a list of all leasing history by userid
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Number of history to be retirved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrive
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Retrive history successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                ' pagination':
+                  $ref: '#/definitions/dto.PaginationResponseBody'
+                data:
+                  items:
+                    $ref: '#/definitions/domain.LeasingHistory'
+                  type: array
+              type: object
+        "400":
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect or page exceeded
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Can not parse UUID
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get all leasing history by userid
+      tags:
+      - history
+  /history/end/{id}:
+    post:
+      description: Delete a leasing history in the database
+      parameters:
+      - description: LeasingHistoryId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Set end timestamp successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                ' pagination':
+                  type: object
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Incorrect UUID format
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Can not parse UUID or Failed to update leasing history
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete a leasing history
+      tags:
+      - history
+  /history/me:
+    get:
+      description: Retrieve a list of all leasing history by userid
+      parameters:
+      - description: Number of history to be retirved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrive
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Retrive history successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                ' pagination':
+                  $ref: '#/definitions/dto.PaginationResponseBody'
+                data:
+                  items:
+                    $ref: '#/definitions/domain.LeasingHistory'
+                  type: array
+              type: object
+        "400":
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect or page exceeded
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get all leasing history by userid
+      tags:
+      - history
   /user:
     patch:
       consumes:
@@ -814,6 +1203,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.User'
               type: object
@@ -863,6 +1254,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -903,6 +1296,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.User'
               type: object
@@ -950,6 +1345,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
@@ -995,6 +1392,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -1040,6 +1439,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object

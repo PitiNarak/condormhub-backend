@@ -19,7 +19,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.UserInformationRequestBody true "user information"
-// @Success 200 {object} httpResponse.HttpResponse{data=domain.User} "user successfully updated account information"
+// @Success 200 {object} httpResponse.HttpResponse{data=domain.User, pagination=nil} "user successfully updated account information"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot update your account information"
@@ -49,6 +49,6 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		return errorHandler.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("user successfully updated account information", userInfo))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("user successfully updated account information", userInfo, nil))
 
 }
