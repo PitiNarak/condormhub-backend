@@ -38,7 +38,7 @@ func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory)
 	}
 	err = d.db.Model(existingHistory).Updates(LeasingHistory).Error
 	if err != nil {
-		return errorHandler.InternalServerError(err, "Failed to update room")
+		return errorHandler.InternalServerError(err, "Failed to update leasing history")
 	}
 	return nil
 }
