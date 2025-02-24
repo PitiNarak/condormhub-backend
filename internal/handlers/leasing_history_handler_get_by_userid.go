@@ -1,6 +1,11 @@
 package handlers
 
 import (
+	"errors"
+	"strconv"
+
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -18,9 +23,33 @@ import (
 // @Router /history/me [get]
 func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
-	leasingHistory, err := h.service.GetByUserID(userID)
+	params := c.Queries()
+	limitStr, ok := params["limit"]
+	if !ok {
+		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		return errorHandler.BadRequestError(errors.New("limit parameter is not integer"), "limit parameter is not integer")
+	}
+	pageStr, ok := params["page"]
+	if !ok {
+		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		return errorHandler.BadRequestError(errors.New("page parameter is not integer"), "page parameter is not integer")
+	}
+	leasingHistory, totalPage, totalRows, err := h.service.GetByUserID(userID, limit, page)
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", leasingHistory))
+	response := dto.GetLeasingHistoryResponseBody{
+		Currentpage:    page,
+		Lastpage:       totalPage,
+		Limit:          limit,
+		Total:          totalRows,
+		LeasingHistory: leasingHistory,
+	}
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Retrive history successfully", response))
 }

@@ -41,12 +41,12 @@ func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
 	}
 	return nil
 }
-func (s *LeasingHistoryService) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {
-	leasingHistory, err := s.historyRepo.GetByUserID(id)
+func (s *LeasingHistoryService) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
+	leasingHistory, totalPage, totalRows, err := s.historyRepo.GetByUserID(id, limit, page)
 	if err != nil {
-		return nil, err
+		return nil, totalPage, totalRows, err
 	}
-	return leasingHistory, nil
+	return leasingHistory, totalPage, totalRows, nil
 }
 func (s *LeasingHistoryService) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
 	leasingHistory, err := s.historyRepo.GetByDormID(id)

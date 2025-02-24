@@ -4,6 +4,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/pagination"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -48,15 +49,17 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 	}
 	return nil
 }
-func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID) ([]domain.LeasingHistory, error) {
+func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").
-		Where("lessee_id = ?", id).Find(&leasingHistory).Error
-
+	scope, totalPage, totalRows, err := pagination.Paginate(leasingHistory, d.db, limit, page, "")
 	if err != nil {
-		return nil, errorHandler.NotFoundError(err, "leasing history not found")
+		return nil, 0, 0, err
 	}
-	return leasingHistory, nil
+	err = d.db.Scopes(scope).Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id).Find(&leasingHistory).Error
+	if err != nil {
+		return nil, 0, 0, errorHandler.NotFoundError(err, "leasing history not found")
+	}
+	return leasingHistory, totalPage, totalRows, nil
 }
 func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID) ([]domain.LeasingHistory, error) {
 	var leasingHistory []domain.LeasingHistory
