@@ -27,7 +27,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Accept json
 // @Produce json
 // @Param dorm body dto.DormRequestBody true "Dorm information"
-// @Success 201  {object}  httpResponse.HttpResponse{data=domain.Dorm} "Dorm successfully created"
+// @Success 201  {object}  httpResponse.HttpResponse{data=domain.Dorm, pagination=nil} "Dorm successfully created"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "Your request is invalid"
 // @Failure 500  {object}  httpResponse.HttpResponse{data=nil} "Failed to save dorm"
@@ -74,7 +74,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Dorm successfully created", res))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Dorm successfully created", res, nil))
 }
 
 // Delete godoc
@@ -84,7 +84,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 200 {object} httpResponse.HttpResponse{data=nil} "Dorm successfully deleted"
+// @Success 200 {object} httpResponse.HttpResponse{data=nil, pagination=nil} "Dorm successfully deleted"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found"
@@ -112,7 +112,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm successfully deleted", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm successfully deleted", nil, nil))
 }
 
 // GetAll godoc
@@ -120,7 +120,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Description Retrieve a list of all dorms
 // @Tags dorms
 // @Produce json
-// @Success 200 {object} httpResponse.HttpResponse{data=[]domain.Dorm} "All dorms retrieved successfully"
+// @Success 200 {object} httpResponse.HttpResponse{data=[]domain.Dorm, pagination=nil} "All dorms retrieved successfully"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "Failed to retrieve dorms"
 // @Router /dorms [get]
@@ -129,7 +129,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("All dorms retrieved successfully", dorms))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("All dorms retrieved successfully", dorms, nil))
 }
 
 // GetByID godoc
@@ -138,7 +138,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 // @Tags dorms
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 200 {object} httpResponse.HttpResponse{data=domain.Dorm} "Dorm data successfully retrieved"
+// @Success 200 {object} httpResponse.HttpResponse{data=domain.Dorm, pagination=nil} "Dorm data successfully retrieved"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found"
@@ -161,7 +161,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data successfully retrieved", dorm))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data successfully retrieved", dorm, nil))
 }
 
 // Update godoc
@@ -173,7 +173,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "DormID"
 // @Param dorm body dto.DormRequestBody true "Updated Room Data"
-// @Success 200 {object} httpResponse.HttpResponse{data=domain.Dorm} "Dorm data updated successfully"
+// @Success 200 {object} httpResponse.HttpResponse{data=domain.Dorm, pagination=nil} "Dorm data updated successfully"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "Invalid Request"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found"
@@ -232,5 +232,5 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data updated successfully", res))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Dorm data updated successfully", res, nil))
 }

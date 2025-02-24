@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.RefreshTokenRequestBody true "user information"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenResponseBody} "user successfully Refresh in"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenResponseBody, pagination=nil} "user successfully Refresh in"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "user not found"
@@ -42,5 +42,5 @@ func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
 		RefreshToken: refreshToken,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("refresh successful", response))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("refresh successful", response, nil))
 }

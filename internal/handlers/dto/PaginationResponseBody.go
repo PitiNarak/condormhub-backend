@@ -2,7 +2,7 @@ package dto
 
 import "github.com/PitiNarak/condormhub-backend/internal/core/domain"
 
-type GetLeasingHistoryResponseBody struct {
+type PaginationResponseBody struct {
 	Currentpage    int                     `json:"currentPage"`
 	Lastpage       int                     `json:"lastPage"`
 	Limit          int                     `json:"limit"`

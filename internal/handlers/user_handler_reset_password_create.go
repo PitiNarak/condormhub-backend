@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.ResetPasswordCreateRequestBody true "token"
-// @Success 200 {object} httpResponse.HttpResponse{data=nil} "email is sent to user successfully"
+// @Success 200 {object} httpResponse.HttpResponse{data=nil, pagination=nil} "email is sent to user successfully"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid
 // @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot resend verification email"
 // @Router /user/resetpassword [post]
@@ -36,5 +36,5 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is sent to user successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is sent to user successfully", nil, nil))
 }

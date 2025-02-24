@@ -14,7 +14,7 @@ import (
 // @Security Bearer
 // @Produce json
 // @Param id path string true "LeasingHistoryId"
-// @Success 200  {object}  httpResponse.HttpResponse{data=nil} "Set end timestamp successfully"
+// @Success 200  {object}  httpResponse.HttpResponse{data=nil, pagination=nil} "Set end timestamp successfully"
 // @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "leasing history not found"
@@ -35,5 +35,5 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Set end timestamp successfully", nil))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Set end timestamp successfully", nil, nil))
 }

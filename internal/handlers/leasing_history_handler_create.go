@@ -14,7 +14,7 @@ import (
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 201  {object}  httpResponse.HttpResponse{data=domain.LeasingHistory} "Dorm successfully created"
+// @Success 201  {object}  httpResponse.HttpResponse{data=domain.LeasingHistory, pagination=nil} "Dorm successfully created"
 // @Failure 400  {object}  httpResponse.HttpResponse{data=nil} "Incorrect UUID format"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil} "Dorm not found or leasing history not found"
@@ -35,5 +35,5 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully created", leasingHistory))
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Leasing history successfully created", leasingHistory, nil))
 }

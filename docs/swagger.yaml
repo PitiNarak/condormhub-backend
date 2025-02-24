@@ -267,6 +267,21 @@ definitions:
     - email
     - password
     type: object
+  dto.PaginationResponseBody:
+    properties:
+      currentPage:
+        type: integer
+      lastPage:
+        type: integer
+      leasingHistory:
+        items:
+          $ref: '#/definitions/domain.LeasingHistory'
+        type: array
+      limit:
+        type: integer
+      total:
+        type: integer
+    type: object
   dto.RefreshTokenRequestBody:
     properties:
       refreshToken:
@@ -356,6 +371,7 @@ definitions:
       data: {}
       message:
         type: string
+      pagination: {}
       success:
         type: boolean
     type: object
@@ -386,6 +402,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
@@ -449,6 +467,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenResponseBody'
               type: object
@@ -512,6 +532,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
@@ -548,6 +570,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   items:
                     $ref: '#/definitions/domain.Dorm'
@@ -594,6 +618,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.Dorm'
               type: object
@@ -647,6 +673,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -708,6 +736,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.Dorm'
               type: object
@@ -775,6 +805,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.Dorm'
               type: object
@@ -837,6 +869,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -898,6 +932,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.LeasingHistory'
               type: object
@@ -970,6 +1006,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  $ref: '#/definitions/dto.PaginationResponseBody'
                 data:
                   items:
                     $ref: '#/definitions/domain.LeasingHistory'
@@ -1035,6 +1073,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -1102,6 +1142,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  $ref: '#/definitions/dto.PaginationResponseBody'
                 data:
                   items:
                     $ref: '#/definitions/domain.LeasingHistory'
@@ -1161,6 +1203,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.User'
               type: object
@@ -1210,6 +1254,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -1250,6 +1296,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/domain.User'
               type: object
@@ -1297,6 +1345,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
@@ -1342,6 +1392,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   type: object
               type: object
@@ -1387,6 +1439,8 @@ paths:
             allOf:
             - $ref: '#/definitions/httpResponse.HttpResponse'
             - properties:
+                ' pagination':
+                  type: object
                 data:
                   $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
               type: object
