@@ -13,6 +13,7 @@ func (s *Server) initRoutes() {
 	s.initUserRoutes()
 	s.initAuthRoutes()
 	s.initDormRoutes()
+	s.initLeasingHistoryRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -48,4 +49,13 @@ func (s *Server) initDormRoutes() {
 	dormRoutes.Get("/:id", s.handler.dorm.GetByID)
 	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.dorm.Update)
 	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.dorm.Delete)
+}
+
+func (s *Server) initLeasingHistoryRoutes() {
+	historyRoutes := s.app.Group("/history")
+	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Create)
+	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
+	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
+	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
+	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
 }
