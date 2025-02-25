@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
@@ -53,4 +55,39 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	responseData := dto.OrderResponseBody(*order)
 
 	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Order successfully retrieved", responseData))
+}
+
+func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
+	userID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return errorHandler.BadRequestError(err, "Invalid user ID")
+	}
+
+	limit := c.QueryInt("limit", 1)
+	if limit <= 0 {
+		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+
+	orders, totalPage, totalRows, errHandler := o.OrderService.GetUnpaidOrderByUserID(userID, limit, page)
+	if errHandler != nil {
+		return err
+	}
+
+	responseData := make([]dto.OrderResponseBody, len(orders))
+	for i, order := range orders {
+		responseData[i] = dto.OrderResponseBody(order)
+	}
+
+	pageination := dto.PaginationResponseBody{
+		Currentpage: page,
+		Lastpage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessPageResponse("Orders successfully retrieved", responseData, pageination))
 }

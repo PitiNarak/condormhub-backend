@@ -26,7 +26,7 @@ type OrderService interface {
 type OrderHandler interface {
 	CreateOrder(c *fiber.Ctx) error
 	GetOrderByID(c *fiber.Ctx) error
-	// GetUnpaidOrderByUserID(c *fiber.Ctx) ([]domain.Order, int, int, *errorHandler.ErrorHandler)
+	GetUnpaidOrderByUserID(c *fiber.Ctx) error
 	// UpdateOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
 	// DeleteOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
 }

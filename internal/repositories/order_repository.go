@@ -36,7 +36,11 @@ func (r *OrderRepository) GetByID(orderID uuid.UUID) (*domain.Order, *errorHandl
 
 func (r *OrderRepository) GetUnpaidByUserID(userID uuid.UUID, limit int, page int) ([]domain.Order, int, int, *errorHandler.ErrorHandler) {
 	var orders []domain.Order
-	query := r.db.Preload("LeasingHistory").Preload("LeasingHistory.Lessee").Where("leasing_history.lessee_id = ?", userID).Where("paid_transaction_id IS NULL")
+	query := r.db.
+		Joins("JOIN leasing_histories ON leasing_histories.id = orders.leasing_history_id").
+		Where("leasing_histories.lessee_id = ?", userID).
+		Where("orders.paid_transaction_id IS NULL")
+
 	scope, totalPage, totalRows, err := databases.Paginate(orders, query, limit, page, "create_at desc")
 	if err != nil {
 		return nil, 0, 0, errorHandler.BadRequestError(err, err.Error())
