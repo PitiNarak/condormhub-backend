@@ -22,6 +22,6 @@ type Order struct {
 	Transactions      []*Transaction  `json:"transactions" gorm:"foreignKey:OrderID"`
 	PaidTransaction   *Transaction    `json:"paidTransaction" gorm:"foreignKey:OrderID;default:null"`
 	PaidTransactionID string          `json:"paidTransactionID" gorm:"default:null"`
-	LeasingHistory    *LeasingHistory `json:"leasingHistory" gorm:"foreignKey:OrderID"`
+	LeasingHistory    *LeasingHistory `json:"leasingHistory" gorm:"foreignKey:LeasingHistoryID"`
 	LeasingHistoryID  string          `json:"leasingHistoryID"`
 }

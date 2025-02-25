@@ -13,6 +13,6 @@ type Transaction struct {
 	CreateAt      time.Time                    `json:"createAt" gorm:"autoCreateTime"`
 	UpdateAt      time.Time                    `json:"updateAt" gorm:"autoUpdateTime"`
 	Price         int64                        `json:"price"`
-	Order         Order                        `json:"order" gorm:"foreignKey:TransactionID"`
+	Order         Order                        `json:"order" gorm:"foreignKey:OrderID"`
 	OrderID       uuid.UUID                    `json:"orderID"`
 }

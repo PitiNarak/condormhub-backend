@@ -81,7 +81,7 @@ func main() {
 	if err := db.AutoMigrate(
 		&domain.SampleLog{},
 		&domain.User{},
-		// &domain.Transaction{},
+		&domain.Transaction{},
 		&domain.Dorm{},
 		&domain.LeasingHistory{},
 		&domain.Order{},
