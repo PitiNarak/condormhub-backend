@@ -56,6 +56,6 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Create)
 	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
-	historyRoutes.Post("/end/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
+	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
 }

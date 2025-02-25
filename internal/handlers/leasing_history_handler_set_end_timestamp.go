@@ -19,7 +19,7 @@ import (
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
 // @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID or Failed to update leasing history"
-// @Router /history/end/{id} [post]
+// @Router /history/{id} [patch]
 func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 	id := c.Params("id")
 
