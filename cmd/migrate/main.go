@@ -13,53 +13,54 @@ import (
 func CreateEnum(db *gorm.DB) {
 	query := `
     DO $$ BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = "lifestyle_tag") THEN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'lifestyle_tag') THEN
             CREATE TYPE lifestyle_tag AS ENUM (
-			"Active",
-			"Creative",
-			"Social",
-			"Relaxed",
+                'Active',
+                'Creative',
+                'Social',
+                'Relaxed',
 
-			"Football",
-			"Basketball",
-			"Tennis",
-			"Swimming",
-			"Running",
-			"Cycling",
-			"Badminton",
-			"Yoga",
-			"Gym & Fitness",
+                'Football',
+                'Basketball',
+                'Tennis',
+                'Swimming',
+                'Running',
+                'Cycling',
+                'Badminton',
+                'Yoga',
+                'Gym & Fitness',
 
-			"Music",
-			"Dancing",
-			"Photography",
-			"Painting",
-			"Gaming",
-			"Reading",
-			"Writing",
-			"DIY & Crafting",
-			"Cooking",
+                'Music',
+                'Dancing',
+                'Photography',
+                'Painting',
+                'Gaming',
+                'Reading',
+                'Writing',
+                'DIY & Crafting',
+                'Cooking',
 
-			"Extrovert",
-			"Introvert",
-			"Night Owl",
-			"Early Bird",
+                'Extrovert',
+                'Introvert',
+                'Night Owl',
+                'Early Bird',
 
-			"Traveler",
-			"Backpacker",
-			"Nature Lover",
-			"Camping",
-			"Beach Lover",
+                'Traveler',
+                'Backpacker',
+                'Nature Lover',
+                'Camping',
+                'Beach Lover',
 
-			"Dog Lover",
-			"Cat Lover",
+                'Dog Lover',
+                'Cat Lover',
 
-			"Freelancer",
-			"Entrepreneur",
-			"Office Worker",
-			"Remote Worker",
-			"Student",
-			"Self-Employed");
+                'Freelancer',
+                'Entrepreneur',
+                'Office Worker',
+                'Remote Worker',
+                'Student',
+                'Self-Employed'
+            );
         END IF;
     END $$;
     `

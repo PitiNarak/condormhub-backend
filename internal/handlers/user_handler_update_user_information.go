@@ -39,7 +39,10 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	}
 
 	validate := validator.New()
-	validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
+	lifestyle_err := validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
+	if lifestyle_err != nil {
+		return errorHandler.BadRequestError(err, "your lifestyle-tg is incorrect format")
+	}
 
 	if err := validate.Struct(requestBody); err != nil {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")
