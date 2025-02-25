@@ -28,7 +28,7 @@ func (r *OrderRepository) Create(order *domain.Order) *errorHandler.ErrorHandler
 
 func (r *OrderRepository) GetByID(orderID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler) {
 	var order domain.Order
-	if err := r.db.Where("id = ?", orderID).First(&order).Error; err != nil {
+	if err := r.db.Where("id = ?", orderID).Preload("PaidTransaction").First(&order).Error; err != nil {
 		return nil, errorHandler.NotFoundError(err, "order not found")
 	}
 	return &order, nil

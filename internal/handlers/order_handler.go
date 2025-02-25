@@ -7,6 +7,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type OrderHandler struct {
@@ -34,4 +35,20 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Order successfully created", order))
+}
+
+func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
+	orderID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return errorHandler.BadRequestError(err, "Invalid order ID")
+	}
+
+	order, errHandler := o.OrderService.GetOrderByID(orderID)
+	if errHandler != nil {
+		return err
+	}
+
+	responseData := dto.OrderResponseBody(*order)
+
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Order successfully retrieved", responseData))
 }
