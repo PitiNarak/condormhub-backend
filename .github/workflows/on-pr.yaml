@@ -1,0 +1,35 @@
+name: PR
+on:
+  pull_request:
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.2"
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60
+
+      - name: Install and Generate Swagger
+        run: |
+          go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc4
+          export PATH=$(go env GOPATH)/bin:$PATH
+          swag init -o docs -g cmd/server/main.go
+
+      - name: Build
+        run: go build -o bin/server ./cmd/server/main.go

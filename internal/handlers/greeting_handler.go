@@ -3,7 +3,7 @@ package handlers
 import (
 	"os"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/http_response"
+	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,6 +19,6 @@ func (e *GreetingHandler) Greeting(c *fiber.Ctx) error {
 	if env == "" {
 		env = "unknown"
 	}
-	return c.Status(fiber.StatusOK).JSON(http_response.SuccessResponse("Hello, welcome to CondormHub!", map[string]string{"env": env}))
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Hello, welcome to CondormHub!", map[string]string{"env": env}))
 	// return error_handler.InternalServerError(errors.New("error from system"), "your error message")
 }

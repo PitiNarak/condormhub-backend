@@ -7,19 +7,21 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
+	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
+	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 	"github.com/PitiNarak/condormhub-backend/pkg/stripe"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 )
 
 type AppConfig struct {
 	SMTP         services.SMTPConfig `envPrefix:"SMTP_"`
-	JWT          utils.JWTConfig     `envPrefix:"JWT_"`
+	JWT          jwt.JWTConfig       `envPrefix:"JWT_"`
 	Server       server.Config       `envPrefix:"SERVER_"`
 	Database     databases.Config    `envPrefix:"DB_"`
 	Storage      storage.Config      `envPrefix:"STORAGE_"`
 	StripeConfig stripe.Config       `envPrefix:"STRIPE_"`
+	Redis        redis.Config        `envPrefix:"REDIS_"`
 }
 
 // Load configs from .env file
