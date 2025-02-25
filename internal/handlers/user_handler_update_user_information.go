@@ -7,7 +7,8 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
-	"github.com/go-playground/validator"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -38,6 +39,10 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	}
 
 	validate := validator.New()
+	lifestyle_err := validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
+	if lifestyle_err != nil {
+		return errorHandler.BadRequestError(err, "your lifestyle-tg is incorrect format")
+	}
 
 	if err := validate.Struct(requestBody); err != nil {
 		return errorHandler.BadRequestError(err, "your request body is incorrect")

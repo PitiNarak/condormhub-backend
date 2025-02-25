@@ -196,12 +196,10 @@ definitions:
         type: boolean
       lastname:
         type: string
-      lifestyle1:
-        $ref: '#/definitions/domain.Lifestyle'
-      lifestyle2:
-        $ref: '#/definitions/domain.Lifestyle'
-      lifestyle3:
-        $ref: '#/definitions/domain.Lifestyle'
+      lifestyles:
+        items:
+          $ref: '#/definitions/domain.Lifestyle'
+        type: array
       nationalID:
         type: string
       role:
