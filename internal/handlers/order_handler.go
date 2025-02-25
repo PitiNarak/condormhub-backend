@@ -34,7 +34,9 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Order successfully created", order))
+	responseData := dto.OrderResponseBody(*order)
+
+	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Order successfully created", responseData))
 }
 
 func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
