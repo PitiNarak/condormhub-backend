@@ -973,6 +973,77 @@ paths:
       summary: Delete a leasing history
       tags:
       - history
+    patch:
+      description: Delete a leasing history in the database
+      parameters:
+      - description: LeasingHistoryId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Set end timestamp successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "400":
+          description: Incorrect UUID format
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: Can not parse UUID or Failed to update leasing history
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete a leasing history
+      tags:
+      - history
     post:
       description: Add a new leasing history to the database
       parameters:
@@ -1127,78 +1198,6 @@ paths:
       security:
       - Bearer: []
       summary: Get all leasing history by userid
-      tags:
-      - history
-  /history/end/{id}:
-    post:
-      description: Delete a leasing history in the database
-      parameters:
-      - description: LeasingHistoryId
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Set end timestamp successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
-        "400":
-          description: Incorrect UUID format
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
-        "401":
-          description: your request is unauthorized
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
-        "404":
-          description: leasing history not found
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
-        "500":
-          description: Can not parse UUID or Failed to update leasing history
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
-      security:
-      - Bearer: []
-      summary: Delete a leasing history
       tags:
       - history
   /history/me:
