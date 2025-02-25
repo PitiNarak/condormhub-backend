@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
@@ -32,21 +31,12 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	if err != nil {
 		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
-	params := c.Queries()
-	limitStr, ok := params["limit"]
-	if !ok {
+	limit := c.QueryInt("limit", 1)
+	if limit <= 0 {
 		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
 	}
-	limit, err := strconv.Atoi(limitStr)
-	if err != nil || limit <= 0 {
-		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
-	}
-	pageStr, ok := params["page"]
-	if !ok {
-		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
-	}
-	page, err := strconv.Atoi(pageStr)
-	if err != nil || page <= 0 {
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
 		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
 	}
 	leasingHistory, totalPage, totalRows, err := h.service.GetByDormID(dormID, limit, page)
