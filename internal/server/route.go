@@ -14,6 +14,7 @@ func (s *Server) initRoutes() {
 	s.initAuthRoutes()
 	s.initDormRoutes()
 	s.initLeasingHistoryRoutes()
+	s.initOrderRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -58,4 +59,9 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
 	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
+}
+
+func (s *Server) initOrderRoutes() {
+	orderRoutes := s.app.Group("/order")
+	orderRoutes.Post("/", s.authMiddleware.Auth, s.handler.order.CreateOrder)
 }

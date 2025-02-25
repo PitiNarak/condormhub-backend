@@ -18,14 +18,14 @@ func NewOrderService(orderRepository ports.OrderRepository, leasingHistoryReposi
 	return &OrderService{orderRepository: orderRepository, leasingHistoryRepository: leasingHistoryRepository}
 }
 
-func (s *OrderService) CreateOrder(leasingHistoryID uuid.UUID) *errorHandler.ErrorHandler {
+func (s *OrderService) CreateOrder(leasingHistoryID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler) {
 	leasingHistory, err := s.leasingHistoryRepository.GetByID(leasingHistoryID)
 	if err != nil {
-		return errorHandler.NotFoundError(err, err.Error())
+		return nil, errorHandler.NotFoundError(err, err.Error())
 	}
 
 	if !leasingHistory.End.IsZero() {
-		return errorHandler.BadRequestError(errors.New("leasing history has ended"), "leasing history has ended")
+		return nil, errorHandler.BadRequestError(errors.New("leasing history has ended"), "leasing history has ended")
 	}
 
 	order := &domain.Order{
@@ -34,7 +34,11 @@ func (s *OrderService) CreateOrder(leasingHistoryID uuid.UUID) *errorHandler.Err
 		Type:             domain.MonthlyBillOrderType,
 	}
 
-	return s.orderRepository.Create(order)
+	if err := s.orderRepository.Create(order); err != nil {
+		return nil, err
+	}
+
+	return order, nil
 }
 
 func (s *OrderService) GetOrderByID(orderID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler) {

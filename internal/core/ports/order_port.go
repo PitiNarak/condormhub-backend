@@ -16,7 +16,7 @@ type OrderRepository interface {
 }
 
 type OrderService interface {
-	CreateOrder(leasingHistoryID uuid.UUID) *errorHandler.ErrorHandler
+	CreateOrder(leasingHistoryID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler)
 	GetOrderByID(orderID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler)
 	GetUnpaidOrderByUserID(userID uuid.UUID, limit int, page int) ([]domain.Order, int, int, *errorHandler.ErrorHandler)
 	UpdateOrder(order *domain.Order) *errorHandler.ErrorHandler
@@ -24,9 +24,9 @@ type OrderService interface {
 }
 
 type OrderHandler interface {
-	CreateOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
-	GetOrder(c *fiber.Ctx) (*domain.Order, *errorHandler.ErrorHandler)
-	GetUnpaidOrderByUserID(c *fiber.Ctx) ([]domain.Order, int, int, *errorHandler.ErrorHandler)
-	UpdateOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
-	DeleteOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
+	CreateOrder(c *fiber.Ctx) error
+	// GetOrder(c *fiber.Ctx) (*domain.Order, *errorHandler.ErrorHandler)
+	// GetUnpaidOrderByUserID(c *fiber.Ctx) ([]domain.Order, int, int, *errorHandler.ErrorHandler)
+	// UpdateOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
+	// DeleteOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
 }

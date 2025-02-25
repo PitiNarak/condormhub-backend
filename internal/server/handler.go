@@ -11,6 +11,7 @@ type handler struct {
 	exampleUpload  *handlers.TestUploadHandler
 	dorm           ports.DormHandler
 	leasingHistory ports.LeasingHistoryHandler
+	order          ports.OrderHandler
 }
 
 func (s *Server) initHandler() {
@@ -19,6 +20,7 @@ func (s *Server) initHandler() {
 	exampleUpload := handlers.NewTestUploadHandler(s.storage)
 	dorm := handlers.NewDormHandler(s.service.dorm)
 	leasingHistory := handlers.NewLeasingHistoryHandler(s.service.leasingHistory)
+	order := handlers.NewOrderHandler(s.service.order)
 
 	s.handler = &handler{
 		greeting:       greeting,
@@ -26,5 +28,6 @@ func (s *Server) initHandler() {
 		exampleUpload:  exampleUpload,
 		dorm:           dorm,
 		leasingHistory: leasingHistory,
+		order:          order,
 	}
 }
