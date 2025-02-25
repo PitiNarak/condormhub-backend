@@ -15,11 +15,11 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.LoginRequestBody true "user information"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody} "user successfully logged in"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil} "your request is invalid"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil} "user not found"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil} "system cannot login user"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody,pagination=nil} "user successfully logged in"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "user not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot login user"
 // @Router /auth/login [post]
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 	var req dto.LoginRequestBody

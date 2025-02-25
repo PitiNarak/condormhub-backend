@@ -52,6 +52,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -69,6 +72,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -88,6 +94,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -106,6 +115,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -123,6 +135,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -170,6 +185,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -187,6 +205,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -206,6 +227,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -224,6 +248,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -241,6 +268,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -288,6 +318,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -306,6 +339,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -323,6 +359,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -359,6 +398,9 @@ const docTemplate = `{
                                             "items": {
                                                 "$ref": "#/definitions/domain.Dorm"
                                             }
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -377,6 +419,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -394,6 +439,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -444,6 +492,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.Dorm"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -461,6 +512,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -480,6 +534,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -497,6 +554,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -539,6 +599,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.Dorm"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -556,6 +619,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -575,6 +641,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -593,6 +662,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -610,6 +682,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -655,6 +730,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -672,6 +750,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -691,6 +772,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -709,6 +793,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -726,6 +813,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -783,6 +873,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.Dorm"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -800,6 +893,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -819,6 +915,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -837,6 +936,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -854,6 +956,676 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/history/bydorm/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve a list of all leasing history by userid",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Get all leasing history by userid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DormID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Number of history to be retirved",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page to retrive",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retrive history successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.LeasingHistory"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/dto.PaginationResponseBody"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Can not parse UUID",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/history/me": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve a list of all leasing history by userid",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Get all leasing history by userid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Number of history to be retirved",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page to retrive",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retrive history successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.LeasingHistory"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/dto.PaginationResponseBody"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/history/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new leasing history to the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Create a new leasing history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DormID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Dorm successfully created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.LeasingHistory"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Dorm not found or leasing history not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Can not parse UUID or failed to save leasing history to database",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a leasing history in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Delete a leasing history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "LeasingHistoryId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Can not parse UUID or Failed to delete leasing history",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a leasing history in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Delete a leasing history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "LeasingHistoryId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Set end timestamp successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect UUID format",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Can not parse UUID or Failed to update leasing history",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -906,6 +1678,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.User"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -923,6 +1698,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -942,6 +1720,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -959,6 +1740,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1000,6 +1784,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1018,6 +1805,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1035,6 +1825,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1076,6 +1869,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/domain.User"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1094,6 +1890,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1111,6 +1910,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1158,6 +1960,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1176,6 +1981,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1193,6 +2001,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1240,6 +2051,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1258,6 +2072,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1275,6 +2092,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1322,6 +2142,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1339,6 +2162,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1358,6 +2184,9 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1375,6 +2204,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
                                             "type": "object"
                                         }
                                     }
@@ -1467,6 +2299,38 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.LeasingHistory": {
+            "type": "object",
+            "properties": {
+                "dorm": {
+                    "$ref": "#/definitions/domain.Dorm"
+                },
+                "dorm_id": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lessee": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "lessee_id": {
+                    "type": "string"
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Order"
+                    }
+                },
+                "start": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Lifestyle": {
             "type": "string",
             "enum": [
@@ -1551,6 +2415,14 @@ const docTemplate = `{
                 "Student",
                 "SelfEmployed"
             ]
+        },
+        "domain.Order": {
+            "type": "object",
+            "properties": {
+                "leasingHistoryID": {
+                    "type": "string"
+                }
+            }
         },
         "domain.Role": {
             "type": "string",
@@ -1697,6 +2569,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.PaginationResponseBody": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "lastPage": {
+                    "type": "integer"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.RefreshTokenRequestBody": {
             "type": "object",
             "required": [
@@ -1832,6 +2721,7 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
+                "pagination": {},
                 "success": {
                     "type": "boolean"
                 }
