@@ -1286,7 +1286,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "price of a dorm",
+                        "description": "price of a dorm must be greater than 100",
                         "name": "price",
                         "in": "body",
                         "required": true,

@@ -1059,7 +1059,7 @@ paths:
         name: id
         required: true
         type: string
-      - description: price of a dorm
+      - description: price of a dorm must be greater than 100
         in: body
         name: price
         required: true
