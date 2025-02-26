@@ -8,8 +8,8 @@ import (
 )
 
 // SetEndTimestamp godoc
-// @Summary Delete a leasing history
-// @Description Delete a leasing history in the database
+// @Summary Set end time to a leasing hostory
+// @Description Set end timestamp to the given leasing hostory id
 // @Tags history
 // @Security Bearer
 // @Produce json
