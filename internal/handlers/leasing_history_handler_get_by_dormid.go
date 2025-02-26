@@ -23,7 +23,7 @@ import (
 // @Failure 400  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID"
+// @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID or cannot paginate the given value"
 // @Router /history/bydorm/{id} [get]
 func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	id := c.Params("id")

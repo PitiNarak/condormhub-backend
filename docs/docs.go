@@ -1096,7 +1096,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "Can not parse UUID",
+                        "description": "Can not parse UUID or cannot paginate the given value",
                         "schema": {
                             "allOf": [
                                 {
@@ -1219,6 +1219,27 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "leasing history not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httpResponse.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "cannot paginate the given value",
                         "schema": {
                             "allOf": [
                                 {
