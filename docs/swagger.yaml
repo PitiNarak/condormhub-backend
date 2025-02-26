@@ -1507,7 +1507,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get unpaid orders by ID
+      description: Get unpaid orders by User ID
       parameters:
       - description: User ID
         in: path
