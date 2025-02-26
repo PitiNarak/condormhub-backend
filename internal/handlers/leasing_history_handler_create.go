@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -21,6 +23,17 @@ import (
 // @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID or failed to save leasing history to database"
 // @Router /history/{id} [post]
 func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
+	reqBody := new(dto.LeasingHistoryCreateRequestBody)
+	if err := c.BodyParser(reqBody); err != nil {
+		return errorHandler.BadRequestError(err, "Your request is invalid")
+	}
+	validate := validator.New()
+	if err := validate.Struct(reqBody); err != nil {
+		return errorHandler.BadRequestError(err, "Your request is invalid")
+	}
+	if err := c.BodyParser(reqBody); err != nil {
+		return errorHandler.BadRequestError(err, "Your request is invalid")
+	}
 	userID := c.Locals("userID").(uuid.UUID)
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
@@ -31,7 +44,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return errorHandler.InternalServerError(err, "Can not parse UUID")
 	}
-	leasingHistory, err := h.service.Create(userID, dormID)
+	leasingHistory, err := h.service.Create(userID, dormID, reqBody.Price)
 	if err != nil {
 		return err
 	}
