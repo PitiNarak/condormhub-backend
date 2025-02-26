@@ -10,12 +10,15 @@ import (
 
 func Paginate(value interface{}, db *gorm.DB, limit, page int, order string) (func(db *gorm.DB) *gorm.DB, int, int, error) {
 	var totalRows int64
-	db.Model(value).Count(&totalRows)
+	err := db.Model(value).Count(&totalRows).Error
+	if err != nil {
+		return func(db *gorm.DB) *gorm.DB { return nil }, 0, 0, errorHandler.InternalServerError(err, "cannot paginate the given value")
+	}
 	totalPages := int(math.Ceil(float64(totalRows) / float64(limit)))
 	offset := (page - 1) * limit
 	if page > totalPages {
 		offset = (totalPages - 1) * limit
-		return func(db *gorm.DB) *gorm.DB { return db.Offset(offset).Limit(limit).Order(order) }, totalPages, int(totalRows), errorHandler.BadRequestError(errors.New("page exceeded"), "page exceeded")
+		return func(db *gorm.DB) *gorm.DB { return nil }, totalPages, int(totalRows), errorHandler.BadRequestError(errors.New("page exceeded"), "page exceeded")
 	}
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Offset(offset).Limit(limit).Order(order)
