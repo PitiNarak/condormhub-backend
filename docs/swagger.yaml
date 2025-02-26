@@ -270,6 +270,11 @@ definitions:
     - email
     - username
     type: object
+  dto.CreateTransactionResponseBody:
+    properties:
+      checkoutUrl:
+        type: string
+    type: object
   dto.DormRequestBody:
     properties:
       address:
@@ -405,6 +410,11 @@ definitions:
         type: string
       userInformation:
         $ref: '#/definitions/domain.User'
+    type: object
+  dto.TransactionRequestBody:
+    properties:
+      orderID:
+        type: string
     type: object
   dto.UserInformationRequestBody:
     properties:
@@ -1526,7 +1536,7 @@ paths:
                 data:
                   $ref: '#/definitions/dto.OrderResponseBody'
                 pagination:
-                  type: object
+                  $ref: '#/definitions/dto.PaginationResponseBody'
               type: object
         "400":
           description: your request is invalid
@@ -1605,7 +1615,7 @@ paths:
                 data:
                   $ref: '#/definitions/dto.OrderResponseBody'
                 pagination:
-                  type: object
+                  $ref: '#/definitions/dto.PaginationResponseBody'
               type: object
         "400":
           description: your request is invalid
@@ -1656,6 +1666,81 @@ paths:
       summary: Get my unpaid orders by ID
       tags:
       - order
+  /transaction:
+    post:
+      consumes:
+      - application/json
+      description: Create a transaction
+      parameters:
+      - description: Transaction request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: account successfully deleted
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CreateTransactionResponseBody'
+                pagination:
+                  type: object
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Create a transaction
+      tags:
+      - transaction
   /user:
     patch:
       consumes:
