@@ -86,7 +86,7 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 }
 
 // Get Unpaid Order by ID godoc
-// @Summary Get unpaid orders by ID
+// @Summary Get unpaid orders by User ID
 // @Description Get unpaid orders by User ID
 // @Router /order/unpaid/{userID} [get]
 // @Tags order
