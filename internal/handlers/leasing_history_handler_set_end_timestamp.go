@@ -8,8 +8,8 @@ import (
 )
 
 // SetEndTimestamp godoc
-// @Summary Set end time to a leasing hostory
-// @Description Set end timestamp to the given leasing hostory id
+// @Summary Set end time to a leasing history
+// @Description Set end timestamp to the given leasing history id
 // @Tags history
 // @Security Bearer
 // @Produce json

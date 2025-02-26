@@ -972,7 +972,7 @@ paths:
       tags:
       - history
     patch:
-      description: Set end timestamp to the given leasing hostory id
+      description: Set end timestamp to the given leasing history id
       parameters:
       - description: LeasingHistoryId
         in: path
@@ -1039,7 +1039,7 @@ paths:
               type: object
       security:
       - Bearer: []
-      summary: Set end time to a leasing hostory
+      summary: Set end time to a leasing history
       tags:
       - history
     post:

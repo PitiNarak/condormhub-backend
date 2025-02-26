@@ -1510,14 +1510,14 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Set end timestamp to the given leasing hostory id",
+                "description": "Set end timestamp to the given leasing history id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "history"
                 ],
-                "summary": "Set end time to a leasing hostory",
+                "summary": "Set end time to a leasing history",
                 "parameters": [
                     {
                         "type": "string",
