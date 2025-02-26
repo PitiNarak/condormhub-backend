@@ -74,7 +74,39 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 
 	orders, totalPage, totalRows, errHandler := o.OrderService.GetUnpaidOrderByUserID(userID, limit, page)
 	if errHandler != nil {
-		return err
+		return errHandler
+	}
+
+	responseData := make([]dto.OrderResponseBody, len(orders))
+	for i, order := range orders {
+		responseData[i] = dto.OrderResponseBody(order)
+	}
+
+	pageination := dto.PaginationResponseBody{
+		Currentpage: page,
+		Lastpage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessPageResponse("Orders successfully retrieved", responseData, pageination))
+}
+
+func (o *OrderHandler) GetMyUnpaidOrder(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+
+	limit := c.QueryInt("limit", 1)
+	if limit <= 0 {
+		return errorHandler.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return errorHandler.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+
+	orders, totalPage, totalRows, errHandler := o.OrderService.GetUnpaidOrderByUserID(userID, limit, page)
+	if errHandler != nil {
+		return errHandler
 	}
 
 	responseData := make([]dto.OrderResponseBody, len(orders))

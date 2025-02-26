@@ -65,5 +65,6 @@ func (s *Server) initOrderRoutes() {
 	orderRoutes := s.app.Group("/order")
 	orderRoutes.Post("/", s.authMiddleware.Auth, s.handler.order.CreateOrder)
 	orderRoutes.Get("/:id", s.authMiddleware.Auth, s.handler.order.GetOrderByID)
+	orderRoutes.Get("/unpaid/me", s.authMiddleware.Auth, s.handler.order.GetMyUnpaidOrder)
 	orderRoutes.Get("/unpaid/:id", s.authMiddleware.Auth, s.handler.order.GetUnpaidOrderByUserID)
 }

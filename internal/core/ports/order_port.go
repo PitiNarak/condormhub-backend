@@ -27,6 +27,7 @@ type OrderHandler interface {
 	CreateOrder(c *fiber.Ctx) error
 	GetOrderByID(c *fiber.Ctx) error
 	GetUnpaidOrderByUserID(c *fiber.Ctx) error
-	// UpdateOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
-	// DeleteOrder(c *fiber.Ctx) *errorHandler.ErrorHandler
+	GetMyUnpaidOrder(c *fiber.Ctx) error
+	// UpdateOrder(c *fiber.Ctx) error
+	// DeleteOrder(c *fiber.Ctx) error
 }
