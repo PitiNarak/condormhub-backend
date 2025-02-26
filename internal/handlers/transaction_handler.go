@@ -19,6 +19,20 @@ func NewTransactionHandler(orderService ports.TransactionService, stripeConfig *
 	return &TransactionHandler{tsxService: orderService, stripeConfig: stripeConfig}
 }
 
+// Create Transaction godoc
+// @Summary Create a transaction
+// @Description Create a transaction
+// @Router /transaction [post]
+// @Tags transaction
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param body body dto.TransactionRequestBody true "Transaction request body"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.CreateTransactionResponseBody,pagination=nil} "account successfully deleted"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
 func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 	var reqBody *dto.TransactionRequestBody
 	if err := c.BodyParser(&reqBody); err != nil {
