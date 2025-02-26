@@ -38,6 +38,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.14 // indirect
 	github.com/aws/smithy-go v1.22.2 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sv-tools/openapi v0.2.1 // indirect
+	github.com/swaggo/swag/v2 v2.0.0-rc4 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 require (
@@ -70,7 +74,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
-	github.com/stripe/stripe-go/v81 v81.3.1
+	github.com/stripe/stripe-go/v81 v81.4.0
 	github.com/swaggo/files/v2 v2.0.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.59.0 // indirect

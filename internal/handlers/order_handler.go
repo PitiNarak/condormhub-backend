@@ -20,6 +20,20 @@ func NewOrderHandler(service ports.OrderService) ports.OrderHandler {
 	return &OrderHandler{OrderService: service}
 }
 
+// Create Order godoc
+// @Summary Create an order
+// @Description Create an order
+// @Router /order [post]
+// @Tags order
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param body body dto.OrderRequestBody true "Order request body"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "account successfully deleted"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	body := new(dto.OrderRequestBody)
 	if err := c.BodyParser(body); err != nil {
@@ -41,6 +55,20 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Order successfully created", responseData))
 }
 
+// Get Order by ID godoc
+// @Summary Get an order by ID
+// @Description Get an order by ID
+// @Router /order/{id} [get]
+// @Tags order
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param id path string true "Order ID"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "account successfully deleted"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	orderID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -57,6 +85,22 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Order successfully retrieved", responseData))
 }
 
+// Get Unpaid Order by ID godoc
+// @Summary Get unpaid orders by ID
+// @Description Get unpaid orders by ID
+// @Router /order/unpaid/{userID} [get]
+// @Tags order
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param userID path string true "User ID"
+// @Param limit query string true "Number of history to be retrieved"
+// @Param page query string true "Page to retrieved"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "account successfully deleted"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -92,6 +136,21 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessPageResponse("Orders successfully retrieved", responseData, pageination))
 }
 
+// Get MT Unpaid Order by ID godoc
+// @Summary Get my unpaid orders by ID
+// @Description Get my unpaid orders by ID
+// @Router /order/unpaid/me [get]
+// @Tags order
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param limit query string true "Number of history to be retrieved"
+// @Param page query string true "Page to retrieved"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "account successfully deleted"
+// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
+// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
+// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
+// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) GetMyUnpaidOrder(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
