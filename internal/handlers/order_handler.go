@@ -96,7 +96,7 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 // @Param userID path string true "User ID"
 // @Param limit query string true "Number of history to be retrieved"
 // @Param page query string true "Page to retrieved"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "account successfully deleted"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=dto.PaginationResponseBody} "account successfully deleted"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
@@ -146,7 +146,7 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 // @Produce json
 // @Param limit query string true "Number of history to be retrieved"
 // @Param page query string true "Page to retrieved"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "account successfully deleted"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=dto.PaginationResponseBody} "account successfully deleted"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
