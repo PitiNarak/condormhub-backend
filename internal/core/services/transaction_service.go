@@ -30,13 +30,16 @@ func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Trans
 	if err != nil {
 		return nil, nil, err
 	}
+	if order.PaidTransactionID != "" {
+		return nil, nil, errorHandler.BadRequestError(fmt.Errorf("order %s is already paid", orderID), "order is already paid")
+	}
 
 	productName := order.LeasingHistory.Dorm.Name
 	price := order.Price
 	customerEmail := order.LeasingHistory.Lessee.Email
 
 	session, sErr := s.stripe.CreateOneTimePaymentSession(productName, int64(price), customerEmail)
-	if err != sErr {
+	if sErr != nil {
 		return nil, nil, errorHandler.InternalServerError(err, "Failed to create payment session")
 	}
 
@@ -61,17 +64,25 @@ func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) *errorH
 		tsx.SessionStatus = stripe.CheckoutSessionStatusExpired
 	case "checkout.session.completed":
 		tsx.SessionStatus = stripe.CheckoutSessionStatusComplete
-	case "checkout.session.async_payment_succeeded":
-		tsx.SessionStatus = stripe.CheckoutSessionStatusComplete
-	case "checkout.session.async_payment_failed":
-		tsx.SessionStatus = stripe.CheckoutSessionStatusExpired
 	default:
 		return errorHandler.BadRequestError(fmt.Errorf("event type %s is not supported", event.Type), "Failed to update order status")
 	}
 
-	err := s.tsxRepo.Update(&tsx)
+	if err := s.tsxRepo.Update(&tsx); err != nil {
+		return err
+	}
+
+	tsx, err := s.tsxRepo.GetByID(tsx.ID)
 	if err != nil {
 		return err
 	}
+
+	if err := s.orderRepo.Update(&domain.Order{
+		ID:                tsx.OrderID,
+		PaidTransactionID: tsx.ID,
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }

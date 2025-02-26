@@ -15,6 +15,7 @@ func (s *Server) initRoutes() {
 	s.initDormRoutes()
 	s.initLeasingHistoryRoutes()
 	s.initOrderRoutes()
+	s.initTransactionRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -67,4 +68,10 @@ func (s *Server) initOrderRoutes() {
 	orderRoutes.Get("/:id", s.authMiddleware.Auth, s.handler.order.GetOrderByID)
 	orderRoutes.Get("/unpaid/me", s.authMiddleware.Auth, s.handler.order.GetMyUnpaidOrder)
 	orderRoutes.Get("/unpaid/:id", s.authMiddleware.Auth, s.handler.order.GetUnpaidOrderByUserID)
+}
+
+func (s *Server) initTransactionRoutes() {
+	tsxRoutes := s.app.Group("/transaction")
+	tsxRoutes.Post("/", s.authMiddleware.Auth, s.handler.tsx.CreateTransaction)
+	tsxRoutes.Post("/webhook", s.handler.tsx.Webhook)
 }

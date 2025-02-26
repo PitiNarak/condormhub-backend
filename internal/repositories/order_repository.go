@@ -28,7 +28,13 @@ func (r *OrderRepository) Create(order *domain.Order) *errorHandler.ErrorHandler
 
 func (r *OrderRepository) GetByID(orderID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler) {
 	var order domain.Order
-	if err := r.db.Where("id = ?", orderID).Preload("PaidTransaction").First(&order).Error; err != nil {
+	if err := r.db.
+		Where("id = ?", orderID).
+		Preload("LeasingHistory").
+		Preload("LeasingHistory.Dorm").
+		Preload("LeasingHistory.Lessee").
+		Preload("PaidTransaction").
+		First(&order).Error; err != nil {
 		return nil, errorHandler.NotFoundError(err, "order not found")
 	}
 	return &order, nil
@@ -53,7 +59,7 @@ func (r *OrderRepository) GetUnpaidByUserID(userID uuid.UUID, limit int, page in
 }
 
 func (r *OrderRepository) Update(order *domain.Order) *errorHandler.ErrorHandler {
-	if err := r.db.Save(&order).Error; err != nil {
+	if err := r.db.Model(&order).Where("id = ?", order.ID).Updates(order).Error; err != nil {
 		return errorHandler.InternalServerError(err, "failed to update order")
 	}
 	return nil

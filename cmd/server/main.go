@@ -38,6 +38,6 @@ func main() {
 		log.Fatalf("Redis connection failed: %v", err)
 	}
 
-	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, redis, db)
+	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, config.StripeConfig, redis, db)
 	s.Start(ctx, stop)
 }

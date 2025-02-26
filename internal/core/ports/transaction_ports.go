@@ -20,5 +20,6 @@ type TransactionService interface {
 
 type TransactionRepository interface {
 	Create(order *domain.Transaction) *errorHandler.ErrorHandler
+	GetByID(id string) (domain.Transaction, *errorHandler.ErrorHandler)
 	Update(order *domain.Transaction) *errorHandler.ErrorHandler
 }

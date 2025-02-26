@@ -12,6 +12,7 @@ type handler struct {
 	dorm           ports.DormHandler
 	leasingHistory ports.LeasingHistoryHandler
 	order          ports.OrderHandler
+	tsx            ports.TransactionHandler
 }
 
 func (s *Server) initHandler() {
@@ -21,6 +22,7 @@ func (s *Server) initHandler() {
 	dorm := handlers.NewDormHandler(s.service.dorm)
 	leasingHistory := handlers.NewLeasingHistoryHandler(s.service.leasingHistory)
 	order := handlers.NewOrderHandler(s.service.order)
+	tsx := handlers.NewTransactionHandler(s.service.tsx, s.stripeConfig)
 
 	s.handler = &handler{
 		greeting:       greeting,
@@ -29,5 +31,6 @@ func (s *Server) initHandler() {
 		dorm:           dorm,
 		leasingHistory: leasingHistory,
 		order:          order,
+		tsx:            tsx,
 	}
 }
