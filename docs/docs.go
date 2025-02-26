@@ -2590,10 +2590,10 @@ const docTemplate = `{
         "dto.LeasingHistoryCreateRequestBody": {
             "type": "object",
             "required": [
-                "password"
+                "price"
             ],
             "properties": {
-                "password": {
+                "price": {
                     "type": "integer"
                 }
             }

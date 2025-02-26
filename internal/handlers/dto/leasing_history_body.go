@@ -1,5 +1,5 @@
 package dto
 
 type LeasingHistoryCreateRequestBody struct {
-	Price int `json:"password" validate:"required,gt=100"`
+	Price int `json:"price" validate:"required,gt=100"`
 }

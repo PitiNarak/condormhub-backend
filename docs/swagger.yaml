@@ -259,10 +259,10 @@ definitions:
     type: object
   dto.LeasingHistoryCreateRequestBody:
     properties:
-      password:
+      price:
         type: integer
     required:
-    - password
+    - price
     type: object
   dto.LoginRequestBody:
     properties:
