@@ -61,9 +61,9 @@ func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) *errorH
 	tsx.ID = event.Data.Object["id"].(string)
 	switch event.Type {
 	case "checkout.session.expired":
-		tsx.SessionStatus = stripe.CheckoutSessionStatusExpired
+		tsx.SessionStatus = domain.StatusExpired
 	case "checkout.session.completed":
-		tsx.SessionStatus = stripe.CheckoutSessionStatusComplete
+		tsx.SessionStatus = domain.StatusComplete
 	default:
 		return errorHandler.BadRequestError(fmt.Errorf("event type %s is not supported", event.Type), "Failed to update order status")
 	}
