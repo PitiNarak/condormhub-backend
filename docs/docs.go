@@ -1284,6 +1284,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "price of a dorm",
+                        "name": "price",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LeasingHistoryCreateRequestBody"
+                        }
                     }
                 ],
                 "responses": {
@@ -2347,6 +2356,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/domain.Order"
                     }
                 },
+                "price": {
+                    "type": "integer"
+                },
                 "start": {
                     "type": "string"
                 }
@@ -2572,6 +2584,17 @@ const docTemplate = `{
                 },
                 "size": {
                     "type": "number"
+                }
+            }
+        },
+        "dto.LeasingHistoryCreateRequestBody": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "integer"
                 }
             }
         },

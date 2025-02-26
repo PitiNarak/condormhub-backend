@@ -74,6 +74,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.Order'
         type: array
+      price:
+        type: integer
       start:
         type: string
     type: object
@@ -254,6 +256,13 @@ definitions:
     - name
     - price
     - size
+    type: object
+  dto.LeasingHistoryCreateRequestBody:
+    properties:
+      password:
+        type: integer
+    required:
+    - password
     type: object
   dto.LoginRequestBody:
     properties:
@@ -1050,6 +1059,12 @@ paths:
         name: id
         required: true
         type: string
+      - description: price of a dorm
+        in: body
+        name: price
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LeasingHistoryCreateRequestBody'
       produces:
       - application/json
       responses:

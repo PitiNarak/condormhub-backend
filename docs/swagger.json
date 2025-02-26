@@ -1276,6 +1276,15 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "price of a dorm",
+                        "name": "price",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LeasingHistoryCreateRequestBody"
+                        }
                     }
                 ],
                 "responses": {
@@ -2339,6 +2348,9 @@
                         "$ref": "#/definitions/domain.Order"
                     }
                 },
+                "price": {
+                    "type": "integer"
+                },
                 "start": {
                     "type": "string"
                 }
@@ -2564,6 +2576,17 @@
                 },
                 "size": {
                     "type": "number"
+                }
+            }
+        },
+        "dto.LeasingHistoryCreateRequestBody": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "integer"
                 }
             }
         },

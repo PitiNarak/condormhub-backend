@@ -16,6 +16,7 @@ import (
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
+// @Param price body dto.LeasingHistoryCreateRequestBody true "price of a dorm"
 // @Success 201  {object}  httpResponse.HttpResponse{data=domain.LeasingHistory,pagination=nil} "Dorm successfully created"
 // @Failure 400  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Incorrect UUID format"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
