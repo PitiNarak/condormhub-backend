@@ -17,7 +17,6 @@ func Paginate(value interface{}, db *gorm.DB, limit, page int, order string) (fu
 	totalPages := int(math.Ceil(float64(totalRows) / float64(limit)))
 	offset := (page - 1) * limit
 	if page > totalPages {
-		offset = (totalPages - 1) * limit
 		return func(db *gorm.DB) *gorm.DB { return nil }, totalPages, int(totalRows), errorHandler.BadRequestError(errors.New("page exceeded"), "page exceeded")
 	}
 	return func(db *gorm.DB) *gorm.DB {
