@@ -1502,14 +1502,14 @@
                         "Bearer": []
                     }
                 ],
-                "description": "Delete a leasing history in the database",
+                "description": "Set end timestamp to the given leasing hostory id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "history"
                 ],
-                "summary": "Delete a leasing history",
+                "summary": "Set end time to a leasing hostory",
                 "parameters": [
                     {
                         "type": "string",

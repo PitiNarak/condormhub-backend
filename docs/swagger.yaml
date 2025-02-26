@@ -972,7 +972,7 @@ paths:
       tags:
       - history
     patch:
-      description: Delete a leasing history in the database
+      description: Set end timestamp to the given leasing hostory id
       parameters:
       - description: LeasingHistoryId
         in: path
@@ -1039,7 +1039,7 @@ paths:
               type: object
       security:
       - Bearer: []
-      summary: Delete a leasing history
+      summary: Set end time to a leasing hostory
       tags:
       - history
     post:
