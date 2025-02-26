@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"regexp"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/go-playground/validator/v10"
 )
@@ -18,4 +20,10 @@ func ValidateLifestyles(fl validator.FieldLevel) bool {
 		}
 	}
 	return true
+}
+
+// Custom validator for Phone
+func ValidatePhone(fl validator.FieldLevel) bool {
+	var phoneRegex = regexp.MustCompile(`^0\d{2}-\d{3}-\d{4}$`)
+	return phoneRegex.MatchString(fl.Field().String())
 }

@@ -2483,6 +2483,9 @@ const docTemplate = `{
                 "nationalID": {
                     "type": "string"
                 },
+                "phoneNumber": {
+                    "type": "string"
+                },
                 "role": {
                     "$ref": "#/definitions/domain.Role"
                 },
@@ -2694,6 +2697,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 8
+                },
+                "phoneNumber": {
+                    "type": "string"
                 },
                 "studentEvidence": {
                     "type": "string"
