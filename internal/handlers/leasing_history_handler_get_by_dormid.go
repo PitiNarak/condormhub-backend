@@ -44,8 +44,8 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 		return err
 	}
 	response := dto.PaginationResponseBody{
-		Currentpage: page,
-		Lastpage:    totalPage,
+		CurrentPage: page,
+		LastPage:    totalPage,
 		Limit:       limit,
 		Total:       totalRows,
 	}
