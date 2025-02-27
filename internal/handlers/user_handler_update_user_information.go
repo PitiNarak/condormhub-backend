@@ -46,7 +46,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 
 	phoneNumber_err := validate.RegisterValidation("phoneNumber", utils.ValidatePhone)
 	if phoneNumber_err != nil {
-		return errorHandler.BadRequestError(err, "your phone number is incorrect format")
+		return errorHandler.BadRequestError(phoneNumber_err, "your phone number is incorrect format")
 	}
 
 	if err := validate.Struct(requestBody); err != nil {
