@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
@@ -40,7 +42,10 @@ func (r *OrderRepository) GetByID(orderID uuid.UUID) (*domain.Order, *errorHandl
 		Preload("LeasingHistory.Lessee").
 		Preload("PaidTransaction").
 		First(&order).Error; err != nil {
-		return nil, errorHandler.NotFoundError(err, "order not found")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorHandler.NotFoundError(err, "order not found")
+		}
+		return nil, errorHandler.InternalServerError(err, "database error retrieving order")
 	}
 	return &order, nil
 }
