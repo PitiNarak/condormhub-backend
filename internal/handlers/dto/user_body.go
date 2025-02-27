@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 )
 
@@ -24,7 +26,7 @@ type UserInformationRequestBody struct {
 	Lastname        string                `json:"lastname"`
 	NationalID      string                `json:"nationalID"`
 	Gender          string                `json:"gender"`
-	BirthDate       string                `json:"birthDate"`
+	BirthDate       time.Time             `json:"birthDate"`
 	StudentEvidence string                `json:"studentEvidence"`
 	Lifestyles      domain.LifestyleArray `json:"lifestyles" validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
 	PhoneNumber     string                `json:"phoneNumber" validate:"phoneNumber"`
