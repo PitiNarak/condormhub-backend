@@ -29,4 +29,5 @@ type UserInformationRequestBody struct {
 	BirthDate       time.Time             `json:"birthDate"`
 	StudentEvidence string                `json:"studentEvidence"`
 	Lifestyles      domain.LifestyleArray `json:"lifestyles" validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
+	PhoneNumber     string                `json:"phoneNumber" validate:"phoneNumber"`
 }
