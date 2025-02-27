@@ -41,7 +41,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	validate := validator.New()
 	lifestyle_err := validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
 	if lifestyle_err != nil {
-		return errorHandler.BadRequestError(err, "your lifestyle-tag is incorrect format")
+		return errorHandler.BadRequestError(lifestyle_err, "your lifestyle-tag is incorrect format")
 	}
 
 	phoneNumber_err := validate.RegisterValidation("phoneNumber", utils.ValidatePhone)
