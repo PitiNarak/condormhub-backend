@@ -28,7 +28,7 @@ func NewTransactionHandler(orderService ports.TransactionService, stripeConfig *
 // @Accept json
 // @Produce json
 // @Param body body dto.TransactionRequestBody true "Transaction request body"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.CreateTransactionResponseBody,pagination=nil} "account successfully deleted"
+// @Success 200 {object} httpResponse.HttpResponse{data=dto.CreateTransactionResponseBody,pagination=nil} "Transaction created successfully"
 // @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
 // @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
 // @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
@@ -61,7 +61,7 @@ func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
 
 	updateErr := h.tsxService.UpdateTransactionStatus(event)
 	if updateErr != nil {
-		return err
+		return updateErr
 	}
 
 	return c.SendStatus(fiber.StatusOK)

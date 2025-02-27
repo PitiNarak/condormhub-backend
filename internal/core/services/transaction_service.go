@@ -40,7 +40,7 @@ func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Trans
 
 	session, sErr := s.stripe.CreateOneTimePaymentSession(productName, int64(price), customerEmail)
 	if sErr != nil {
-		return nil, nil, errorHandler.InternalServerError(err, "Failed to create payment session")
+		return nil, nil, errorHandler.InternalServerError(sErr, "Failed to create payment session")
 	}
 
 	tsx := domain.Transaction{

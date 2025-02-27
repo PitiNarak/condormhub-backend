@@ -20,9 +20,14 @@ func NewOrderRepository(db *gorm.DB) ports.OrderRepository {
 }
 
 func (r *OrderRepository) Create(order *domain.Order) *errorHandler.ErrorHandler {
-	if err := r.db.Create(&order).Preload("LeasingHistory").Error; err != nil {
+	if err := r.db.Create(order).Error; err != nil {
 		return errorHandler.InternalServerError(err, "failed to create order")
 	}
+
+	if err := r.db.Preload("LeasingHistory").First(order, order.ID).Error; err != nil {
+		return errorHandler.InternalServerError(err, "failed to preload leasing history")
+	}
+
 	return nil
 }
 
@@ -59,7 +64,7 @@ func (r *OrderRepository) GetUnpaidByUserID(userID uuid.UUID, limit int, page in
 }
 
 func (r *OrderRepository) Update(order *domain.Order) *errorHandler.ErrorHandler {
-	if err := r.db.Model(&order).Where("id = ?", order.ID).Updates(order).Error; err != nil {
+	if err := r.db.Model(order).Where("id = ?", order.ID).Updates(order).Error; err != nil {
 		return errorHandler.InternalServerError(err, "failed to update order")
 	}
 	return nil
