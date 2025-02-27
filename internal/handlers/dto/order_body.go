@@ -17,7 +17,7 @@ type OrderResponseBody struct {
 	UpdateAt          time.Time              `json:"-"`
 	Type              domain.OrderType       `json:"type"`
 	Price             int64                  `json:"price"`
-	Transactions      []*domain.Transaction  `json:"transactions"`
+	Transactions      []*domain.Transaction  `json:"-"`
 	PaidTransaction   *domain.Transaction    `json:"paidTransaction"`
 	PaidTransactionID string                 `json:"-"`
 	LeasingHistory    *domain.LeasingHistory `json:"-"`
