@@ -16,4 +16,7 @@ clean:
 deps:
 	go mod tidy
 
+gen-docs:
+	swag init -v3.1 -o docs -g cmd/server/main.go
+
 .DEFAULT_GOAL = run
