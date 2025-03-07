@@ -70,7 +70,7 @@ func CreateEnum(db *gorm.DB) {
 func main() {
 	config := config.Load()
 
-	db, err := databases.NewDatabaseConnection(config.Database)
+	db, err := databases.New(config.Database)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}

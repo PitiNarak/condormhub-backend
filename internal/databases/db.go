@@ -3,6 +3,7 @@ package databases
 import (
 	"fmt"
 	"log"
+	"math"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,7 +19,11 @@ type Config struct {
 	SSLMode  string `env:"SSLMODE"`
 }
 
-func NewDatabaseConnection(config Config) (*gorm.DB, error) {
+type Database struct {
+	*gorm.DB
+}
+
+func New(config Config) (*Database, error) {
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", config.Host, config.Port, config.User, config.Password, config.DBName, config.SSLMode)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
@@ -27,5 +32,18 @@ func NewDatabaseConnection(config Config) (*gorm.DB, error) {
 		log.Fatal("failed to connect database")
 		return nil, err
 	}
-	return db, nil
+	return &Database{db}, nil
+}
+
+func (db *Database) Paginate(value any, limit int, page int, order string) (int, int, error) {
+	var totalRows int64
+
+	offset := (page - 1) * limit
+	if err := db.Model(value).Count(&totalRows).Offset(offset).Limit(limit).Order(order).Find(value).Error; err != nil {
+		return 0, 0, err
+	}
+	totalPages := int(math.Ceil(float64(totalRows) / float64(limit)))
+
+	return totalPages, int(totalRows), nil
+
 }

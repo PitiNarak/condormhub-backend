@@ -29,7 +29,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	db, err := databases.NewDatabaseConnection(config.Database)
+	db, err := databases.New(config.Database)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
