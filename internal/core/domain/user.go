@@ -215,7 +215,7 @@ type User struct {
 	Role               *Role          `json:"role" gorm:"default:null"`
 	FilledPersonalInfo bool           `json:"filledPersonalInfo" gorm:"default:false"`
 	Lifestyles         LifestyleArray `json:"lifestyles" validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
-
+	PhoneNumber        string         `json:"phoneNumber" gorm:"unique"`
 	// studentEvidence
 	StudentEvidence   string `json:"studentEvidence"`
 	IsStudentVerified bool   `json:"isStudentVerified" gorm:"default:false" `

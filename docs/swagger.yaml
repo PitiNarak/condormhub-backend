@@ -253,6 +253,8 @@ definitions:
         type: array
       nationalID:
         type: string
+      phoneNumber:
+        type: string
       role:
         $ref: '#/definitions/domain.Role'
       studentEvidence:
@@ -426,6 +428,8 @@ definitions:
         type: string
       password:
         minLength: 8
+        type: string
+      phoneNumber:
         type: string
       studentEvidence:
         type: string
