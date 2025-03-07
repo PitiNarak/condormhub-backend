@@ -3,7 +3,7 @@ package apperror
 import (
 	"errors"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/dto"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
