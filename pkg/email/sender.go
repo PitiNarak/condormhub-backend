@@ -34,7 +34,7 @@ func (e *EmailService) SendVerificationEmail(email, name string, token string) e
 	message.SetHeader("Subject", "ConDormHub Email Verification")
 	cwd, _ := os.Getwd()
 	verLink := fmt.Sprintf(e.emailConfig.LinkHostname+"/verify?token=%s", token)
-	html, _ := readTemplate(cwd + "/pkg/html_template/verify-compress.html")
+	html, _ := readTemplate(cwd + "/pkg/email/verify-compress.html")
 	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
 
@@ -54,7 +54,7 @@ func (e *EmailService) SendResetPasswordEmail(email, name string, token string) 
 		return apperror.InternalServerError(err, "cannot get current path")
 	}
 	verLink := fmt.Sprintf(e.emailConfig.LinkHostname+"/newpassword/token=%s", token)
-	html, err := readTemplate(cwd + "/pkg/html_template/reset-compress.html")
+	html, err := readTemplate(cwd + "/pkg/email/reset-compress.html")
 	if err != nil {
 		return apperror.InternalServerError(err, "cannot load html template")
 	}
