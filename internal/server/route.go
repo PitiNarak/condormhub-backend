@@ -1,12 +1,17 @@
 package server
 
-import "github.com/gofiber/swagger"
+import (
+	"github.com/PitiNarak/condormhub-backend/docs"
+	"github.com/gofiber/swagger"
+	"github.com/swaggo/swag/v2"
+)
 
 func (s *Server) initRoutes() {
 	// greeting
 	s.app.Get("/", s.handler.greeting.Greeting)
 
 	// swagger
+	swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
 	s.app.Get("/swagger/*", swagger.HandlerDefault)
 
 	s.initExampleUploadRoutes()
@@ -14,6 +19,8 @@ func (s *Server) initRoutes() {
 	s.initAuthRoutes()
 	s.initDormRoutes()
 	s.initLeasingHistoryRoutes()
+	s.initOrderRoutes()
+	s.initTransactionRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -58,4 +65,18 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
 	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
+}
+
+func (s *Server) initOrderRoutes() {
+	orderRoutes := s.app.Group("/order")
+	orderRoutes.Post("/", s.authMiddleware.Auth, s.handler.order.CreateOrder)
+	orderRoutes.Get("/:id", s.authMiddleware.Auth, s.handler.order.GetOrderByID)
+	orderRoutes.Get("/unpaid/me", s.authMiddleware.Auth, s.handler.order.GetMyUnpaidOrder)
+	orderRoutes.Get("/unpaid/:id", s.authMiddleware.Auth, s.handler.order.GetUnpaidOrderByUserID)
+}
+
+func (s *Server) initTransactionRoutes() {
+	tsxRoutes := s.app.Group("/transaction")
+	tsxRoutes.Post("/", s.authMiddleware.Auth, s.handler.tsx.CreateTransaction)
+	tsxRoutes.Post("/webhook", s.handler.tsx.Webhook)
 }

@@ -15,6 +15,16 @@ definitions:
     - subdistrict
     - zipcode
     type: object
+  domain.CheckoutStatus:
+    enum:
+    - open
+    - complete
+    - expired
+    type: string
+    x-enum-varnames:
+    - StatusOpen
+    - StatusComplete
+    - StatusExpired
   domain.Dorm:
     properties:
       address:
@@ -161,9 +171,37 @@ definitions:
     - SelfEmployed
   domain.Order:
     properties:
+      createAt:
+        type: string
+      id:
+        type: string
+      leasingHistory:
+        $ref: '#/definitions/domain.LeasingHistory'
       leasingHistoryID:
         type: string
+      paidTransaction:
+        $ref: '#/definitions/domain.Transaction'
+      paidTransactionID:
+        type: string
+      price:
+        type: integer
+      transactions:
+        items:
+          $ref: '#/definitions/domain.Transaction'
+        type: array
+      type:
+        $ref: '#/definitions/domain.OrderType'
+      updateAt:
+        type: string
     type: object
+  domain.OrderType:
+    enum:
+    - insurance
+    - monthly_bill
+    type: string
+    x-enum-varnames:
+    - InsuranceOrderType
+    - MonthlyBillOrderType
   domain.Role:
     enum:
     - ADMIN
@@ -174,6 +212,19 @@ definitions:
     - AdminRole
     - LesseeRole
     - LessorRole
+  domain.Transaction:
+    properties:
+      createAt:
+        type: string
+      id:
+        type: string
+      price:
+        type: integer
+      status:
+        $ref: '#/definitions/domain.CheckoutStatus'
+      updateAt:
+        type: string
+    type: object
   domain.User:
     properties:
       birthDate:
@@ -216,6 +267,11 @@ definitions:
     required:
     - email
     - username
+    type: object
+  dto.CreateTransactionResponseBody:
+    properties:
+      checkoutUrl:
+        type: string
     type: object
   dto.DormRequestBody:
     properties:
@@ -266,6 +322,24 @@ definitions:
     required:
     - email
     - password
+    type: object
+  dto.OrderRequestBody:
+    properties:
+      leasingHistoryId:
+        type: string
+    required:
+    - leasingHistoryId
+    type: object
+  dto.OrderResponseBody:
+    properties:
+      id:
+        type: string
+      paidTransaction:
+        $ref: '#/definitions/domain.Transaction'
+      price:
+        type: integer
+      type:
+        $ref: '#/definitions/domain.OrderType'
     type: object
   dto.PaginationResponseBody:
     properties:
@@ -330,6 +404,11 @@ definitions:
         type: string
       userInformation:
         $ref: '#/definitions/domain.User'
+    type: object
+  dto.TransactionRequestBody:
+    properties:
+      orderID:
+        type: string
     type: object
   dto.UserInformationRequestBody:
     properties:
@@ -1271,6 +1350,393 @@ paths:
       summary: Get all leasing history by userid
       tags:
       - history
+  /order:
+    post:
+      consumes:
+      - application/json
+      description: Create an order
+      parameters:
+      - description: Order request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrderResponseBody'
+                pagination:
+                  type: object
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Create an order
+      tags:
+      - order
+  /order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an order by ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrderResponseBody'
+                pagination:
+                  type: object
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get an order by ID
+      tags:
+      - order
+  /order/unpaid/{userID}:
+    get:
+      consumes:
+      - application/json
+      description: Get unpaid orders by User ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Number of history to be retrieved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrieved
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrderResponseBody'
+                pagination:
+                  $ref: '#/definitions/dto.PaginationResponseBody'
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get unpaid orders by User ID
+      tags:
+      - order
+  /order/unpaid/me:
+    get:
+      consumes:
+      - application/json
+      description: Get my unpaid orders by ID
+      parameters:
+      - description: Number of history to be retrieved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrieved
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Unpaid orders retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrderResponseBody'
+                pagination:
+                  $ref: '#/definitions/dto.PaginationResponseBody'
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get my unpaid orders by ID
+      tags:
+      - order
+  /transaction:
+    post:
+      consumes:
+      - application/json
+      description: Create a transaction
+      parameters:
+      - description: Transaction request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaction created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CreateTransactionResponseBody'
+                pagination:
+                  type: object
+              type: object
+        "400":
+          description: your request is invalid
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "401":
+          description: your request is unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "404":
+          description: leasing history not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            allOf:
+            - $ref: '#/definitions/httpResponse.HttpResponse'
+            - properties:
+                data:
+                  type: object
+                pagination:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Create a transaction
+      tags:
+      - transaction
   /user:
     patch:
       consumes:

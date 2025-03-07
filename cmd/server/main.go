@@ -6,13 +6,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	_ "github.com/PitiNarak/condormhub-backend/docs"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 
 	"github.com/PitiNarak/condormhub-backend/internal/config"
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/gofiber/fiber/v2/log"
+
+	_ "github.com/PitiNarak/condormhub-backend/docs"
 )
 
 // @title Condormhub API
@@ -38,6 +39,6 @@ func main() {
 		log.Fatalf("Redis connection failed: %v", err)
 	}
 
-	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, redis, db)
+	s := server.NewServer(config.Server, config.SMTP, config.JWT, config.Storage, config.StripeConfig, redis, db)
 	s.Start(ctx, stop)
 }

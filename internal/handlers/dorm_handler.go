@@ -38,11 +38,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return errorHandler.BadRequestError(err, "Your request is invalid")
 	}
 
-	userIDstr := c.Locals("userID").(string)
-	userID, err := uuid.Parse(userIDstr)
-	if err != nil {
-		return errorHandler.InternalServerError(err, "Can not parse UUID")
-	}
+	userID := c.Locals("userID").(uuid.UUID)
 
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {

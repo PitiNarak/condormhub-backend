@@ -12,6 +12,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
+	"github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -39,12 +40,14 @@ type Server struct {
 	redis          *redis.Redis
 	db             *gorm.DB
 	smtpConfig     *services.SMTPConfig
+	stripeConfig   *stripe.Config
+	stripe         *stripe.Stripe
 	handler        *handler
 	service        *service
 	repository     *repository
 }
 
-func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, redis *redis.Redis, db *gorm.DB) *Server {
+func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, redis *redis.Redis, db *gorm.DB) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:               config.Name,
@@ -58,15 +61,18 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTC
 
 	jwtUtils := jwt.NewJWTUtils(&jwtConfig, redis)
 	storage := storage.NewStorage(storageConfig)
+	stripe := stripe.New(stripeConfig)
 
 	return &Server{
-		app:        app,
-		config:     config,
-		storage:    storage,
-		jwtUtils:   jwtUtils,
-		db:         db,
-		redis:      redis,
-		smtpConfig: &smtpConfig,
+		app:          app,
+		config:       config,
+		storage:      storage,
+		jwtUtils:     jwtUtils,
+		db:           db,
+		redis:        redis,
+		smtpConfig:   &smtpConfig,
+		stripeConfig: &stripeConfig,
+		stripe:       stripe,
 	}
 }
 
