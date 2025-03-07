@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/PitiNarak/condormhub-backend/docs"
 	"github.com/gofiber/swagger"
-	"github.com/swaggo/swag"
+	"github.com/swaggo/swag/v2"
 )
 
 func (s *Server) initRoutes() {
