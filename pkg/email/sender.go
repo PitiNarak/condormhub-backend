@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/go-gomail/gomail"
@@ -18,16 +17,16 @@ type SMTPConfig struct {
 	LinkHostname string `env:"LINK_HOSTNAME,required"`
 }
 
-type EmailService struct {
+type Email struct {
 	emailConfig *SMTPConfig
 	jwtUtils    *jwt.JWTUtils
 }
 
-func NewEmailService(emailConfig *SMTPConfig, jwtUtils *jwt.JWTUtils) ports.EmailServicePort {
-	return &EmailService{emailConfig: emailConfig, jwtUtils: jwtUtils}
+func NewEmailService(emailConfig *SMTPConfig, jwtUtils *jwt.JWTUtils) Email {
+	return Email{emailConfig: emailConfig, jwtUtils: jwtUtils}
 }
 
-func (e *EmailService) SendVerificationEmail(email, name string, token string) error {
+func (e *Email) SendVerificationEmail(email, name string, token string) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
@@ -43,7 +42,7 @@ func (e *EmailService) SendVerificationEmail(email, name string, token string) e
 	return dailer.DialAndSend(message)
 }
 
-func (e *EmailService) SendResetPasswordEmail(email, name string, token string) error {
+func (e *Email) SendResetPasswordEmail(email, name string, token string) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
