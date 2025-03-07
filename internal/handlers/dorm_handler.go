@@ -61,12 +61,18 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 	}
 
 	if err := d.dormService.Create(dorm); err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "create dorm error")
 	}
 
 	res, err := d.dormService.GetByID(dorm.ID)
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorm error")
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
@@ -97,14 +103,11 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	_, err = d.dormService.GetByID(dormID)
-	if err != nil {
-		return err
-	}
-
-	err = d.dormService.Delete(dormID)
-	if err != nil {
-		return err
+	if err := d.dormService.Delete(dormID); err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "delete dorm error")
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -122,7 +125,10 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	dorms, err := d.dormService.GetAll()
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorms error")
 	}
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dorms))
 }
@@ -153,7 +159,10 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 
 	dorm, err := d.dormService.GetByID(dormID)
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorm error")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm))
@@ -219,12 +228,18 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 
 	err = d.dormService.Update(dormID, dorm)
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "update dorm error")
 	}
 
 	res, err := d.dormService.GetByID(dormID)
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorm error")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
