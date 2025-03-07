@@ -5,7 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
 
@@ -18,14 +18,14 @@ func NewOrderService(orderRepository ports.OrderRepository, leasingHistoryReposi
 	return &OrderService{orderRepository: orderRepository, leasingHistoryRepository: leasingHistoryRepository}
 }
 
-func (s *OrderService) CreateOrder(leasingHistoryID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler) {
+func (s *OrderService) CreateOrder(leasingHistoryID uuid.UUID) (*domain.Order, error) {
 	leasingHistory, err := s.leasingHistoryRepository.GetByID(leasingHistoryID)
 	if err != nil {
-		return nil, errorHandler.NotFoundError(err, err.Error())
+		return nil, apperror.NotFoundError(err, err.Error())
 	}
 
 	if !leasingHistory.End.IsZero() {
-		return nil, errorHandler.BadRequestError(errors.New("leasing history has ended"), "leasing history has ended")
+		return nil, apperror.BadRequestError(errors.New("leasing history has ended"), "leasing history has ended")
 	}
 
 	order := &domain.Order{
@@ -41,7 +41,7 @@ func (s *OrderService) CreateOrder(leasingHistoryID uuid.UUID) (*domain.Order, *
 	return order, nil
 }
 
-func (s *OrderService) GetOrderByID(orderID uuid.UUID) (*domain.Order, *errorHandler.ErrorHandler) {
+func (s *OrderService) GetOrderByID(orderID uuid.UUID) (*domain.Order, error) {
 	order, err := s.orderRepository.GetByID(orderID)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (s *OrderService) GetOrderByID(orderID uuid.UUID) (*domain.Order, *errorHan
 	return order, nil
 }
 
-func (s *OrderService) GetUnpaidOrderByUserID(userID uuid.UUID, limit int, page int) ([]domain.Order, int, int, *errorHandler.ErrorHandler) {
+func (s *OrderService) GetUnpaidOrderByUserID(userID uuid.UUID, limit int, page int) ([]domain.Order, int, int, error) {
 	orders, totalPage, totalRows, err := s.orderRepository.GetUnpaidByUserID(userID, limit, page)
 	if err != nil {
 		return nil, 0, 0, err
@@ -57,10 +57,10 @@ func (s *OrderService) GetUnpaidOrderByUserID(userID uuid.UUID, limit int, page 
 	return orders, totalPage, totalRows, nil
 }
 
-func (s *OrderService) UpdateOrder(order *domain.Order) *errorHandler.ErrorHandler {
+func (s *OrderService) UpdateOrder(order *domain.Order) error {
 	return s.orderRepository.Update(order)
 }
 
-func (s *OrderService) DeleteOrder(orderID uuid.UUID) *errorHandler.ErrorHandler {
+func (s *OrderService) DeleteOrder(orderID uuid.UUID) error {
 	return s.orderRepository.Delete(orderID)
 }
