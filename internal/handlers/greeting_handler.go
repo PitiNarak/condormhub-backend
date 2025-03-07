@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,10 +15,5 @@ func NewGreetingHandler() *GreetingHandler {
 }
 
 func (e *GreetingHandler) Greeting(c *fiber.Ctx) error {
-	env := os.Getenv("GO_ENV")
-	if env == "" {
-		env = "unknown"
-	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Hello, welcome to CondormHub!", map[string]string{"env": env}))
-	// return error_handler.InternalServerError(errors.New("error from system"), "your error message")
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fmt.Sprintf("Hello from CondromHub Api.")))
 }
