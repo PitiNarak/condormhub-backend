@@ -4,9 +4,8 @@ import (
 	"errors"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -30,35 +29,37 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*domain.User)
 	if user == nil {
-		return errorHandler.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
 	err := c.BodyParser(&requestBody)
 	if err != nil {
-		return errorHandler.BadRequestError(err, "your request is invalid")
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 	lifeStyleErr := validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
 	if lifeStyleErr != nil {
-		return errorHandler.BadRequestError(lifeStyleErr, "your lifestyle-tag is incorrect format")
+		return apperror.BadRequestError(lifeStyleErr, "your lifestyle-tag is incorrect format")
 	}
 
 	phoneNumberErr := validate.RegisterValidation("phoneNumber", utils.ValidatePhone)
 	if phoneNumberErr != nil {
-		return errorHandler.BadRequestError(phoneNumberErr, "your phone number is incorrect format")
+		return apperror.BadRequestError(phoneNumberErr, "your phone number is incorrect format")
 	}
 
 	if err := validate.Struct(requestBody); err != nil {
-		return errorHandler.BadRequestError(err, "your request body is incorrect")
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 
 	userInfo, err := h.userService.UpdateInformation(user.ID, *requestBody)
 
 	if err != nil {
-		return errorHandler.InternalServerError(err, "system cannot update your account information")
+		return apperror.InternalServerError(err, "system cannot update your account information")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("user successfully updated account information", userInfo))
+	res := dto.Success(userInfo)
+
+	return c.Status(fiber.StatusOK).JSON(res)
 
 }

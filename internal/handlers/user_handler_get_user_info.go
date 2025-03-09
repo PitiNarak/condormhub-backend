@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,6 +19,6 @@ import (
 // @Router /user/me [get]
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get user information successfully", user))
-
+	res := dto.Success(user)
+	return c.Status(fiber.StatusOK).JSON(res)
 }

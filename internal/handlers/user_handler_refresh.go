@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -25,11 +24,11 @@ func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
 	var req dto.RefreshTokenRequestBody
 	err := c.BodyParser(&req)
 	if err != nil {
-		return errorHandler.BadRequestError(err, "your request is invalid")
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 	if err := validate.Struct(req); err != nil {
-		return errorHandler.BadRequestError(err, "your request body is incorrect")
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 
 	accessToken, refreshToken, loginErr := h.userService.RefreshToken(c.Context(), req.RefreshToken)
@@ -37,10 +36,12 @@ func (h *UserHandler) RefreshToken(c *fiber.Ctx) error {
 		return loginErr
 	}
 
-	response := dto.TokenResponseBody{
+	data := dto.TokenResponseBody{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("refresh successful", response))
+	res := dto.Success(data)
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }

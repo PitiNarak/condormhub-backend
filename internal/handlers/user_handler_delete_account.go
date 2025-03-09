@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -22,7 +21,7 @@ func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 	userIDstr := c.Locals("userID").(string)
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot parse uuid")
+		return apperror.InternalServerError(err, "cannot parse uuid")
 	}
 
 	err = h.userService.DeleteAccount(userID)
@@ -30,5 +29,5 @@ func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("account successfully deleted", nil))
+	return c.SendStatus(fiber.StatusNoContent)
 }

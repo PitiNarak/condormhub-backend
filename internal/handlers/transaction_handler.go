@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stripe/stripe-go/v81/webhook"
@@ -36,7 +35,7 @@ func NewTransactionHandler(orderService ports.TransactionService, stripeConfig *
 func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 	var reqBody *dto.TransactionRequestBody
 	if err := c.BodyParser(&reqBody); err != nil {
-		return errorHandler.BadRequestError(err, "Failed to parse request body")
+		return apperror.BadRequestError(err, "Failed to parse request body")
 	}
 
 	_, url, err := h.tsxService.CreateTransaction(reqBody.OrderID)
@@ -44,9 +43,11 @@ func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("Order created successfully", dto.CreateTransactionResponseBody{
+	res := dto.Success(dto.CreateTransactionResponseBody{
 		CheckoutUrl: *url,
-	}))
+	})
+
+	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
 func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
@@ -56,7 +57,7 @@ func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
 		IgnoreAPIVersionMismatch: true,
 	})
 	if err != nil {
-		return errorHandler.BadRequestError(err, "Failed to construct event")
+		return apperror.BadRequestError(err, "Failed to construct event")
 	}
 
 	updateErr := h.tsxService.UpdateTransactionStatus(event)

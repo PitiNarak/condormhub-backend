@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,5 +13,5 @@ func NewGreetingHandler() *GreetingHandler {
 }
 
 func (e *GreetingHandler) Greeting(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fmt.Sprintf("Hello from CondromHub Api.")))
+	return c.Status(fiber.StatusOK).JSON(dto.Success("Hello from CondromHub Api."))
 }

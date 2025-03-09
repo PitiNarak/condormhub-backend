@@ -7,10 +7,9 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
 	"github.com/gofiber/fiber/v2/log"
-	"gorm.io/gorm"
 )
 
-func CreateEnum(db *gorm.DB) {
+func CreateEnum(db *databases.Database) {
 	query := `
     DO $$ BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'lifestyle_tag') THEN

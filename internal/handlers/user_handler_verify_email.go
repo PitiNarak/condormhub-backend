@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,22 +23,24 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	body := new(dto.VerifyRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return errorHandler.BadRequestError(err, "your request is invalid")
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		return errorHandler.BadRequestError(err, "your request body is incorrect")
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}
 
-	response := dto.TokenWithUserInformationResponseBody{
+	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		UserInformation: *user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is verified successfully", response))
+	res := dto.Success(data)
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }

@@ -3,9 +3,8 @@ package handlers
 import (
 	"errors"
 
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -25,25 +24,31 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return errorHandler.BadRequestError(err, "your request is invalid")
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		return errorHandler.BadRequestError(err, "your request body is incorrect")
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 	tokenString := body.Token
 	if tokenString == "" {
-		return errorHandler.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
+		return apperror.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
 	user, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("password reset successfully", fiber.Map{
-		"userInformation": user,
-		"accessToken":     tokenString,
-	}))
+
+	data := dto.TokenWithUserInformationResponseBody{
+		AccessToken:     tokenString,
+		RefreshToken:    "",
+		UserInformation: *user,
+	}
+
+	res := dto.Success(data)
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }

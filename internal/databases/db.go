@@ -35,7 +35,7 @@ func New(config Config) (*Database, error) {
 	return &Database{db}, nil
 }
 
-func (db *Database) Paginate(value any, limit int, page int, order string) (int, int, error) {
+func (db *Database) Paginate(value any, tx *gorm.DB, limit int, page int, order string) (int, int, error) {
 	var totalRows int64
 
 	offset := (page - 1) * limit

@@ -12,8 +12,6 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/gofiber/fiber/v2/log"
-
-	_ "github.com/PitiNarak/condormhub-backend/docs"
 )
 
 // @title Condormhub API

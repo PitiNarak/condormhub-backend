@@ -3,39 +3,39 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"gorm.io/gorm"
+	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 )
 
 type TransactionRepository struct {
-	db *gorm.DB
+	db *databases.Database
 }
 
-func NewTransactionRepository(db *gorm.DB) ports.TransactionRepository {
+func NewTransactionRepository(db *databases.Database) ports.TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
-func (r *TransactionRepository) Create(tsx *domain.Transaction) *errorHandler.ErrorHandler {
+func (r *TransactionRepository) Create(tsx *domain.Transaction) error {
 	err := r.db.Create(tsx).Error
 	if err != nil {
-		return errorHandler.InternalServerError(err, "Failed to create order")
+		return apperror.InternalServerError(err, "Failed to create order")
 	}
 	return nil
 }
 
-func (r *TransactionRepository) Update(tsx *domain.Transaction) *errorHandler.ErrorHandler {
+func (r *TransactionRepository) Update(tsx *domain.Transaction) error {
 	err := r.db.Model(&tsx).Where("id = ?", tsx.ID).Updates(tsx).Error
 	if err != nil {
-		return errorHandler.InternalServerError(err, "Failed to create order")
+		return apperror.InternalServerError(err, "Failed to create order")
 	}
 	return nil
 }
 
-func (r *TransactionRepository) GetByID(id string) (domain.Transaction, *errorHandler.ErrorHandler) {
+func (r *TransactionRepository) GetByID(id string) (domain.Transaction, error) {
 	var tsx domain.Transaction
 	err := r.db.Where("id = ?", id).First(&tsx).Error
 	if err != nil {
-		return tsx, errorHandler.NotFoundError(err, "Transaction not found")
+		return tsx, apperror.NotFoundError(err, "Transaction not found")
 	}
 	return tsx, nil
 }

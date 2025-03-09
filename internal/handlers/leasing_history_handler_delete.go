@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -24,16 +23,16 @@ func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := uuid.Validate(id); err != nil {
-		return errorHandler.BadRequestError(err, "Incorrect UUID format")
+		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
 
 	leasingHistoryID, err := uuid.Parse(id)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "Can not parse UUID")
+		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 	err = h.service.Delete(leasingHistoryID)
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("Delete successfully", nil))
+	return c.SendStatus(fiber.StatusNoContent)
 }
