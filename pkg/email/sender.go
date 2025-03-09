@@ -1,13 +1,11 @@
-package services
+package email
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-gomail/gomail"
 )
 
@@ -19,23 +17,23 @@ type SMTPConfig struct {
 	LinkHostname string `env:"LINK_HOSTNAME,required"`
 }
 
-type EmailService struct {
+type Email struct {
 	emailConfig *SMTPConfig
 	jwtUtils    *jwt.JWTUtils
 }
 
-func NewEmailService(emailConfig *SMTPConfig, jwtUtils *jwt.JWTUtils) ports.EmailServicePort {
-	return &EmailService{emailConfig: emailConfig, jwtUtils: jwtUtils}
+func NewEmailService(emailConfig *SMTPConfig, jwtUtils *jwt.JWTUtils) Email {
+	return Email{emailConfig: emailConfig, jwtUtils: jwtUtils}
 }
 
-func (e *EmailService) SendVerificationEmail(email, name string, token string) error {
+func (e *Email) SendVerificationEmail(email, name string, token string) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
 	message.SetHeader("Subject", "ConDormHub Email Verification")
 	cwd, _ := os.Getwd()
 	verLink := fmt.Sprintf(e.emailConfig.LinkHostname+"/verify?token=%s", token)
-	html, _ := utils.ReadTemplate(cwd + "/pkg/html_template/verify-compress.html")
+	html, _ := readTemplate(cwd + "/pkg/email/verify-compress.html")
 	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
 
@@ -44,7 +42,7 @@ func (e *EmailService) SendVerificationEmail(email, name string, token string) e
 	return dailer.DialAndSend(message)
 }
 
-func (e *EmailService) SendResetPasswordEmail(email, name string, token string) error {
+func (e *Email) SendResetPasswordEmail(email, name string, token string) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "no-reply@condormhub.xyz")
 	message.SetHeader("To", email)
@@ -52,12 +50,12 @@ func (e *EmailService) SendResetPasswordEmail(email, name string, token string) 
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot get current path")
+		return apperror.InternalServerError(err, "cannot get current path")
 	}
 	verLink := fmt.Sprintf(e.emailConfig.LinkHostname+"/newpassword/token=%s", token)
-	html, err := utils.ReadTemplate(cwd + "/pkg/html_template/reset-compress.html")
+	html, err := readTemplate(cwd + "/pkg/email/reset-compress.html")
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot load html template")
+		return apperror.InternalServerError(err, "cannot load html template")
 	}
 	body := fmt.Sprintf(html, name, verLink, verLink)
 	message.SetBody("text/html", body)
@@ -65,8 +63,16 @@ func (e *EmailService) SendResetPasswordEmail(email, name string, token string) 
 	dailer := gomail.NewDialer(e.emailConfig.Host, e.emailConfig.Port, e.emailConfig.Email, e.emailConfig.Password)
 	err = dailer.DialAndSend(message)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot sent email")
+		return apperror.InternalServerError(err, "cannot sent email")
 	}
 
 	return nil
+}
+
+func readTemplate(path string) (string, error) {
+	byteContent, err := os.ReadFile(path)
+	if err != nil { //many people wrap this into a function
+		return "", err
+	}
+	return string(byteContent), nil
 }

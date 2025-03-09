@@ -1,16 +1,16 @@
-package repositories
+package repository
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type SampleLogRepository struct {
-	db *gorm.DB
+	db *database.Database
 }
 
-func NewSampleLogRepository(db *gorm.DB) *SampleLogRepository {
+func NewSampleLogRepository(db *database.Database) *SampleLogRepository {
 	return &SampleLogRepository{
 		db: db,
 	}

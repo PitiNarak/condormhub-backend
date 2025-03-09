@@ -4,8 +4,8 @@ build:
 run: 
 	go run ./cmd/server/main.go
 
-watch:
-	reflex -r '\.go$$' -s -- sh -c "make"
+dev:
+	air
 
 migrate:
 	go run cmd/migrate/main.go

@@ -2,22 +2,22 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internal/core/services"
-	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
-	"github.com/PitiNarak/condormhub-backend/internal/storage"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
+	"github.com/PitiNarak/condormhub-backend/internal/middleware"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/email"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/stripe"
+	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"gorm.io/gorm"
 )
 
 type Config struct {
@@ -36,10 +36,10 @@ type Server struct {
 	config         Config
 	storage        *storage.Storage
 	jwtUtils       *jwt.JWTUtils
-	authMiddleware *middlewares.AuthMiddleware
+	authMiddleware *middleware.AuthMiddleware
 	redis          *redis.Redis
-	db             *gorm.DB
-	smtpConfig     *services.SMTPConfig
+	db             *database.Database
+	smtpConfig     *email.SMTPConfig
 	stripeConfig   *stripe.Config
 	stripe         *stripe.Stripe
 	handler        *handler
@@ -47,7 +47,7 @@ type Server struct {
 	repository     *repository
 }
 
-func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, redis *redis.Redis, db *gorm.DB) *Server {
+func NewServer(config Config, smtpConfig email.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, redis *redis.Redis, db *database.Database) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:               config.Name,
@@ -56,7 +56,7 @@ func NewServer(config Config, smtpConfig services.SMTPConfig, jwtConfig jwt.JWTC
 		JSONEncoder:           json.Marshal,
 		JSONDecoder:           json.Unmarshal,
 		DisableStartupMessage: true,
-		ErrorHandler:          errorHandler.Handler,
+		ErrorHandler:          apperror.ErrorHandler,
 	})
 
 	jwtUtils := jwt.NewJWTUtils(&jwtConfig, redis)
@@ -123,5 +123,5 @@ func (s *Server) initServerMiddleware() {
 }
 
 func (s *Server) initAuthMiddleware() {
-	s.authMiddleware = middlewares.NewAuthMiddleware(s.jwtUtils, s.repository.user)
+	s.authMiddleware = middleware.NewAuthMiddleware(s.jwtUtils, s.repository.user)
 }

@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,21 +15,21 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.RegisterRequestBody true "user information"
-// @Success 201  {object}  httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody,pagination=nil} "user successfully registered"
-// @Failure 400  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
-// @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot register user"
+// @Success 201 {object} dto.SuccessResponse[dto.TokenWithUserInformationResponseBody] "user successfully registered"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid"
+// @Failure 500 {object} dto.ErrorResponse "system cannot register user"
 // @Router /auth/register [post]
 func (h *UserHandler) Register(c *fiber.Ctx) error {
 	user := new(dto.RegisterRequestBody)
 	err := c.BodyParser(&user)
 	if err != nil {
-		return errorHandler.BadRequestError(err, "your request is invalid")
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 
 	validate := validator.New()
 
 	if err := validate.Struct(user); err != nil {
-		return errorHandler.BadRequestError(err, "your request body is incorrect")
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 	gormUser := &domain.User{
 		Email:    user.Email,
@@ -43,12 +42,14 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := dto.TokenWithUserInformationResponseBody{
+	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		RefreshToken:    refreshToken,
 		UserInformation: *gormUser,
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(httpResponse.SuccessResponse("user successfully registered", response))
+	res := dto.Success(data)
+
+	return c.Status(fiber.StatusCreated).JSON(res)
 
 }

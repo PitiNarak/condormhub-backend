@@ -5,7 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	stripePkg "github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v81"
@@ -25,13 +25,13 @@ func NewTransactionService(tsxRepo ports.TransactionRepository, orderRepo ports.
 	}
 }
 
-func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Transaction, *string, *errorHandler.ErrorHandler) {
+func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Transaction, *string, error) {
 	order, err := s.orderRepo.GetByID(orderID)
 	if err != nil {
 		return nil, nil, err
 	}
 	if order.PaidTransactionID != "" {
-		return nil, nil, errorHandler.BadRequestError(fmt.Errorf("order %s is already paid", orderID), "order is already paid")
+		return nil, nil, apperror.BadRequestError(fmt.Errorf("order %s is already paid", orderID), "order is already paid")
 	}
 
 	productName := order.LeasingHistory.Dorm.Name
@@ -40,7 +40,7 @@ func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Trans
 
 	session, sErr := s.stripe.CreateOneTimePaymentSession(productName, int64(price), customerEmail)
 	if sErr != nil {
-		return nil, nil, errorHandler.InternalServerError(sErr, "Failed to create payment session")
+		return nil, nil, apperror.InternalServerError(sErr, "Failed to create payment session")
 	}
 
 	tsx := domain.Transaction{
@@ -56,7 +56,7 @@ func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Trans
 	return &tsx, &session.URL, nil
 }
 
-func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) *errorHandler.ErrorHandler {
+func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) error {
 	var tsx domain.Transaction
 	tsx.ID = event.Data.Object["id"].(string)
 	switch event.Type {
@@ -65,7 +65,7 @@ func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) *errorH
 	case "checkout.session.completed":
 		tsx.SessionStatus = domain.StatusComplete
 	default:
-		return errorHandler.BadRequestError(fmt.Errorf("event type %s is not supported", event.Type), "Failed to update order status")
+		return apperror.BadRequestError(fmt.Errorf("event type %s is not supported", event.Type), "Failed to update order status")
 	}
 
 	if err := s.tsxRepo.Update(&tsx); err != nil {

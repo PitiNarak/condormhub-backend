@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -14,15 +13,15 @@ import (
 // @Security Bearer
 // @Accept json
 // @Produce json
-// @Success 200 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "account successfully deleted"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
+// @Success 204 "account successfully deleted"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "cannot parse uuid or cannot delete user"
 // @Router /user/ [delete]
 func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 	userIDstr := c.Locals("userID").(string)
 	userID, err := uuid.Parse(userIDstr)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot parse uuid")
+		return apperror.InternalServerError(err, "cannot parse uuid")
 	}
 
 	err = h.userService.DeleteAccount(userID)
@@ -30,5 +29,5 @@ func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("account successfully deleted", nil))
+	return c.SendStatus(fiber.StatusNoContent)
 }
