@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/PitiNarak/condormhub-backend/internal/database"
-	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
+	"github.com/PitiNarak/condormhub-backend/internal/middleware"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/email"
@@ -36,7 +36,7 @@ type Server struct {
 	config         Config
 	storage        *storage.Storage
 	jwtUtils       *jwt.JWTUtils
-	authMiddleware *middlewares.AuthMiddleware
+	authMiddleware *middleware.AuthMiddleware
 	redis          *redis.Redis
 	db             *database.Database
 	smtpConfig     *email.SMTPConfig
@@ -123,5 +123,5 @@ func (s *Server) initServerMiddleware() {
 }
 
 func (s *Server) initAuthMiddleware() {
-	s.authMiddleware = middlewares.NewAuthMiddleware(s.jwtUtils, s.repository.user)
+	s.authMiddleware = middleware.NewAuthMiddleware(s.jwtUtils, s.repository.user)
 }
