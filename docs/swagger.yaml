@@ -1378,11 +1378,6 @@ paths:
   /user/me:
     get:
       description: Get user information
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         "200":
           content:

@@ -11,7 +11,6 @@ import (
 // @Description Get user information
 // @Tags user
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[domain.User] "get user information successfully"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
