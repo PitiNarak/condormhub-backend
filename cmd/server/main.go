@@ -7,7 +7,7 @@ import (
 	"syscall"
 
 	"github.com/PitiNarak/condormhub-backend/internal/config"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 	"github.com/gofiber/fiber/v2/log"
@@ -27,7 +27,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	db, err := databases.New(config.Database)
+	db, err := database.New(config.Database)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}

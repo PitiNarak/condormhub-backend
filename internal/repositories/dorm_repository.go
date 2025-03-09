@@ -3,16 +3,16 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
 
 type DormRepository struct {
-	db *databases.Database
+	db *database.Database
 }
 
-func NewDormRepository(db *databases.Database) ports.DormRepository {
+func NewDormRepository(db *database.Database) ports.DormRepository {
 	return &DormRepository{db: db}
 }
 

@@ -3,7 +3,7 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 
@@ -11,10 +11,10 @@ import (
 )
 
 type UserRepo struct {
-	db *databases.Database
+	db *database.Database
 }
 
-func NewUserRepo(db *databases.Database) ports.UserRepository {
+func NewUserRepo(db *database.Database) ports.UserRepository {
 	return &UserRepo{db: db}
 }
 

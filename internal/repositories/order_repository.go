@@ -5,17 +5,17 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type OrderRepository struct {
-	db *databases.Database
+	db *database.Database
 }
 
-func NewOrderRepository(db *databases.Database) ports.OrderRepository {
+func NewOrderRepository(db *database.Database) ports.OrderRepository {
 	return &OrderRepository{
 		db: db,
 	}

@@ -3,15 +3,15 @@ package repositories
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 )
 
 type TransactionRepository struct {
-	db *databases.Database
+	db *database.Database
 }
 
-func NewTransactionRepository(db *databases.Database) ports.TransactionRepository {
+func NewTransactionRepository(db *database.Database) ports.TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 

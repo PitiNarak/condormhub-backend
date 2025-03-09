@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/email"
@@ -18,7 +18,7 @@ type AppConfig struct {
 	SMTP         email.SMTPConfig `envPrefix:"SMTP_"`
 	JWT          jwt.JWTConfig    `envPrefix:"JWT_"`
 	Server       server.Config    `envPrefix:"SERVER_"`
-	Database     databases.Config `envPrefix:"DB_"`
+	Database     database.Config  `envPrefix:"DB_"`
 	Storage      storage.Config   `envPrefix:"STORAGE_"`
 	StripeConfig stripe.Config    `envPrefix:"STRIPE_"`
 	Redis        redis.Config     `envPrefix:"REDIS_"`

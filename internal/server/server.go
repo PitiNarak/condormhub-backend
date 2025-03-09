@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/internal/middlewares"
 	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -38,7 +38,7 @@ type Server struct {
 	jwtUtils       *jwt.JWTUtils
 	authMiddleware *middlewares.AuthMiddleware
 	redis          *redis.Redis
-	db             *databases.Database
+	db             *database.Database
 	smtpConfig     *email.SMTPConfig
 	stripeConfig   *stripe.Config
 	stripe         *stripe.Stripe
@@ -47,7 +47,7 @@ type Server struct {
 	repository     *repository
 }
 
-func NewServer(config Config, smtpConfig email.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, redis *redis.Redis, db *databases.Database) *Server {
+func NewServer(config Config, smtpConfig email.SMTPConfig, jwtConfig jwt.JWTConfig, storageConfig storage.Config, stripeConfig stripe.Config, redis *redis.Redis, db *database.Database) *Server {
 
 	app := fiber.New(fiber.Config{
 		AppName:               config.Name,

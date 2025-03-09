@@ -5,17 +5,17 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type LeasingHistoryRepository struct {
-	db *databases.Database
+	db *database.Database
 }
 
-func NewLeasingHistoryRepository(db *databases.Database) ports.LeasingHistoryRepository {
+func NewLeasingHistoryRepository(db *database.Database) ports.LeasingHistoryRepository {
 	return &LeasingHistoryRepository{db: db}
 }
 

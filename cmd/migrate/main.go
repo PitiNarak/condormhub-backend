@@ -5,11 +5,11 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/config"
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/gofiber/fiber/v2/log"
 )
 
-func CreateEnum(db *databases.Database) {
+func CreateEnum(db *database.Database) {
 	query := `
     DO $$ BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'lifestyle_tag') THEN
@@ -69,7 +69,7 @@ func CreateEnum(db *databases.Database) {
 func main() {
 	config := config.Load()
 
-	db, err := databases.New(config.Database)
+	db, err := database.New(config.Database)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
