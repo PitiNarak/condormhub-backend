@@ -5,10 +5,10 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
-	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/email"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"

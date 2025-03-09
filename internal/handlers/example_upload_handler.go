@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
-	"github.com/PitiNarak/condormhub-backend/internal/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
