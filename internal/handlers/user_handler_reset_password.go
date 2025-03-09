@@ -16,9 +16,9 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.ResetPasswordRequestBody true "token"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody,pagination=nil} "password reset successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot reset password"
+// @Success 200 {object} dto.SuccessResponse[dto.TokenWithUserInformationResponseBody] "password reset successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid
+// @Failure 500 {object} dto.ErrorResponse "system cannot reset password"
 // @Router /user/newpassword [post]
 func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordRequestBody)

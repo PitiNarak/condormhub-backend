@@ -13,11 +13,11 @@ import (
 // @Security Bearer
 // @Produce json
 // @Param id path string true "LeasingHistoryId"
-// @Success 200  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Delete successfully"
-// @Failure 400  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Incorrect UUID format"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID or Failed to delete leasing history"
+// @Success 204 "No Content"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to delete leasing history"
 // @Router /history/{id} [delete]
 func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")

@@ -28,11 +28,11 @@ func NewOrderHandler(service ports.OrderService) ports.OrderHandler {
 // @Accept json
 // @Produce json
 // @Param body body dto.OrderRequestBody true "Order request body"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "Order created successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
+// @Success 200 {object} dto.SuccessResponse[dto.OrderResponseBody] "Order created successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	body := new(dto.OrderRequestBody)
 	if err := c.BodyParser(body); err != nil {
@@ -64,11 +64,11 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "Order ID"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=nil} "Order retrieved successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
+// @Success 200 {object} dto.SuccessResponse[dto.OrderResponseBody] "Order retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	orderID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -97,11 +97,11 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 // @Param userID path string true "User ID"
 // @Param limit query string true "Number of history to be retrieved"
 // @Param page query string true "Page to retrieved"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=dto.PaginationResponseBody} "Order retrieved successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
+// @Success 200 {object} dto.PaginationResponse[dto.OrderResponseBody] "Order retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -149,11 +149,11 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 // @Produce json
 // @Param limit query string true "Number of history to be retrieved"
 // @Param page query string true "Page to retrieved"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.OrderResponseBody,pagination=dto.PaginationResponseBody} "Unpaid orders retrieved successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "cannot parse uuid or cannot delete user"
+// @Success 200 {object} dto.PaginationResponse[dto.OrderResponseBody] "Unpaid orders retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "cannot parse uuid or cannot delete user"
 func (o *OrderHandler) GetMyUnpaidOrder(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 

@@ -19,10 +19,10 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.UserInformationRequestBody true "user information"
-// @Success 200 {object} httpResponse.HttpResponse{data=domain.User,pagination=nil} "user successfully updated account information"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot update your account information"
+// @Success 200 {object} dto.SuccessResponse[domain.User] "user successfully updated account information"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "system cannot update your account information"
 // @Router /user [patch]
 func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 	var requestBody *dto.UserInformationRequestBody

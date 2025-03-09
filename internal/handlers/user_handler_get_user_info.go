@@ -13,9 +13,9 @@ import (
 // @Security Bearer
 // @Accept json
 // @Produce json
-// @Success 200 {object} httpResponse.HttpResponse{data=domain.User,pagination=nil} "get user information successfully"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot get user information"
+// @Success 200 {object} dto.SuccessResponse[domain.User] "get user information successfully"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "system cannot get user information"
 // @Router /user/me [get]
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)

@@ -14,10 +14,10 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.VerifyRequestBody true "token"
-// @Success 200 {object} httpResponse.HttpResponse{data=dto.TokenWithUserInformationResponseBody,pagination=nil} "email is verified successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot verify your email"
+// @Success 200 {object} dto.SuccessResponse[dto.TokenWithUserInformationResponseBody] "email is verified successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "system cannot verify your email"
 // @Router /user/verify [post]
 func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	body := new(dto.VerifyRequestBody)

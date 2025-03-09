@@ -18,11 +18,11 @@ import (
 // @Param id path string true "DormID"
 // @Param limit query string true "Number of history to be retirved"
 // @Param page query string true "Page to retrive"
-// @Success 200 {object} httpResponse.HttpResponse{data=[]domain.LeasingHistory,pagination=dto.PaginationResponseBody} "Retrive history successfully"
-// @Failure 400  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
-// @Failure 401 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is unauthorized"
-// @Failure 404 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "leasing history not found"
-// @Failure 500  {object}  httpResponse.HttpResponse{data=nil,pagination=nil} "Can not parse UUID"
+// @Success 200 {object} dto.PaginationResponse[domain.LeasingHistory] "Retrive history successfully"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID"
 // @Router /history/bydorm/{id} [get]
 func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	id := c.Params("id")

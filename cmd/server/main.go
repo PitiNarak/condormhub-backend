@@ -6,12 +6,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/redis"
-
 	"github.com/PitiNarak/condormhub-backend/internal/config"
 	"github.com/PitiNarak/condormhub-backend/internal/databases"
 	"github.com/PitiNarak/condormhub-backend/internal/server"
+	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 	"github.com/gofiber/fiber/v2/log"
+	// _ "github.com/PitiNarak/condormhub-backend/docs"
 )
 
 // @title Condormhub API

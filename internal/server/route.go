@@ -1,10 +1,18 @@
 package server
 
+import (
+	"github.com/PitiNarak/condormhub-backend/docs"
+	"github.com/gofiber/swagger"
+	"github.com/swaggo/swag"
+)
+
 func (s *Server) initRoutes() {
 	// greeting
 	s.app.Get("/", s.handler.greeting.Greeting)
 
 	// swagger
+	swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
+	s.app.Get("/swagger/*", swagger.HandlerDefault)
 
 	s.initExampleUploadRoutes()
 	s.initUserRoutes()
