@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
