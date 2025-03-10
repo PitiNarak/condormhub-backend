@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
@@ -54,6 +56,10 @@ func (d *DormRepository) Update(id uuid.UUID, dorm *domain.Dorm) error {
 	existingDorm, err := d.GetByID(id)
 	if err != nil {
 		return apperror.NotFoundError(err, "Dorm not found")
+	}
+
+	if existingDorm.OwnerID != dorm.OwnerID {
+		return apperror.ForbiddenError(errors.New("you are not allowed to update this dorm"), "you are not allowed to update this dorm")
 	}
 
 	err = d.db.Model(existingDorm).Updates(dorm).Error
