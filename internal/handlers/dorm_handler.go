@@ -87,7 +87,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm successfully deleted"
+// @Success 204 "Dorm successfully deleted"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
