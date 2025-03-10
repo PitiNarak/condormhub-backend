@@ -119,7 +119,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms
 // @Description Retrieve a list of all dorms
 // @Tags dorms
-// @Param limit query string false "Number of dorms to retrieve (default 1)"
+// @Param limit query string false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query string false "Page number to retrieve (default 1)"
 // @Produce json
 // @Success 200 {object} dto.PaginationResponse[domain.Dorm] "All dorms retrieved successfully"
@@ -127,9 +127,12 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve dorms"
 // @Router /dorms [get]
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
-	limit := c.QueryInt("limit", 1)
+	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
 		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	if limit > 50 {
+		limit = 50
 	}
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
