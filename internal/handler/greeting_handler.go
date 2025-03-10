@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
