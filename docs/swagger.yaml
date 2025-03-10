@@ -625,6 +625,15 @@ paths:
   /dorms:
     get:
       description: Retrieve a list of all dorms
+      parameters:
+      - description: Number of dorms to retrieve (default 1)
+        in: query
+        name: limit
+        type: string
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        type: string
       produces:
       - application/json
       responses:

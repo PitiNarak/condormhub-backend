@@ -187,6 +187,20 @@ const docTemplate = `{
                     "dorms"
                 ],
                 "summary": "Get all dorms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Number of dorms to retrieve (default 1)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page number to retrieve (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "All dorms retrieved successfully",

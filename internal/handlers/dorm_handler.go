@@ -119,6 +119,8 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms
 // @Description Retrieve a list of all dorms
 // @Tags dorms
+// @Param limit query string false "Number of dorms to retrieve (default 1)"
+// @Param page query string false "Page number to retrieve (default 1)"
 // @Produce json
 // @Success 200 {object} dto.PaginationResponse[domain.Dorm] "All dorms retrieved successfully"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
