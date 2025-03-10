@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -6,20 +6,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// SetEndTimestamp godoc
+// Delete godoc
 // @Summary Delete a leasing history
 // @Description Delete a leasing history in the database
 // @Tags history
 // @Security Bearer
 // @Produce json
 // @Param id path string true "LeasingHistoryId"
-// @Success 204 "Set end timestamp successfully"
+// @Success 204 "No Content"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
-// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing history"
-// @Router /history/{id} [patch]
-func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to delete leasing history"
+// @Router /history/{id} [delete]
+func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := uuid.Validate(id); err != nil {
@@ -30,7 +30,7 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 	if err != nil {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.SetEndTimestamp(leasingHistoryID)
+	err = h.service.Delete(leasingHistoryID)
 	if err != nil {
 		return err
 	}
