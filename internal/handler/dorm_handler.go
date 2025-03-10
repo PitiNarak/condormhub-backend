@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -85,7 +87,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm successfully deleted"
+// @Success 204 "Dorm successfully deleted"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
@@ -117,20 +119,41 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms
 // @Description Retrieve a list of all dorms
 // @Tags dorms
+// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
 // @Success 200 {object} dto.PaginationResponse[domain.Dorm] "All dorms retrieved successfully"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve dorms"
 // @Router /dorms [get]
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
-	dorms, err := d.dormService.GetAll()
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	if limit > 50 {
+		limit = 50
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
 		return apperror.InternalServerError(err, "get dorms error")
 	}
-	return c.Status(fiber.StatusOK).JSON(dto.SuccessPagination(dorms, dto.Pagination{}))
+
+	res := dto.SuccessPagination(dorms, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 // GetByID godoc
@@ -190,11 +213,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 
-	userIDstr := c.Locals("userID").(string)
-	userID, err := uuid.Parse(userIDstr)
-	if err != nil {
-		return apperror.InternalServerError(err, "cannot parse uuid")
-	}
+	userID := c.Locals("userID").(uuid.UUID)
 
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
