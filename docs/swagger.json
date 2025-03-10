@@ -181,13 +181,13 @@
                 "summary": "Get all dorms",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Number of dorms to retrieve (default 1)",
+                        "type": "integer",
+                        "description": "Number of dorms to retrieve (default 10, max 50)",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Page number to retrieve (default 1)",
                         "name": "page",
                         "in": "query"
