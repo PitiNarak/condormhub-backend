@@ -208,11 +208,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 
-	userIDstr := c.Locals("userID").(string)
-	userID, err := uuid.Parse(userIDstr)
-	if err != nil {
-		return apperror.InternalServerError(err, "cannot parse uuid")
-	}
+	userID := c.Locals("userID").(uuid.UUID)
 
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
