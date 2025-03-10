@@ -18,7 +18,7 @@ func (s *DormService) Create(dorm *domain.Dorm) error {
 	return s.dormRepo.Create(dorm)
 }
 
-func (s *DormService) GetAll(limit, page int) ([]domain.Dorm, int, int, error) {
+func (s *DormService) GetAll(limit int, page int) ([]domain.Dorm, int, int, error) {
 	dorms, totalPages, totalRows, err := s.dormRepo.GetAll(limit, page)
 	if err != nil {
 		return nil, totalPages, totalRows, err

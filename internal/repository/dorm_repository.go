@@ -32,7 +32,7 @@ func (d *DormRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (d *DormRepository) GetAll(limit, page int) ([]domain.Dorm, int, int, error) {
+func (d *DormRepository) GetAll(limit int, page int) ([]domain.Dorm, int, int, error) {
 	var dorms []domain.Dorm
 	query := d.db.Preload("Owner")
 
