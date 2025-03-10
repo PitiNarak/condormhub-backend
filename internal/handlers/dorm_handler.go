@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -123,14 +125,30 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve dorms"
 // @Router /dorms [get]
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
-	dorms, err := d.dormService.GetAll()
+	limit := c.QueryInt("limit", 1)
+	if limit <= 0 {
+		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+	}
+	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
 		return apperror.InternalServerError(err, "get dorms error")
 	}
-	return c.Status(fiber.StatusOK).JSON(dto.SuccessPagination(dorms, dto.Pagination{}))
+
+	res := dto.SuccessPagination(dorms, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 // GetByID godoc

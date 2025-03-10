@@ -8,7 +8,7 @@ import (
 
 type DormRepository interface {
 	Create(dorm *domain.Dorm) error
-	GetAll() ([]domain.Dorm, error)
+	GetAll(limit, page int) ([]domain.Dorm, int, int, error)
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(id uuid.UUID, dorm *domain.Dorm) error
 	Delete(id uuid.UUID) error
@@ -16,7 +16,7 @@ type DormRepository interface {
 
 type DormService interface {
 	Create(dorm *domain.Dorm) error
-	GetAll() ([]domain.Dorm, error)
+	GetAll(limit, page int) ([]domain.Dorm, int, int, error)
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(id uuid.UUID, dorm *domain.Dorm) error
 	Delete(id uuid.UUID) error

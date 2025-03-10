@@ -18,8 +18,12 @@ func (s *DormService) Create(dorm *domain.Dorm) error {
 	return s.dormRepo.Create(dorm)
 }
 
-func (s *DormService) GetAll() ([]domain.Dorm, error) {
-	return s.dormRepo.GetAll()
+func (s *DormService) GetAll(limit, page int) ([]domain.Dorm, int, int, error) {
+	dorms, totalPages, totalRows, err := s.dormRepo.GetAll(limit, page)
+	if err != nil {
+		return nil, totalPages, totalRows, err
+	}
+	return dorms, totalPages, totalRows, nil
 }
 
 func (s *DormService) GetByID(id uuid.UUID) (*domain.Dorm, error) {
