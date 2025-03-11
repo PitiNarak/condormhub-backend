@@ -340,13 +340,8 @@ func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "cannot parse uuid or cannot delete user"
 // @Router /user/ [delete]
 func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
-	userIDstr := c.Locals("userID").(string)
-	userID, err := uuid.Parse(userIDstr)
-	if err != nil {
-		return apperror.InternalServerError(err, "cannot parse uuid")
-	}
-
-	err = h.userService.DeleteAccount(userID)
+	userID := c.Locals("userID").(uuid.UUID)
+	err := h.userService.DeleteAccount(userID)
 	if err != nil {
 		return err
 	}
