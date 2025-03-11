@@ -31,3 +31,4 @@ bin/
 #temp directory for running locally
 tmpDir/
 tmp/
+.commitlint/

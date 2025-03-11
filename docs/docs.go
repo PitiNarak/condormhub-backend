@@ -43,106 +43,31 @@ const docTemplate = `{
                     "200": {
                         "description": "user successfully logged in",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody"
                         }
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "user not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot login user",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -176,106 +101,31 @@ const docTemplate = `{
                     "200": {
                         "description": "user successfully Refresh in",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.TokenResponseBody"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_TokenResponseBody"
                         }
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "user not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot refresh user",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -309,64 +159,19 @@ const docTemplate = `{
                     "201": {
                         "description": "user successfully registered",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody"
                         }
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot register user",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -382,71 +187,37 @@ const docTemplate = `{
                     "dorms"
                 ],
                 "summary": "Get all dorms",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of dorms to retrieve (default 10, max 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number to retrieve (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "All dorms retrieved successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.Dorm"
-                                            }
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.PaginationResponse-domain_Dorm"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Failed to retrieve dorms",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -483,85 +254,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Dorm successfully created",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.Dorm"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-domain_Dorm"
                         }
                     },
                     "400": {
                         "description": "Your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Failed to save dorm",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -590,106 +301,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Dorm data successfully retrieved",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.Dorm"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-domain_Dorm"
                         }
                     },
                     "400": {
                         "description": "Incorrect UUID format",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Dorm not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Server failed to retrieve dorm",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -718,109 +354,31 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Dorm successfully deleted",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                    "204": {
+                        "description": "Dorm successfully deleted"
                     },
                     "400": {
                         "description": "Incorrect UUID format",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Dorm not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Failed to delete dorm",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -864,106 +422,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Dorm data updated successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.Dorm"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-domain_Dorm"
                         }
                     },
                     "400": {
                         "description": "Invalid Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Dorm not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Server failed to update dorm",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1011,109 +494,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Retrive history successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.LeasingHistory"
-                                            }
-                                        },
-                                        "pagination": {
-                                            "$ref": "#/definitions/dto.PaginationResponseBody"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.PaginationResponse-domain_LeasingHistory"
                         }
                     },
                     "400": {
                         "description": "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "leasing history not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Can not parse UUID",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1154,88 +559,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Retrive history successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.LeasingHistory"
-                                            }
-                                        },
-                                        "pagination": {
-                                            "$ref": "#/definitions/dto.PaginationResponseBody"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.PaginationResponse-domain_LeasingHistory"
                         }
                     },
                     "400": {
                         "description": "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "leasing history not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1269,106 +611,31 @@ const docTemplate = `{
                     "201": {
                         "description": "Dorm successfully created",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.LeasingHistory"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-domain_LeasingHistory"
                         }
                     },
                     "400": {
                         "description": "Incorrect UUID format",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Dorm not found or leasing history not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Can not parse UUID or failed to save leasing history to database",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1397,109 +664,31 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Delete successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Incorrect UUID format",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "leasing history not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Can not parse UUID or Failed to delete leasing history",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1528,109 +717,361 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Set end timestamp successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                    "204": {
+                        "description": "Set end timestamp successfully"
                     },
                     "400": {
                         "description": "Incorrect UUID format",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "leasing history not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Can not parse UUID or Failed to update leasing history",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create an order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Create an order",
+                "parameters": [
+                    {
+                        "description": "Order request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_OrderResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "cannot parse uuid or cannot delete user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/unpaid/me": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get my unpaid orders by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get my unpaid orders by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Number of history to be retrieved",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page to retrieved",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unpaid orders retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PaginationResponse-dto_OrderResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "cannot parse uuid or cannot delete user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/unpaid/{userID}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get unpaid orders by User ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get unpaid orders by User ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Number of history to be retrieved",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page to retrieved",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PaginationResponse-dto_OrderResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "cannot parse uuid or cannot delete user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get an order by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get an order by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_OrderResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "cannot parse uuid or cannot delete user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction"
+                ],
+                "summary": "Create a transaction",
+                "parameters": [
+                    {
+                        "description": "Transaction request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransactionRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_CreateTransactionResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "your request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "your request is unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "leasing history not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "cannot parse uuid or cannot delete user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1669,85 +1110,25 @@ const docTemplate = `{
                     "200": {
                         "description": "user successfully updated account information",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.User"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-domain_User"
                         }
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot update your account information",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1772,67 +1153,19 @@ const docTemplate = `{
                 ],
                 "summary": "Delete a user account",
                 "responses": {
-                    "200": {
-                        "description": "account successfully deleted",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                    "204": {
+                        "description": "account successfully deleted"
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "cannot parse uuid or cannot delete user",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1846,9 +1179,6 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get user information",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1860,64 +1190,19 @@ const docTemplate = `{
                     "200": {
                         "description": "get user information successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.User"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-domain_User"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot get user information",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1951,64 +1236,19 @@ const docTemplate = `{
                     "200": {
                         "description": "password reset successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody"
                         }
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot reset password",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -2039,67 +1279,19 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "email is sent to user successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                    "204": {
+                        "description": "email is sent to user successfully"
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot resend verification email",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -2133,85 +1325,25 @@ const docTemplate = `{
                     "200": {
                         "description": "email is verified successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody"
                         }
                     },
                     "400": {
                         "description": "your request is invalid",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "your request is unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "system cannot verify your email",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/httpResponse.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "pagination": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -2241,6 +1373,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "domain.CheckoutStatus": {
+            "type": "string",
+            "enum": [
+                "open",
+                "complete",
+                "expired"
+            ],
+            "x-enum-varnames": [
+                "StatusOpen",
+                "StatusComplete",
+                "StatusExpired"
+            ]
         },
         "domain.Dorm": {
             "type": "object",
@@ -2419,10 +1564,51 @@ const docTemplate = `{
         "domain.Order": {
             "type": "object",
             "properties": {
+                "createAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "leasingHistory": {
+                    "$ref": "#/definitions/domain.LeasingHistory"
+                },
                 "leasingHistoryID": {
+                    "type": "string"
+                },
+                "paidTransaction": {
+                    "$ref": "#/definitions/domain.Transaction"
+                },
+                "paidTransactionID": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Transaction"
+                    }
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.OrderType"
+                },
+                "updateAt": {
                     "type": "string"
                 }
             }
+        },
+        "domain.OrderType": {
+            "type": "string",
+            "enum": [
+                "insurance",
+                "monthly_bill"
+            ],
+            "x-enum-varnames": [
+                "InsuranceOrderType",
+                "MonthlyBillOrderType"
+            ]
         },
         "domain.Role": {
             "type": "string",
@@ -2436,6 +1622,26 @@ const docTemplate = `{
                 "LesseeRole",
                 "LessorRole"
             ]
+        },
+        "domain.Transaction": {
+            "type": "object",
+            "properties": {
+                "createAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.CheckoutStatus"
+                },
+                "updateAt": {
+                    "type": "string"
+                }
+            }
         },
         "domain.User": {
             "type": "object",
@@ -2501,6 +1707,14 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateTransactionResponseBody": {
+            "type": "object",
+            "properties": {
+                "checkoutUrl": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.DormRequestBody": {
             "type": "object",
             "required": [
@@ -2557,6 +1771,14 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.LoginRequestBody": {
             "type": "object",
             "required": [
@@ -2572,13 +1794,41 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PaginationResponseBody": {
+        "dto.OrderRequestBody": {
+            "type": "object",
+            "required": [
+                "leasingHistoryId"
+            ],
+            "properties": {
+                "leasingHistoryId": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrderResponseBody": {
             "type": "object",
             "properties": {
-                "currentPage": {
+                "id": {
+                    "type": "string"
+                },
+                "paidTransaction": {
+                    "$ref": "#/definitions/domain.Transaction"
+                },
+                "price": {
                     "type": "integer"
                 },
-                "lastPage": {
+                "type": {
+                    "$ref": "#/definitions/domain.OrderType"
+                }
+            }
+        },
+        "dto.Pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "last_page": {
                     "type": "integer"
                 },
                 "limit": {
@@ -2586,6 +1836,48 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.PaginationResponse-domain_Dorm": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Dorm"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.Pagination"
+                }
+            }
+        },
+        "dto.PaginationResponse-domain_LeasingHistory": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.LeasingHistory"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.Pagination"
+                }
+            }
+        },
+        "dto.PaginationResponse-dto_OrderResponseBody": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.OrderResponseBody"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.Pagination"
                 }
             }
         },
@@ -2645,6 +1937,62 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.SuccessResponse-domain_Dorm": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.Dorm"
+                }
+            }
+        },
+        "dto.SuccessResponse-domain_LeasingHistory": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.LeasingHistory"
+                }
+            }
+        },
+        "dto.SuccessResponse-domain_User": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.User"
+                }
+            }
+        },
+        "dto.SuccessResponse-dto_CreateTransactionResponseBody": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.CreateTransactionResponseBody"
+                }
+            }
+        },
+        "dto.SuccessResponse-dto_OrderResponseBody": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.OrderResponseBody"
+                }
+            }
+        },
+        "dto.SuccessResponse-dto_TokenResponseBody": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.TokenResponseBody"
+                }
+            }
+        },
+        "dto.SuccessResponse-dto_TokenWithUserInformationResponseBody": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.TokenWithUserInformationResponseBody"
+                }
+            }
+        },
         "dto.TokenResponseBody": {
             "type": "object",
             "properties": {
@@ -2667,6 +2015,14 @@ const docTemplate = `{
                 },
                 "userInformation": {
                     "$ref": "#/definitions/domain.User"
+                }
+            }
+        },
+        "dto.TransactionRequestBody": {
+            "type": "object",
+            "properties": {
+                "orderID": {
+                    "type": "string"
                 }
             }
         },
@@ -2717,19 +2073,6 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "httpResponse.HttpResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "pagination": {},
-                "success": {
-                    "type": "boolean"
                 }
             }
         }

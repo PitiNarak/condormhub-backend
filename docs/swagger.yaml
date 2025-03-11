@@ -15,6 +15,16 @@ definitions:
     - subdistrict
     - zipcode
     type: object
+  domain.CheckoutStatus:
+    enum:
+    - open
+    - complete
+    - expired
+    type: string
+    x-enum-varnames:
+    - StatusOpen
+    - StatusComplete
+    - StatusExpired
   domain.Dorm:
     properties:
       address:
@@ -161,9 +171,37 @@ definitions:
     - SelfEmployed
   domain.Order:
     properties:
+      createAt:
+        type: string
+      id:
+        type: string
+      leasingHistory:
+        $ref: '#/definitions/domain.LeasingHistory'
       leasingHistoryID:
         type: string
+      paidTransaction:
+        $ref: '#/definitions/domain.Transaction'
+      paidTransactionID:
+        type: string
+      price:
+        type: integer
+      transactions:
+        items:
+          $ref: '#/definitions/domain.Transaction'
+        type: array
+      type:
+        $ref: '#/definitions/domain.OrderType'
+      updateAt:
+        type: string
     type: object
+  domain.OrderType:
+    enum:
+    - insurance
+    - monthly_bill
+    type: string
+    x-enum-varnames:
+    - InsuranceOrderType
+    - MonthlyBillOrderType
   domain.Role:
     enum:
     - ADMIN
@@ -174,6 +212,19 @@ definitions:
     - AdminRole
     - LesseeRole
     - LessorRole
+  domain.Transaction:
+    properties:
+      createAt:
+        type: string
+      id:
+        type: string
+      price:
+        type: integer
+      status:
+        $ref: '#/definitions/domain.CheckoutStatus'
+      updateAt:
+        type: string
+    type: object
   domain.User:
     properties:
       birthDate:
@@ -217,6 +268,11 @@ definitions:
     - email
     - username
     type: object
+  dto.CreateTransactionResponseBody:
+    properties:
+      checkoutUrl:
+        type: string
+    type: object
   dto.DormRequestBody:
     properties:
       address:
@@ -257,6 +313,11 @@ definitions:
     - price
     - size
     type: object
+  dto.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
   dto.LoginRequestBody:
     properties:
       email:
@@ -267,16 +328,61 @@ definitions:
     - email
     - password
     type: object
-  dto.PaginationResponseBody:
+  dto.OrderRequestBody:
     properties:
-      currentPage:
+      leasingHistoryId:
+        type: string
+    required:
+    - leasingHistoryId
+    type: object
+  dto.OrderResponseBody:
+    properties:
+      id:
+        type: string
+      paidTransaction:
+        $ref: '#/definitions/domain.Transaction'
+      price:
         type: integer
-      lastPage:
+      type:
+        $ref: '#/definitions/domain.OrderType'
+    type: object
+  dto.Pagination:
+    properties:
+      current_page:
+        type: integer
+      last_page:
         type: integer
       limit:
         type: integer
       total:
         type: integer
+    type: object
+  dto.PaginationResponse-domain_Dorm:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.Dorm'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.Pagination'
+    type: object
+  dto.PaginationResponse-domain_LeasingHistory:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.LeasingHistory'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.Pagination'
+    type: object
+  dto.PaginationResponse-dto_OrderResponseBody:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.OrderResponseBody'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.Pagination'
     type: object
   dto.RefreshTokenRequestBody:
     properties:
@@ -315,6 +421,41 @@ definitions:
     - password
     - token
     type: object
+  dto.SuccessResponse-domain_Dorm:
+    properties:
+      data:
+        $ref: '#/definitions/domain.Dorm'
+    type: object
+  dto.SuccessResponse-domain_LeasingHistory:
+    properties:
+      data:
+        $ref: '#/definitions/domain.LeasingHistory'
+    type: object
+  dto.SuccessResponse-domain_User:
+    properties:
+      data:
+        $ref: '#/definitions/domain.User'
+    type: object
+  dto.SuccessResponse-dto_CreateTransactionResponseBody:
+    properties:
+      data:
+        $ref: '#/definitions/dto.CreateTransactionResponseBody'
+    type: object
+  dto.SuccessResponse-dto_OrderResponseBody:
+    properties:
+      data:
+        $ref: '#/definitions/dto.OrderResponseBody'
+    type: object
+  dto.SuccessResponse-dto_TokenResponseBody:
+    properties:
+      data:
+        $ref: '#/definitions/dto.TokenResponseBody'
+    type: object
+  dto.SuccessResponse-dto_TokenWithUserInformationResponseBody:
+    properties:
+      data:
+        $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
+    type: object
   dto.TokenResponseBody:
     properties:
       accessToken:
@@ -330,6 +471,11 @@ definitions:
         type: string
       userInformation:
         $ref: '#/definitions/domain.User'
+    type: object
+  dto.TransactionRequestBody:
+    properties:
+      orderID:
+        type: string
     type: object
   dto.UserInformationRequestBody:
     properties:
@@ -364,15 +510,6 @@ definitions:
     required:
     - token
     type: object
-  httpResponse.HttpResponse:
-    properties:
-      data: {}
-      message:
-        type: string
-      pagination: {}
-      success:
-        type: boolean
-    type: object
 info:
   contact: {}
   description: This is the API for the Condormhub project.
@@ -397,58 +534,23 @@ paths:
         "200":
           description: user successfully logged in
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody'
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: user not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot login user
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Login user
       tags:
       - auth
@@ -470,58 +572,23 @@ paths:
         "200":
           description: user successfully Refresh in
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.TokenResponseBody'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-dto_TokenResponseBody'
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: user not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot refresh user
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Refresh user
       tags:
       - auth
@@ -543,80 +610,45 @@ paths:
         "201":
           description: user successfully registered
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody'
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot register user
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Register new user
       tags:
       - auth
   /dorms:
     get:
       description: Retrieve a list of all dorms
+      parameters:
+      - description: Number of dorms to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: All dorms retrieved successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.Dorm'
-                  type: array
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.PaginationResponse-domain_Dorm'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Failed to retrieve dorms
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Get all dorms
       tags:
       - dorms
@@ -637,47 +669,19 @@ paths:
         "201":
           description: Dorm successfully created
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.Dorm'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-domain_Dorm'
         "400":
           description: Your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Failed to save dorm
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Create a new dorm
@@ -695,61 +699,24 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "204":
           description: Dorm successfully deleted
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
         "400":
           description: Incorrect UUID format
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Dorm not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Failed to delete dorm
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a dorm
@@ -769,58 +736,23 @@ paths:
         "200":
           description: Dorm data successfully retrieved
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.Dorm'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-domain_Dorm'
         "400":
           description: Incorrect UUID format
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Dorm not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Server failed to retrieve dorm
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Get a dorm by ID
       tags:
       - dorms
@@ -846,58 +778,23 @@ paths:
         "200":
           description: Dorm data updated successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.Dorm'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-domain_Dorm'
         "400":
           description: Invalid Request
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Dorm not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Server failed to update dorm
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Update an existing dorm
@@ -915,61 +812,24 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: Delete successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+        "204":
+          description: No Content
         "400":
           description: Incorrect UUID format
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: leasing history not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Can not parse UUID or Failed to delete leasing history
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a leasing history
@@ -986,61 +846,24 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "204":
           description: Set end timestamp successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
         "400":
           description: Incorrect UUID format
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: leasing history not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Can not parse UUID or Failed to update leasing history
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a leasing history
@@ -1060,58 +883,23 @@ paths:
         "201":
           description: Dorm successfully created
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.LeasingHistory'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-domain_LeasingHistory'
         "400":
           description: Incorrect UUID format
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Dorm not found or leasing history not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Can not parse UUID or failed to save leasing history to database
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Create a new leasing history
@@ -1142,61 +930,24 @@ paths:
         "200":
           description: Retrive history successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.LeasingHistory'
-                  type: array
-                pagination:
-                  $ref: '#/definitions/dto.PaginationResponseBody'
-              type: object
+            $ref: '#/definitions/dto.PaginationResponse-domain_LeasingHistory'
         "400":
           description: Incorrect UUID format or limit parameter is incorrect or page
             parameter is incorrect or page exceeded
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: leasing history not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Can not parse UUID
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Get all leasing history by userid
@@ -1222,55 +973,237 @@ paths:
         "200":
           description: Retrive history successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.LeasingHistory'
-                  type: array
-                pagination:
-                  $ref: '#/definitions/dto.PaginationResponseBody'
-              type: object
+            $ref: '#/definitions/dto.PaginationResponse-domain_LeasingHistory'
         "400":
           description: Incorrect UUID format or limit parameter is incorrect or page
             parameter is incorrect or page exceeded
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: leasing history not found
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Get all leasing history by userid
       tags:
       - history
+  /order:
+    post:
+      consumes:
+      - application/json
+      description: Create an order
+      parameters:
+      - description: Order request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order created successfully
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse-dto_OrderResponseBody'
+        "400":
+          description: your request is invalid
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: leasing history not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create an order
+      tags:
+      - order
+  /order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an order by ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse-dto_OrderResponseBody'
+        "400":
+          description: your request is invalid
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: leasing history not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get an order by ID
+      tags:
+      - order
+  /order/unpaid/{userID}:
+    get:
+      consumes:
+      - application/json
+      description: Get unpaid orders by User ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Number of history to be retrieved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrieved
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.PaginationResponse-dto_OrderResponseBody'
+        "400":
+          description: your request is invalid
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: leasing history not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get unpaid orders by User ID
+      tags:
+      - order
+  /order/unpaid/me:
+    get:
+      consumes:
+      - application/json
+      description: Get my unpaid orders by ID
+      parameters:
+      - description: Number of history to be retrieved
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Page to retrieved
+        in: query
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Unpaid orders retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.PaginationResponse-dto_OrderResponseBody'
+        "400":
+          description: your request is invalid
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: leasing history not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get my unpaid orders by ID
+      tags:
+      - order
+  /transaction:
+    post:
+      consumes:
+      - application/json
+      description: Create a transaction
+      parameters:
+      - description: Transaction request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transaction created successfully
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse-dto_CreateTransactionResponseBody'
+        "400":
+          description: your request is invalid
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: leasing history not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: cannot parse uuid or cannot delete user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create a transaction
+      tags:
+      - transaction
   /user:
     patch:
       consumes:
@@ -1289,47 +1222,19 @@ paths:
         "200":
           description: user successfully updated account information
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.User'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-domain_User'
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot update your account information
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Update user information
@@ -1343,39 +1248,16 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "204":
           description: account successfully deleted
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: cannot parse uuid or cannot delete user
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a user account
@@ -1383,8 +1265,6 @@ paths:
       - user
   /user/me:
     get:
-      consumes:
-      - application/json
       description: Get user information
       produces:
       - application/json
@@ -1392,36 +1272,15 @@ paths:
         "200":
           description: get user information successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.User'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-domain_User'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot get user information
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
       summary: Get user information
@@ -1445,36 +1304,15 @@ paths:
         "200":
           description: password reset successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody'
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot reset password
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Reset password
       tags:
       - user
@@ -1493,39 +1331,16 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "204":
           description: email is sent to user successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot resend verification email
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Resend verification email
       tags:
       - user
@@ -1547,47 +1362,19 @@ paths:
         "200":
           description: email is verified successfully
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.TokenWithUserInformationResponseBody'
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.SuccessResponse-dto_TokenWithUserInformationResponseBody'
         "400":
           description: your request is invalid
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: system cannot verify your email
           schema:
-            allOf:
-            - $ref: '#/definitions/httpResponse.HttpResponse'
-            - properties:
-                data:
-                  type: object
-                pagination:
-                  type: object
-              type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Verify email
       tags:
       - user
