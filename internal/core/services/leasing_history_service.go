@@ -17,13 +17,17 @@ func NewLeasingHistoryService(historyRepo ports.LeasingHistoryRepository, dormRe
 	return &LeasingHistoryService{historyRepo: historyRepo, dormRepo: dormRepo}
 }
 
-func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID, price int) (*domain.LeasingHistory, error) {
+func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error) {
 	_, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
 		return &domain.LeasingHistory{}, err
 	}
 	createTime := time.Now()
-	leasingHistory := &domain.LeasingHistory{DormID: dormID, LesseeID: userID, Start: createTime, Price: price}
+	dorm, err := s.dormRepo.GetByID(dormID)
+	if err != nil {
+
+	}
+	leasingHistory := &domain.LeasingHistory{DormID: dormID, LesseeID: userID, Start: createTime, Price: dorm.Price}
 	err = s.historyRepo.Create(leasingHistory)
 	if err != nil {
 		return &domain.LeasingHistory{}, err

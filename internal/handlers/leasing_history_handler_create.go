@@ -43,7 +43,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	leasingHistory, err := h.service.Create(userID, dormID, reqBody.Price)
+	leasingHistory, err := h.service.Create(userID, dormID)
 	if err != nil {
 		return err
 	}

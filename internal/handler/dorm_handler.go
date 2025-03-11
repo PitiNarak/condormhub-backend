@@ -138,7 +138,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	if page <= 0 {
 		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
 	}
-	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page)
+	dorms, err := d.dormService.GetAll()
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -146,12 +146,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorms error")
 	}
 
-	res := dto.SuccessPagination(dorms, dto.Pagination{
-		CurrentPage: page,
-		LastPage:    totalPages,
-		Limit:       limit,
-		Total:       totalRows,
-	})
+	res := dto.Success(dorms)
 
 	return c.Status(fiber.StatusOK).JSON(res)
 }

@@ -16,7 +16,7 @@ type LeasingHistoryRepository interface {
 }
 
 type LeasingHistoryService interface {
-	Create(userID uuid.UUID, dormID uuid.UUID, price int) (*domain.LeasingHistory, error)
+	Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error)
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)

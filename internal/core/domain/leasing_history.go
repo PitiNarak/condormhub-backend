@@ -15,5 +15,5 @@ type LeasingHistory struct {
 	Orders   []Order   `json:"orders" gorm:"foreignKey:LeasingHistoryID"`
 	Start    time.Time `json:"start"`
 	End      time.Time `json:"end" gorm:"default:null"`
-	Price    int       `json:"price"`
+	Price    float64   `json:"price"`
 }
