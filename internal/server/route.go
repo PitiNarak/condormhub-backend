@@ -1,9 +1,7 @@
 package server
 
 import (
-	"github.com/PitiNarak/condormhub-backend/docs"
 	"github.com/gofiber/swagger"
-	"github.com/swaggo/swag"
 )
 
 func (s *Server) initRoutes() {
@@ -11,7 +9,7 @@ func (s *Server) initRoutes() {
 	s.app.Get("/", s.handler.greeting.Greeting)
 
 	// swagger
-	swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
+	// swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
 	s.app.Get("/swagger/*", swagger.HandlerDefault)
 
 	s.initExampleUploadRoutes()
