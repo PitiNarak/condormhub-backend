@@ -25,7 +25,7 @@ func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*dom
 	createTime := time.Now()
 	dorm, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
-
+		return &domain.LeasingHistory{}, err
 	}
 	leasingHistory := &domain.LeasingHistory{DormID: dormID, LesseeID: userID, Start: createTime, Price: dorm.Price}
 	err = s.historyRepo.Create(leasingHistory)
