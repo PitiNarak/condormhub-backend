@@ -627,6 +627,15 @@ paths:
   /dorms:
     get:
       description: Retrieve a list of all dorms
+      parameters:
+      - description: Number of dorms to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -692,10 +701,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "204":
           description: Dorm successfully deleted
-          schema:
-            $ref: '#/definitions/dto.SuccessResponse-domain_Dorm'
         "400":
           description: Incorrect UUID format
           schema:
@@ -831,7 +838,7 @@ paths:
       tags:
       - history
     patch:
-      description: Set end timestamp to the given leasing history id
+      description: Delete a leasing history in the database
       parameters:
       - description: LeasingHistoryId
         in: path
@@ -861,7 +868,7 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
       - Bearer: []
-      summary: Set end time to a leasing history
+      summary: Delete a leasing history
       tags:
       - history
     post:

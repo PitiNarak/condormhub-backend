@@ -187,6 +187,20 @@ const docTemplate = `{
                     "dorms"
                 ],
                 "summary": "Get all dorms",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of dorms to retrieve (default 10, max 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number to retrieve (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "All dorms retrieved successfully",
@@ -340,11 +354,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Dorm successfully deleted",
-                        "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse-domain_Dorm"
-                        }
+                    "204": {
+                        "description": "Dorm successfully deleted"
                     },
                     "400": {
                         "description": "Incorrect UUID format",
@@ -688,14 +699,14 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Set end timestamp to the given leasing history id",
+                "description": "Delete a leasing history in the database",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "history"
                 ],
-                "summary": "Set end time to a leasing history",
+                "summary": "Delete a leasing history",
                 "parameters": [
                     {
                         "type": "string",
