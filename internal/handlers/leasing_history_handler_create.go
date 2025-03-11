@@ -24,14 +24,14 @@ import (
 func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	reqBody := new(dto.LeasingHistoryCreateRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
-		return errorHandler.BadRequestError(err, "Your request is invalid")
+		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
-		return errorHandler.BadRequestError(err, "Your request is invalid")
+		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 	if err := c.BodyParser(reqBody); err != nil {
-		return errorHandler.BadRequestError(err, "Your request is invalid")
+		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 	userID := c.Locals("userID").(uuid.UUID)
 	id := c.Params("id")
