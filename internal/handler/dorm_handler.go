@@ -35,6 +35,9 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Failure 500 {object} dto.ErrorResponse "Failed to save dorm"
 // @Router /dorms [post]
 func (d *DormHandler) Create(c *fiber.Ctx) error {
+	user := c.Locals("user").(*domain.User)
+	userRole := *user.Role // maybe should have user role in local?
+
 	reqBody := new(dto.DormRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
@@ -45,13 +48,6 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 	validate := validator.New()
 	if err := validate.Struct(reqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request body is invalid")
-	}
-
-	user := c.Locals("user").(*domain.User)
-	userRole := *user.Role
-
-	if userRole != domain.AdminRole && userRole != domain.LessorRole {
-		return apperror.ForbiddenError(errors.New("unauthorized"), "You do not have permission to create a dorm")
 	}
 
 	dorm := &domain.Dorm{
@@ -70,7 +66,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		Description: reqBody.Description,
 	}
 
-	if err := d.dormService.Create(dorm); err != nil {
+	if err := d.dormService.Create(userRole, dorm); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -104,6 +100,8 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Router /dorms/{id} [delete]
 func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
+	user := c.Locals("user").(*domain.User)
+	userRole := *user.Role // maybe should have user role in local?
 
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
@@ -114,14 +112,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	user := c.Locals("user").(*domain.User)
-	userRole := *user.Role
-
-	if userRole != domain.AdminRole && userRole != domain.LessorRole {
-		return apperror.ForbiddenError(errors.New("unauthorized"), "You do not have permission to delete this dorm")
-	}
-
-	if err := d.dormService.Delete(dormID); err != nil {
+	if err := d.dormService.Delete(userRole, dormID); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -225,8 +216,8 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Router /dorms/{id} [patch]
 func (d *DormHandler) Update(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
-	user := c.Locals("user").(*domain.User)
-	isAdmin := *user.Role == domain.AdminRole // maybe this should be in local?
+	user := c.Locals("user").(*domain.User) // maybe should have user role in local?
+	isAdmin := *user.Role == domain.AdminRole
 
 	id := c.Params("id")
 	updateReqBody := new(dto.DormRequestBody)

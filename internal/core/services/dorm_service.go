@@ -18,7 +18,17 @@ func NewDormService(repo ports.DormRepository) ports.DormService {
 	return &DormService{dormRepo: repo}
 }
 
-func (s *DormService) Create(dorm *domain.Dorm) error {
+func checkPermission(role domain.Role) error {
+	if role != domain.AdminRole && role != domain.LessorRole {
+		return errors.New("unauthorized action")
+	}
+	return nil
+}
+
+func (s *DormService) Create(userRole domain.Role, dorm *domain.Dorm) error {
+	if err := checkPermission(userRole); err != nil {
+		return apperror.ForbiddenError(err, "You do not have permission to create a dorm")
+	}
 	return s.dormRepo.Create(dorm)
 }
 
@@ -59,6 +69,9 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 	return dorm, nil
 }
 
-func (s *DormService) Delete(id uuid.UUID) error {
+func (s *DormService) Delete(userRole domain.Role, id uuid.UUID) error {
+	if err := checkPermission(userRole); err != nil {
+		return apperror.ForbiddenError(err, "You do not have permission to delete this dorm")
+	}
 	return s.dormRepo.Delete(id)
 }

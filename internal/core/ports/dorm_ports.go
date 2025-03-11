@@ -16,11 +16,11 @@ type DormRepository interface {
 }
 
 type DormService interface {
-	Create(dorm *domain.Dorm) error
+	Create(userRole domain.Role, dorm *domain.Dorm) error
 	GetAll(limit int, page int) ([]domain.Dorm, int, int, error)
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormRequestBody) (*domain.Dorm, error)
-	Delete(id uuid.UUID) error
+	Delete(userRole domain.Role, id uuid.UUID) error
 }
 
 type DormHandler interface {
