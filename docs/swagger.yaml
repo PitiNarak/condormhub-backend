@@ -916,16 +916,14 @@ paths:
         name: id
         required: true
         type: string
-      - description: Number of history to be retirved
+      - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
-        required: true
-        type: string
-      - description: Page to retrive
+        type: integer
+      - description: Page number to retrieve (default 1)
         in: query
         name: page
-        required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -959,16 +957,14 @@ paths:
     get:
       description: Retrieve a list of all leasing history by userid
       parameters:
-      - description: Number of history to be retirved
+      - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
-        required: true
-        type: string
-      - description: Page to retrive
+        type: integer
+      - description: Page number to retrieve (default 1)
         in: query
         name: page
-        required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:

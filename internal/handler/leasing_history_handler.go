@@ -64,8 +64,8 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
-// @Param limit query string true "Number of history to be retirved"
-// @Param page query string true "Page to retrive"
+// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
 // @Success 200 {object} dto.PaginationResponse[domain.LeasingHistory] "Retrive history successfully"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -73,7 +73,7 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 // @Router /history/me [get]
 func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
-	limit := c.QueryInt("limit", 1)
+	limit := max(50, c.QueryInt("limit", 10))
 	if limit <= 0 {
 		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
 	}
@@ -103,8 +103,8 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Param limit query string true "Number of history to be retirved"
-// @Param page query string true "Page to retrive"
+// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
 // @Success 200 {object} dto.PaginationResponse[domain.LeasingHistory] "Retrive history successfully"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -120,7 +120,7 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	limit := c.QueryInt("limit", 1)
+	limit := max(50, c.QueryInt("limit", 10))
 	if limit <= 0 {
 		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
 	}

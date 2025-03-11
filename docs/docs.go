@@ -476,18 +476,16 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Number of history to be retirved",
+                        "type": "integer",
+                        "description": "Number of dorms to retrieve (default 10, max 50)",
                         "name": "limit",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Page to retrive",
+                        "type": "integer",
+                        "description": "Page number to retrieve (default 1)",
                         "name": "page",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -541,18 +539,16 @@ const docTemplate = `{
                 "summary": "Get all leasing history by userid",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Number of history to be retirved",
+                        "type": "integer",
+                        "description": "Number of dorms to retrieve (default 10, max 50)",
                         "name": "limit",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Page to retrive",
+                        "type": "integer",
+                        "description": "Page number to retrieve (default 1)",
                         "name": "page",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
