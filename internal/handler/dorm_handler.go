@@ -100,8 +100,9 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Router /dorms/{id} [delete]
 func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
+	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	userRole := *user.Role // maybe should have user role in local?
+	isAdmin := *user.Role == domain.AdminRole // maybe should have user role in local?
 
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
@@ -112,7 +113,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	if err := d.dormService.Delete(userRole, dormID); err != nil {
+	if err := d.dormService.Delete(userID, isAdmin, dormID); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}

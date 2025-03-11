@@ -20,7 +20,7 @@ type DormService interface {
 	GetAll(limit int, page int) ([]domain.Dorm, int, int, error)
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormRequestBody) (*domain.Dorm, error)
-	Delete(userRole domain.Role, id uuid.UUID) error
+	Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
 }
 
 type DormHandler interface {

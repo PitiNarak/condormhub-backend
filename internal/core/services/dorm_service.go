@@ -18,16 +18,16 @@ func NewDormService(repo ports.DormRepository) ports.DormService {
 	return &DormService{dormRepo: repo}
 }
 
-func checkPermission(role domain.Role) error {
-	if role != domain.AdminRole && role != domain.LessorRole {
+func checkPermission(ownerID uuid.UUID, userID uuid.UUID, isAdmin bool) error {
+	if ownerID != userID && !isAdmin {
 		return errors.New("unauthorized action")
 	}
 	return nil
 }
 
 func (s *DormService) Create(userRole domain.Role, dorm *domain.Dorm) error {
-	if err := checkPermission(userRole); err != nil {
-		return apperror.ForbiddenError(err, "You do not have permission to create a dorm")
+	if userRole != domain.AdminRole && userRole != domain.LessorRole {
+		return apperror.ForbiddenError(errors.New("unauthorized action"), "You do not have permission to create a dorm")
 	}
 	return s.dormRepo.Create(dorm)
 }
@@ -50,8 +50,8 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 		return nil, err
 	}
 
-	if dorm.OwnerID != userID && !isAdmin {
-		return nil, apperror.ForbiddenError(errors.New("unauthorized to update this dorm"), "You do not have permission to update this dorm")
+	if err = checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
+		return nil, apperror.ForbiddenError(err, "You do not have permission to update this dorm")
 	}
 
 	dorm.Name = updateData.Name
@@ -69,9 +69,15 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 	return dorm, nil
 }
 
-func (s *DormService) Delete(userRole domain.Role, id uuid.UUID) error {
-	if err := checkPermission(userRole); err != nil {
+func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error {
+	dorm, err := s.dormRepo.GetByID(dormID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
 		return apperror.ForbiddenError(err, "You do not have permission to delete this dorm")
 	}
-	return s.dormRepo.Delete(id)
+
+	return s.dormRepo.Delete(dormID)
 }
