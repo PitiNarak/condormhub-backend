@@ -221,16 +221,18 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Server failed to update dorm"
 // @Router /dorms/{id} [patch]
 func (d *DormHandler) Update(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	isAdmin := *user.Role == domain.AdminRole // maybe this should be in local?
+
 	id := c.Params("id")
-	reqBody := new(dto.DormRequestBody)
-	if err := c.BodyParser(reqBody); err != nil {
+	updateReqBody := new(dto.DormRequestBody)
+	if err := c.BodyParser(updateReqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 
-	userID := c.Locals("userID").(uuid.UUID)
-
 	validate := validator.New()
-	if err := validate.Struct(reqBody); err != nil {
+	if err := validate.Struct(updateReqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request body is invalid")
 	}
 
@@ -243,30 +245,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	user := c.Locals("user").(*domain.User)
-	userRole := *user.Role
-
-	if userRole != domain.AdminRole && userRole != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("unauthorized"), "You do not have permission to update a dorm")
-	}
-
-	dorm := &domain.Dorm{
-		Name:      reqBody.Name,
-		OwnerID:   userID,
-		Size:      reqBody.Size,
-		Bedrooms:  reqBody.Bedrooms,
-		Bathrooms: reqBody.Bathrooms,
-		Address: domain.Address{
-			District:    reqBody.Address.District,
-			Subdistrict: reqBody.Address.Subdistrict,
-			Province:    reqBody.Address.Province,
-			Zipcode:     reqBody.Address.Zipcode,
-		},
-		Price:       reqBody.Price,
-		Description: reqBody.Description,
-	}
-
-	err = d.dormService.Update(dormID, dorm)
+	updatedDorm, err := d.dormService.Update(userID, isAdmin, dormID, updateReqBody)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -274,13 +253,5 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	res, err := d.dormService.GetByID(dormID)
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "get dorm error")
-	}
-
-	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
 }
