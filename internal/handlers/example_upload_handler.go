@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PitiNarak/condormhub-backend/internal/storage"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -25,12 +25,12 @@ func NewTestUploadHandler(storage *storage.Storage) *TestUploadHandler {
 func (e *TestUploadHandler) UploadToPrivateBucketHandler(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
-		return errorHandler.BadRequestError(err, "file is required")
+		return apperror.BadRequestError(err, "file is required")
 	}
 
 	fileData, err := file.Open()
 	if err != nil {
-		return errorHandler.InternalServerError(err, "error opening file")
+		return apperror.InternalServerError(err, "error opening file")
 	}
 	defer fileData.Close()
 
@@ -41,26 +41,26 @@ func (e *TestUploadHandler) UploadToPrivateBucketHandler(c *fiber.Ctx) error {
 
 	err = e.storage.UploadFile(c.Context(), fileKey, contentType, fileData, storage.PrivateBucket)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "error uploading file")
+		return apperror.InternalServerError(err, "error uploading file")
 	}
 
 	url, err := e.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "error getting signed url")
+		return apperror.InternalServerError(err, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", httpResponse.SuccessResponse("upload success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)})))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
 }
 
 func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
-		return errorHandler.BadRequestError(err, "file is required")
+		return apperror.BadRequestError(err, "file is required")
 	}
 
 	fileData, err := file.Open()
 	if err != nil {
-		return errorHandler.InternalServerError(err, "error opening file")
+		return apperror.InternalServerError(err, "error opening file")
 	}
 	defer fileData.Close()
 
@@ -71,20 +71,20 @@ func (e *TestUploadHandler) UploadToPublicBucketHandler(c *fiber.Ctx) error {
 
 	err = e.storage.UploadFile(c.Context(), fileKey, contentType, fileData, storage.PublicBucket)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "error uploading file")
+		return apperror.InternalServerError(err, "error uploading file")
 	}
 
 	url := e.storage.GetPublicUrl(fileKey)
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("upload success", fiber.Map{"url": url}))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url}))
 }
 
 func (e *TestUploadHandler) GetSignedUrlHandler(c *fiber.Ctx) error {
 	fileKey := c.Params("*")
 	url, err := e.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "error getting signed url")
+		return apperror.InternalServerError(err, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("get signed url success", fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url, "key": fileKey, "expires": time.Now().Add(time.Minute * 5)}))
 }

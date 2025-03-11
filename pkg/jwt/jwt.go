@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
@@ -61,7 +61,7 @@ func (j *JWTUtils) GenerateJWT(userID uuid.UUID, exp int) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := jwtToken.SignedString([]byte(j.Config.JWTSecretKey))
 	if err != nil {
-		return "", errorHandler.InternalServerError(err, "cannot generate token")
+		return "", apperror.InternalServerError(err, "cannot generate token")
 	}
 	return tokenString, nil
 }
@@ -75,12 +75,12 @@ func (j *JWTUtils) DecodeJWT(inputToken string) (*JWTClaims, error) {
 	})
 
 	if err != nil || !token.Valid {
-		return new(JWTClaims), errorHandler.UnauthorizedError(err, "parse token failed")
+		return new(JWTClaims), apperror.UnauthorizedError(err, "parse token failed")
 	}
 
 	claims, ok := token.Claims.(*JWTClaims)
 	if !ok || !token.Valid {
-		return new(JWTClaims), errorHandler.UnauthorizedError(err, "invalid token")
+		return new(JWTClaims), apperror.UnauthorizedError(err, "invalid token")
 	}
 
 	return claims, nil
@@ -93,7 +93,7 @@ func (j *JWTUtils) GenerateKeyPair(ctx context.Context, userID uuid.UUID) (strin
 	}
 	err = j.Redis.SetAccessToken(ctx, userID, accessToken, time.Hour*time.Duration(j.Config.AccessTokenExpiration))
 	if err != nil {
-		return "", "", errorHandler.InternalServerError(err, "cannot set access token")
+		return "", "", apperror.InternalServerError(err, "cannot set access token")
 	}
 
 	refreshToken, err := j.GenerateJWT(userID, j.Config.RefreshTokenExpiration)
@@ -102,7 +102,7 @@ func (j *JWTUtils) GenerateKeyPair(ctx context.Context, userID uuid.UUID) (strin
 	}
 	err = j.Redis.SetRefreshToken(ctx, userID, refreshToken, time.Hour*time.Duration(j.Config.RefreshTokenExpiration))
 	if err != nil {
-		return "", "", errorHandler.InternalServerError(err, "cannot set refresh token")
+		return "", "", apperror.InternalServerError(err, "cannot set refresh token")
 	}
 
 	return accessToken, refreshToken, nil
@@ -116,16 +116,16 @@ func (j *JWTUtils) VerifyAccessToken(ctx context.Context, accessToken string) (u
 
 	userID, err := uuid.Parse(claims.UserID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+		return uuid.Nil, apperror.InternalServerError(err, "cannot parse user id")
 	}
 
 	token, err := j.Redis.GetAccessToken(ctx, userID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get access token")
+		return uuid.Nil, apperror.InternalServerError(err, "cannot get access token")
 	}
 
 	if token != accessToken {
-		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid access token")
+		return uuid.Nil, apperror.UnauthorizedError(nil, "invalid access token")
 	}
 
 	return userID, nil
@@ -139,16 +139,16 @@ func (j *JWTUtils) VerifyRefreshToken(ctx context.Context, refreshToken string) 
 
 	userID, err := uuid.Parse(claims.UserID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+		return uuid.Nil, apperror.InternalServerError(err, "cannot parse user id")
 	}
 
 	token, err := j.Redis.GetRefreshToken(ctx, userID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot get refresh token")
+		return uuid.Nil, apperror.InternalServerError(err, "cannot get refresh token")
 	}
 
 	if token != refreshToken {
-		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid refresh token")
+		return uuid.Nil, apperror.UnauthorizedError(nil, "invalid refresh token")
 	}
 
 	return userID, nil
@@ -166,7 +166,7 @@ func (j *JWTUtils) RefreshToken(ctx context.Context, refreshToken string) (strin
 	}
 	err = j.Redis.SetAccessToken(ctx, userID, accessToken, time.Hour*time.Duration(j.Config.AccessTokenExpiration))
 	if err != nil {
-		return "", "", errorHandler.InternalServerError(err, "cannot set access token")
+		return "", "", apperror.InternalServerError(err, "cannot set access token")
 	}
 
 	return accessToken, refreshToken, nil
@@ -179,7 +179,7 @@ func (j *JWTUtils) GenerateResetPasswordToken(ctx context.Context, userID uuid.U
 	}
 	err = j.Redis.SetResetToken(ctx, userID, resetToken, time.Hour*24)
 	if err != nil {
-		return "", errorHandler.InternalServerError(err, "cannot set reset token")
+		return "", apperror.InternalServerError(err, "cannot set reset token")
 	}
 	return resetToken, nil
 }
@@ -192,16 +192,16 @@ func (j *JWTUtils) VerifyResetPasswordToken(ctx context.Context, resetToken stri
 
 	userID, err := uuid.Parse(claims.UserID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+		return uuid.Nil, apperror.InternalServerError(err, "cannot parse user id")
 	}
 
 	token, err := j.Redis.GetResetToken(ctx, userID)
 	if err != nil {
-		return uuid.Nil, errorHandler.UnauthorizedError(err, "token is expired or token is used")
+		return uuid.Nil, apperror.UnauthorizedError(err, "token is expired or token is used")
 	}
 
 	if token != resetToken {
-		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid reset token")
+		return uuid.Nil, apperror.UnauthorizedError(nil, "invalid reset token")
 	}
 
 	return userID, nil
@@ -210,7 +210,7 @@ func (j *JWTUtils) VerifyResetPasswordToken(ctx context.Context, resetToken stri
 func (j *JWTUtils) DeleteResetPasswordToken(ctx context.Context, userID uuid.UUID) error {
 	err := j.Redis.DeleteResetToken(ctx, userID)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot delete reset token")
+		return apperror.InternalServerError(err, "cannot delete reset token")
 	}
 	return nil
 }
@@ -222,7 +222,7 @@ func (j *JWTUtils) GenerateVerificationToken(ctx context.Context, userID uuid.UU
 	}
 	err = j.Redis.SetVerificationToken(ctx, userID, verificationToken, time.Hour*24)
 	if err != nil {
-		return "", errorHandler.InternalServerError(err, "cannot set verification token")
+		return "", apperror.InternalServerError(err, "cannot set verification token")
 	}
 	return verificationToken, nil
 }
@@ -235,16 +235,16 @@ func (j *JWTUtils) VerifyVerificationToken(ctx context.Context, verificationToke
 
 	userID, err := uuid.Parse(claims.UserID)
 	if err != nil {
-		return uuid.Nil, errorHandler.InternalServerError(err, "cannot parse user id")
+		return uuid.Nil, apperror.InternalServerError(err, "cannot parse user id")
 	}
 
 	token, err := j.Redis.GetVerificationToken(ctx, userID)
 	if err != nil {
-		return uuid.Nil, errorHandler.UnauthorizedError(err, "token is expired or token is used")
+		return uuid.Nil, apperror.UnauthorizedError(err, "token is expired or token is used")
 	}
 
 	if token != verificationToken {
-		return uuid.Nil, errorHandler.UnauthorizedError(nil, "invalid verification token")
+		return uuid.Nil, apperror.UnauthorizedError(nil, "invalid verification token")
 	}
 
 	return userID, nil
@@ -253,7 +253,7 @@ func (j *JWTUtils) VerifyVerificationToken(ctx context.Context, verificationToke
 func (j *JWTUtils) DeleteVerificationToken(ctx context.Context, userID uuid.UUID) error {
 	err := j.Redis.DeleteVerificationToken(ctx, userID)
 	if err != nil {
-		return errorHandler.InternalServerError(err, "cannot delete verification token")
+		return apperror.InternalServerError(err, "cannot delete verification token")
 	}
 	return nil
 }

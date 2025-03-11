@@ -5,12 +5,11 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/config"
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internal/databases"
+	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/gofiber/fiber/v2/log"
-	"gorm.io/gorm"
 )
 
-func CreateEnum(db *gorm.DB) {
+func CreateEnum(db *database.Database) {
 	query := `
     DO $$ BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'lifestyle_tag') THEN
@@ -70,7 +69,7 @@ func CreateEnum(db *gorm.DB) {
 func main() {
 	config := config.Load()
 
-	db, err := databases.NewDatabaseConnection(config.Database)
+	db, err := database.New(config.Database)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
@@ -81,6 +80,7 @@ func main() {
 	if err := db.AutoMigrate(
 		&domain.SampleLog{},
 		&domain.User{},
+		&domain.Transaction{},
 		&domain.Dorm{},
 		&domain.LeasingHistory{},
 		&domain.Order{},

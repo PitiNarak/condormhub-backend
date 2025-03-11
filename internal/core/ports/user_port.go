@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )

@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"github.com/PitiNarak/condormhub-backend/internal/handlers/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/errorHandler"
-	"github.com/PitiNarak/condormhub-backend/pkg/httpResponse"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,20 +14,20 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body dto.ResetPasswordCreateRequestBody true "token"
-// @Success 200 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "email is sent to user successfully"
-// @Failure 400 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "your request is invalid
-// @Failure 500 {object} httpResponse.HttpResponse{data=nil,pagination=nil} "system cannot resend verification email"
+// @Success 204 "email is sent to user successfully"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid
+// @Failure 500 {object} dto.ErrorResponse "system cannot resend verification email"
 // @Router /user/resetpassword [post]
 func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 	body := new(dto.ResetPasswordCreateRequestBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return errorHandler.BadRequestError(err, "your request is invalid")
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 	validate := validator.New()
 
 	if err := validate.Struct(body); err != nil {
-		return errorHandler.BadRequestError(err, "your request body is incorrect")
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 
 	err := h.userService.ResetPasswordCreate(c.Context(), body.Email)
@@ -36,5 +35,5 @@ func (h *UserHandler) ResetPasswordCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(httpResponse.SuccessResponse("email is sent to user successfully", nil))
+	return c.SendStatus(fiber.StatusNoContent)
 }
