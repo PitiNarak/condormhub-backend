@@ -88,5 +88,6 @@ func (s *Server) initOwnershipProofRoutes() {
 	ownershipRoutes.Delete("/", s.authMiddleware.Auth, s.handler.ownershipProof.Delete)
 	ownershipRoutes.Post("/update", s.authMiddleware.Auth, s.handler.ownershipProof.Update)
 	ownershipRoutes.Post("/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
+	ownershipRoutes.Post("/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
 
 }

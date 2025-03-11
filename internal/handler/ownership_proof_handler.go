@@ -196,3 +196,28 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
 }
+
+func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
+	adminID, locals_err := c.Locals("userID").(uuid.UUID)
+	if !locals_err {
+		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+	}
+
+	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
+	if body_err := c.BodyParser(dormReqBody); body_err != nil {
+		return apperror.BadRequestError(body_err, "your request is invalid")
+	}
+	dormID := dormReqBody.DormID
+
+	updateStatus_err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected"))
+	if updateStatus_err != nil {
+		return updateStatus_err
+	}
+
+	ownershipProof, getOnwership_err := o.ownershipProofService.GetByDormID(dormID)
+	if getOnwership_err != nil {
+		return getOnwership_err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
+}
