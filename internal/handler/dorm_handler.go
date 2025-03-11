@@ -46,6 +46,13 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Your request body is invalid")
 	}
 
+	user := c.Locals("user").(*domain.User)
+	userRole := *user.Role
+
+	if userRole != domain.AdminRole && userRole != domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "You do not have permission to create a dorm")
+	}
+
 	dorm := &domain.Dorm{
 		Name:      reqBody.Name,
 		OwnerID:   userID,
@@ -103,6 +110,13 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	dormID, err := uuid.Parse(id)
 	if err != nil {
 		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	user := c.Locals("user").(*domain.User)
+	userRole := *user.Role
+
+	if userRole != domain.AdminRole && userRole != domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "You do not have permission to delete a dorm")
 	}
 
 	if err := d.dormService.Delete(dormID); err != nil {
@@ -227,6 +241,13 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	dormID, err := uuid.Parse(id)
 	if err != nil {
 		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	user := c.Locals("user").(*domain.User)
+	userRole := *user.Role
+
+	if userRole != domain.AdminRole && userRole != domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "You do not have permission to update a dorm")
 	}
 
 	dorm := &domain.Dorm{
