@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
@@ -30,12 +32,16 @@ func (d *DormRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (d *DormRepository) GetAll() ([]domain.Dorm, error) {
+func (d *DormRepository) GetAll(limit int, page int) ([]domain.Dorm, int, int, error) {
 	var dorms []domain.Dorm
-	if err := d.db.Preload("Owner").Find(&dorms).Error; err != nil {
-		return nil, apperror.InternalServerError(err, "Failed to retrieve dorms")
+	query := d.db.Preload("Owner")
+
+	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
+	if err != nil {
+		return nil, 0, 0, apperror.InternalServerError(err, "Failed to retrieve dorms")
 	}
-	return dorms, nil
+
+	return dorms, totalPages, totalRows, nil
 }
 
 func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
@@ -50,6 +56,10 @@ func (d *DormRepository) Update(id uuid.UUID, dorm *domain.Dorm) error {
 	existingDorm, err := d.GetByID(id)
 	if err != nil {
 		return apperror.NotFoundError(err, "Dorm not found")
+	}
+
+	if existingDorm.OwnerID != dorm.OwnerID {
+		return apperror.ForbiddenError(errors.New("you are not allowed to update this dorm"), "you are not allowed to update this dorm")
 	}
 
 	err = d.db.Model(existingDorm).Updates(dorm).Error
