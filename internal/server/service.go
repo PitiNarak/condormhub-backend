@@ -10,6 +10,7 @@ type service struct {
 	user           ports.UserService
 	dorm           ports.DormService
 	leasingHistory ports.LeasingHistoryService
+	ownershipProof ports.OwnershipProofService
 }
 
 func (s *Server) initService() {
@@ -17,11 +18,13 @@ func (s *Server) initService() {
 	user := services.NewUserService(s.repository.user, email, s.jwtUtils)
 	dorm := services.NewDormService(s.repository.dorm)
 	leasingHistory := services.NewLeasingHistoryService(s.repository.leasingHistory, s.repository.dorm)
+	ownershipProof := services.NewOwnershipProofService(s.repository.ownershipProof, s.repository.user)
 
 	s.service = &service{
 		email:          email,
 		user:           user,
 		dorm:           dorm,
 		leasingHistory: leasingHistory,
+		ownershipProof: ownershipProof,
 	}
 }
