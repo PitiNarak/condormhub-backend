@@ -84,6 +84,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.Order'
         type: array
+      price:
+        type: number
       start:
         type: string
     type: object
@@ -625,15 +627,6 @@ paths:
   /dorms:
     get:
       description: Retrieve a list of all dorms
-      parameters:
-      - description: Number of dorms to retrieve (default 10, max 50)
-        in: query
-        name: limit
-        type: integer
-      - description: Page number to retrieve (default 1)
-        in: query
-        name: page
-        type: integer
       produces:
       - application/json
       responses:
@@ -699,8 +692,10 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
+        "200":
           description: Dorm successfully deleted
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse-domain_Dorm'
         "400":
           description: Incorrect UUID format
           schema:
