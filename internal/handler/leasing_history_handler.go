@@ -35,15 +35,24 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := uuid.Validate(id); err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
 
 	leasingHistoryID, err := uuid.Parse(id)
 	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 	err = h.service.SetEndTimestamp(leasingHistoryID)
 	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return err
 	}
 	return c.SendStatus(fiber.StatusNoContent)
@@ -106,6 +115,9 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	dormID, err := uuid.Parse(id)
 	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 	limit := c.QueryInt("limit", 1)
@@ -159,6 +171,9 @@ func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 
 	leasingHistoryID, err := uuid.Parse(id)
 	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 	err = h.service.Delete(leasingHistoryID)
@@ -190,10 +205,16 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 
 	dormID, err := uuid.Parse(id)
 	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 	leasingHistory, err := h.service.Create(userID, dormID)
 	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
 		return err
 	}
 
