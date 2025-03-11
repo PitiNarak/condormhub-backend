@@ -4,6 +4,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
@@ -50,10 +51,44 @@ func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	return dorm, nil
 }
 
-func (d *DormRepository) Update(id uuid.UUID, dorm *domain.Dorm) error {
-	err := d.db.Save(dorm).Error
-	if err != nil {
-		return apperror.InternalServerError(err, "Failed to update room")
+func (d *DormRepository) Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error {
+	updateData := make(map[string]interface{})
+	if dorm.Name != nil {
+		updateData["name"] = *dorm.Name
+	}
+	if dorm.Size != nil {
+		updateData["size"] = *dorm.Size
+	}
+	if dorm.Bedrooms != nil {
+		updateData["bedrooms"] = *dorm.Bedrooms
+	}
+	if dorm.Bathrooms != nil {
+		updateData["bathrooms"] = *dorm.Bathrooms
+	}
+	if dorm.Price != nil {
+		updateData["price"] = *dorm.Price
+	}
+	if dorm.Description != nil {
+		updateData["description"] = *dorm.Description
+	}
+	if dorm.Address != nil {
+		if dorm.Address.District != nil {
+			updateData["district"] = *dorm.Address.District
+		}
+		if dorm.Address.Subdistrict != nil {
+			updateData["subdistrict"] = *dorm.Address.Subdistrict
+		}
+		if dorm.Address.Province != nil {
+			updateData["province"] = *dorm.Address.Province
+		}
+		if dorm.Address.Zipcode != nil {
+			updateData["zipcode"] = *dorm.Address.Zipcode
+		}
+	}
+
+	res := d.db.Model(&domain.Dorm{}).Where("id = ?", id).Updates(updateData)
+	if res.Error != nil {
+		return apperror.InternalServerError(res.Error, "Failed to update room")
 	}
 
 	return nil

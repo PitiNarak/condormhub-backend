@@ -38,7 +38,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	userRole := *user.Role // maybe should have user role in local?
 
-	reqBody := new(dto.DormRequestBody)
+	reqBody := new(dto.DormCreateRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
@@ -221,7 +221,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	isAdmin := *user.Role == domain.AdminRole
 
 	id := c.Params("id")
-	updateReqBody := new(dto.DormRequestBody)
+	updateReqBody := new(dto.DormUpdateRequestBody)
 	if err := c.BodyParser(updateReqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}

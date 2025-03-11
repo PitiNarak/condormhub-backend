@@ -44,7 +44,7 @@ func (s *DormService) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	return s.dormRepo.GetByID(id)
 }
 
-func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, updateData *dto.DormRequestBody) (*domain.Dorm, error) {
+func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, updateData *dto.DormUpdateRequestBody) (*domain.Dorm, error) {
 	dorm, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
 		return nil, err
@@ -54,19 +54,11 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 		return nil, apperror.ForbiddenError(err, "You do not have permission to update this dorm")
 	}
 
-	dorm.Name = updateData.Name
-	dorm.Size = updateData.Size
-	dorm.Bedrooms = updateData.Bedrooms
-	dorm.Bathrooms = updateData.Bathrooms
-	dorm.Address = updateData.Address
-	dorm.Price = updateData.Price
-	dorm.Description = updateData.Description
-
-	if err := s.dormRepo.Update(dormID, dorm); err != nil {
+	if err := s.dormRepo.Update(dormID, *updateData); err != nil {
 		return nil, err
 	}
 
-	return dorm, nil
+	return s.dormRepo.GetByID(dormID)
 }
 
 func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error {
