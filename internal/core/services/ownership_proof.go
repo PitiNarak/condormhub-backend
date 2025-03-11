@@ -29,37 +29,41 @@ func (o *OwnershipProofService) Create(ownershipProof *domain.OwnershipProof) er
 	}
 	return nil
 }
-func (o *OwnershipProofService) Delete(lessorID uuid.UUID) error {
-	err := o.ownershipProofRepo.Delete(lessorID)
+func (o *OwnershipProofService) Delete(dormID uuid.UUID) error {
+	err := o.ownershipProofRepo.Delete(dormID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *OwnershipProofService) GetByLessorID(lessorID uuid.UUID) (*domain.OwnershipProof, error) {
-	ownershipProof, err := o.ownershipProofRepo.GetByLessorID(lessorID)
+func (o *OwnershipProofService) GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error) {
+	ownershipProof, err := o.ownershipProofRepo.GetByDormID(dormID)
 	if err != nil {
 		return nil, err
 	}
 	return ownershipProof, nil
 }
 
-func (o *OwnershipProofService) UpdateDocument(lessorID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error {
-	err := o.ownershipProofRepo.UpdateDocument(lessorID, updateDocumentRequestBody)
+func (o *OwnershipProofService) UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error {
+	err := o.ownershipProofRepo.UpdateDocument(dormID, updateDocumentRequestBody)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *OwnershipProofService) UpdateStatus(lessorID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error {
+func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error {
 	admin, admin_err := o.userRepo.GetUserByID(adminID)
 	if admin_err != nil {
 		return admin_err
 	}
 
-	if *admin.Role != domain.Role("ADMIN") {
+	if admin == nil || admin.Role == nil {
+		return apperror.BadRequestError(errors.New("invalid admin"), "Admin not found or role is missing")
+	}
+
+	if *admin.Role != domain.AdminRole {
 		return apperror.BadRequestError(errors.New("role mismatch"), "You are not an admin")
 	}
 
@@ -67,7 +71,7 @@ func (o *OwnershipProofService) UpdateStatus(lessorID uuid.UUID, adminID uuid.UU
 	updateStatusRequestBody.Status = status
 	updateStatusRequestBody.AdminID = adminID
 
-	err := o.ownershipProofRepo.UpdateStatus(lessorID, updateStatusRequestBody)
+	err := o.ownershipProofRepo.UpdateStatus(dormID, updateStatusRequestBody)
 	if err != nil {
 		return err
 	}

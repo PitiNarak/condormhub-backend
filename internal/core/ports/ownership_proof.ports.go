@@ -9,23 +9,24 @@ import (
 
 type OwnershipProofRepository interface {
 	Create(ownershipProof *domain.OwnershipProof) error
-	Delete(lessorID uuid.UUID) error
-	GetByLessorID(lessorID uuid.UUID) (*domain.OwnershipProof, error)
-	UpdateDocument(lessorID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error
-	UpdateStatus(lessorID uuid.UUID, updateStatusRequestBody *dto.UpdateOwnerShipProofStatusRequestBody) error
+	Delete(dormID uuid.UUID) error
+	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
+	UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error
+	UpdateStatus(dormID uuid.UUID, updateStatusRequestBody *dto.UpdateOwnerShipProofStatusRequestBody) error
 }
 
 type OwnershipProofService interface {
 	Create(*domain.OwnershipProof) error
-	Delete(lessorID uuid.UUID) error
-	GetByLessorID(lessorID uuid.UUID) (*domain.OwnershipProof, error)
-	UpdateDocument(lessorID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error
-	UpdateStatus(lessorID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error
+	Delete(dormID uuid.UUID) error
+	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
+	UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error
+	UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error
 }
 
 type OwnershipProofHandler interface {
 	Create(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	Update(c *fiber.Ctx) error
-	// GetByLessorID(c *fiber.Ctx) error
+	Approve(c *fiber.Ctx) error
+	// GetBydormID(c *fiber.Ctx) error
 }

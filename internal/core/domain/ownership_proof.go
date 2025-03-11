@@ -13,8 +13,8 @@ const (
 )
 
 type OwnershipProof struct {
-	LessorID uuid.UUID             `json:"lessorId" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	AdminID  uuid.UUID             `json:"adminId" gorm:"type:uuid;default:null"`
-	Status   *OwnershipProofStatus `json:"status" gorm:"default:Pending"`
-	FileKey  string                `json:"file_key"`
+	DormID  uuid.UUID             `json:"dormId" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	AdminID uuid.UUID             `json:"adminId" gorm:"type:uuid;default:null"`
+	Status  *OwnershipProofStatus `json:"status" gorm:"default:Pending"`
+	FileKey string                `json:"file_key"`
 }

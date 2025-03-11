@@ -5,6 +5,10 @@ import (
 	"github.com/google/uuid"
 )
 
+type DormIDForOwnershipProofRequestBody struct {
+	DormID uuid.UUID `json:"dormId" `
+}
+
 type UpdateOwnerShipProofRequestBody struct {
 	FileKey string `json:"filekey" `
 }
