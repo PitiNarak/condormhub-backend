@@ -82,6 +82,8 @@ components:
             $ref: '#/components/schemas/domain.Order'
           type: array
           uniqueItems: false
+        price:
+          type: number
         start:
           type: string
       type: object
@@ -955,18 +957,16 @@ paths:
         required: true
         schema:
           type: string
-      - description: Number of history to be retirved
+      - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
-        required: true
         schema:
-          type: string
-      - description: Page to retrive
+          type: integer
+      - description: Page number to retrieve (default 1)
         in: query
         name: page
-        required: true
         schema:
-          type: string
+          type: integer
       responses:
         "200":
           content:
@@ -1008,18 +1008,16 @@ paths:
     get:
       description: Retrieve a list of all leasing history by userid
       parameters:
-      - description: Number of history to be retirved
+      - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
-        required: true
         schema:
-          type: string
-      - description: Page to retrive
+          type: integer
+      - description: Page number to retrieve (default 1)
         in: query
         name: page
-        required: true
         schema:
-          type: string
+          type: integer
       responses:
         "200":
           content:
