@@ -678,6 +678,10 @@ paths:
           description: your request is unauthorized
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: You do not have permission to create a dorm
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Failed to save dorm
           schema:
@@ -707,6 +711,10 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: You do not have permission to delete this dorm
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
         "404":
@@ -785,6 +793,10 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: your request is unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: unauthorized to update this dorm
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
         "404":

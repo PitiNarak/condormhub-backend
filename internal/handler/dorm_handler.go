@@ -30,6 +30,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Param dorm body dto.DormRequestBody true "Dorm information"
 // @Success 201 {object} dto.SuccessResponse[domain.Dorm] "Dorm successfully created"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to create a dorm"
 // @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
 // @Failure 500 {object} dto.ErrorResponse "Failed to save dorm"
 // @Router /dorms [post]
@@ -50,7 +51,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 	userRole := *user.Role
 
 	if userRole != domain.AdminRole && userRole != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("unauthorized"), "You do not have permission to create a dorm")
+		return apperror.ForbiddenError(errors.New("unauthorized"), "You do not have permission to create a dorm")
 	}
 
 	dorm := &domain.Dorm{
@@ -97,6 +98,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Success 204 "Dorm successfully deleted"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this dorm"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
 // @Failure 500 {object} dto.ErrorResponse "Failed to delete dorm"
 // @Router /dorms/{id} [delete]
@@ -116,7 +118,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	userRole := *user.Role
 
 	if userRole != domain.AdminRole && userRole != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("unauthorized"), "You do not have permission to delete a dorm")
+		return apperror.ForbiddenError(errors.New("unauthorized"), "You do not have permission to delete this dorm")
 	}
 
 	if err := d.dormService.Delete(dormID); err != nil {
@@ -216,6 +218,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Param dorm body dto.DormRequestBody true "Updated Room Data"
 // @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm data updated successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to update this dorm"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
 // @Failure 500 {object} dto.ErrorResponse "Server failed to update dorm"

@@ -41,7 +41,7 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 	}
 
 	if dorm.OwnerID != userID && !isAdmin {
-		return nil, apperror.ForbiddenError(errors.New("unauthorized to update this room"), "unauthorized to update this room")
+		return nil, apperror.ForbiddenError(errors.New("unauthorized to update this dorm"), "You do not have permission to update this dorm")
 	}
 
 	dorm.Name = updateData.Name

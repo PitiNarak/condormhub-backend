@@ -269,6 +269,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
+                    "403": {
+                        "description": "You do not have permission to create a dorm",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
                     "500": {
                         "description": "Failed to save dorm",
                         "schema": {
@@ -369,6 +375,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
+                    "403": {
+                        "description": "You do not have permission to delete this dorm",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Dorm not found",
                         "schema": {
@@ -433,6 +445,12 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "your request is unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "unauthorized to update this dorm",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
