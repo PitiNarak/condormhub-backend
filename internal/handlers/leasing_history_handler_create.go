@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
-	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -22,17 +21,6 @@ import (
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
 // @Router /history/{id} [post]
 func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
-	reqBody := new(dto.LeasingHistoryCreateRequestBody)
-	if err := c.BodyParser(reqBody); err != nil {
-		return apperror.BadRequestError(err, "Your request is invalid")
-	}
-	validate := validator.New()
-	if err := validate.Struct(reqBody); err != nil {
-		return apperror.BadRequestError(err, "Your request is invalid")
-	}
-	if err := c.BodyParser(reqBody); err != nil {
-		return apperror.BadRequestError(err, "Your request is invalid")
-	}
 	userID := c.Locals("userID").(uuid.UUID)
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
