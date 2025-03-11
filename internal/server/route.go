@@ -21,6 +21,7 @@ func (s *Server) initRoutes() {
 	s.initLeasingHistoryRoutes()
 	s.initOrderRoutes()
 	s.initTransactionRoutes()
+	s.initOwnershipProofRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -79,4 +80,12 @@ func (s *Server) initTransactionRoutes() {
 	tsxRoutes := s.app.Group("/transaction")
 	tsxRoutes.Post("/", s.authMiddleware.Auth, s.handler.tsx.CreateTransaction)
 	tsxRoutes.Post("/webhook", s.handler.tsx.Webhook)
+}
+
+func (s *Server) initOwnershipProofRoutes() {
+	ownershipRoutes := s.app.Group("/ownership")
+	ownershipRoutes.Post("/create", s.authMiddleware.Auth, s.handler.ownershipProof.Create)
+	ownershipRoutes.Delete("/", s.authMiddleware.Auth, s.handler.ownershipProof.Delete)
+	ownershipRoutes.Post("/update", s.authMiddleware.Auth, s.handler.ownershipProof.Update)
+
 }

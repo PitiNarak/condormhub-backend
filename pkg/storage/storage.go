@@ -141,5 +141,5 @@ func (s *Storage) GetSignedUrl(ctx context.Context, key string, expires time.Dur
 }
 
 func (s *Storage) GetPublicUrl(key string) string {
-	return fmt.Sprintf("%s/%s/%s", s.Config.URL_PREFIX, s.Config.BucketName, key)
+	return fmt.Sprintf(s.Config.URL_PREFIX, key)
 }
