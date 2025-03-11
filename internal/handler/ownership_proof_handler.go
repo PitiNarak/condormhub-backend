@@ -221,3 +221,22 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
 }
+
+func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	ownershipProof, getOnwership_err := o.ownershipProofService.GetByDormID(dormID)
+	if getOnwership_err != nil {
+		return getOnwership_err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
+
+}

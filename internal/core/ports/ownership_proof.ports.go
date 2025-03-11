@@ -29,5 +29,5 @@ type OwnershipProofHandler interface {
 	Update(c *fiber.Ctx) error
 	Approve(c *fiber.Ctx) error
 	Reject(c *fiber.Ctx) error
-	// GetBydormID(c *fiber.Ctx) error
+	GetByDormID(c *fiber.Ctx) error
 }
