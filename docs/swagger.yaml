@@ -226,6 +226,11 @@ components:
         checkoutUrl:
           type: string
       type: object
+    dto.DormIDForOwnershipProofRequestBody:
+      properties:
+        dormId:
+          type: string
+      type: object
     dto.DormRequestBody:
       properties:
         address:
@@ -414,6 +419,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.TokenWithUserInformationResponseBody'
+      type: object
+    dto.SuccessResponse-string:
+      properties:
+        data:
+          type: string
       type: object
     dto.TokenResponseBody:
       properties:
@@ -1268,6 +1278,226 @@ paths:
       summary: Get my unpaid orders by ID
       tags:
       - order
+  /ownership:
+    delete:
+      description: Delete an ownership proof file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.DormIDForOwnershipProofRequestBody'
+        description: Dorm ID
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-string'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Delete ownership proof
+      tags:
+      - ownership
+  /ownership/{id}:
+    get:
+      description: Retrieve ownership proof for a specific dorm
+      parameters:
+      - description: Dorm ID (UUID format)
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-string'
+          description: Ownership proof retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Unauthorized request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership proof not found
+      security:
+      - Bearer: []
+      summary: Get ownership proof by Dorm ID
+      tags:
+      - ownership
+  /ownership/approve:
+    post:
+      description: Approve a submitted ownership proof for a dorm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.DormIDForOwnershipProofRequestBody'
+        description: Dorm ID
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-string'
+          description: Ownership proof approved
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid request body
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Unauthorized request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Approve ownership proof
+      tags:
+      - ownership
+  /ownership/create:
+    post:
+      description: Upload a new file as ownership proof for a dorm
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+        description: Dorm ID (UUID format)
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-string'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal Server Error
+      summary: Upload new ownership proof
+      tags:
+      - ownership
+  /ownership/reject:
+    post:
+      description: Reject a submitted ownership proof for a dorm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.DormIDForOwnershipProofRequestBody'
+        description: Dorm ID
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-string'
+          description: Ownership proof rejected
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid request body
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Unauthorized request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Reject ownership proof
+      tags:
+      - ownership
+  /ownership/update:
+    post:
+      description: Replace an existing ownership proof file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+        description: Dorm ID (UUID format)
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-string'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Update ownership proof
+      tags:
+      - ownership
   /transaction:
     post:
       description: Create a transaction

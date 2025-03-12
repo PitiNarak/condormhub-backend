@@ -26,6 +26,18 @@ func NewOwnershipProofHandler(OwnershipProofService ports.OwnershipProofService,
 	return &OwnershipProofHandler{ownershipProofService: OwnershipProofService, storage: storage}
 }
 
+// Create godoc
+// @Summary Upload new ownership proof
+// @Description Upload a new file as ownership proof for a dorm
+// @Tags ownership
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "Ownership proof file"
+// @Param dormId formData string true "Dorm ID (UUID format)"
+// @Success 200 {object} dto.SuccessResponse[string]
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /ownership/create [post]
 func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 
 	//extract file from http
@@ -76,9 +88,21 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 		return db_err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)}))
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
 }
 
+// Delete godoc
+// @Summary Delete ownership proof
+// @Description Delete an ownership proof file
+// @Tags ownership
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
+// @Success 200 {object} dto.SuccessResponse[string]
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /ownership [delete]
 func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 
 	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
@@ -106,6 +130,19 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success("Ownership proof successfully deleted"))
 }
 
+// Update godoc
+// @Summary Update ownership proof
+// @Description Replace an existing ownership proof file
+// @Tags ownership
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "New ownership proof file"
+// @Param dormId formData string true "Dorm ID (UUID format)"
+// @Success 200 {object} dto.SuccessResponse[string]
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /ownership/update [post]
 func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 
 	//extract file from http
@@ -168,10 +205,23 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return get_err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)}))
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
 
 }
 
+// Approve godoc
+// @Summary Approve ownership proof
+// @Description Approve a submitted ownership proof for a dorm
+// @Tags ownership
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
+// @Success 200 {object} dto.SuccessResponse[string] "Ownership proof approved"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
+// @Router /ownership/approve [post]
 func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 	adminID, locals_err := c.Locals("userID").(uuid.UUID)
 	if !locals_err {
@@ -194,9 +244,22 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 		return getOnwership_err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"Dorm's ownership proof": ownershipProof})
 }
 
+// Reject godoc
+// @Summary Reject ownership proof
+// @Description Reject a submitted ownership proof for a dorm
+// @Tags ownership
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
+// @Success 200 {object} dto.SuccessResponse[string] "Ownership proof rejected"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
+// @Router /ownership/reject [post]
 func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 	adminID, locals_err := c.Locals("userID").(uuid.UUID)
 	if !locals_err {
@@ -219,9 +282,21 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 		return getOnwership_err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"Dorm's ownership proof": ownershipProof})
 }
 
+// GetByDormID godoc
+// @Summary Get ownership proof by Dorm ID
+// @Description Retrieve ownership proof for a specific dorm
+// @Tags ownership
+// @Security Bearer
+// @Produce json
+// @Param id path string true "Dorm ID (UUID format)"
+// @Success 200 {object} dto.SuccessResponse[string] "Ownership proof retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse[] "Invalid UUID format"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
+// @Failure 404 {object} dto.ErrorResponse "Ownership proof not found"
+// @Router /ownership/{id} [get]
 func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
@@ -237,6 +312,13 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 		return getOnwership_err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"Dorm's ownership proof": ownershipProof}))
+	fileKey := ownershipProof.FileKey
+	//get key file
+	url, url_err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
+	if url_err != nil {
+		return apperror.InternalServerError(err, "error getting signed url")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
 
 }
