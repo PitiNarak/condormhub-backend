@@ -57,7 +57,7 @@ func (o *OwnershipProofRepository) UpdateStatus(dormID uuid.UUID, updateStatusRe
 	if err != nil {
 		return apperror.NotFoundError(err, "Ownership proof not found")
 	}
-	updateErr := o.db.Model(existingOwnershipProof).Where("dorm_id =  ?", dormID).Updates(updateStatusRequestBody).Error
+	updateErr := o.db.Model(existingOwnershipProof).Where("dorm_id = ?", dormID).Updates(updateStatusRequestBody).Error
 	if updateErr != nil {
 		return apperror.InternalServerError(updateErr, "failed to update status")
 	}
