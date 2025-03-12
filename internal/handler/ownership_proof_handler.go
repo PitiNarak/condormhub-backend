@@ -202,9 +202,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
 
-	requestBody := new(dto.UpdateOwnerShipProofRequestBody)
-	requestBody.FileKey = newFileKey
-	updateErr := o.ownershipProofService.UpdateDocument(dormID, requestBody)
+	updateErr := o.ownershipProofService.UpdateDocument(dormID, newFileKey)
 	if updateErr != nil {
 		if apperror.IsAppError(updateErr) {
 			return updateErr
@@ -220,7 +218,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 30)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 60)})
 
 }
 
@@ -348,6 +346,6 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(urlErr, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 30)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 60)})
 
 }

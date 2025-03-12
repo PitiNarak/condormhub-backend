@@ -39,8 +39,8 @@ func (o *OwnershipProofRepository) GetByDormID(dormID uuid.UUID) (*domain.Owners
 	return ownershipProof, nil
 }
 
-func (o *OwnershipProofRepository) UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error {
-	updateErr := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(updateDocumentRequestBody).Error
+func (o *OwnershipProofRepository) UpdateDocument(dormID uuid.UUID, fileKey string) error {
+	updateErr := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(map[string]interface{}{"file_key": fileKey}).Error
 	if updateErr != nil {
 		return apperror.InternalServerError(updateErr, "failed to update document")
 	}

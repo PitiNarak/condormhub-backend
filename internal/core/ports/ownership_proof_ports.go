@@ -11,7 +11,7 @@ type OwnershipProofRepository interface {
 	Create(ownershipProof *domain.OwnershipProof) error
 	Delete(dormID uuid.UUID) error
 	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
-	UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error
+	UpdateDocument(dormID uuid.UUID, fileKey string) error
 	UpdateStatus(dormID uuid.UUID, updateStatusRequestBody *dto.UpdateOwnerShipProofStatusRequestBody) error
 }
 
@@ -19,7 +19,7 @@ type OwnershipProofService interface {
 	Create(*domain.OwnershipProof) error
 	Delete(dormID uuid.UUID) error
 	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
-	UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error
+	UpdateDocument(dormID uuid.UUID, fileKey string) error
 	UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error
 }
 

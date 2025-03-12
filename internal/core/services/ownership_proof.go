@@ -45,8 +45,8 @@ func (o *OwnershipProofService) GetByDormID(dormID uuid.UUID) (*domain.Ownership
 	return ownershipProof, nil
 }
 
-func (o *OwnershipProofService) UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error {
-	err := o.ownershipProofRepo.UpdateDocument(dormID, updateDocumentRequestBody)
+func (o *OwnershipProofService) UpdateDocument(dormID uuid.UUID, fileKey string) error {
+	err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey)
 	if err != nil {
 		return err
 	}
