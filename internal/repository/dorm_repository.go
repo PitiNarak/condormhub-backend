@@ -53,37 +53,35 @@ func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 
 func (d *DormRepository) Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error {
 	updateData := make(map[string]interface{})
-	if dorm.Name != nil {
-		updateData["name"] = *dorm.Name
+	if dorm.Name != "" {
+		updateData["name"] = dorm.Name
 	}
-	if dorm.Size != nil {
-		updateData["size"] = *dorm.Size
+	if dorm.Size != 0 {
+		updateData["size"] = dorm.Size
 	}
-	if dorm.Bedrooms != nil {
-		updateData["bedrooms"] = *dorm.Bedrooms
+	if dorm.Bedrooms != 0 {
+		updateData["bedrooms"] = dorm.Bedrooms
 	}
-	if dorm.Bathrooms != nil {
-		updateData["bathrooms"] = *dorm.Bathrooms
+	if dorm.Bathrooms != 0 {
+		updateData["bathrooms"] = dorm.Bathrooms
 	}
-	if dorm.Price != nil {
-		updateData["price"] = *dorm.Price
+	if dorm.Price != 0 {
+		updateData["price"] = dorm.Price
 	}
-	if dorm.Description != nil {
-		updateData["description"] = *dorm.Description
+	if dorm.Description != "" {
+		updateData["description"] = dorm.Description
 	}
-	if dorm.Address != nil {
-		if dorm.Address.District != nil {
-			updateData["district"] = *dorm.Address.District
-		}
-		if dorm.Address.Subdistrict != nil {
-			updateData["subdistrict"] = *dorm.Address.Subdistrict
-		}
-		if dorm.Address.Province != nil {
-			updateData["province"] = *dorm.Address.Province
-		}
-		if dorm.Address.Zipcode != nil {
-			updateData["zipcode"] = *dorm.Address.Zipcode
-		}
+	if dorm.Address.District != "" {
+		updateData["district"] = dorm.Address.District
+	}
+	if dorm.Address.Subdistrict != "" {
+		updateData["subdistrict"] = dorm.Address.Subdistrict
+	}
+	if dorm.Address.Province != "" {
+		updateData["province"] = dorm.Address.Province
+	}
+	if dorm.Address.Zipcode != "" {
+		updateData["zipcode"] = dorm.Address.Zipcode
 	}
 
 	res := d.db.Model(&domain.Dorm{}).Where("id = ?", id).Updates(updateData)
