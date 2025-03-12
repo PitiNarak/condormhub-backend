@@ -64,7 +64,18 @@ func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.OwnershipProofResponseBody{Url: url}))
+	ownershipProof, err := o.ownershipProofService.GetByDormID(dormID)
+	if err != nil {
+		return err
+	}
+	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
+		Url:     url,
+		DormID:  dormID,
+		AdminID: ownershipProof.AdminID,
+		Status:  ownershipProof.Status,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
 }
 
 // Delete godoc
@@ -140,9 +151,19 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 
-	ownershipProofResponse := o.ownershipProofService.ConvertToDTO(*ownershipProof)
+	url, urlErr := o.ownershipProofService.GetUrl(c.Context(), dormID)
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponse))
+	if urlErr != nil {
+		return urlErr
+	}
+	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
+		Url:     url,
+		DormID:  dormID,
+		AdminID: ownershipProof.AdminID,
+		Status:  ownershipProof.Status,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
 
 }
 
@@ -188,9 +209,19 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
-	ownershipProofResponse := o.ownershipProofService.ConvertToDTO(*ownershipProof)
+	url, urlErr := o.ownershipProofService.GetUrl(c.Context(), dormID)
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponse))
+	if urlErr != nil {
+		return urlErr
+	}
+	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
+		Url:     url,
+		DormID:  dormID,
+		AdminID: ownershipProof.AdminID,
+		Status:  ownershipProof.Status,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
 }
 
 // GetByDormID godoc
@@ -230,8 +261,13 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(urlErr, "error getting signed url")
 	}
 
-	ownershipProofResponse := o.ownershipProofService.ConvertToDTOWithFile(*ownershipProof, url, time.Now().Add(time.Minute*60))
+	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
+		Url:     url,
+		DormID:  dormID,
+		AdminID: ownershipProof.AdminID,
+		Status:  ownershipProof.Status,
+	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponse))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
 
 }
