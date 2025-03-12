@@ -158,6 +158,12 @@ components:
       x-enum-varnames:
       - InsuranceOrderType
       - MonthlyBillOrderType
+    domain.OwnershipProofStatus:
+      type: string
+      x-enum-varnames:
+      - Pending
+      - Approved
+      - Rejected
     domain.Role:
       type: string
       x-enum-varnames:
@@ -307,6 +313,32 @@ components:
           - InsuranceOrderType
           - MonthlyBillOrderType
       type: object
+    dto.OwnershipProofResponseBody:
+      properties:
+        adminId:
+          type: string
+        dormId:
+          type: string
+        status:
+          type: string
+          x-enum-varnames:
+          - Pending
+          - Approved
+          - Rejected
+      type: object
+    dto.OwnershipProofWithFileResponseBody:
+      properties:
+        adminId:
+          type: string
+        dormId:
+          type: string
+        expires:
+          type: string
+        status:
+          $ref: '#/components/schemas/domain.OwnershipProofStatus'
+        url:
+          type: string
+      type: object
     dto.Pagination:
       properties:
         current_page:
@@ -410,6 +442,16 @@ components:
         data:
           $ref: '#/components/schemas/dto.OrderResponseBody'
       type: object
+    dto.SuccessResponse-dto_OwnershipProofResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
+      type: object
+    dto.SuccessResponse-dto_OwnershipProofWithFileResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.OwnershipProofWithFileResponseBody'
+      type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
         data:
@@ -419,11 +461,6 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.TokenWithUserInformationResponseBody'
-      type: object
-    dto.SuccessResponse-string:
-      properties:
-        data:
-          type: string
       type: object
     dto.TokenResponseBody:
       properties:
@@ -1289,12 +1326,8 @@ paths:
         description: Dorm ID
         required: true
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-string'
-          description: OK
+        "204":
+          description: Ownership proof successfully deleted
         "400":
           content:
             application/json:
@@ -1327,7 +1360,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-string'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofWithFileResponseBody'
           description: Ownership proof retrieved successfully
         "400":
           content:
@@ -1367,7 +1400,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-string'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
           description: Ownership proof approved
         "400":
           content:
@@ -1407,8 +1440,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-string'
-          description: OK
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofWithFileResponseBody'
+          description: Ownership proof created
         "400":
           content:
             application/json:
@@ -1439,7 +1472,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-string'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
           description: Ownership proof rejected
         "400":
           content:
@@ -1479,8 +1512,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-string'
-          description: OK
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofWithFileResponseBody'
+          description: Ownership proof updated
         "400":
           content:
             application/json:

@@ -104,7 +104,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
-// @Success 204 {object} "Ownership proof successfully deleted"
+// @Success 204 "Ownership proof successfully deleted"
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /ownership [delete]
@@ -199,7 +199,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 	}
 
 	//get key file
-	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*60)
+	url, err := o.storage.GetSignedUrl(c.Context(), newFileKey, time.Minute*60)
 	if err != nil {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
