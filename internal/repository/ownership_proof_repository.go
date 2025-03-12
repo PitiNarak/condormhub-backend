@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
@@ -21,7 +19,6 @@ func NewOwnershipProofRepository(db *database.Database) ports.OwnershipProofRepo
 
 func (o *OwnershipProofRepository) Create(ownershipProof *domain.OwnershipProof) error {
 	if err := o.db.Create(ownershipProof).Error; err != nil {
-		fmt.Println("DB Error:", err)
 		return apperror.InternalServerError(err, "Failed to save ownership proof to database")
 	}
 	return nil
