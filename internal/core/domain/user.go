@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -219,4 +220,27 @@ type User struct {
 	// studentEvidence
 	StudentEvidence   string `json:"studentEvidence"`
 	IsStudentVerified bool   `json:"isStudentVerified" gorm:"default:false" `
+}
+
+func (u *User) ToDTO() dto.UserResponse {
+	lifestyles := make([]string, len(u.Lifestyles))
+	for i, v := range u.Lifestyles {
+		lifestyles[i] = string(v)
+	}
+	return dto.UserResponse{
+		ID:                 u.ID,
+		Username:           u.Username,
+		Email:              u.Email,
+		Firstname:          u.Firstname,
+		Lastname:           u.Lastname,
+		Gender:             u.Gender,
+		BirthDate:          u.BirthDate,
+		IsVerified:         u.IsVerified,
+		Role:               string(*u.Role),
+		FilledPersonalInfo: u.FilledPersonalInfo,
+		Lifestyles:         lifestyles,
+		PhoneNumber:        u.PhoneNumber,
+		StudentEvidence:    u.StudentEvidence,
+		IsStudentVerified:  u.IsStudentVerified,
+	}
 }
