@@ -40,19 +40,15 @@ func (o *OwnershipProofRepository) GetByDormID(dormID uuid.UUID) (*domain.Owners
 }
 
 func (o *OwnershipProofRepository) UpdateDocument(dormID uuid.UUID, fileKey string) error {
-	updateErr := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(map[string]interface{}{"file_key": fileKey}).Error
-	if updateErr != nil {
-		return apperror.InternalServerError(updateErr, "failed to update document")
+	if err := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(map[string]interface{}{"file_key": fileKey}).Error; err != nil {
+		return apperror.InternalServerError(err, "failed to update document")
 	}
-
 	return nil
 }
 
 func (o *OwnershipProofRepository) UpdateStatus(dormID uuid.UUID, updateStatusRequestBody *dto.UpdateOwnerShipProofStatusRequestBody) error {
-	updateErr := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(updateStatusRequestBody).Error
-	if updateErr != nil {
-		return apperror.InternalServerError(updateErr, "failed to update status")
+	if err := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(updateStatusRequestBody).Error; err != nil {
+		return apperror.InternalServerError(err, "failed to update status")
 	}
-
 	return nil
 }
