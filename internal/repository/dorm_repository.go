@@ -91,3 +91,10 @@ func (d *DormRepository) Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) er
 
 	return nil
 }
+
+func (d *DormRepository) SaveDormImage(dormImage *domain.DormImage) error {
+	if err := d.db.Create(dormImage).Error; err != nil {
+		return apperror.InternalServerError(err, "Failed to save dorm's image to database")
+	}
+	return nil
+}

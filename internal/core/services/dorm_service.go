@@ -90,6 +90,11 @@ func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, fil
 		return "", apperror.InternalServerError(err, "error uploading file")
 	}
 
+	dormImage := &domain.DormImage{DormID: dormID, ImageKey: fileKey}
+	if err = s.dormRepo.SaveDormImage(dormImage); err != nil {
+		return "", err
+	}
+
 	url := s.storage.GetPublicUrl(fileKey)
 
 	return url, nil
