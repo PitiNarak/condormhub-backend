@@ -28,13 +28,15 @@ func NewOwnershipProofHandler(OwnershipProofService ports.OwnershipProofService,
 // @Summary Upload new ownership proof
 // @Description Upload a new file as ownership proof for a dorm
 // @Tags ownership
+// @Security Bearer
 // @Accept multipart/form-data
 // @Produce json
-// @Param file formData file true "Ownership proof file"
-// @Param dormId formData string true "Dorm ID (UUID format)"
+// @Param file formData file true "file"
+// @Param id path string true "DormID"
 // @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofResponseBody] "Ownership proof created"
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 404 {object} dto.ErrorResponse "Ownershop proof not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
 // @Router /ownership/{id}/upload [post]
 func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -88,12 +90,12 @@ func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 // @Description Delete an ownership proof file
 // @Tags ownership
 // @Security Bearer
-// @Accept json
 // @Produce json
-// @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
+// @Param id path string true "DormID"
 // @Success 204 "Ownership proof successfully deleted"
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 404 {object} dto.ErrorResponse "Ownership file not found"
+// @Failure 500 {object} dto.ErrorResponse "Failed to delete Ownership file"
 // @Router /ownership/{id} [delete]
 func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 
@@ -121,12 +123,11 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 // @Description Approve a submitted ownership proof for a dorm
 // @Tags ownership
 // @Security Bearer
-// @Accept json
 // @Produce json
-// @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
+// @Param id path string true "DormID"
 // @Success 200 {object} dto.SuccessResponse[dto.OwnershipProofResponseBody] "Ownership proof approved"
-// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
-// @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 404 {object} dto.ErrorResponse "Ownership file not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /ownership/{id}/approve [post]
 func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
@@ -183,12 +184,11 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 // @Description Reject a submitted ownership proof for a dorm
 // @Tags ownership
 // @Security Bearer
-// @Accept json
 // @Produce json
-// @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
+// @Param id path string true "DormID"
 // @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofResponseBody] "Ownership proof rejected"
-// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
-// @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 404 {object} dto.ErrorResponse "Ownership file not found"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /ownership/{id}/reject [post]
 func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
@@ -243,11 +243,11 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 // @Tags ownership
 // @Security Bearer
 // @Produce json
-// @Param id path string true "Dorm ID (UUID format)"
+// @Param id path string true "DormID"
 // @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofResponseBody] "Ownership proof retrieved successfully"
-// @Failure 400 {object} dto.ErrorResponse "Invalid UUID format"
-// @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
-// @Failure 404 {object} dto.ErrorResponse "Ownership proof not found"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 404 {object} dto.ErrorResponse "Ownership file not found"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /ownership/{id} [get]
 func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 	id := c.Params("id")
