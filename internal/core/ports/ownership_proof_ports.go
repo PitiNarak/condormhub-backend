@@ -1,6 +1,8 @@
 package ports
 
 import (
+	"context"
+	"io"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
@@ -23,8 +25,8 @@ type OwnershipProofService interface {
 	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
 	UpdateDocument(dormID uuid.UUID, fileKey string) error
 	UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error
-	ConvertToDTO(ownershipProof domain.OwnershipProof) dto.OwnershipProofResponseBody
-	ConvertToDTOWithFile(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofWithFileResponseBody
+	ConvertToDTO(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofResponseBody
+	UploadFile(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 }
 
 type OwnershipProofHandler interface {

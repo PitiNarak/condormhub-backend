@@ -1,34 +1,61 @@
 package services
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"io"
+	"strings"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/google/uuid"
 )
 
 type OwnershipProofService struct {
 	ownershipProofRepo ports.OwnershipProofRepository
 	userRepo           ports.UserRepository
+	storage            *storage.Storage
 }
 
-func NewOwnershipProofService(ownershipProofRepo ports.OwnershipProofRepository, userRepo ports.UserRepository) ports.OwnershipProofService {
+func NewOwnershipProofService(ownershipProofRepo ports.OwnershipProofRepository, userRepo ports.UserRepository, storage *storage.Storage) ports.OwnershipProofService {
 	return &OwnershipProofService{
 		ownershipProofRepo: ownershipProofRepo,
 		userRepo:           userRepo,
+		storage:            storage,
 	}
 }
 
-func (o *OwnershipProofService) Create(ownershipProof *domain.OwnershipProof) error {
-	if err := o.ownershipProofRepo.Create(ownershipProof); err != nil {
-		return err
+func (o *OwnershipProofService) UploadFile(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error) {
+
+	filename = strings.ReplaceAll(filename, " ", "-")
+	uuid := uuid.New().String()
+	fileKey := fmt.Sprintf("ownership-proof/%s-%s", uuid, filename)
+
+	if err := o.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket); err != nil {
+		return "", apperror.InternalServerError(err, "error uploading file")
 	}
-	return nil
+	url := o.storage.GetPublicUrl(fileKey)
+
+	if _, err := o.ownershipProofRepo.GetByDormID(dormID); err != nil {
+		ownershipProof := domain.OwnershipProof{DormID: dormID, FileKey: fileKey}
+		if err := o.ownershipProofRepo.Create(&ownershipProof); err != nil {
+			return "", err
+		}
+		return url, nil
+	}
+
+	if err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey); err != nil {
+		return "", err
+	}
+	return url, nil
+
 }
+
 func (o *OwnershipProofService) Delete(dormID uuid.UUID) error {
 	if err := o.ownershipProofRepo.Delete(dormID); err != nil {
 		return err
@@ -42,13 +69,6 @@ func (o *OwnershipProofService) GetByDormID(dormID uuid.UUID) (*domain.Ownership
 		return nil, err
 	}
 	return ownershipProof, nil
-}
-
-func (o *OwnershipProofService) UpdateDocument(dormID uuid.UUID, fileKey string) error {
-	if err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error {
@@ -75,20 +95,10 @@ func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID
 	return nil
 }
 
-func (o *OwnershipProofService) ConvertToDTOWithFile(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofWithFileResponseBody {
-	ownershipProofWithFileResponseBody := dto.OwnershipProofWithFileResponseBody{
+func (o *OwnershipProofService) ConvertToDTO(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofResponseBody {
+	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
 		Url:     url,
 		Expires: expires,
-		DormID:  ownershipProof.DormID,
-		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
-	}
-
-	return ownershipProofWithFileResponseBody
-}
-
-func (o *OwnershipProofService) ConvertToDTO(ownershipProof domain.OwnershipProof) dto.OwnershipProofResponseBody {
-	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
 		DormID:  ownershipProof.DormID,
 		AdminID: ownershipProof.AdminID,
 		Status:  ownershipProof.Status,

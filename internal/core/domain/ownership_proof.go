@@ -1,9 +1,6 @@
 package domain
 
 import (
-	"time"
-
-	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -20,16 +17,4 @@ type OwnershipProof struct {
 	AdminID uuid.UUID            `gorm:"type:uuid;default:null"`
 	Status  OwnershipProofStatus `gorm:"default:Pending"`
 	FileKey string
-}
-
-func (o *OwnershipProof) ConvertToDTOWithFile(url string, expires time.Time) dto.OwnershipProofWithFileResponseBody {
-	ownershipProofWithFileResponseBody := dto.OwnershipProofWithFileResponseBody{
-		Url:     url,
-		Expires: expires,
-		DormID:  ownershipProof.DormID,
-		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
-	}
-
-	return ownershipProofWithFileResponseBody
 }

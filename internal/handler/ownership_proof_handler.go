@@ -39,18 +39,19 @@ func NewOwnershipProofHandler(OwnershipProofService ports.OwnershipProofService,
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /ownership/create [post]
 func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
 
-	//extract file from http
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		return apperror.BadRequestError(err, "file is required")
-	}
-
-	dormIDStr := c.FormValue("dormId")
-	dormID, err := uuid.Parse(dormIDStr)
-
-	if err != nil {
-		return apperror.BadRequestError(err, "Dorm id is required")
 	}
 
 	fileData, err := file.Open()
@@ -59,38 +60,13 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 	}
 	defer fileData.Close()
 
-	//prepare element for upload to storage
-	filename := strings.ReplaceAll(file.Filename, " ", "-")
 	contentType := file.Header.Get("Content-Type")
-	file_uuid := uuid.New().String()
-	fileKey := fmt.Sprintf("ownership-proof/%s-%s", filename, file_uuid)
-
-	//upload to storage
-	if err = o.storage.UploadFile(c.Context(), fileKey, contentType, fileData, storage.PrivateBucket); err != nil {
-		return apperror.InternalServerError(err, "error uploading file")
-	}
-
-	//get key file
-	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*60)
+	url, err := o.ownershipProofService.UploadFile(c.Context(), dormID, file.Filename, contentType, fileData)
 	if err != nil {
-		return apperror.InternalServerError(err, "error getting signed url")
+		return err
 	}
 
-	ownershipProof := &domain.OwnershipProof{
-		DormID:  dormID,
-		FileKey: fileKey,
-	}
-
-	if err := o.ownershipProofService.Create(ownershipProof); err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "create ownership proof error")
-	}
-
-	ownershipProofResponse := o.ownershipProofService.ConvertToDTOWithFile(*ownershipProof, url, time.Now().Add(time.Minute*60))
-
-	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponse))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.OwnershipProofResponseBody{Url: url}))
 }
 
 // Delete godoc
@@ -211,7 +187,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
-	ownershipProofResponse := o.ownershipProofService.ConvertToDTOWithFile(*ownershipProof, url, time.Now().Add(time.Minute*60))
+	ownershipProofResponse := o.ownershipProofService.ConvertToDTO(*ownershipProof, url, time.Now().Add(time.Minute*60))
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponse))
 
@@ -259,6 +235,8 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
+	fileKey := ownershipProof.FileKey
+
 	ownershipProofResponse := o.ownershipProofService.ConvertToDTO(*ownershipProof)
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponse))
