@@ -72,7 +72,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 	}
 
 	//get key file
-	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
+	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*30)
 	if err != nil {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
@@ -91,7 +91,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(createErr, "create ownership proof error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 20)})
 }
 
 // Delete godoc
@@ -196,7 +196,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 	}
 
 	//get key file
-	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
+	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*30)
 	if err != nil {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
@@ -219,7 +219,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 30)})
 
 }
 
@@ -342,11 +342,11 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 
 	fileKey := ownershipProof.FileKey
 	//get key file
-	url, urlErr := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
+	url, urlErr := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*30)
 	if urlErr != nil {
 		return apperror.InternalServerError(urlErr, "error getting signed url")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 30)})
 
 }
