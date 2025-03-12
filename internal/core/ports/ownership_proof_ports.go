@@ -19,7 +19,7 @@ type OwnershipProofRepository interface {
 }
 
 type OwnershipProofService interface {
-	Delete(dormID uuid.UUID) error
+	Delete(ctx context.Context, dormID uuid.UUID) error
 	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
 	UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error
 	UploadFile(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader) (string, error)

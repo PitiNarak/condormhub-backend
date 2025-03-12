@@ -55,7 +55,10 @@ func (o *OwnershipProofService) UploadFile(ctx context.Context, dormID uuid.UUID
 
 	oldFilekey := ownershipProof.FileKey
 	if err := o.storage.DeleteFile(ctx, oldFilekey, storage.PrivateBucket); err != nil {
-		return "", err
+		if apperror.IsAppError(err) {
+			return "", err
+		}
+		return "", apperror.InternalServerError(err, "error deleting file")
 	}
 
 	if err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey); err != nil {
@@ -65,7 +68,19 @@ func (o *OwnershipProofService) UploadFile(ctx context.Context, dormID uuid.UUID
 
 }
 
-func (o *OwnershipProofService) Delete(dormID uuid.UUID) error {
+func (o *OwnershipProofService) Delete(ctx context.Context, dormID uuid.UUID) error {
+	ownershipProof, err := o.ownershipProofRepo.GetByDormID(dormID)
+	if err != nil {
+		return err
+	}
+	fileKey := ownershipProof.FileKey
+	if err := o.storage.DeleteFile(ctx, fileKey, storage.PrivateBucket); err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "error deleting file")
+	}
+
 	if err := o.ownershipProofRepo.Delete(dormID); err != nil {
 		return err
 	}

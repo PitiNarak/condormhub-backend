@@ -90,19 +90,7 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	ownershipProof, err := o.ownershipProofService.GetByDormID(dormID)
-	if err != nil {
-		return err
-	}
-	fileKey := ownershipProof.FileKey
-	if err := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket); err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "error deleting file")
-	}
-
-	if err = o.ownershipProofService.Delete(dormID); err != nil {
+	if err = o.ownershipProofService.Delete(c.Context(), dormID); err != nil {
 		return err
 	}
 	return c.SendStatus(fiber.StatusNoContent)
