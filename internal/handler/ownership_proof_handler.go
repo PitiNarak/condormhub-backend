@@ -66,8 +66,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 	fileKey := fmt.Sprintf("ownership-proof/%s-%s", filename, file_uuid)
 
 	//upload to storage
-	err = o.storage.UploadFile(c.Context(), fileKey, contentType, fileData, storage.PrivateBucket)
-	if err != nil {
+	if err = o.storage.UploadFile(c.Context(), fileKey, contentType, fileData, storage.PrivateBucket); err != nil {
 		return apperror.InternalServerError(err, "error uploading file")
 	}
 
@@ -82,13 +81,11 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 		FileKey: fileKey,
 	}
 
-	createErr := o.ownershipProofService.Create(ownershipProof)
-
-	if createErr != nil {
-		if apperror.IsAppError(createErr) {
-			return createErr
+	if err := o.ownershipProofService.Create(ownershipProof); err != nil {
+		if apperror.IsAppError(err) {
+			return err
 		}
-		return apperror.InternalServerError(createErr, "create ownership proof error")
+		return apperror.InternalServerError(err, "create ownership proof error")
 	}
 
 	ownershipProofResponse := o.ownershipProofService.ConvertToDTOWithFile(*ownershipProof, url, time.Now().Add(time.Minute*60))
@@ -121,20 +118,16 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 	fileKey := ownershipProof.FileKey
-	deleteErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
-
-	if deleteErr != nil {
-		if apperror.IsAppError(deleteErr) {
-			return deleteErr
+	if err := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket); err != nil {
+		if apperror.IsAppError(err) {
+			return err
 		}
-		return apperror.InternalServerError(deleteErr, "error deleting file")
+		return apperror.InternalServerError(err, "error deleting file")
 	}
 
-	err = o.ownershipProofService.Delete(dormID)
-	if err != nil {
+	if err = o.ownershipProofService.Delete(dormID); err != nil {
 		return err
 	}
-
 	return c.SendStatus(fiber.StatusNoContent)
 
 }
@@ -178,13 +171,11 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 	fileKey := ownershipProof.FileKey
-	deleteErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
-
-	if deleteErr != nil {
-		if apperror.IsAppError(deleteErr) {
-			return deleteErr
+	if err := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket); err != nil {
+		if apperror.IsAppError(err) {
+			return err
 		}
-		return apperror.InternalServerError(deleteErr, "error deleting file")
+		return apperror.InternalServerError(err, "error deleting file")
 	}
 	//prepare element for upload to storage
 	filename := strings.ReplaceAll(file.Filename, " ", "-")
@@ -193,8 +184,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 	newFileKey := fmt.Sprintf("ownership-proof/%s-%s", filename, file_uuid)
 
 	//upload to storage
-	err = o.storage.UploadFile(c.Context(), newFileKey, contentType, fileData, storage.PrivateBucket)
-	if err != nil {
+	if err = o.storage.UploadFile(c.Context(), newFileKey, contentType, fileData, storage.PrivateBucket); err != nil {
 		return apperror.InternalServerError(err, "error uploading file")
 	}
 
@@ -204,12 +194,11 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
 
-	updateErr := o.ownershipProofService.UpdateDocument(dormID, newFileKey)
-	if updateErr != nil {
-		if apperror.IsAppError(updateErr) {
-			return updateErr
+	if err := o.ownershipProofService.UpdateDocument(dormID, newFileKey); err != nil {
+		if apperror.IsAppError(err) {
+			return err
 		}
-		return apperror.InternalServerError(updateErr, "error updating file")
+		return apperror.InternalServerError(err, "error updating file")
 	}
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
@@ -250,12 +239,11 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 	}
 	dormID := dormReqBody.DormID
 
-	updateErr := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Approved"))
-	if updateErr != nil {
-		if apperror.IsAppError(updateErr) {
-			return updateErr
+	if err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Approved")); err != nil {
+		if apperror.IsAppError(err) {
+			return err
 		}
-		return apperror.InternalServerError(updateErr, "error updating file")
+		return apperror.InternalServerError(err, "error updating file")
 	}
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
@@ -296,12 +284,11 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 	}
 	dormID := dormReqBody.DormID
 
-	updateErr := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected"))
-	if updateErr != nil {
-		if apperror.IsAppError(updateErr) {
-			return updateErr
+	if err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected")); err != nil {
+		if apperror.IsAppError(err) {
+			return err
 		}
-		return apperror.InternalServerError(updateErr, "error updating file")
+		return apperror.InternalServerError(err, "error updating file")
 	}
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)

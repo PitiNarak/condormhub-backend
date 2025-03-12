@@ -24,15 +24,13 @@ func NewOwnershipProofService(ownershipProofRepo ports.OwnershipProofRepository,
 }
 
 func (o *OwnershipProofService) Create(ownershipProof *domain.OwnershipProof) error {
-	err := o.ownershipProofRepo.Create(ownershipProof)
-	if err != nil {
+	if err := o.ownershipProofRepo.Create(ownershipProof); err != nil {
 		return err
 	}
 	return nil
 }
 func (o *OwnershipProofService) Delete(dormID uuid.UUID) error {
-	err := o.ownershipProofRepo.Delete(dormID)
-	if err != nil {
+	if err := o.ownershipProofRepo.Delete(dormID); err != nil {
 		return err
 	}
 	return nil
@@ -47,17 +45,16 @@ func (o *OwnershipProofService) GetByDormID(dormID uuid.UUID) (*domain.Ownership
 }
 
 func (o *OwnershipProofService) UpdateDocument(dormID uuid.UUID, fileKey string) error {
-	err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey)
-	if err != nil {
+	if err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error {
-	admin, adminErr := o.userRepo.GetUserByID(adminID)
-	if adminErr != nil {
-		return adminErr
+	admin, err := o.userRepo.GetUserByID(adminID)
+	if err != nil {
+		return err
 	}
 
 	if admin == nil || admin.Role == nil {
@@ -72,8 +69,7 @@ func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID
 	updateStatusRequestBody.Status = status
 	updateStatusRequestBody.AdminID = adminID
 
-	err := o.ownershipProofRepo.UpdateStatus(dormID, updateStatusRequestBody)
-	if err != nil {
+	if err := o.ownershipProofRepo.UpdateStatus(dormID, updateStatusRequestBody); err != nil {
 		return err
 	}
 	return nil
