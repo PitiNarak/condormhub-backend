@@ -85,7 +85,10 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 	createErr := o.ownershipProofService.Create(ownershipProof)
 
 	if createErr != nil {
-		return createErr
+		if apperror.IsAppError(createErr) {
+			return createErr
+		}
+		return apperror.InternalServerError(createErr, "create ownership proof error")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
@@ -116,10 +119,13 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 	fileKey := ownershipProof.FileKey
-	storageErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
+	deleteErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
 
-	if storageErr != nil {
-		return apperror.InternalServerError(storageErr, "error deleting file")
+	if deleteErr != nil {
+		if apperror.IsAppError(deleteErr) {
+			return deleteErr
+		}
+		return apperror.InternalServerError(deleteErr, "error deleting file")
 	}
 
 	err = o.ownershipProofService.Delete(dormID)
@@ -169,12 +175,14 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 	fileKey := ownershipProof.FileKey
-	storageErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
+	deleteErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
 
-	if storageErr != nil {
-		return apperror.InternalServerError(storageErr, "error deleting file")
+	if deleteErr != nil {
+		if apperror.IsAppError(deleteErr) {
+			return deleteErr
+		}
+		return apperror.InternalServerError(deleteErr, "error deleting file")
 	}
-
 	//prepare element for upload to storage
 	filename := strings.ReplaceAll(file.Filename, " ", "-")
 	contentType := file.Header.Get("Content-Type")
@@ -197,12 +205,18 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 	requestBody.FileKey = newFileKey
 	updateErr := o.ownershipProofService.UpdateDocument(dormID, requestBody)
 	if updateErr != nil {
-		return updateErr
+		if apperror.IsAppError(updateErr) {
+			return updateErr
+		}
+		return apperror.InternalServerError(updateErr, "error updating file")
 	}
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
 	if getErr != nil {
-		return getErr
+		if apperror.IsAppError(getErr) {
+			return getErr
+		}
+		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
@@ -236,12 +250,18 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 
 	updateErr := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Approved"))
 	if updateErr != nil {
-		return updateErr
+		if apperror.IsAppError(updateErr) {
+			return updateErr
+		}
+		return apperror.InternalServerError(updateErr, "error updating file")
 	}
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
 	if getErr != nil {
-		return getErr
+		if apperror.IsAppError(getErr) {
+			return getErr
+		}
+		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"Dorm's ownership proof": ownershipProof})
@@ -274,14 +294,19 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 
 	updateErr := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected"))
 	if updateErr != nil {
-		return updateErr
+		if apperror.IsAppError(updateErr) {
+			return updateErr
+		}
+		return apperror.InternalServerError(updateErr, "error updating file")
 	}
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
 	if getErr != nil {
-		return getErr
+		if apperror.IsAppError(getErr) {
+			return getErr
+		}
+		return apperror.InternalServerError(getErr, "error getting new file")
 	}
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"Dorm's ownership proof": ownershipProof})
 }
 
@@ -309,7 +334,10 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 
 	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
 	if getErr != nil {
-		return getErr
+		if apperror.IsAppError(getErr) {
+			return getErr
+		}
+		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 
 	fileKey := ownershipProof.FileKey
