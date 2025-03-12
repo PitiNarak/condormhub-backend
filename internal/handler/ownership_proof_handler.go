@@ -102,7 +102,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param ownership body dto.DormIDForOwnershipProofRequestBody true "Dorm ID"
-// @Success 200 {object} dto.SuccessResponse[string]
+// @Success 204 {object} dto.SuccessResponse[string]
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /ownership [delete]
@@ -133,7 +133,8 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success("Ownership proof successfully deleted"))
+	return c.SendStatus(fiber.StatusNoContent)
+
 }
 
 // Update godoc
