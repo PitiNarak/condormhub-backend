@@ -72,7 +72,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 	}
 
 	//get key file
-	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*30)
+	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*60)
 	if err != nil {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
@@ -91,7 +91,7 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(createErr, "create ownership proof error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 20)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 60)})
 }
 
 // Delete godoc
@@ -197,7 +197,7 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 	}
 
 	//get key file
-	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*30)
+	url, err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*60)
 	if err != nil {
 		return apperror.InternalServerError(err, "error getting signed url")
 	}
@@ -319,7 +319,7 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "Dorm ID (UUID format)"
 // @Success 200 {object} dto.SuccessResponse[string] "Ownership proof retrieved successfully"
-// @Failure 400 {object} dto.ErrorResponse[] "Invalid UUID format"
+// @Failure 400 {object} dto.ErrorResponse "Invalid UUID format"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
 // @Failure 404 {object} dto.ErrorResponse "Ownership proof not found"
 // @Router /ownership/{id} [get]
@@ -343,7 +343,7 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 
 	fileKey := ownershipProof.FileKey
 	//get key file
-	url, urlErr := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*30)
+	url, urlErr := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*60)
 	if urlErr != nil {
 		return apperror.InternalServerError(urlErr, "error getting signed url")
 	}
