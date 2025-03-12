@@ -1,6 +1,8 @@
 package ports
 
 import (
+	"time"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
@@ -21,6 +23,8 @@ type OwnershipProofService interface {
 	GetByDormID(dormID uuid.UUID) (*domain.OwnershipProof, error)
 	UpdateDocument(dormID uuid.UUID, fileKey string) error
 	UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error
+	ConvertToDTO(ownershipProof domain.OwnershipProof) dto.OwnershipProofResponseBody
+	ConvertToDTOWithFile(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofWithFileResponseBody
 }
 
 type OwnershipProofHandler interface {

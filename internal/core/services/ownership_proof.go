@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -76,4 +77,26 @@ func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID
 		return err
 	}
 	return nil
+}
+
+func (o *OwnershipProofService) ConvertToDTOWithFile(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofWithFileResponseBody {
+	ownershipProofWithFileResponseBody := dto.OwnershipProofWithFileResponseBody{
+		Url:     url,
+		Expires: expires,
+		DormID:  ownershipProof.DormID,
+		AdminID: ownershipProof.AdminID,
+		Status:  ownershipProof.Status,
+	}
+
+	return ownershipProofWithFileResponseBody
+}
+
+func (o *OwnershipProofService) ConvertToDTO(ownershipProof domain.OwnershipProof) dto.OwnershipProofResponseBody {
+	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
+		DormID:  ownershipProof.DormID,
+		AdminID: ownershipProof.AdminID,
+		Status:  ownershipProof.Status,
+	}
+
+	return ownershipProofResponseBody
 }
