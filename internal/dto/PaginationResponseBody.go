@@ -1,8 +1,8 @@
 package dto
 
 type PaginationResponseBody struct {
-	Currentpage int `json:"currentPage"`
-	Lastpage    int `json:"lastPage"`
+	CurrentPage int `json:"currentPage"`
+	LastPage    int `json:"lastPage"`
 	Limit       int `json:"limit"`
 	Total       int `json:"total"`
 }
