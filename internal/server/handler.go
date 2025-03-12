@@ -19,7 +19,7 @@ func (s *Server) initHandler() {
 	greeting := handler1.NewGreetingHandler()
 	user := handler1.NewUserHandler(s.service.user)
 	exampleUpload := handler1.NewTestUploadHandler(s.storage)
-	dorm := handler1.NewDormHandler(s.service.dorm)
+	dorm := handler1.NewDormHandler(s.service.dorm, s.storage)
 	leasingHistory := handler1.NewLeasingHistoryHandler(s.service.leasingHistory)
 	order := handler1.NewOrderHandler(s.service.order)
 	tsx := handler1.NewTransactionHandler(s.service.tsx, s.stripeConfig)

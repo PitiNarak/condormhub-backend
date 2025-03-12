@@ -29,4 +29,5 @@ type DormHandler interface {
 	GetByID(c *fiber.Ctx) error
 	Update(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
+	UploadDormImage(c *fiber.Ctx) error
 }
