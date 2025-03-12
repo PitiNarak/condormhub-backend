@@ -40,11 +40,7 @@ func (o *OwnershipProofRepository) GetByDormID(dormID uuid.UUID) (*domain.Owners
 }
 
 func (o *OwnershipProofRepository) UpdateDocument(dormID uuid.UUID, updateDocumentRequestBody *dto.UpdateOwnerShipProofRequestBody) error {
-	existingOwnershipProof, err := o.GetByDormID(dormID)
-	if err != nil {
-		return apperror.NotFoundError(err, "Ownership proof not found")
-	}
-	updateErr := o.db.Model(existingOwnershipProof).Where("dorm_id = ?", dormID).Updates(updateDocumentRequestBody).Error
+	updateErr := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(updateDocumentRequestBody).Error
 	if updateErr != nil {
 		return apperror.InternalServerError(updateErr, "failed to update document")
 	}
@@ -53,11 +49,7 @@ func (o *OwnershipProofRepository) UpdateDocument(dormID uuid.UUID, updateDocume
 }
 
 func (o *OwnershipProofRepository) UpdateStatus(dormID uuid.UUID, updateStatusRequestBody *dto.UpdateOwnerShipProofStatusRequestBody) error {
-	existingOwnershipProof, err := o.GetByDormID(dormID)
-	if err != nil {
-		return apperror.NotFoundError(err, "Ownership proof not found")
-	}
-	updateErr := o.db.Model(existingOwnershipProof).Where("dorm_id = ?", dormID).Updates(updateStatusRequestBody).Error
+	updateErr := o.db.Model(&domain.OwnershipProof{}).Where("dorm_id = ?", dormID).Updates(updateStatusRequestBody).Error
 	if updateErr != nil {
 		return apperror.InternalServerError(updateErr, "failed to update status")
 	}
