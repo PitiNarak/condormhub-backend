@@ -196,6 +196,7 @@ components:
           type: string
       type: object
     domain.User:
+      description: will probably change to some form of dto.UserResponseBody
       properties:
         birthDate:
           type: string
@@ -300,6 +301,38 @@ components:
         url:
           type: string
       type: object
+    dto.DormResponseBody:
+      properties:
+        address:
+          $ref: '#/components/schemas/dto.Address'
+        bathrooms:
+          type: integer
+        bedrooms:
+          type: integer
+        createAt:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        imagesUrl:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/domain.User'
+        price:
+          type: number
+        rating:
+          type: number
+        size:
+          type: number
+        updateAt:
+          type: string
+      type: object
     dto.DormUpdateRequestBody:
       properties:
         address:
@@ -366,21 +399,21 @@ components:
         total:
           type: integer
       type: object
-    dto.PaginationResponse-domain_Dorm:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/domain.Dorm'
-          type: array
-          uniqueItems: false
-        pagination:
-          $ref: '#/components/schemas/dto.Pagination'
-      type: object
     dto.PaginationResponse-domain_LeasingHistory:
       properties:
         data:
           items:
             $ref: '#/components/schemas/domain.LeasingHistory'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
+    dto.PaginationResponse-dto_DormResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.DormResponseBody'
           type: array
           uniqueItems: false
         pagination:
@@ -433,11 +466,6 @@ components:
       - password
       - token
       type: object
-    dto.SuccessResponse-domain_Dorm:
-      properties:
-        data:
-          $ref: '#/components/schemas/domain.Dorm'
-      type: object
     dto.SuccessResponse-domain_LeasingHistory:
       properties:
         data:
@@ -457,6 +485,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.DormImageUploadResponseBody'
+      type: object
+    dto.SuccessResponse-dto_DormResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.DormResponseBody'
       type: object
     dto.SuccessResponse-dto_OrderResponseBody:
       properties:
@@ -682,7 +715,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_DormResponseBody'
           description: All dorms retrieved successfully
         "401":
           content:
@@ -713,7 +746,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormResponseBody'
           description: Dorm successfully created
         "400":
           content:
@@ -806,7 +839,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormResponseBody'
           description: Dorm data successfully retrieved
         "400":
           content:
@@ -856,7 +889,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormResponseBody'
           description: Dorm data updated successfully
         "400":
           content:

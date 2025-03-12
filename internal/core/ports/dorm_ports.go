@@ -20,6 +20,7 @@ type DormRepository interface {
 }
 
 type DormService interface {
+	ConvertToDTO(dorm domain.Dorm) dto.DormResponseBody
 	Create(userRole domain.Role, dorm *domain.Dorm) error
 	GetAll(limit int, page int) ([]domain.Dorm, int, int, error)
 	GetByID(id uuid.UUID) (*domain.Dorm, error)

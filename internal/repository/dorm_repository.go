@@ -33,7 +33,7 @@ func (d *DormRepository) Delete(id uuid.UUID) error {
 
 func (d *DormRepository) GetAll(limit int, page int) ([]domain.Dorm, int, int, error) {
 	var dorms []domain.Dorm
-	query := d.db.Preload("Owner")
+	query := d.db.Preload("Owner").Preload("Images")
 
 	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
 	if err != nil {
@@ -45,7 +45,7 @@ func (d *DormRepository) GetAll(limit int, page int) ([]domain.Dorm, int, int, e
 
 func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	dorm := new(domain.Dorm)
-	if err := d.db.Preload("Owner").First(dorm, id).Error; err != nil {
+	if err := d.db.Preload("Owner").Preload("Images").First(dorm, id).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Dorm not found")
 	}
 	return dorm, nil
