@@ -15,11 +15,9 @@ type CreateTransactionResponseBody struct {
 }
 
 type TransactionResponse struct {
-	ID            string            `json:"id"`
-	SessionStatus string            `json:"status"`
-	CreateAt      time.Time         `json:"createAt"`
-	UpdateAt      time.Time         `json:"updateAt"`
-	Price         int64             `json:"price"`
-	Order         OrderResponseBody `json:"-"`
-	OrderID       uuid.UUID         `json:"-"`
+	ID            string    `json:"id"`
+	SessionStatus string    `json:"status"`
+	CreateAt      time.Time `json:"createAt"`
+	UpdateAt      time.Time `json:"updateAt"`
+	Price         int64     `json:"price"`
 }

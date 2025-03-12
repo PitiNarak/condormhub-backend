@@ -49,7 +49,7 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 		return err
 	}
 
-	data := dto.OrderResponseBody(*order)
+	data := order.ToDTO()
 	res := dto.Success(data)
 
 	return c.Status(fiber.StatusCreated).JSON(res)
@@ -80,7 +80,7 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 		return serviceErr
 	}
 
-	data := dto.OrderResponseBody(*order)
+	data := order.ToDTO()
 	res := dto.Success(data)
 
 	return c.Status(fiber.StatusOK).JSON(res)
@@ -124,7 +124,7 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 
 	responseData := make([]dto.OrderResponseBody, len(orders))
 	for i, order := range orders {
-		responseData[i] = dto.OrderResponseBody(order)
+		responseData[i] = order.ToDTO()
 	}
 
 	pagination := dto.Pagination{
@@ -173,7 +173,7 @@ func (o *OrderHandler) GetMyUnpaidOrder(c *fiber.Ctx) error {
 
 	responseData := make([]dto.OrderResponseBody, len(orders))
 	for i, order := range orders {
-		responseData[i] = dto.OrderResponseBody(order)
+		responseData[i] = order.ToDTO()
 	}
 
 	pagination := dto.Pagination{
