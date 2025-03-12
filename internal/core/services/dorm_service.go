@@ -1,21 +1,27 @@
 package services
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"io"
+	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/google/uuid"
 )
 
 type DormService struct {
 	dormRepo ports.DormRepository
+	storage  *storage.Storage
 }
 
-func NewDormService(repo ports.DormRepository) ports.DormService {
-	return &DormService{dormRepo: repo}
+func NewDormService(repo ports.DormRepository, storage *storage.Storage) ports.DormService {
+	return &DormService{dormRepo: repo, storage: storage}
 }
 
 func checkPermission(ownerID uuid.UUID, userID uuid.UUID, isAdmin bool) error {
@@ -72,4 +78,19 @@ func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) e
 	}
 
 	return s.dormRepo.Delete(dormID)
+}
+
+func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader) (string, error) {
+	filename = strings.ReplaceAll(filename, " ", "-")
+	uuid := uuid.New().String()
+	fileKey := fmt.Sprintf("dorms/%s-%s", uuid, filename)
+
+	err := s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "error uploading file")
+	}
+
+	url := s.storage.GetPublicUrl(fileKey)
+
+	return url, nil
 }

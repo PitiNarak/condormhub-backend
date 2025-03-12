@@ -1,6 +1,9 @@
 package ports
 
 import (
+	"context"
+	"io"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
@@ -13,6 +16,7 @@ type DormRepository interface {
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error
 	Delete(id uuid.UUID) error
+	SaveDormImage(dormImage *domain.DormImage) error
 }
 
 type DormService interface {
@@ -21,6 +25,7 @@ type DormService interface {
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormUpdateRequestBody) (*domain.Dorm, error)
 	Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
+	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader) (string, error)
 }
 
 type DormHandler interface {

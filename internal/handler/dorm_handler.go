@@ -2,14 +2,11 @@ package handler
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
-	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -17,11 +14,10 @@ import (
 
 type DormHandler struct {
 	dormService ports.DormService
-	storage     *storage.Storage
 }
 
-func NewDormHandler(service ports.DormService, storage *storage.Storage) ports.DormHandler {
-	return &DormHandler{dormService: service, storage: storage}
+func NewDormHandler(service ports.DormService) ports.DormHandler {
+	return &DormHandler{dormService: service}
 }
 
 // Register godoc
@@ -268,6 +264,16 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 }
 
 func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		return apperror.BadRequestError(err, "file is required")
@@ -279,17 +285,11 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 	}
 	defer fileData.Close()
 
-	filename := strings.ReplaceAll(file.Filename, " ", "-")
 	contentType := file.Header.Get("Content-Type")
-	uuid := uuid.New().String()
-	fileKey := fmt.Sprintf("dorms/%s-%s", uuid, filename)
-
-	err = d.storage.UploadFile(c.Context(), fileKey, contentType, fileData, storage.PublicBucket)
+	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData)
 	if err != nil {
-		return apperror.InternalServerError(err, "error uploading file")
+		return err
 	}
-
-	url := d.storage.GetPublicUrl(fileKey)
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url}))
 }
