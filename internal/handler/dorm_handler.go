@@ -279,6 +279,13 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "file is required")
 	}
 
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == nil {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isAdmin := *user.Role == domain.AdminRole
+
 	fileData, err := file.Open()
 	if err != nil {
 		return apperror.InternalServerError(err, "error opening file")
@@ -286,7 +293,7 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 	defer fileData.Close()
 
 	contentType := file.Header.Get("Content-Type")
-	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData)
+	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData, userID, isAdmin)
 	if err != nil {
 		return err
 	}

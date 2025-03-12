@@ -25,7 +25,7 @@ type DormService interface {
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormUpdateRequestBody) (*domain.Dorm, error)
 	Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
-	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader) (string, error)
+	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 }
 
 type DormHandler interface {

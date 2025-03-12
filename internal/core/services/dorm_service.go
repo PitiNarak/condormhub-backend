@@ -80,12 +80,21 @@ func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) e
 	return s.dormRepo.Delete(dormID)
 }
 
-func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader) (string, error) {
+func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error) {
+	dorm, err := s.dormRepo.GetByID(dormID)
+	if err != nil {
+		return "", err
+	}
+
+	if err = checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
+		return "", apperror.ForbiddenError(err, "You do not have permission to upload image to this dorm")
+	}
+
 	filename = strings.ReplaceAll(filename, " ", "-")
 	uuid := uuid.New().String()
 	fileKey := fmt.Sprintf("dorms/%s-%s", uuid, filename)
 
-	err := s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket)
+	err = s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket)
 	if err != nil {
 		return "", apperror.InternalServerError(err, "error uploading file")
 	}
