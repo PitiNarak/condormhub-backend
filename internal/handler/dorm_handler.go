@@ -263,6 +263,22 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
 }
 
+// UploadDormImage godoc
+// @Summary Upload an image for a dorm
+// @Description Upload an image for a specific dorm by its ID
+// @Tags dorms
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path string true "DormID"
+// @Param image formData file true "DormImage"
+// @Success 200 {object} dto.SuccessResponse[dto.DormImageUploadResponseBody] "Successful image upload"
+// @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to upload image to dorm"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "Dorm not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload dorm image"
+// @Router /dorms/{id}/images [post]
 func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
@@ -298,5 +314,5 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"url": url}))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: url}))
 }

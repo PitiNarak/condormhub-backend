@@ -31,3 +31,7 @@ type Address struct {
 	Province    string `json:"province" validate:"omitempty"`
 	Zipcode     string `json:"zipcode" validate:"omitempty,numeric,len=5"`
 }
+
+type DormImageUploadResponseBody struct {
+	ImageURL string `json:"url"`
+}
