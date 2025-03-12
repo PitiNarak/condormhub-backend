@@ -118,3 +118,17 @@ func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID
 	}
 	return nil
 }
+
+func (o *OwnershipProofService) GetUrl(ctx context.Context, dormID uuid.UUID) (string, error) {
+	ownershipProof, err := o.ownershipProofRepo.GetByDormID(dormID)
+	if err != nil {
+		return "", err
+	}
+	fileKey := ownershipProof.FileKey
+	url, err := o.storage.GetSignedUrl(ctx, fileKey, time.Minute*60)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "error getting signed url")
+	}
+
+	return url, nil
+}

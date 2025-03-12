@@ -11,5 +11,8 @@ type UpdateOwnerShipProofStatusRequestBody struct {
 }
 
 type OwnershipProofResponseBody struct {
-	Url string `json:"url"`
+	Url     string                      `json:"url"`
+	DormID  uuid.UUID                   `json:"dormId"`
+	AdminID uuid.UUID                   `json:"adminId"`
+	Status  domain.OwnershipProofStatus `json:"status"`
 }
