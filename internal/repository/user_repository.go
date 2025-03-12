@@ -63,8 +63,26 @@ func (r *UserRepo) UpdateUser(user *domain.User) error {
 }
 
 func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error {
-	err := r.db.Model(&domain.User{}).Where("id = ?", userID).Updates(data).Error
-	if err != nil {
+
+	lifestyles := make([]domain.Lifestyle, len(data.Lifestyles))
+	for i, v := range data.Lifestyles {
+		lifestyles[i] = domain.Lifestyle(v)
+	}
+
+	user := domain.User{
+		Username:        data.Username,
+		Password:        data.Password,
+		Firstname:       data.Firstname,
+		Lastname:        data.Lastname,
+		NationalID:      data.NationalID,
+		Gender:          data.Gender,
+		BirthDate:       data.BirthDate,
+		Lifestyles:      lifestyles,
+		PhoneNumber:     data.PhoneNumber,
+		StudentEvidence: data.StudentEvidence,
+	}
+
+	if err := r.db.Model(&domain.User{}).Where("id = ?", userID).Updates(user).Error; err != nil {
 		return apperror.InternalServerError(err, "failed to update user information")
 	}
 

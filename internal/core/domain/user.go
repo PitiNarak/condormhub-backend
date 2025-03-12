@@ -21,107 +21,62 @@ const (
 
 type Lifestyle string
 
-const (
-	Active   Lifestyle = "Active"
-	Creative Lifestyle = "Creative"
-	Social   Lifestyle = "Social"
-	Relaxed  Lifestyle = "Relaxed"
+var validLifestyles = []Lifestyle{
+	"Active",
+	"Creative",
+	"Social",
+	"Relaxed",
 
-	Football      Lifestyle = "Football"
-	Basketball    Lifestyle = "Basketball"
-	Tennis        Lifestyle = "Tennis"
-	Swimming      Lifestyle = "Swimming"
-	Running       Lifestyle = "Running"
-	Cycling       Lifestyle = "Cycling"
-	Badminton     Lifestyle = "Badminton"
-	Yoga          Lifestyle = "Yoga"
-	GymAndFitness Lifestyle = "Gym & Fitness"
+	"Football",
+	"Basketball",
+	"Tennis",
+	"Swimming",
+	"Running",
+	"Cycling",
+	"Badminton",
+	"Yoga",
+	"Gym & Fitness",
 
-	Music          Lifestyle = "Music"
-	Dancing        Lifestyle = "Dancing"
-	Photography    Lifestyle = "Photography"
-	Painting       Lifestyle = "Painting"
-	Gaming         Lifestyle = "Gaming"
-	Reading        Lifestyle = "Reading"
-	Writing        Lifestyle = "Writing"
-	DIYAndCrafting Lifestyle = "DIY & Crafting"
-	Cooking        Lifestyle = "Cooking"
+	"Music",
+	"Dancing",
+	"Photography",
+	"Painting",
+	"Gaming",
+	"Reading",
+	"Writing",
+	"DIY & Crafting",
+	"Cooking",
 
-	Extrovert Lifestyle = "Extrovert"
-	Introvert Lifestyle = "Introvert"
-	NightOwl  Lifestyle = "Night Owl"
-	EarlyBird Lifestyle = "Early Bird"
+	"Extrovert",
+	"Introvert",
+	"Night Owl",
+	"Early Bird",
 
-	Traveler    Lifestyle = "Traveler"
-	Backpacker  Lifestyle = "Backpacker"
-	NatureLover Lifestyle = "Nature Lover"
-	Camping     Lifestyle = "Camping"
-	BeachLover  Lifestyle = "Beach Lover"
+	"Traveler",
+	"Backpacker",
+	"Nature Lover",
+	"Camping",
+	"Beach Lover",
 
-	DogLover Lifestyle = "Dog Lover"
-	CatLover Lifestyle = "Cat Lover"
+	"Dog Lover",
+	"Cat Lover",
 
-	Freelancer   Lifestyle = "Freelancer"
-	Entrepreneur Lifestyle = "Entrepreneur"
-	OfficeWorker Lifestyle = "Office Worker"
-	RemoteWorker Lifestyle = "Remote Worker"
-	Student      Lifestyle = "Student"
-	SelfEmployed Lifestyle = "Self-Employed"
-)
-
-// Set of valid lifestyle values (for quick lookup)
-var validLifestyles = map[Lifestyle]struct{}{
-	Active:   {},
-	Creative: {},
-	Social:   {},
-	Relaxed:  {},
-
-	Football:      {},
-	Basketball:    {},
-	Tennis:        {},
-	Swimming:      {},
-	Running:       {},
-	Cycling:       {},
-	Badminton:     {},
-	Yoga:          {},
-	GymAndFitness: {},
-
-	Music:          {},
-	Dancing:        {},
-	Photography:    {},
-	Painting:       {},
-	Gaming:         {},
-	Reading:        {},
-	Writing:        {},
-	DIYAndCrafting: {},
-	Cooking:        {},
-
-	Extrovert: {},
-	Introvert: {},
-	NightOwl:  {},
-	EarlyBird: {},
-
-	Traveler:    {},
-	Backpacker:  {},
-	NatureLover: {},
-	Camping:     {},
-	BeachLover:  {},
-
-	DogLover: {},
-	CatLover: {},
-
-	Freelancer:   {},
-	Entrepreneur: {},
-	OfficeWorker: {},
-	RemoteWorker: {},
-	Student:      {},
-	SelfEmployed: {},
+	"Freelancer",
+	"Entrepreneur",
+	"Office Worker",
+	"Remote Worker",
+	"Student",
+	"Self-Employed",
 }
 
-// IsValid checks if the lifestyle value is in the valid set.
+// IsValid checks if the lifestyle value is in the valid slice.
 func (l Lifestyle) IsValid() bool {
-	_, exists := validLifestyles[l]
-	return exists
+	for _, validLifestyle := range validLifestyles {
+		if l == validLifestyle {
+			return true
+		}
+	}
+	return false
 }
 
 type LifestyleArray []Lifestyle
