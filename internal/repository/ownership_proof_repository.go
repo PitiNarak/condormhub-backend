@@ -49,7 +49,7 @@ func (o *OwnershipProofRepository) UpdateDocument(dormID uuid.UUID, updateDocume
 	}
 	updateErr := o.db.Model(existingOwnershipProof).Where("dorm_id = ?", dormID).Updates(updateDocumentRequestBody).Error
 	if updateErr != nil {
-		return apperror.InternalServerError(err, "failed to update document")
+		return apperror.InternalServerError(updateErr, "failed to update document")
 	}
 
 	return nil
@@ -62,7 +62,7 @@ func (o *OwnershipProofRepository) UpdateStatus(dormID uuid.UUID, updateStatusRe
 	}
 	updateErr := o.db.Model(existingOwnershipProof).Where("dorm_id =  ?", dormID).Updates(updateStatusRequestBody).Error
 	if updateErr != nil {
-		return apperror.InternalServerError(err, "failed to update status")
+		return apperror.InternalServerError(updateErr, "failed to update status")
 	}
 
 	return nil

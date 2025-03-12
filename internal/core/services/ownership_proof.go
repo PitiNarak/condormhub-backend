@@ -54,9 +54,9 @@ func (o *OwnershipProofService) UpdateDocument(dormID uuid.UUID, updateDocumentR
 }
 
 func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error {
-	admin, admin_err := o.userRepo.GetUserByID(adminID)
-	if admin_err != nil {
-		return admin_err
+	admin, adminErr := o.userRepo.GetUserByID(adminID)
+	if adminErr != nil {
+		return adminErr
 	}
 
 	if admin == nil || admin.Role == nil {

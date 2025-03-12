@@ -47,9 +47,9 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 	}
 
 	dormIDStr := c.FormValue("dormId")
-	dormID, dorm_err := uuid.Parse(dormIDStr)
+	dormID, err := uuid.Parse(dormIDStr)
 
-	if dorm_err != nil {
+	if err != nil {
 		return apperror.BadRequestError(err, "Dorm id is required")
 	}
 
@@ -82,10 +82,10 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 		FileKey: fileKey,
 	}
 
-	db_err := o.ownershipProofService.Create(ownershipProof)
+	createErr := o.ownershipProofService.Create(ownershipProof)
 
-	if db_err != nil {
-		return db_err
+	if createErr != nil {
+		return createErr
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
@@ -106,8 +106,8 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 
 	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
-	if body_err := c.BodyParser(dormReqBody); body_err != nil {
-		return apperror.BadRequestError(body_err, "your request is invalid")
+	if err := c.BodyParser(dormReqBody); err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 	dormID := dormReqBody.DormID
 
@@ -116,10 +116,10 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 		return err
 	}
 	fileKey := ownershipProof.FileKey
-	storage_err := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
+	storageErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
 
-	if storage_err != nil {
-		return apperror.InternalServerError(err, "error deleting file")
+	if storageErr != nil {
+		return apperror.InternalServerError(storageErr, "error deleting file")
 	}
 
 	err = o.ownershipProofService.Delete(dormID)
@@ -152,9 +152,9 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 	}
 
 	dormIDStr := c.FormValue("dormId")
-	dormID, dorm_err := uuid.Parse(dormIDStr)
+	dormID, err := uuid.Parse(dormIDStr)
 
-	if dorm_err != nil {
+	if err != nil {
 		return apperror.BadRequestError(err, "Dorm id is required")
 	}
 
@@ -169,10 +169,10 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 		return err
 	}
 	fileKey := ownershipProof.FileKey
-	storage_err := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
+	storageErr := o.storage.DeleteFile(c.Context(), fileKey, storage.PrivateBucket)
 
-	if storage_err != nil {
-		return apperror.InternalServerError(err, "error deleting file")
+	if storageErr != nil {
+		return apperror.InternalServerError(storageErr, "error deleting file")
 	}
 
 	//prepare element for upload to storage
@@ -195,14 +195,14 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 
 	requestBody := new(dto.UpdateOwnerShipProofRequestBody)
 	requestBody.FileKey = newFileKey
-	db_err := o.ownershipProofService.UpdateDocument(dormID, requestBody)
-	if db_err != nil {
-		return db_err
+	updateErr := o.ownershipProofService.UpdateDocument(dormID, requestBody)
+	if updateErr != nil {
+		return updateErr
 	}
 
-	ownershipProof, get_err := o.ownershipProofService.GetByDormID(dormID)
-	if get_err != nil {
-		return get_err
+	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
+	if getErr != nil {
+		return getErr
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
@@ -223,25 +223,25 @@ func (o *OwnershipProofHandler) Update(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /ownership/approve [post]
 func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
-	adminID, locals_err := c.Locals("userID").(uuid.UUID)
-	if !locals_err {
+	adminID, err := c.Locals("userID").(uuid.UUID)
+	if !err {
 		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
 	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
-	if body_err := c.BodyParser(dormReqBody); body_err != nil {
-		return apperror.BadRequestError(body_err, "your request is invalid")
+	if err := c.BodyParser(dormReqBody); err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 	dormID := dormReqBody.DormID
 
-	updateStatus_err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Approved"))
-	if updateStatus_err != nil {
-		return updateStatus_err
+	updateErr := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Approved"))
+	if updateErr != nil {
+		return updateErr
 	}
 
-	ownershipProof, getOnwership_err := o.ownershipProofService.GetByDormID(dormID)
-	if getOnwership_err != nil {
-		return getOnwership_err
+	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
+	if getErr != nil {
+		return getErr
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"Dorm's ownership proof": ownershipProof})
@@ -261,25 +261,25 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /ownership/reject [post]
 func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
-	adminID, locals_err := c.Locals("userID").(uuid.UUID)
-	if !locals_err {
+	adminID, err := c.Locals("userID").(uuid.UUID)
+	if !err {
 		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
 	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
-	if body_err := c.BodyParser(dormReqBody); body_err != nil {
-		return apperror.BadRequestError(body_err, "your request is invalid")
+	if err := c.BodyParser(dormReqBody); err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 	dormID := dormReqBody.DormID
 
-	updateStatus_err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected"))
-	if updateStatus_err != nil {
-		return updateStatus_err
+	updateErr := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected"))
+	if updateErr != nil {
+		return updateErr
 	}
 
-	ownershipProof, getOnwership_err := o.ownershipProofService.GetByDormID(dormID)
-	if getOnwership_err != nil {
-		return getOnwership_err
+	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
+	if getErr != nil {
+		return getErr
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"Dorm's ownership proof": ownershipProof})
@@ -307,16 +307,16 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	ownershipProof, getOnwership_err := o.ownershipProofService.GetByDormID(dormID)
-	if getOnwership_err != nil {
-		return getOnwership_err
+	ownershipProof, getErr := o.ownershipProofService.GetByDormID(dormID)
+	if getErr != nil {
+		return getErr
 	}
 
 	fileKey := ownershipProof.FileKey
 	//get key file
-	url, url_err := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
-	if url_err != nil {
-		return apperror.InternalServerError(err, "error getting signed url")
+	url, urlErr := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*5)
+	if urlErr != nil {
+		return apperror.InternalServerError(urlErr, "error getting signed url")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"url": url, "user's ownership proof": ownershipProof, "expires": time.Now().Add(time.Minute * 5)})
