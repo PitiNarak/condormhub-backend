@@ -895,7 +895,8 @@ paths:
       - dorms
   /dorms/{id}/images:
     post:
-      description: Upload an image for a specific dorm by its ID
+      description: Upload an image for a specific dorm by its ID, by attaching the
+        image as a value for the key field name "image", as a multipart form-data
       parameters:
       - description: DormID
         in: path

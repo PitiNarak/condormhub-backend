@@ -265,7 +265,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 
 // UploadDormImage godoc
 // @Summary Upload an image for a dorm
-// @Description Upload an image for a specific dorm by its ID
+// @Description Upload an image for a specific dorm by its ID, by attaching the image as a value for the key field name "image", as a multipart form-data
 // @Tags dorms
 // @Security Bearer
 // @Accept multipart/form-data
@@ -290,7 +290,7 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	file, err := c.FormFile("file")
+	file, err := c.FormFile("image")
 	if err != nil {
 		return apperror.BadRequestError(err, "file is required")
 	}
