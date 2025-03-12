@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -27,4 +28,26 @@ type Address struct {
 	Subdistrict string `json:"subdistrict" validate:"required"`
 	Province    string `json:"province" validate:"required"`
 	Zipcode     string `json:"zipcode" validate:"required,numeric,len=5"`
+}
+
+func (d *Dorm) ToDTO() dto.DormResponseBody {
+	return dto.DormResponseBody{
+		ID:        d.ID,
+		CreateAt:  d.CreateAt,
+		UpdateAt:  d.UpdateAt,
+		Name:      d.Name,
+		Owner:     d.Owner.ToDTO(),
+		Size:      d.Size,
+		Bedrooms:  d.Bedrooms,
+		Bathrooms: d.Bathrooms,
+		Address: dto.Address{
+			District:    d.Address.District,
+			Subdistrict: d.Address.Subdistrict,
+			Province:    d.Address.Province,
+			Zipcode:     d.Address.Zipcode,
+		},
+		Price:       d.Price,
+		Rating:      d.Rating,
+		Description: d.Description,
+	}
 }

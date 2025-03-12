@@ -325,14 +325,11 @@ components:
         id:
           type: string
         paidTransaction:
-          $ref: '#/components/schemas/domain.Transaction'
+          $ref: '#/components/schemas/dto.TransactionResponse'
         price:
           type: integer
         type:
           type: string
-          x-enum-varnames:
-          - InsuranceOrderType
-          - MonthlyBillOrderType
       type: object
     dto.Pagination:
       properties:
@@ -461,11 +458,24 @@ components:
         refreshToken:
           type: string
         userInformation:
-          $ref: '#/components/schemas/domain.User'
+          $ref: '#/components/schemas/dto.UserResponse'
       type: object
     dto.TransactionRequestBody:
       properties:
         orderID:
+          type: string
+      type: object
+    dto.TransactionResponse:
+      properties:
+        createAt:
+          type: string
+        id:
+          type: string
+        price:
+          type: integer
+        status:
+          type: string
+        updateAt:
           type: string
       type: object
     dto.UserInformationRequestBody:
@@ -473,14 +483,16 @@ components:
         birthDate:
           type: string
         firstname:
+          minLength: 2
           type: string
         gender:
           type: string
         lastname:
+          minLength: 2
           type: string
         lifestyles:
           items:
-            $ref: '#/components/schemas/domain.Lifestyle'
+            type: string
           type: array
           uniqueItems: false
         nationalID:
@@ -489,6 +501,41 @@ components:
           minLength: 8
           type: string
         phoneNumber:
+          type: string
+        studentEvidence:
+          type: string
+        username:
+          minLength: 2
+          type: string
+      type: object
+    dto.UserResponse:
+      properties:
+        birthDate:
+          type: string
+        email:
+          type: string
+        filledPersonalInfo:
+          type: boolean
+        firstname:
+          type: string
+        gender:
+          type: string
+        id:
+          type: string
+        isStudentVerified:
+          type: boolean
+        isVerified:
+          type: boolean
+        lastname:
+          type: string
+        lifestyles:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+        phoneNumber:
+          type: string
+        role:
           type: string
         studentEvidence:
           type: string
