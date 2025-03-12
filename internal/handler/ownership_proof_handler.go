@@ -32,10 +32,10 @@ func NewOwnershipProofHandler(OwnershipProofService ports.OwnershipProofService,
 // @Produce json
 // @Param file formData file true "Ownership proof file"
 // @Param dormId formData string true "Dorm ID (UUID format)"
-// @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofWithFileResponseBody] "Ownership proof created"
+// @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofResponseBody] "Ownership proof created"
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
-// @Router /ownership/create [post]
+// @Router /ownership/{id}/upload [post]
 func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
@@ -61,12 +61,17 @@ func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 	contentType := file.Header.Get("Content-Type")
 	url, err := o.ownershipProofService.UploadFile(c.Context(), dormID, file.Filename, contentType, fileData)
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
 	}
 
 	ownershipProof, err := o.ownershipProofService.GetByDormID(dormID)
 	if err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "error getting ownership proof")
 	}
 	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
 		Url:     url,
@@ -89,7 +94,7 @@ func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 // @Success 204 "Ownership proof successfully deleted"
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
-// @Router /ownership [delete]
+// @Router /ownership/{id} [delete]
 func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 
 	id := c.Params("id")
@@ -102,7 +107,10 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 	}
 
 	if err = o.ownershipProofService.Delete(c.Context(), dormID); err != nil {
-		return err
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "error deleting file")
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 
@@ -120,7 +128,7 @@ func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid request body"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /ownership/approve [post]
+// @Router /ownership/{id}/approve [post]
 func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 	adminID, err := c.Locals("userID").(uuid.UUID)
 	if !err {
@@ -154,7 +162,10 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 	url, urlErr := o.ownershipProofService.GetUrl(c.Context(), dormID)
 
 	if urlErr != nil {
-		return urlErr
+		if apperror.IsAppError(urlErr) {
+			return urlErr
+		}
+		return apperror.InternalServerError(urlErr, "error getting url")
 	}
 	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
 		Url:     url,
@@ -179,7 +190,7 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid request body"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
-// @Router /ownership/reject [post]
+// @Router /ownership/{id}/reject [post]
 func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 	adminID, err := c.Locals("userID").(uuid.UUID)
 	if !err {
@@ -210,9 +221,11 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "error getting new file")
 	}
 	url, urlErr := o.ownershipProofService.GetUrl(c.Context(), dormID)
-
 	if urlErr != nil {
-		return urlErr
+		if apperror.IsAppError(urlErr) {
+			return urlErr
+		}
+		return apperror.InternalServerError(urlErr, "error getting url")
 	}
 	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
 		Url:     url,
@@ -231,7 +244,7 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "Dorm ID (UUID format)"
-// @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofWithFileResponseBody] "Ownership proof retrieved successfully"
+// @Success 200 {object}  dto.SuccessResponse[dto.OwnershipProofResponseBody] "Ownership proof retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid UUID format"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized request"
 // @Failure 404 {object} dto.ErrorResponse "Ownership proof not found"
@@ -251,14 +264,14 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 		if apperror.IsAppError(getErr) {
 			return getErr
 		}
-		return apperror.InternalServerError(getErr, "error getting new file")
+		return apperror.InternalServerError(getErr, "error getting ownership proof")
 	}
 
 	fileKey := ownershipProof.FileKey
 	//get key file
 	url, urlErr := o.storage.GetSignedUrl(c.Context(), fileKey, time.Minute*60)
 	if urlErr != nil {
-		return apperror.InternalServerError(urlErr, "error getting signed url")
+		return apperror.InternalServerError(urlErr, "error getting url")
 	}
 
 	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
