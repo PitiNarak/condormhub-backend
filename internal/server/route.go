@@ -85,10 +85,10 @@ func (s *Server) initTransactionRoutes() {
 func (s *Server) initOwnershipProofRoutes() {
 	ownershipRoutes := s.app.Group("/ownership")
 	ownershipRoutes.Post("/create", s.authMiddleware.Auth, s.handler.ownershipProof.Create)
-	ownershipRoutes.Delete("/", s.authMiddleware.Auth, s.handler.ownershipProof.Delete)
+	ownershipRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.ownershipProof.Delete)
 	ownershipRoutes.Get("/:id", s.handler.ownershipProof.GetByDormID)
 	ownershipRoutes.Post("/update", s.authMiddleware.Auth, s.handler.ownershipProof.Update)
-	ownershipRoutes.Post("/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
-	ownershipRoutes.Post("/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
+	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
+	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
 
 }

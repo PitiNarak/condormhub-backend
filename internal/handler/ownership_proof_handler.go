@@ -107,11 +107,14 @@ func (o *OwnershipProofHandler) Create(c *fiber.Ctx) error {
 // @Router /ownership [delete]
 func (o *OwnershipProofHandler) Delete(c *fiber.Ctx) error {
 
-	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
-	if err := c.BodyParser(dormReqBody); err != nil {
-		return apperror.BadRequestError(err, "your request is invalid")
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
-	dormID := dormReqBody.DormID
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
 
 	ownershipProof, err := o.ownershipProofService.GetByDormID(dormID)
 	if err != nil {
@@ -233,11 +236,14 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
-	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
-	if err := c.BodyParser(dormReqBody); err != nil {
-		return apperror.BadRequestError(err, "your request is invalid")
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
-	dormID := dormReqBody.DormID
+	dormID, dormIdRrr := uuid.Parse(id)
+	if dormIdRrr != nil {
+		return apperror.InternalServerError(dormIdRrr, "Can not parse UUID")
+	}
 
 	if err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Approved")); err != nil {
 		if apperror.IsAppError(err) {
@@ -278,11 +284,14 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
-	dormReqBody := new(dto.DormIDForOwnershipProofRequestBody)
-	if err := c.BodyParser(dormReqBody); err != nil {
-		return apperror.BadRequestError(err, "your request is invalid")
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
-	dormID := dormReqBody.DormID
+	dormID, dormIdRrr := uuid.Parse(id)
+	if dormIdRrr != nil {
+		return apperror.InternalServerError(dormIdRrr, "Can not parse UUID")
+	}
 
 	if err := o.ownershipProofService.UpdateStatus(dormID, adminID, domain.OwnershipProofStatus("Rejected")); err != nil {
 		if apperror.IsAppError(err) {
