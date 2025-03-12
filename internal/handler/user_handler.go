@@ -51,7 +51,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
-		UserInformation: *user,
+		UserInformation: user.ToDTO(),
 	}
 
 	res := dto.Success(data)
@@ -148,7 +148,7 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     tokenString,
 		RefreshToken:    "",
-		UserInformation: *user,
+		UserInformation: user.ToDTO(),
 	}
 
 	res := dto.Success(data)
@@ -224,7 +224,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		RefreshToken:    refreshToken,
-		UserInformation: *gormUser,
+		UserInformation: gormUser.ToDTO(),
 	}
 
 	res := dto.Success(data)
@@ -304,7 +304,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		RefreshToken:    refreshToken,
-		UserInformation: *user,
+		UserInformation: user.ToDTO(),
 	}
 
 	res := dto.Success(data)
