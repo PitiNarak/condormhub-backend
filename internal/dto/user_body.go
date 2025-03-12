@@ -2,6 +2,8 @@ package dto
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type ResetPasswordCreateRequestBody struct {
@@ -28,4 +30,21 @@ type UserInformationRequestBody struct {
 	StudentEvidence string    `json:"studentEvidence,omitempty"`
 	Lifestyles      []string  `json:"lifestyles,omitempty" validate:"omitempty,lifestyle"`
 	PhoneNumber     string    `json:"phoneNumber,omitempty" validate:"omitempty,phoneNumber"`
+}
+
+type UserResponse struct {
+	ID                 uuid.UUID `json:"id"`
+	Username           string    `json:"username"`
+	Email              string    `json:"email"`
+	Firstname          string    `json:"firstname"`
+	Lastname           string    `json:"lastname"`
+	Gender             string    `json:"gender"`
+	BirthDate          time.Time `json:"birthDate"`
+	IsVerified         bool      `json:"isVerified"`
+	Role               string    `json:"role"`
+	FilledPersonalInfo bool      `json:"filledPersonalInfo"`
+	Lifestyles         []string  `json:"lifestyles"`
+	PhoneNumber        string    `json:"phoneNumber"`
+	StudentEvidence    string    `json:"studentEvidence"`
+	IsStudentVerified  bool      `json:"isStudentVerified"`
 }

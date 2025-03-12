@@ -1,7 +1,5 @@
 package dto
 
-import "github.com/PitiNarak/condormhub-backend/internal/core/domain"
-
 type RegisterRequestBody struct {
 	Password string `json:"password" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
@@ -18,9 +16,9 @@ type RefreshTokenRequestBody struct {
 }
 
 type TokenWithUserInformationResponseBody struct {
-	AccessToken     string      `json:"accessToken"`
-	RefreshToken    string      `json:"refreshToken"`
-	UserInformation domain.User `json:"userInformation"`
+	AccessToken     string       `json:"accessToken"`
+	RefreshToken    string       `json:"refreshToken"`
+	UserInformation UserResponse `json:"userInformation"`
 }
 
 type TokenResponseBody struct {
