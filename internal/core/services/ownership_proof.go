@@ -30,23 +30,32 @@ func NewOwnershipProofService(ownershipProofRepo ports.OwnershipProofRepository,
 	}
 }
 
-func (o *OwnershipProofService) UploadFile(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error) {
+func (o *OwnershipProofService) UploadFile(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader) (string, error) {
 
 	filename = strings.ReplaceAll(filename, " ", "-")
 	uuid := uuid.New().String()
 	fileKey := fmt.Sprintf("ownership-proof/%s-%s", uuid, filename)
 
-	if err := o.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket); err != nil {
+	if err := o.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PrivateBucket); err != nil {
 		return "", apperror.InternalServerError(err, "error uploading file")
 	}
-	url := o.storage.GetPublicUrl(fileKey)
+	url, err := o.storage.GetSignedUrl(ctx, fileKey, time.Minute*60)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "error getting signed url")
+	}
 
-	if _, err := o.ownershipProofRepo.GetByDormID(dormID); err != nil {
+	ownershipProof, err := o.ownershipProofRepo.GetByDormID(dormID)
+	if err != nil {
 		ownershipProof := domain.OwnershipProof{DormID: dormID, FileKey: fileKey}
 		if err := o.ownershipProofRepo.Create(&ownershipProof); err != nil {
 			return "", err
 		}
 		return url, nil
+	}
+
+	oldFilekey := ownershipProof.FileKey
+	if err := o.storage.DeleteFile(ctx, oldFilekey, storage.PrivateBucket); err != nil {
+		return "", err
 	}
 
 	if err := o.ownershipProofRepo.UpdateDocument(dormID, fileKey); err != nil {
@@ -93,16 +102,4 @@ func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID
 		return err
 	}
 	return nil
-}
-
-func (o *OwnershipProofService) ConvertToDTO(ownershipProof domain.OwnershipProof, url string, expires time.Time) dto.OwnershipProofResponseBody {
-	ownershipProofResponseBody := dto.OwnershipProofResponseBody{
-		Url:     url,
-		Expires: expires,
-		DormID:  ownershipProof.DormID,
-		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
-	}
-
-	return ownershipProofResponseBody
 }
