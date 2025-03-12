@@ -27,7 +27,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Security Bearer
 // @Accept json
 // @Produce json
-// @Param dorm body dto.DormRequestBody true "Dorm information"
+// @Param dorm body dto.DormCreateRequestBody true "Dorm information"
 // @Success 201 {object} dto.SuccessResponse[domain.Dorm] "Dorm successfully created"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 403 {object} dto.ErrorResponse "You do not have permission to create a dorm"
@@ -214,7 +214,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "DormID"
-// @Param dorm body dto.DormRequestBody true "Updated Room Data"
+// @Param dorm body dto.DormUpdateRequestBody true "Updated Room Data"
 // @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm data updated successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid Request"
 // @Failure 403 {object} dto.ErrorResponse "unauthorized to update this dorm"
