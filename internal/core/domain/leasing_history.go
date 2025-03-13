@@ -26,13 +26,12 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 	}
 
 	return dto.LeasingHistory{
-		ID:       l.ID,
-		Dorm:     l.Dorm.ToDTO(),
-		LesseeID: l.LesseeID,
-		Lessee:   l.Lessee.ToDTO(),
-		Orders:   orders,
-		Start:    l.Start,
-		End:      l.End,
-		Price:    l.Price,
+		ID:     l.ID,
+		Dorm:   l.Dorm.ToDTO(),
+		Lessee: l.Lessee.ToDTO(),
+		Orders: orders,
+		Start:  l.Start,
+		End:    l.End,
+		Price:  l.Price,
 	}
 }
