@@ -156,25 +156,24 @@ func (l LifestyleArray) Value() (driver.Value, error) {
 }
 
 type User struct {
-	ID                 uuid.UUID      `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	CreateAt           time.Time      `json:"createAt" gorm:"autoCreateTime"`
-	UpdateAt           time.Time      `json:"updateAt" gorm:"autoUpdateTime"`
-	Username           string         `json:"username" gorm:"unique" validate:"required"`
-	Password           string         `json:"-" validate:"required,min=8"`
-	Email              string         `json:"email" gorm:"unique" validate:"required,email"`
-	Firstname          string         `json:"firstname"`
-	Lastname           string         `json:"lastname"`
-	NationalID         string         `json:"nationalID" `
-	Gender             string         `json:"gender"`
-	BirthDate          time.Time      `json:"birthDate" gorm:"type:DATE;default:null"`
-	IsVerified         bool           `json:"isVerified" gorm:"default:false"`
-	Role               Role           `json:"role" gorm:"default:null"`
-	FilledPersonalInfo bool           `json:"filledPersonalInfo" gorm:"default:false"`
-	Lifestyles         LifestyleArray `json:"lifestyles" validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
-	PhoneNumber        string         `json:"phoneNumber"`
-	// studentEvidence
-	StudentEvidence   string `json:"studentEvidence"`
-	IsStudentVerified bool   `json:"isStudentVerified" gorm:"default:false" `
+	ID                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt           time.Time `gorm:"autoCreateTime"`
+	UpdateAt           time.Time `gorm:"autoUpdateTime"`
+	Username           string    `gorm:"unique" validate:"required"`
+	Password           string    `validate:"required,min=8"`
+	Email              string    `gorm:"unique" validate:"required,email"`
+	Firstname          string
+	Lastname           string
+	NationalID         string
+	Gender             string
+	BirthDate          time.Time      `gorm:"type:DATE;default:null"`
+	IsVerified         bool           `gorm:"default:false"`
+	Role               Role           `gorm:"default:null"`
+	FilledPersonalInfo bool           `gorm:"default:false"`
+	Lifestyles         LifestyleArray `validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
+	PhoneNumber        string
+	StudentEvidence    string
+	IsStudentVerified  bool `gorm:"default:false"`
 }
 
 func (u *User) ToDTO() dto.UserResponse {

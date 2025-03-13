@@ -16,13 +16,13 @@ const (
 )
 
 type Transaction struct {
-	ID            string         `json:"id" gorm:"primaryKey"`
-	SessionStatus CheckoutStatus `json:"status" gorm:"default:open"`
-	CreateAt      time.Time      `json:"createAt" gorm:"autoCreateTime"`
-	UpdateAt      time.Time      `json:"updateAt" gorm:"autoUpdateTime"`
-	Price         int64          `json:"price"`
-	Order         Order          `json:"-" gorm:"foreignKey:OrderID"`
-	OrderID       uuid.UUID      `json:"-"`
+	ID            string         `gorm:"primaryKey"`
+	SessionStatus CheckoutStatus `gorm:"default:open"`
+	CreateAt      time.Time      `gorm:"autoCreateTime"`
+	UpdateAt      time.Time      `gorm:"autoUpdateTime"`
+	Price         int64
+	Order         Order `gorm:"foreignKey:OrderID"`
+	OrderID       uuid.UUID
 }
 
 func (t *Transaction) ToDTO() dto.TransactionResponse {
