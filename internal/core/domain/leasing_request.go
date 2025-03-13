@@ -9,9 +9,9 @@ import (
 type Status string
 
 const (
-	Pending Status = "PENDING"
-	Accept  Status = "ACCEPT"
-	Reject  Status = "REJECT"
+	RequestPending  Status = "PENDING"
+	RequestAccepted Status = "ACCEPT"
+	RequestRejected Status = "REJECT"
 )
 
 type LeasingRequest struct {
