@@ -29,15 +29,9 @@ type Order struct {
 
 func (o *Order) ToDTO() dto.OrderResponseBody {
 	return dto.OrderResponseBody{
-		ID:    o.ID,
-		Type:  string(o.Type),
-		Price: o.Price,
-		PaidTransaction: &dto.TransactionResponse{
-			ID:            o.PaidTransaction.ID,
-			SessionStatus: string(o.PaidTransaction.SessionStatus),
-			CreateAt:      o.PaidTransaction.CreateAt,
-			UpdateAt:      o.PaidTransaction.UpdateAt,
-			Price:         o.PaidTransaction.Price,
-		},
+		ID:              o.ID,
+		Type:            string(o.Type),
+		Price:           o.Price,
+		PaidTransaction: o.PaidTransaction.ToDTO(),
 	}
 }

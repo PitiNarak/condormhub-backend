@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -22,4 +23,14 @@ type Transaction struct {
 	Price         int64          `json:"price"`
 	Order         Order          `json:"-" gorm:"foreignKey:OrderID"`
 	OrderID       uuid.UUID      `json:"-"`
+}
+
+func (t *Transaction) ToDTO() dto.TransactionResponse {
+	return dto.TransactionResponse{
+		ID:            t.ID,
+		SessionStatus: string(t.SessionStatus),
+		CreateAt:      t.CreateAt,
+		UpdateAt:      t.UpdateAt,
+		Price:         t.Price,
+	}
 }

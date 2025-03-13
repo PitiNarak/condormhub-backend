@@ -9,8 +9,8 @@ type OrderRequestBody struct {
 }
 
 type OrderResponseBody struct {
-	ID              uuid.UUID            `json:"id"`
-	Type            string               `json:"type"`
-	Price           int64                `json:"price"`
-	PaidTransaction *TransactionResponse `json:"paidTransaction"`
+	ID              uuid.UUID           `json:"id"`
+	Type            string              `json:"type"`
+	Price           int64               `json:"price"`
+	PaidTransaction TransactionResponse `json:"paidTransaction"`
 }
