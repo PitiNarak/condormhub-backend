@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -16,4 +17,23 @@ type LeasingHistory struct {
 	Start    time.Time `json:"start"`
 	End      time.Time `json:"end" gorm:"default:null"`
 	Price    float64   `json:"price"`
+}
+
+func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
+	orders := make([]dto.OrderResponseBody, len(l.Orders))
+	for i, v := range l.Orders {
+		orders[i] = v.ToDTO()
+	}
+
+	return dto.LeasingHistory{
+		ID:       l.ID,
+		DormID:   l.DormID,
+		Dorm:     l.Dorm.ToDTO(),
+		LesseeID: l.LesseeID,
+		Lessee:   l.Lessee.ToDTO(),
+		Orders:   orders,
+		Start:    l.Start,
+		End:      l.End,
+		Price:    l.Price,
+	}
 }
