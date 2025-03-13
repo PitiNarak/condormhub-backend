@@ -27,14 +27,21 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Security Bearer
 // @Accept json
 // @Produce json
-// @Param dorm body dto.DormRequestBody true "Dorm information"
+// @Param dorm body dto.DormCreateRequestBody true "Dorm information"
 // @Success 201 {object} dto.SuccessResponse[domain.Dorm] "Dorm successfully created"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to create a dorm"
 // @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
 // @Failure 500 {object} dto.ErrorResponse "Failed to save dorm"
 // @Router /dorms [post]
 func (d *DormHandler) Create(c *fiber.Ctx) error {
-	reqBody := new(dto.DormRequestBody)
+	user := c.Locals("user").(*domain.User)
+	userRole := user.Role
+	if userRole == nil {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	reqBody := new(dto.DormCreateRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
@@ -62,7 +69,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		Description: reqBody.Description,
 	}
 
-	if err := d.dormService.Create(dorm); err != nil {
+	if err := d.dormService.Create(*userRole, dorm); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -90,11 +97,19 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 // @Success 204 "Dorm successfully deleted"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this dorm"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
 // @Failure 500 {object} dto.ErrorResponse "Failed to delete dorm"
 // @Router /dorms/{id} [delete]
 func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == nil {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	isAdmin := *user.Role == domain.AdminRole
 
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
@@ -105,7 +120,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	if err := d.dormService.Delete(dormID); err != nil {
+	if err := d.dormService.Delete(userID, isAdmin, dormID); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -199,24 +214,32 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "DormID"
-// @Param dorm body dto.DormRequestBody true "Updated Room Data"
+// @Param dorm body dto.DormUpdateRequestBody true "Updated Room Data"
 // @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm data updated successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to update this dorm"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
 // @Failure 500 {object} dto.ErrorResponse "Server failed to update dorm"
 // @Router /dorms/{id} [patch]
 func (d *DormHandler) Update(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+
+	if user.Role == nil {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	isAdmin := *user.Role == domain.AdminRole
+
 	id := c.Params("id")
-	reqBody := new(dto.DormRequestBody)
-	if err := c.BodyParser(reqBody); err != nil {
+	updateReqBody := new(dto.DormUpdateRequestBody)
+	if err := c.BodyParser(updateReqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 
-	userID := c.Locals("userID").(uuid.UUID)
-
 	validate := validator.New()
-	if err := validate.Struct(reqBody); err != nil {
+	if err := validate.Struct(updateReqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request body is invalid")
 	}
 
@@ -229,23 +252,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	dorm := &domain.Dorm{
-		Name:      reqBody.Name,
-		OwnerID:   userID,
-		Size:      reqBody.Size,
-		Bedrooms:  reqBody.Bedrooms,
-		Bathrooms: reqBody.Bathrooms,
-		Address: domain.Address{
-			District:    reqBody.Address.District,
-			Subdistrict: reqBody.Address.Subdistrict,
-			Province:    reqBody.Address.Province,
-			Zipcode:     reqBody.Address.Zipcode,
-		},
-		Price:       reqBody.Price,
-		Description: reqBody.Description,
-	}
-
-	err = d.dormService.Update(dormID, dorm)
+	updatedDorm, err := d.dormService.Update(userID, isAdmin, dormID, updateReqBody)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -253,13 +260,5 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	res, err := d.dormService.GetByID(dormID)
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "get dorm error")
-	}
-
-	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
 }

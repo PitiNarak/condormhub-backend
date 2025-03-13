@@ -1,11 +1,10 @@
 package repository
 
 import (
-	"errors"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
@@ -52,19 +51,42 @@ func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	return dorm, nil
 }
 
-func (d *DormRepository) Update(id uuid.UUID, dorm *domain.Dorm) error {
-	existingDorm, err := d.GetByID(id)
-	if err != nil {
-		return apperror.NotFoundError(err, "Dorm not found")
+func (d *DormRepository) Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error {
+	updateData := make(map[string]interface{})
+	if dorm.Name != "" {
+		updateData["name"] = dorm.Name
+	}
+	if dorm.Size != 0 {
+		updateData["size"] = dorm.Size
+	}
+	if dorm.Bedrooms != 0 {
+		updateData["bedrooms"] = dorm.Bedrooms
+	}
+	if dorm.Bathrooms != 0 {
+		updateData["bathrooms"] = dorm.Bathrooms
+	}
+	if dorm.Price != 0 {
+		updateData["price"] = dorm.Price
+	}
+	if dorm.Description != "" {
+		updateData["description"] = dorm.Description
+	}
+	if dorm.Address.District != "" {
+		updateData["district"] = dorm.Address.District
+	}
+	if dorm.Address.Subdistrict != "" {
+		updateData["subdistrict"] = dorm.Address.Subdistrict
+	}
+	if dorm.Address.Province != "" {
+		updateData["province"] = dorm.Address.Province
+	}
+	if dorm.Address.Zipcode != "" {
+		updateData["zipcode"] = dorm.Address.Zipcode
 	}
 
-	if existingDorm.OwnerID != dorm.OwnerID {
-		return apperror.ForbiddenError(errors.New("you are not allowed to update this dorm"), "you are not allowed to update this dorm")
-	}
-
-	err = d.db.Model(existingDorm).Updates(dorm).Error
-	if err != nil {
-		return apperror.InternalServerError(err, "Failed to update room")
+	res := d.db.Model(&domain.Dorm{}).Where("id = ?", id).Updates(updateData)
+	if res.Error != nil {
+		return apperror.InternalServerError(res.Error, "Failed to update room")
 	}
 
 	return nil

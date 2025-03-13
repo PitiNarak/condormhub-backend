@@ -82,6 +82,8 @@ components:
             $ref: '#/components/schemas/domain.Order'
           type: array
           uniqueItems: false
+        price:
+          type: number
         start:
           type: string
       type: object
@@ -227,12 +229,23 @@ components:
       - email
       - username
       type: object
+    dto.Address:
+      properties:
+        district:
+          type: string
+        province:
+          type: string
+        subdistrict:
+          type: string
+        zipcode:
+          type: string
+      type: object
     dto.CreateTransactionResponseBody:
       properties:
         checkoutUrl:
           type: string
       type: object
-    dto.DormRequestBody:
+    dto.DormCreateRequestBody:
       properties:
         address:
           properties:
@@ -271,6 +284,25 @@ components:
       - name
       - price
       - size
+      type: object
+    dto.DormUpdateRequestBody:
+      properties:
+        address:
+          $ref: '#/components/schemas/dto.Address'
+        bathrooms:
+          minimum: 0
+          type: integer
+        bedrooms:
+          minimum: 0
+          type: integer
+        description:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        size:
+          type: number
       type: object
     dto.ErrorResponse:
       properties:
@@ -669,7 +701,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dto.DormRequestBody'
+              $ref: '#/components/schemas/dto.DormCreateRequestBody'
         description: Dorm information
         required: true
       responses:
@@ -691,6 +723,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to create a dorm
         "500":
           content:
             application/json:
@@ -727,6 +765,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to delete this dorm
         "404":
           content:
             application/json:
@@ -800,7 +844,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dto.DormRequestBody'
+              $ref: '#/components/schemas/dto.DormUpdateRequestBody'
         description: Updated Room Data
         required: true
       responses:
@@ -822,6 +866,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized to update this dorm
         "404":
           content:
             application/json:
@@ -977,18 +1027,16 @@ paths:
         required: true
         schema:
           type: string
-      - description: Number of history to be retirved
+      - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
-        required: true
         schema:
-          type: string
-      - description: Page to retrive
+          type: integer
+      - description: Page number to retrieve (default 1)
         in: query
         name: page
-        required: true
         schema:
-          type: string
+          type: integer
       responses:
         "200":
           content:
@@ -1030,18 +1078,16 @@ paths:
     get:
       description: Retrieve a list of all leasing history by userid
       parameters:
-      - description: Number of history to be retirved
+      - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
-        required: true
         schema:
-          type: string
-      - description: Page to retrive
+          type: integer
+      - description: Page number to retrieve (default 1)
         in: query
         name: page
-        required: true
         schema:
-          type: string
+          type: integer
       responses:
         "200":
           content:
