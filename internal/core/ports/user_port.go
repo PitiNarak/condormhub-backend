@@ -41,4 +41,5 @@ type UserHandler interface {
 	GetUserInfo(c *fiber.Ctx) error
 	ResetPassword(c *fiber.Ctx) error
 	DeleteAccount(c *fiber.Ctx) error
+	GetUserByID(c *fiber.Ctx) error
 }
