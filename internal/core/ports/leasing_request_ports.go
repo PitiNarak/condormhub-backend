@@ -10,7 +10,7 @@ type LeasingRequestRepository interface {
 	Create(LeasingRequest *domain.LeasingRequest) error
 	Update(LeasingRequest *domain.LeasingRequest) error
 	Delete(id uuid.UUID) error
-	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
+	GetByID(id uuid.UUID) (*domain.LeasingRequest, error)
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error)
 }
