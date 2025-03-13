@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -25,4 +26,16 @@ type LeasingRequest struct {
 	Lessor   User      `gorm:"foreignKey:LessorID;references:ID"`
 	Create   time.Time
 	End      time.Time `gorm:"default:null"`
+}
+
+func (l *LeasingRequest) ToDTO() dto.LeasingRequest {
+	return dto.LeasingRequest{
+		ID:     l.ID,
+		Status: string(*l.Status),
+		Dorm:   l.Dorm.ToDTO(),
+		Lessee: l.Lessee.ToDTO(),
+		Lessor: l.Lessor.ToDTO(),
+		Create: l.Create,
+		End:    l.End,
+	}
 }
