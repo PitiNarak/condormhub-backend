@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
@@ -12,7 +11,6 @@ import (
 func ValidateLifestyles(fl validator.FieldLevel) bool {
 	lifestyles, ok := fl.Field().Interface().([]string)
 	if !ok {
-		fmt.Println("HERE")
 		return false
 	}
 
