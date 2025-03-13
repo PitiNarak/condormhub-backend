@@ -1,184 +1,11 @@
 components:
   schemas:
-    domain.Address:
-      properties:
-        district:
-          type: string
-        province:
-          type: string
-        subdistrict:
-          type: string
-        zipcode:
-          type: string
-      required:
-      - district
-      - province
-      - subdistrict
-      - zipcode
-      type: object
-    domain.CheckoutStatus:
-      type: string
-      x-enum-varnames:
-      - StatusOpen
-      - StatusComplete
-      - StatusExpired
-    domain.Dorm:
-      properties:
-        address:
-          $ref: '#/components/schemas/domain.Address'
-        bathrooms:
-          minimum: 0
-          type: integer
-        bedrooms:
-          minimum: 0
-          type: integer
-        createAt:
-          type: string
-        description:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        owner:
-          $ref: '#/components/schemas/domain.User'
-        ownerId:
-          type: string
-        price:
-          type: number
-        rating:
-          maximum: 5
-          minimum: 0
-          type: number
-        size:
-          type: number
-        updateAt:
-          type: string
-      required:
-      - address
-      - bathrooms
-      - bedrooms
-      - name
-      - ownerId
-      - price
-      - size
-      type: object
-    domain.LeasingHistory:
-      properties:
-        dorm:
-          $ref: '#/components/schemas/domain.Dorm'
-        dorm_id:
-          type: string
-        end:
-          type: string
-        id:
-          type: string
-        lessee:
-          $ref: '#/components/schemas/domain.User'
-        lessee_id:
-          type: string
-        orders:
-          items:
-            $ref: '#/components/schemas/domain.Order'
-          type: array
-          uniqueItems: false
-        price:
-          type: number
-        start:
-          type: string
-      type: object
-    domain.Lifestyle:
-      type: string
-      x-enum-varnames:
-      - Active
-      - Creative
-      - Social
-      - Relaxed
-      - Football
-      - Basketball
-      - Tennis
-      - Swimming
-      - Running
-      - Cycling
-      - Badminton
-      - Yoga
-      - GymAndFitness
-      - Music
-      - Dancing
-      - Photography
-      - Painting
-      - Gaming
-      - Reading
-      - Writing
-      - DIYAndCrafting
-      - Cooking
-      - Extrovert
-      - Introvert
-      - NightOwl
-      - EarlyBird
-      - Traveler
-      - Backpacker
-      - NatureLover
-      - Camping
-      - BeachLover
-      - DogLover
-      - CatLover
-      - Freelancer
-      - Entrepreneur
-      - OfficeWorker
-      - RemoteWorker
-      - Student
-      - SelfEmployed
-    domain.Order:
-      properties:
-        createAt:
-          type: string
-        id:
-          type: string
-        leasingHistory:
-          $ref: '#/components/schemas/domain.LeasingHistory'
-        leasingHistoryID:
-          type: string
-        paidTransaction:
-          $ref: '#/components/schemas/domain.Transaction'
-        paidTransactionID:
-          type: string
-        price:
-          type: integer
-        transactions:
-          items:
-            $ref: '#/components/schemas/domain.Transaction'
-          type: array
-          uniqueItems: false
-        type:
-          $ref: '#/components/schemas/domain.OrderType'
-        updateAt:
-          type: string
-      type: object
-    domain.OrderType:
-      type: string
-      x-enum-varnames:
-      - InsuranceOrderType
-      - MonthlyBillOrderType
     domain.Role:
       type: string
       x-enum-varnames:
       - AdminRole
       - LesseeRole
       - LessorRole
-    domain.Transaction:
-      properties:
-        createAt:
-          type: string
-        id:
-          type: string
-        price:
-          type: integer
-        status:
-          $ref: '#/components/schemas/domain.CheckoutStatus'
-        updateAt:
-          type: string
-      type: object
     domain.User:
       properties:
         birthDate:
@@ -203,7 +30,7 @@ components:
           type: string
         lifestyles:
           items:
-            $ref: '#/components/schemas/domain.Lifestyle'
+            type: string
           type: array
           uniqueItems: false
         nationalID:
@@ -279,6 +106,38 @@ components:
       - price
       - size
       type: object
+    dto.DormResponseBody:
+      properties:
+        address:
+          $ref: '#/components/schemas/dto.Address'
+        bathrooms:
+          type: integer
+        bedrooms:
+          type: integer
+        createAt:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        imagesUrl:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/dto.UserResponse'
+        price:
+          type: number
+        rating:
+          type: number
+        size:
+          type: number
+        updateAt:
+          type: string
+      type: object
     dto.DormUpdateRequestBody:
       properties:
         address:
@@ -301,6 +160,30 @@ components:
     dto.ErrorResponse:
       properties:
         error:
+          type: string
+      type: object
+    dto.LeasingHistory:
+      properties:
+        dorm:
+          $ref: '#/components/schemas/dto.DormResponseBody'
+        dorm_id:
+          type: string
+        end:
+          type: string
+        id:
+          type: string
+        lessee:
+          $ref: '#/components/schemas/dto.UserResponse'
+        lessee_id:
+          type: string
+        orders:
+          items:
+            $ref: '#/components/schemas/dto.OrderResponseBody'
+          type: array
+          uniqueItems: false
+        price:
+          type: number
+        start:
           type: string
       type: object
     dto.LoginRequestBody:
@@ -342,21 +225,21 @@ components:
         total:
           type: integer
       type: object
-    dto.PaginationResponse-domain_Dorm:
+    dto.PaginationResponse-dto_DormResponseBody:
       properties:
         data:
           items:
-            $ref: '#/components/schemas/domain.Dorm'
+            $ref: '#/components/schemas/dto.DormResponseBody'
           type: array
           uniqueItems: false
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
-    dto.PaginationResponse-domain_LeasingHistory:
+    dto.PaginationResponse-dto_LeasingHistory:
       properties:
         data:
           items:
-            $ref: '#/components/schemas/domain.LeasingHistory'
+            $ref: '#/components/schemas/dto.LeasingHistory'
           type: array
           uniqueItems: false
         pagination:
@@ -409,16 +292,6 @@ components:
       - password
       - token
       type: object
-    dto.SuccessResponse-domain_Dorm:
-      properties:
-        data:
-          $ref: '#/components/schemas/domain.Dorm'
-      type: object
-    dto.SuccessResponse-domain_LeasingHistory:
-      properties:
-        data:
-          $ref: '#/components/schemas/domain.LeasingHistory'
-      type: object
     dto.SuccessResponse-domain_User:
       properties:
         data:
@@ -428,6 +301,16 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.CreateTransactionResponseBody'
+      type: object
+    dto.SuccessResponse-dto_DormResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.DormResponseBody'
+      type: object
+    dto.SuccessResponse-dto_LeasingHistory:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.LeasingHistory'
       type: object
     dto.SuccessResponse-dto_OrderResponseBody:
       properties:
@@ -443,6 +326,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.TokenWithUserInformationResponseBody'
+      type: object
+    dto.SuccessResponse-dto_UserResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.UserResponse'
       type: object
     dto.TokenResponseBody:
       properties:
@@ -509,6 +397,7 @@ components:
           type: string
       type: object
     dto.UserResponse:
+      description: will probably change to some form of dto.UserResponseBody
       properties:
         birthDate:
           type: string
@@ -703,7 +592,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_DormResponseBody'
           description: All dorms retrieved successfully
         "401":
           content:
@@ -734,7 +623,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormResponseBody'
           description: Dorm successfully created
         "400":
           content:
@@ -827,7 +716,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormResponseBody'
           description: Dorm data successfully retrieved
         "400":
           content:
@@ -877,7 +766,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Dorm'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormResponseBody'
           description: Dorm data updated successfully
         "400":
           content:
@@ -1011,7 +900,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_LeasingHistory'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_LeasingHistory'
           description: Dorm successfully created
         "400":
           content:
@@ -1067,7 +956,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_LeasingHistory'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
           description: Retrive history successfully
         "400":
           content:
@@ -1118,7 +1007,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_LeasingHistory'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
           description: Retrive history successfully
         "400":
           content:
@@ -1200,11 +1089,6 @@ paths:
         required: true
         schema:
           type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         "200":
           content:
@@ -1254,20 +1138,13 @@ paths:
       - description: Number of history to be retrieved
         in: query
         name: limit
-        required: true
         schema:
-          type: string
+          type: integer
       - description: Page to retrieved
         in: query
         name: page
-        required: true
         schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
+          type: integer
       responses:
         "200":
           content:
@@ -1311,20 +1188,13 @@ paths:
       - description: Number of history to be retrieved
         in: query
         name: limit
-        required: true
         schema:
-          type: string
+          type: integer
       - description: Page to retrieved
         in: query
         name: page
-        required: true
         schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
+          type: integer
       responses:
         "200":
           content:
@@ -1422,7 +1292,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_User'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
           description: user successfully updated account information
         "400":
           content:
