@@ -28,7 +28,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 // @Accept json
 // @Produce json
 // @Param dorm body dto.DormCreateRequestBody true "Dorm information"
-// @Success 201 {object} dto.SuccessResponse[domain.Dorm] "Dorm successfully created"
+// @Success 201 {object} dto.SuccessResponse[dto.DormResponseBody] "Dorm successfully created"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 403 {object} dto.ErrorResponse "You do not have permission to create a dorm"
 // @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
@@ -37,7 +37,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 func (d *DormHandler) Create(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	userRole := user.Role
-	if userRole == nil {
+	if userRole == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
@@ -69,14 +69,14 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		Description: reqBody.Description,
 	}
 
-	if err := d.dormService.Create(*userRole, dorm); err != nil {
+	if err := d.dormService.Create(userRole, dorm); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
 		return apperror.InternalServerError(err, "create dorm error")
 	}
 
-	res, err := d.dormService.GetByID(dorm.ID)
+	data, err := d.dormService.GetByID(dorm.ID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -84,7 +84,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(data.ToDTO()))
 }
 
 // Delete godoc
@@ -105,11 +105,11 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
@@ -137,7 +137,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
-// @Success 200 {object} dto.PaginationResponse[domain.Dorm] "All dorms retrieved successfully"
+// @Success 200 {object} dto.PaginationResponse[dto.DormResponseBody] "All dorms retrieved successfully"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve dorms"
 // @Router /dorms [get]
@@ -161,7 +161,12 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorms error")
 	}
 
-	res := dto.SuccessPagination(dorms, dto.Pagination{
+	resData := make([]dto.DormResponseBody, len(dorms))
+	for i, v := range dorms {
+		resData[i] = v.ToDTO()
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPages,
 		Limit:       limit,
@@ -177,7 +182,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 // @Tags dorms
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm data successfully retrieved"
+// @Success 200 {object} dto.SuccessResponse[dto.DormResponseBody] "Dorm data successfully retrieved"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found"
@@ -203,7 +208,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm.ToDTO()))
 }
 
 // Update godoc
@@ -215,7 +220,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "DormID"
 // @Param dorm body dto.DormUpdateRequestBody true "Updated Room Data"
-// @Success 200 {object} dto.SuccessResponse[domain.Dorm] "Dorm data updated successfully"
+// @Success 200 {object} dto.SuccessResponse[dto.DormResponseBody] "Dorm data updated successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid Request"
 // @Failure 403 {object} dto.ErrorResponse "unauthorized to update this dorm"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -226,11 +231,11 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
 
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	id := c.Params("id")
 	updateReqBody := new(dto.DormUpdateRequestBody)
@@ -260,5 +265,5 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm.ToDTO()))
 }
