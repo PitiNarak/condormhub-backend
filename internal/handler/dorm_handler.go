@@ -37,7 +37,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 func (d *DormHandler) Create(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	userRole := user.Role
-	if userRole == nil {
+	if userRole == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
@@ -69,7 +69,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		Description: reqBody.Description,
 	}
 
-	if err := d.dormService.Create(*userRole, dorm); err != nil {
+	if err := d.dormService.Create(userRole, dorm); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -105,11 +105,11 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
@@ -231,11 +231,11 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
 
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	id := c.Params("id")
 	updateReqBody := new(dto.DormUpdateRequestBody)

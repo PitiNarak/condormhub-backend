@@ -168,7 +168,7 @@ type User struct {
 	Gender             string         `json:"gender"`
 	BirthDate          time.Time      `json:"birthDate" gorm:"type:DATE;default:null"`
 	IsVerified         bool           `json:"isVerified" gorm:"default:false"`
-	Role               *Role          `json:"role" gorm:"default:null"`
+	Role               Role           `json:"role" gorm:"default:null"`
 	FilledPersonalInfo bool           `json:"filledPersonalInfo" gorm:"default:false"`
 	Lifestyles         LifestyleArray `json:"lifestyles" validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
 	PhoneNumber        string         `json:"phoneNumber" gorm:"unique"`
@@ -191,7 +191,7 @@ func (u *User) ToDTO() dto.UserResponse {
 		Gender:             u.Gender,
 		BirthDate:          u.BirthDate,
 		IsVerified:         u.IsVerified,
-		Role:               string(*u.Role),
+		Role:               string(u.Role),
 		FilledPersonalInfo: u.FilledPersonalInfo,
 		Lifestyles:         lifestyles,
 		PhoneNumber:        u.PhoneNumber,
