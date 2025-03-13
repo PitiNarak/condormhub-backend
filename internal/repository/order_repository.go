@@ -57,7 +57,7 @@ func (r *OrderRepository) GetUnpaidByUserID(userID uuid.UUID, limit int, page in
 		Where("leasing_histories.lessee_id = ?", userID).
 		Where("orders.paid_transaction_id IS NULL")
 
-	totalPage, totalRows, err := r.db.Paginate(orders, query, limit, page, "create_at desc")
+	totalPage, totalRows, err := r.db.Paginate(&orders, query, limit, page, "create_at desc")
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, 0, apperror.NotFoundError(err, "order not found")

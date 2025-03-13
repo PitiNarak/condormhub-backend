@@ -101,16 +101,16 @@ func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID
 		return err
 	}
 
-	if admin == nil || admin.Role == nil {
+	if admin == nil || admin.Role == "" {
 		return apperror.BadRequestError(errors.New("invalid admin"), "Admin not found or role is missing")
 	}
 
-	if *admin.Role != domain.AdminRole {
+	if admin.Role != domain.AdminRole {
 		return apperror.BadRequestError(errors.New("role mismatch"), "You are not an admin")
 	}
 
 	updateStatusRequestBody := new(dto.UpdateOwnerShipProofStatusRequestBody)
-	updateStatusRequestBody.Status = status
+	updateStatusRequestBody.Status = dto.OwnershipProofStatus(status)
 	updateStatusRequestBody.AdminID = adminID
 
 	if err := o.ownershipProofRepo.UpdateStatus(dormID, updateStatusRequestBody); err != nil {

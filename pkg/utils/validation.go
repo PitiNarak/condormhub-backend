@@ -9,13 +9,13 @@ import (
 
 // Custom validator for Lifestyles
 func ValidateLifestyles(fl validator.FieldLevel) bool {
-	lifestyles, ok := fl.Field().Interface().(domain.LifestyleArray)
+	lifestyles, ok := fl.Field().Interface().([]string)
 	if !ok {
 		return false
 	}
 
 	for _, l := range lifestyles {
-		if !l.IsValid() {
+		if !domain.Lifestyle(l).IsValid() {
 			return false
 		}
 	}

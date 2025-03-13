@@ -66,7 +66,7 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 // @Produce json
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
-// @Success 200 {object} dto.PaginationResponse[domain.LeasingHistory] "Retrive history successfully"
+// @Success 200 {object} dto.PaginationResponse[dto.LeasingHistory] "Retrive history successfully"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
@@ -86,7 +86,12 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 		return err
 	}
 
-	res := dto.SuccessPagination(leasingHistory, dto.Pagination{
+	resData := make([]dto.LeasingHistory, len(leasingHistory))
+	for i, v := range leasingHistory {
+		resData[i] = v.ToDTO()
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPage,
 		Limit:       limit,
@@ -105,7 +110,7 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 // @Param id path string true "DormID"
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
-// @Success 200 {object} dto.PaginationResponse[domain.LeasingHistory] "Retrive history successfully"
+// @Success 200 {object} dto.PaginationResponse[dto.LeasingHistory] "Retrive history successfully"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
@@ -132,14 +137,12 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	// response := dto.PaginationResponseBody{
-	// 	Currentpage: page,
-	// 	Lastpage:    totalPage,
-	// 	Limit:       limit,
-	// 	Total:       totalRows,
-	// }
+	resData := make([]dto.LeasingHistory, len(leasingHistory))
+	for i, v := range leasingHistory {
+		resData[i] = v.ToDTO()
+	}
 
-	res := dto.SuccessPagination(leasingHistory, dto.Pagination{
+	res := dto.SuccessPagination(resData, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPage,
 		Limit:       limit,
@@ -190,7 +193,7 @@ func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Success 201 {object} dto.SuccessResponse[domain.LeasingHistory] "Dorm successfully created"
+// @Success 201 {object} dto.SuccessResponse[dto.LeasingHistory] "Dorm successfully created"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found or leasing history not found"
@@ -218,7 +221,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	res := dto.Success(leasingHistory)
+	res := dto.Success(leasingHistory.ToDTO())
 
 	return c.Status(fiber.StatusCreated).JSON(res)
 }

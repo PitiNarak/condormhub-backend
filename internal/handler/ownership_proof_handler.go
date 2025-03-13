@@ -79,7 +79,7 @@ func (o *OwnershipProofHandler) UploadFile(c *fiber.Ctx) error {
 		Url:     url,
 		DormID:  dormID,
 		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
+		Status:  dto.OwnershipProofStatus(ownershipProof.Status),
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
@@ -172,7 +172,7 @@ func (o *OwnershipProofHandler) Approve(c *fiber.Ctx) error {
 		Url:     url,
 		DormID:  dormID,
 		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
+		Status:  dto.OwnershipProofStatus(ownershipProof.Status),
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
@@ -231,7 +231,7 @@ func (o *OwnershipProofHandler) Reject(c *fiber.Ctx) error {
 		Url:     url,
 		DormID:  dormID,
 		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
+		Status:  dto.OwnershipProofStatus(ownershipProof.Status),
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
@@ -278,7 +278,7 @@ func (o *OwnershipProofHandler) GetByDormID(c *fiber.Ctx) error {
 		Url:     url,
 		DormID:  dormID,
 		AdminID: ownershipProof.AdminID,
-		Status:  ownershipProof.Status,
+		Status:  dto.OwnershipProofStatus(ownershipProof.Status),
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(ownershipProofResponseBody))
