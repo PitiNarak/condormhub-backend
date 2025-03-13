@@ -160,6 +160,12 @@ components:
       x-enum-varnames:
       - InsuranceOrderType
       - MonthlyBillOrderType
+    domain.OwnershipProofStatus:
+      type: string
+      x-enum-varnames:
+      - Pending
+      - Approved
+      - Rejected
     domain.Role:
       type: string
       x-enum-varnames:
@@ -334,6 +340,17 @@ components:
           - InsuranceOrderType
           - MonthlyBillOrderType
       type: object
+    dto.OwnershipProofResponseBody:
+      properties:
+        adminId:
+          type: string
+        dormId:
+          type: string
+        status:
+          $ref: '#/components/schemas/domain.OwnershipProofStatus'
+        url:
+          type: string
+      type: object
     dto.Pagination:
       properties:
         current_page:
@@ -436,6 +453,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.OrderResponseBody'
+      type: object
+    dto.SuccessResponse-dto_OwnershipProofResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
       type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
@@ -1314,6 +1336,208 @@ paths:
       summary: Get my unpaid orders by ID
       tags:
       - order
+  /ownership/{id}:
+    delete:
+      description: Delete an ownership proof file
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Ownership proof successfully deleted
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to delete Ownership file
+      security:
+      - Bearer: []
+      summary: Delete ownership proof
+      tags:
+      - ownership
+    get:
+      description: Retrieve ownership proof for a specific dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Get ownership proof by Dorm ID
+      tags:
+      - ownership
+  /ownership/{id}/approve:
+    post:
+      description: Approve a submitted ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof approved
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Approve ownership proof
+      tags:
+      - ownership
+  /ownership/{id}/reject:
+    post:
+      description: Reject a submitted ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof rejected
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Reject ownership proof
+      tags:
+      - ownership
+  /ownership/{id}/upload:
+    post:
+      description: Upload a new file as ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: file
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownershop proof not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload new ownership proof
+      tags:
+      - ownership
   /transaction:
     post:
       description: Create a transaction
