@@ -141,6 +141,15 @@ func (s *UserService) GetUserByEmail(email string) (*domain.User, error) {
 	return user, nil
 }
 
+func (s *UserService) GetUserByID(id uuid.UUID) (*domain.User, error) {
+	user, err := s.userRepo.GetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (s *UserService) ResetPasswordCreate(ctx context.Context, email string) error {
 	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
