@@ -18,3 +18,16 @@ type OwnershipProof struct {
 	Status  OwnershipProofStatus `gorm:"default:Pending"`
 	FileKey string
 }
+
+// func (o *OwnershipProof) ToDTO(ctx context.Context, storage *storage.Storage) (dto.OwnershipProofResponseBody, error) {
+// 	url, err := storage.GetSignedUrl(ctx, o.FileKey, 60*time.Minute)
+// 	if err != nil {
+// 		return dto.OwnershipProofResponseBody{}, err
+// 	}
+// 	return dto.OwnershipProofResponseBody{
+// 		Url:     url,
+// 		DormID:  o.DormID,
+// 		AdminID: o.AdminID,
+// 		Status:  dto.OwnershipProofStatus(o.Status),
+// 	}, nil
+// }
