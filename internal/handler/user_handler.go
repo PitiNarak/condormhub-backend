@@ -67,7 +67,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param user body dto.UserInformationRequestBody true "user information"
-// @Success 200 {object} dto.SuccessResponse[domain.User] "user successfully updated account information"
+// @Success 200 {object} dto.SuccessResponse[dto.UserResponse] "user successfully updated account information"
 // @Failure 400 {object} dto.ErrorResponse "your request is invalid
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "system cannot update your account information"
@@ -106,7 +106,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "system cannot update your account information")
 	}
 
-	res := dto.Success(userInfo)
+	res := dto.Success(userInfo.ToDTO())
 
 	return c.Status(fiber.StatusOK).JSON(res)
 
