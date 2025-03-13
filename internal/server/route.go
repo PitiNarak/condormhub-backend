@@ -34,6 +34,7 @@ func (s *Server) initUserRoutes() {
 	userRoutes := s.app.Group("/user")
 
 	userRoutes.Get("/me", s.authMiddleware.Auth, s.handler.user.GetUserInfo)
+	userRoutes.Get("/:id", s.authMiddleware.Auth, s.handler.user.GetUserByID)
 
 	userRoutes.Post("/verify", s.handler.user.VerifyEmail)
 	userRoutes.Post("/resetpassword", s.handler.user.ResetPasswordCreate)
