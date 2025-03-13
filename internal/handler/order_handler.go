@@ -93,8 +93,8 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param userID path string true "User ID"
-// @Param limit query string true "Number of history to be retrieved"
-// @Param page query string true "Page to retrieved"
+// @Param limit query int false "Number of history to be retrieved"
+// @Param page query int false "Page to retrieved"
 // @Success 200 {object} dto.PaginationResponse[dto.OrderResponseBody] "Order retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "your request is invalid"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -144,8 +144,8 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 // @Tags order
 // @Security Bearer
 // @Produce json
-// @Param limit query string true "Number of history to be retrieved"
-// @Param page query string true "Page to retrieved"
+// @Param limit query int false "Number of history to be retrieved"
+// @Param page query int false "Page to retrieved"
 // @Success 200 {object} dto.PaginationResponse[dto.OrderResponseBody] "Unpaid orders retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "your request is invalid"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
