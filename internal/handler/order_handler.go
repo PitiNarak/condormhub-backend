@@ -61,7 +61,6 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 // @Router /order/{id} [get]
 // @Tags order
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param id path string true "Order ID"
 // @Success 200 {object} dto.SuccessResponse[dto.OrderResponseBody] "Order retrieved successfully"
@@ -92,7 +91,6 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 // @Router /order/unpaid/{userID} [get]
 // @Tags order
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param userID path string true "User ID"
 // @Param limit query string true "Number of history to be retrieved"
@@ -145,7 +143,6 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 // @Router /order/unpaid/me [get]
 // @Tags order
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param limit query string true "Number of history to be retrieved"
 // @Param page query string true "Page to retrieved"
