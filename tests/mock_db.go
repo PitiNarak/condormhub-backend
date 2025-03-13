@@ -40,8 +40,6 @@ func NewMockDB(t *testing.T) (*database.Database, sqlmock.Sqlmock) {
 func SetupMockDormRepo(mock sqlmock.Sqlmock) {
 	// You can add common mock expectations here
 	// For example, setting up UUID generation functions
-	// mock.ExpectExec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`).
-	// 	WillReturnResult(sqlmock.NewResult(0, 0))
     mock.MatchExpectationsInOrder(false)
     
     // Allow any extension creation statements
