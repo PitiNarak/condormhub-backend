@@ -27,7 +27,6 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 
 	return dto.LeasingHistory{
 		ID:       l.ID,
-		DormID:   l.DormID,
 		Dorm:     l.Dorm.ToDTO(),
 		LesseeID: l.LesseeID,
 		Lessee:   l.Lessee.ToDTO(),
