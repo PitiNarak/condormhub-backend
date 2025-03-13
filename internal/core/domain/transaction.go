@@ -26,6 +26,9 @@ type Transaction struct {
 }
 
 func (t *Transaction) ToDTO() dto.TransactionResponse {
+	if t == nil {
+		return dto.TransactionResponse{}
+	}
 	return dto.TransactionResponse{
 		ID:            t.ID,
 		SessionStatus: string(t.SessionStatus),
