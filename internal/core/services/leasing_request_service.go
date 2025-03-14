@@ -1,10 +1,12 @@
 package services
 
 import (
+	"errors"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
 
@@ -49,10 +51,13 @@ func (s *LeasingRequestService) GetByUserID(id uuid.UUID, role domain.Role, limi
 	}
 	return leasingRequest, totalPage, totalRows, nil
 }
-func (s *LeasingRequestService) Approve(id uuid.UUID) error {
+func (s *LeasingRequestService) Approve(id, userId uuid.UUID) error {
 	leasingRequest, err := s.requestRepo.GetByID(id)
 	if err != nil {
 		return err
+	}
+	if userId != leasingRequest.LessorID {
+		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
 	}
 	leasingRequest.End = time.Now()
 	requestAccept := domain.RequestAccepted
@@ -64,10 +69,13 @@ func (s *LeasingRequestService) Approve(id uuid.UUID) error {
 	return nil
 }
 
-func (s *LeasingRequestService) Reject(id uuid.UUID) error {
+func (s *LeasingRequestService) Reject(id, userId uuid.UUID) error {
 	leasingRequest, err := s.requestRepo.GetByID(id)
 	if err != nil {
 		return err
+	}
+	if userId != leasingRequest.LessorID {
+		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
 	}
 	leasingRequest.End = time.Now()
 	requestRejected := domain.RequestRejected
@@ -79,10 +87,13 @@ func (s *LeasingRequestService) Reject(id uuid.UUID) error {
 	return nil
 }
 
-func (s *LeasingRequestService) Cancel(id uuid.UUID) error {
+func (s *LeasingRequestService) Cancel(id, userId uuid.UUID) error {
 	leasingRequest, err := s.requestRepo.GetByID(id)
 	if err != nil {
 		return err
+	}
+	if userId != leasingRequest.LesseeID {
+		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
 	}
 	leasingRequest.End = time.Now()
 	requestCanceled := domain.RequestCanceled

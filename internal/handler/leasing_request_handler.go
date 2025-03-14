@@ -52,7 +52,7 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Approve(leasingRequestID)
+	err = h.service.Approve(leasingRequestID, user.ID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -95,7 +95,7 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Reject(leasingRequestID)
+	err = h.service.Reject(leasingRequestID, user.ID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -138,7 +138,7 @@ func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Cancel(leasingRequestID)
+	err = h.service.Cancel(leasingRequestID, user.ID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
