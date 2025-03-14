@@ -66,27 +66,15 @@ func (d *LeasingRequestRepository) Delete(id uuid.UUID) error {
 	}
 	return nil
 }
-func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error) {
+func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, role domain.Role) ([]domain.LeasingRequest, int, int, error) {
 	var leasingRequest []domain.LeasingRequest
-	query := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id)
-	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start")
-
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return nil, 0, 0, err
-		}
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, 0, 0, apperror.NotFoundError(err, "leasing request not found")
-		}
-		return nil, 0, 0, apperror.InternalServerError(err, "failed to get leasing request")
+	query := new(gorm.DB)
+	if role == domain.LesseeRole {
+		query = d.db.Preload("Dorm").Preload("Lessee").Preload("Lessor").Where("lessee_id = ?", id)
+	} else {
+		query = d.db.Preload("Dorm").Preload("Lessee").Preload("Lessor").Where("lessor_id = ?", id)
 	}
-
-	return leasingRequest, totalPage, totalRows, nil
-}
-func (d *LeasingRequestRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error) {
-	var leasingRequest []domain.LeasingRequest
-	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
-	totalPage, totalRows, err := d.db.Paginate(leasingRequest, query, limit, page, "start")
+	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start")
 
 	if err != nil {
 		if apperror.IsAppError(err) {

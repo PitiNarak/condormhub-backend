@@ -42,15 +42,8 @@ func (s *LeasingRequestService) Delete(id uuid.UUID) error {
 	}
 	return nil
 }
-func (s *LeasingRequestService) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error) {
-	leasingRequest, totalPage, totalRows, err := s.requestRepo.GetByUserID(id, limit, page)
-	if err != nil {
-		return nil, totalPage, totalRows, err
-	}
-	return leasingRequest, totalPage, totalRows, nil
-}
-func (s *LeasingRequestService) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error) {
-	leasingRequest, totalPage, totalRows, err := s.requestRepo.GetByDormID(id, limit, page)
+func (s *LeasingRequestService) GetByUserID(id uuid.UUID, role domain.Role, limit, page int) ([]domain.LeasingRequest, int, int, error) {
+	leasingRequest, totalPage, totalRows, err := s.requestRepo.GetByUserID(id, limit, page, role)
 	if err != nil {
 		return nil, totalPage, totalRows, err
 	}
