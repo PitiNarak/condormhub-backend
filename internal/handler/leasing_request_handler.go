@@ -29,7 +29,7 @@ func NewLeasingRequestHandler(service ports.LeasingRequestService) ports.Leasing
 // @Success 204
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only lessor can approve a request"
-// @Failure 404 {object} dto.ErrorResponse "leasing request not found"
+// @Failure 404 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
 // @Router /request/approve/{id} [patch]
 func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
@@ -70,7 +70,7 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "LeasingRequestId"
 // @Success 204
-// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 400 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only lessor can reject a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
@@ -113,7 +113,7 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "LeasingRequestId"
 // @Success 204
-// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 400 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
