@@ -13,6 +13,7 @@ const (
 	RequestPending  Status = "PENDING"
 	RequestAccepted Status = "ACCEPT"
 	RequestRejected Status = "REJECT"
+	RequestCanceled Status = "CANCELED"
 )
 
 type LeasingRequest struct {

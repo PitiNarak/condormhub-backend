@@ -78,3 +78,18 @@ func (s *LeasingRequestService) Reject(id uuid.UUID) error {
 	}
 	return nil
 }
+
+func (s *LeasingRequestService) Cancel(id uuid.UUID) error {
+	leasingRequest, err := s.requestRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	leasingRequest.End = time.Now()
+	requestCanceled := domain.RequestCanceled
+	leasingRequest.Status = &requestCanceled
+	err = s.requestRepo.Update(leasingRequest)
+	if err != nil {
+		return err
+	}
+	return nil
+}
