@@ -25,7 +25,7 @@ type LeasingRequest struct {
 	Lessee   User      `gorm:"foreignKey:LesseeID;references:ID"`
 	LessorID uuid.UUID `gorm:"type:uuid;not null"`
 	Lessor   User      `gorm:"foreignKey:LessorID;references:ID"`
-	Create   time.Time
+	Start    time.Time
 	End      time.Time `gorm:"default:null"`
 }
 
@@ -36,7 +36,7 @@ func (l *LeasingRequest) ToDTO() dto.LeasingRequest {
 		Dorm:   l.Dorm.ToDTO(),
 		Lessee: l.Lessee.ToDTO(),
 		Lessor: l.Lessor.ToDTO(),
-		Create: l.Create,
+		Start:  l.Start,
 		End:    l.End,
 	}
 }

@@ -12,6 +12,6 @@ type LeasingRequest struct {
 	Dorm   DormResponseBody `json:"dorm"`
 	Lessee UserResponse     `json:"lessee"`
 	Lessor UserResponse     `json:"lessor"`
-	Create time.Time        `json:"create"`
+	Start  time.Time        `json:"start"`
 	End    time.Time        `json:"end"`
 }

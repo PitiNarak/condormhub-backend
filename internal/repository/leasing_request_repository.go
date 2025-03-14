@@ -74,7 +74,7 @@ func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, ro
 	} else {
 		query = d.db.Preload("Dorm").Preload("Lessee").Preload("Lessor").Where("lessor_id = ?", id)
 	}
-	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "create desc")
+	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start DESC")
 
 	if err != nil {
 		if apperror.IsAppError(err) {

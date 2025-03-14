@@ -26,7 +26,7 @@ func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*d
 	}
 	createTime := time.Now()
 	requestPending := domain.RequestPending
-	leasingRequest := &domain.LeasingRequest{Status: &requestPending, DormID: dormID, LesseeID: leeseeID, LessorID: dorm.OwnerID, Create: createTime}
+	leasingRequest := &domain.LeasingRequest{Status: &requestPending, DormID: dormID, LesseeID: leeseeID, LessorID: dorm.OwnerID, Start: createTime}
 	err = s.requestRepo.Create(leasingRequest)
 	if err != nil {
 		return &domain.LeasingRequest{}, err

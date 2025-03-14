@@ -31,7 +31,7 @@ func NewLeasingRequestHandler(service ports.LeasingRequestService) ports.Leasing
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only lessor can approve a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
-// @Router /request/{id} [patch]
+// @Router /request/approve/{id} [patch]
 func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(domain.User)
@@ -74,7 +74,7 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only lessor can reject a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
-// @Router /request/{id} [patch]
+// @Router /request/reject/{id} [patch]
 func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(domain.User)
@@ -117,7 +117,7 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
-// @Router /request/{id} [patch]
+// @Router /request/cancel/{id} [patch]
 func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(domain.User)
