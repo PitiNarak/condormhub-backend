@@ -318,13 +318,13 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 // @Tags user
 // @Security Bearer
 // @Produce json
-// @Success 200 {object} dto.SuccessResponse[domain.User] "get user information successfully"
+// @Success 200 {object} dto.SuccessResponse[dto.UserResponse] "get user information successfully"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "system cannot get user information"
 // @Router /user/me [get]
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	res := dto.Success(user)
+	res := dto.Success(user.ToDTO())
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
@@ -347,4 +347,31 @@ func (h *UserHandler) DeleteAccount(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+// GetUserByID godoc
+// @Summary GetUserByID
+// @Description Get User By ID
+// @Tags user
+// @Security Bearer
+// @Produce json
+// @Param id path string true "user id"
+// @Success 200 {object} dto.SuccessResponse[dto.UserResponse] "get user information successfully"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "system cannot get user information"
+// @Router /user/{id} [get]
+func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
+	userID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return apperror.BadRequestError(err, "invalid user id")
+	}
+	user, err := h.userService.GetUserByID(userID)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get user by id failed")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(user.ToDTO()))
 }

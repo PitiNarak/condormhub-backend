@@ -21,6 +21,7 @@ type UserRepository interface {
 type UserService interface {
 	Create(ctx context.Context, user *domain.User) (string, string, error)
 	GetUserByEmail(email string) (*domain.User, error)
+	GetUserByID(id uuid.UUID) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(context.Context, string, string) (*domain.User, string, string, error)
 	RefreshToken(ctx context.Context, refreshToken string) (string, string, error)
@@ -40,4 +41,5 @@ type UserHandler interface {
 	GetUserInfo(c *fiber.Ctx) error
 	ResetPassword(c *fiber.Ctx) error
 	DeleteAccount(c *fiber.Ctx) error
+	GetUserByID(c *fiber.Ctx) error
 }

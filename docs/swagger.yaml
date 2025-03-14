@@ -1,58 +1,5 @@
 components:
   schemas:
-    domain.Role:
-      type: string
-      x-enum-varnames:
-      - AdminRole
-      - LesseeRole
-      - LessorRole
-    domain.User:
-      properties:
-        birthDate:
-          type: string
-        createAt:
-          type: string
-        email:
-          type: string
-        filledPersonalInfo:
-          type: boolean
-        firstname:
-          type: string
-        gender:
-          type: string
-        id:
-          type: string
-        isStudentVerified:
-          type: boolean
-        isVerified:
-          type: boolean
-        lastname:
-          type: string
-        lifestyles:
-          items:
-            type: string
-          type: array
-          uniqueItems: false
-        nationalID:
-          type: string
-        password:
-          minLength: 8
-          type: string
-        phoneNumber:
-          type: string
-        role:
-          $ref: '#/components/schemas/domain.Role'
-        studentEvidence:
-          type: string
-        updateAt:
-          type: string
-        username:
-          type: string
-      required:
-      - email
-      - password
-      - username
-      type: object
     dto.Address:
       properties:
         district:
@@ -334,11 +281,6 @@ components:
       required:
       - password
       - token
-      type: object
-    dto.SuccessResponse-domain_User:
-      properties:
-        data:
-          $ref: '#/components/schemas/domain.User'
       type: object
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
@@ -1858,6 +1800,40 @@ paths:
       summary: Delete a user account
       tags:
       - user
+  /user/{id}:
+    get:
+      description: Get User By ID
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
+          description: get user information successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot get user information
+      security:
+      - Bearer: []
+      summary: GetUserByID
+      tags:
+      - user
   /user/me:
     get:
       description: Get user information
@@ -1866,7 +1842,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_User'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
           description: get user information successfully
         "401":
           content:
