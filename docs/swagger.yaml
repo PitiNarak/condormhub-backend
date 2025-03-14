@@ -187,8 +187,6 @@ components:
       type: object
     dto.LeasingRequest:
       properties:
-        create:
-          type: string
         dorm:
           $ref: '#/components/schemas/dto.DormResponseBody'
         end:
@@ -199,6 +197,8 @@ components:
           $ref: '#/components/schemas/dto.UserResponse'
         lessor:
           $ref: '#/components/schemas/dto.UserResponse'
+        start:
+          type: string
         status:
           type: string
       type: object
@@ -1528,47 +1528,6 @@ paths:
       summary: Delete a leasing request
       tags:
       - request
-    patch:
-      description: Cancel a leasing request
-      parameters:
-      - description: LeasingRequestId
-        in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      responses:
-        "204":
-          description: No Content
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: leasing request not found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Can not parse UUID or Failed to update leasing request
-      security:
-      - Bearer: []
-      summary: Cancel a leasing request
-      tags:
-      - request
     post:
       description: Add a new leasing request to the database
       parameters:
@@ -1614,6 +1573,90 @@ paths:
       summary: Create a new leasing request
       tags:
       - request
+  /request/approve/{id}:
+    patch:
+      description: Approve a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized or only lessor can approve a request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Approve a leasing request
+      tags:
+      - request
+  /request/cancel/{id}:
+    patch:
+      description: Cancel a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Cancel a leasing request
+      tags:
+      - request
   /request/me:
     get:
       description: Retrieve a list of all leasing request by userid
@@ -1657,6 +1700,48 @@ paths:
       security:
       - Bearer: []
       summary: Get all leasing request by userid
+      tags:
+      - request
+  /request/reject/{id}:
+    patch:
+      description: Reject a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized or only lessor can reject a request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Reject a leasing request
       tags:
       - request
   /transaction:
