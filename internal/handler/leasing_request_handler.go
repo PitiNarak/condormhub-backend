@@ -163,7 +163,7 @@ func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 // @Router /request/me [get]
 func (h *LeasingRequestHandler) GetByUserID(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
-	user := c.Locals("user").(domain.User)
+	user := c.Locals("user").(*domain.User)
 	limit := max(50, c.QueryInt("limit", 10))
 	if limit <= 0 {
 		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
