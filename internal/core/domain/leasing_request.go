@@ -18,7 +18,7 @@ const (
 
 type LeasingRequest struct {
 	ID       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	Status   *Status   `gorm:"default:null"`
+	Status   Status    `gorm:"default:null"`
 	DormID   uuid.UUID `gorm:"type:uuid;not null"`
 	Dorm     Dorm      `gorm:"foreignKey:DormID;references:ID"`
 	LesseeID uuid.UUID `gorm:"type:uuid;not null"`
@@ -32,7 +32,7 @@ type LeasingRequest struct {
 func (l *LeasingRequest) ToDTO() dto.LeasingRequest {
 	return dto.LeasingRequest{
 		ID:     l.ID,
-		Status: string(*l.Status),
+		Status: string(l.Status),
 		Dorm:   l.Dorm.ToDTO(),
 		Lessee: l.Lessee.ToDTO(),
 		Lessor: l.Lessor.ToDTO(),

@@ -25,8 +25,7 @@ func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*d
 		return &domain.LeasingRequest{}, err
 	}
 	createTime := time.Now()
-	requestPending := domain.RequestPending
-	leasingRequest := &domain.LeasingRequest{Status: &requestPending, DormID: dormID, LesseeID: leeseeID, LessorID: dorm.OwnerID, Start: createTime}
+	leasingRequest := &domain.LeasingRequest{Status: domain.RequestPending, DormID: dormID, LesseeID: leeseeID, LessorID: dorm.OwnerID, Start: createTime}
 	err = s.requestRepo.Create(leasingRequest)
 	if err != nil {
 		return &domain.LeasingRequest{}, err
@@ -56,12 +55,14 @@ func (s *LeasingRequestService) Approve(id, userId uuid.UUID) error {
 	if err != nil {
 		return err
 	}
+	if leasingRequest.Status != domain.RequestPending {
+		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
+	}
 	if userId != leasingRequest.LessorID {
 		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
 	}
 	leasingRequest.End = time.Now()
-	requestAccept := domain.RequestAccepted
-	leasingRequest.Status = &requestAccept
+	leasingRequest.Status = domain.RequestAccepted
 	err = s.requestRepo.Update(leasingRequest)
 	if err != nil {
 		return err
@@ -74,12 +75,14 @@ func (s *LeasingRequestService) Reject(id, userId uuid.UUID) error {
 	if err != nil {
 		return err
 	}
+	if leasingRequest.Status != domain.RequestPending {
+		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
+	}
 	if userId != leasingRequest.LessorID {
 		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
 	}
 	leasingRequest.End = time.Now()
-	requestRejected := domain.RequestRejected
-	leasingRequest.Status = &requestRejected
+	leasingRequest.Status = domain.RequestRejected
 	err = s.requestRepo.Update(leasingRequest)
 	if err != nil {
 		return err
@@ -92,12 +95,14 @@ func (s *LeasingRequestService) Cancel(id, userId uuid.UUID) error {
 	if err != nil {
 		return err
 	}
+	if leasingRequest.Status != domain.RequestPending {
+		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
+	}
 	if userId != leasingRequest.LesseeID {
 		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
 	}
 	leasingRequest.End = time.Now()
-	requestCanceled := domain.RequestCanceled
-	leasingRequest.Status = &requestCanceled
+	leasingRequest.Status = domain.RequestCanceled
 	err = s.requestRepo.Update(leasingRequest)
 	if err != nil {
 		return err
