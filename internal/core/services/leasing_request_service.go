@@ -55,6 +55,8 @@ func (s *LeasingRequestService) Approve(id uuid.UUID) error {
 		return err
 	}
 	leasingRequest.End = time.Now()
+	requestAccept := domain.RequestAccepted
+	leasingRequest.Status = &requestAccept
 	err = s.requestRepo.Update(leasingRequest)
 	if err != nil {
 		return err
@@ -68,6 +70,8 @@ func (s *LeasingRequestService) Reject(id uuid.UUID) error {
 		return err
 	}
 	leasingRequest.End = time.Now()
+	requestRejected := domain.RequestRejected
+	leasingRequest.Status = &requestRejected
 	err = s.requestRepo.Update(leasingRequest)
 	if err != nil {
 		return err
