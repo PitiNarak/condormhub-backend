@@ -34,7 +34,7 @@ func NewLeasingRequestHandler(service ports.LeasingRequestService) ports.Leasing
 // @Router /request/approve/{id} [patch]
 func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 	id := c.Params("id")
-	user := c.Locals("user").(domain.User)
+	user := c.Locals("user").(*domain.User)
 	if user.Role != domain.LessorRole {
 		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessor can approve a request")
 	}
@@ -77,7 +77,7 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 // @Router /request/reject/{id} [patch]
 func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 	id := c.Params("id")
-	user := c.Locals("user").(domain.User)
+	user := c.Locals("user").(*domain.User)
 	if user.Role != domain.LessorRole {
 		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessor can reject a request")
 	}
@@ -120,7 +120,7 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 // @Router /request/cancel/{id} [patch]
 func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 	id := c.Params("id")
-	user := c.Locals("user").(domain.User)
+	user := c.Locals("user").(*domain.User)
 	if user.Role != domain.LesseeRole {
 		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessee can cancel a request")
 	}

@@ -31,7 +31,7 @@ func (d *LeasingRequestRepository) Create(LeasingRequest *domain.LeasingRequest)
 
 func (d *LeasingRequestRepository) GetByID(id uuid.UUID) (*domain.LeasingRequest, error) {
 	leasingRequest := new(domain.LeasingRequest)
-	if err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").First(leasingRequest, id).Error; err != nil {
+	if err := d.db.Preload("Dorm").Preload("Lessee").First(leasingRequest, id).Error; err != nil {
 		if apperror.IsAppError(err) {
 			return nil, err
 		}
