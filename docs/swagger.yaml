@@ -1545,7 +1545,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: leasing request not found
+          description: leasing request not found or request is not in the pending
+            status
         "500":
           content:
             application/json:
@@ -1575,7 +1576,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
+          description: leasing request not found or request is not in the pending
+            status
         "401":
           content:
             application/json:
@@ -1662,7 +1664,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
+          description: leasing request not found or request is not in the pending
+            status
         "401":
           content:
             application/json:
