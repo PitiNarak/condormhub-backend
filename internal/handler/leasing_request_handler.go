@@ -241,6 +241,10 @@ func (h *LeasingRequestHandler) Delete(c *fiber.Ctx) error {
 // @Router /request/{id} [post]
 func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role != domain.LesseeRole {
+		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessee can cancel a request")
+	}
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
