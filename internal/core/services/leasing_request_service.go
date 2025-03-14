@@ -17,14 +17,14 @@ func NewLeasingRequestService(requestRepo ports.LeasingRequestRepository, dormRe
 	return &LeasingRequestService{requestRepo: requestRepo, dormRepo: dormRepo}
 }
 
-func (s *LeasingRequestService) Create(leeseeID, leesorID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error) {
-	_, err := s.dormRepo.GetByID(dormID)
+func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error) {
+	dorm, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
 		return &domain.LeasingRequest{}, err
 	}
 	createTime := time.Now()
 	requestPending := domain.RequestPending
-	leasingRequest := &domain.LeasingRequest{Status: &requestPending, DormID: dormID, LesseeID: leeseeID, LessorID: leesorID, Create: createTime}
+	leasingRequest := &domain.LeasingRequest{Status: &requestPending, DormID: dormID, LesseeID: leeseeID, LessorID: dorm.OwnerID, Create: createTime}
 	err = s.requestRepo.Create(leasingRequest)
 	if err != nil {
 		return &domain.LeasingRequest{}, err
