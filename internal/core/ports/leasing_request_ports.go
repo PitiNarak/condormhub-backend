@@ -16,7 +16,7 @@ type LeasingRequestRepository interface {
 }
 
 type LeasingRequestService interface {
-	Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error)
+	Create(leeseeID, leesorID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error)
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error)
