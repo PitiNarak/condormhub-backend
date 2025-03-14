@@ -68,7 +68,7 @@ func (d *LeasingRequestRepository) Delete(id uuid.UUID) error {
 }
 func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, role domain.Role) ([]domain.LeasingRequest, int, int, error) {
 	var leasingRequest []domain.LeasingRequest
-	query := new(gorm.DB)
+	var query *gorm.DB
 	if role == domain.LesseeRole {
 		query = d.db.Preload("Dorm").Preload("Lessee").Preload("Lessor").Where("lessee_id = ?", id)
 	} else {
