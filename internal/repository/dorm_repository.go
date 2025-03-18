@@ -52,39 +52,17 @@ func (d *DormRepository) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 }
 
 func (d *DormRepository) Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error {
-	updateData := make(map[string]interface{})
-	if dorm.Name != "" {
-		updateData["name"] = dorm.Name
-	}
-	if dorm.Size != 0 {
-		updateData["size"] = dorm.Size
-	}
-	if dorm.Bedrooms != 0 {
-		updateData["bedrooms"] = dorm.Bedrooms
-	}
-	if dorm.Bathrooms != 0 {
-		updateData["bathrooms"] = dorm.Bathrooms
-	}
-	if dorm.Price != 0 {
-		updateData["price"] = dorm.Price
-	}
-	if dorm.Description != "" {
-		updateData["description"] = dorm.Description
-	}
-	if dorm.Address.District != "" {
-		updateData["district"] = dorm.Address.District
-	}
-	if dorm.Address.Subdistrict != "" {
-		updateData["subdistrict"] = dorm.Address.Subdistrict
-	}
-	if dorm.Address.Province != "" {
-		updateData["province"] = dorm.Address.Province
-	}
-	if dorm.Address.Zipcode != "" {
-		updateData["zipcode"] = dorm.Address.Zipcode
+	updatedDorm := domain.Dorm{
+		Name:        dorm.Name,
+		Size:        dorm.Size,
+		Bedrooms:    dorm.Bedrooms,
+		Bathrooms:   dorm.Bathrooms,
+		Address:     domain.Address(dorm.Address),
+		Price:       dorm.Price,
+		Description: dorm.Description,
 	}
 
-	res := d.db.Model(&domain.Dorm{}).Where("id = ?", id).Updates(updateData)
+	res := d.db.Model(&domain.Dorm{}).Where("id = ?", id).Updates(updatedDorm)
 	if res.Error != nil {
 		return apperror.InternalServerError(res.Error, "Failed to update room")
 	}
