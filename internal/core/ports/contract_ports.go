@@ -25,4 +25,5 @@ type ContractService interface {
 type ContractHandler interface {
 	Create(c *fiber.Ctx) error
 	SignContract(c *fiber.Ctx) error
+	CancelContract(c *fiber.Ctx) error
 }

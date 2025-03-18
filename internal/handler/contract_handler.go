@@ -80,3 +80,50 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
 
 }
+
+func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
+	userID, err := c.Locals("userID").(uuid.UUID)
+	if !err {
+		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+	}
+
+	var reqBody *dto.ContractRequestBody
+	if err := c.BodyParser(&reqBody); err != nil {
+		return apperror.BadRequestError(err, "Failed to parse request body")
+	}
+
+	if userID != reqBody.LessorID && userID != reqBody.LesseeID {
+		return apperror.BadRequestError(errors.New("user ID does not match anyone in the contract"), "You are not authorized to update this contract")
+	}
+
+	contract, getErr := ct.contractService.GetContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID)
+	if getErr != nil {
+		if apperror.IsAppError(getErr) {
+			return getErr
+		}
+		return apperror.InternalServerError(getErr, "get contract error")
+	}
+
+	if contract.Status == domain.Signed {
+		return apperror.BadRequestError(errors.New("contract is already signed"), "You cannot cancel signed contract")
+	}
+
+	if contract.Status == domain.Cancelled {
+		return apperror.BadRequestError(errors.New("contract is already cancelld"), "You cannot cancel cancelled contract")
+	}
+
+	if err := ct.contractService.UpdateStatus(*reqBody, domain.Cancelled, userID); err != nil {
+		return err
+	}
+
+	res, getErr := ct.contractService.GetContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID)
+	if getErr != nil {
+		if apperror.IsAppError(getErr) {
+			return getErr
+		}
+		return apperror.InternalServerError(getErr, "get contract error")
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
+
+}

@@ -118,5 +118,11 @@ func (ct *ContractService) UpdateStatus(contractRequestBody dto.ContractRequestB
 			return err
 		}
 	}
+
+	if contract.LesseeStatus == domain.Cancelled || contract.LessorStatus == domain.Cancelled {
+		if err := ct.contractRepo.UpdateContractStatus(contractRequestBody, domain.Cancelled); err != nil {
+			return err
+		}
+	}
 	return nil
 }
