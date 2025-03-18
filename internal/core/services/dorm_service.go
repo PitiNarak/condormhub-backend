@@ -1,8 +1,12 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
 
@@ -14,7 +18,17 @@ func NewDormService(repo ports.DormRepository) ports.DormService {
 	return &DormService{dormRepo: repo}
 }
 
-func (s *DormService) Create(dorm *domain.Dorm) error {
+func checkPermission(ownerID uuid.UUID, userID uuid.UUID, isAdmin bool) error {
+	if ownerID != userID && !isAdmin {
+		return errors.New("unauthorized action")
+	}
+	return nil
+}
+
+func (s *DormService) Create(userRole domain.Role, dorm *domain.Dorm) error {
+	if userRole != domain.AdminRole && userRole != domain.LessorRole {
+		return apperror.ForbiddenError(errors.New("unauthorized action"), "You do not have permission to create a dorm")
+	}
 	return s.dormRepo.Create(dorm)
 }
 
@@ -30,10 +44,32 @@ func (s *DormService) GetByID(id uuid.UUID) (*domain.Dorm, error) {
 	return s.dormRepo.GetByID(id)
 }
 
-func (s *DormService) Update(id uuid.UUID, dorm *domain.Dorm) error {
-	return s.dormRepo.Update(id, dorm)
+func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, updateData *dto.DormUpdateRequestBody) (*domain.Dorm, error) {
+	dorm, err := s.dormRepo.GetByID(dormID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
+		return nil, apperror.ForbiddenError(err, "You do not have permission to update this dorm")
+	}
+
+	if err := s.dormRepo.Update(dormID, *updateData); err != nil {
+		return nil, err
+	}
+
+	return s.dormRepo.GetByID(dormID)
 }
 
-func (s *DormService) Delete(id uuid.UUID) error {
-	return s.dormRepo.Delete(id)
+func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error {
+	dorm, err := s.dormRepo.GetByID(dormID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
+		return apperror.ForbiddenError(err, "You do not have permission to delete this dorm")
+	}
+
+	return s.dormRepo.Delete(dormID)
 }

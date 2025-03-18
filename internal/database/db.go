@@ -39,7 +39,7 @@ func (db *Database) Paginate(value any, tx *gorm.DB, limit int, page int, order 
 	var totalRows int64
 
 	offset := (page - 1) * limit
-	if err := db.Model(value).Count(&totalRows).Offset(offset).Limit(limit).Order(order).Find(value).Error; err != nil {
+	if err := tx.Model(value).Count(&totalRows).Offset(offset).Limit(limit).Order(order).Find(value).Error; err != nil {
 		return 0, 0, err
 	}
 	totalPages := int(math.Ceil(float64(totalRows) / float64(limit)))

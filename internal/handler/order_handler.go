@@ -49,7 +49,7 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 		return err
 	}
 
-	data := dto.OrderResponseBody(*order)
+	data := order.ToDTO()
 	res := dto.Success(data)
 
 	return c.Status(fiber.StatusCreated).JSON(res)
@@ -61,7 +61,6 @@ func (o *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 // @Router /order/{id} [get]
 // @Tags order
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param id path string true "Order ID"
 // @Success 200 {object} dto.SuccessResponse[dto.OrderResponseBody] "Order retrieved successfully"
@@ -80,7 +79,7 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 		return serviceErr
 	}
 
-	data := dto.OrderResponseBody(*order)
+	data := order.ToDTO()
 	res := dto.Success(data)
 
 	return c.Status(fiber.StatusOK).JSON(res)
@@ -92,11 +91,10 @@ func (o *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 // @Router /order/unpaid/{userID} [get]
 // @Tags order
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param userID path string true "User ID"
-// @Param limit query string true "Number of history to be retrieved"
-// @Param page query string true "Page to retrieved"
+// @Param limit query int false "Number of history to be retrieved"
+// @Param page query int false "Page to retrieved"
 // @Success 200 {object} dto.PaginationResponse[dto.OrderResponseBody] "Order retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "your request is invalid"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -124,7 +122,7 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 
 	responseData := make([]dto.OrderResponseBody, len(orders))
 	for i, order := range orders {
-		responseData[i] = dto.OrderResponseBody(order)
+		responseData[i] = order.ToDTO()
 	}
 
 	pagination := dto.Pagination{
@@ -145,10 +143,9 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 // @Router /order/unpaid/me [get]
 // @Tags order
 // @Security Bearer
-// @Accept json
 // @Produce json
-// @Param limit query string true "Number of history to be retrieved"
-// @Param page query string true "Page to retrieved"
+// @Param limit query int false "Number of history to be retrieved"
+// @Param page query int false "Page to retrieved"
 // @Success 200 {object} dto.PaginationResponse[dto.OrderResponseBody] "Unpaid orders retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "your request is invalid"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -173,7 +170,7 @@ func (o *OrderHandler) GetMyUnpaidOrder(c *fiber.Ctx) error {
 
 	responseData := make([]dto.OrderResponseBody, len(orders))
 	for i, order := range orders {
-		responseData[i] = dto.OrderResponseBody(order)
+		responseData[i] = order.ToDTO()
 	}
 
 	pagination := dto.Pagination{
