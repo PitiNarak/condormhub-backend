@@ -1,245 +1,5 @@
 components:
   schemas:
-    domain.Address:
-      properties:
-        district:
-          type: string
-        province:
-          type: string
-        subdistrict:
-          type: string
-        zipcode:
-          type: string
-      required:
-      - district
-      - province
-      - subdistrict
-      - zipcode
-      type: object
-    domain.CheckoutStatus:
-      type: string
-      x-enum-varnames:
-      - StatusOpen
-      - StatusComplete
-      - StatusExpired
-    domain.Dorm:
-      properties:
-        address:
-          $ref: '#/components/schemas/domain.Address'
-        bathrooms:
-          minimum: 0
-          type: integer
-        bedrooms:
-          minimum: 0
-          type: integer
-        createAt:
-          type: string
-        description:
-          type: string
-        id:
-          type: string
-        images:
-          items:
-            $ref: '#/components/schemas/domain.DormImage'
-          type: array
-          uniqueItems: false
-        name:
-          type: string
-        owner:
-          $ref: '#/components/schemas/domain.User'
-        ownerId:
-          type: string
-        price:
-          type: number
-        rating:
-          maximum: 5
-          minimum: 0
-          type: number
-        size:
-          type: number
-        updateAt:
-          type: string
-      required:
-      - address
-      - bathrooms
-      - bedrooms
-      - name
-      - ownerId
-      - price
-      - size
-      type: object
-    domain.DormImage:
-      properties:
-        createAt:
-          type: string
-        dormID:
-          type: string
-        id:
-          type: string
-        imageKey:
-          type: string
-      type: object
-    domain.LeasingHistory:
-      properties:
-        dorm:
-          $ref: '#/components/schemas/domain.Dorm'
-        dorm_id:
-          type: string
-        end:
-          type: string
-        id:
-          type: string
-        lessee:
-          $ref: '#/components/schemas/domain.User'
-        lessee_id:
-          type: string
-        orders:
-          items:
-            $ref: '#/components/schemas/domain.Order'
-          type: array
-          uniqueItems: false
-        price:
-          type: number
-        start:
-          type: string
-      type: object
-    domain.Lifestyle:
-      type: string
-      x-enum-varnames:
-      - Active
-      - Creative
-      - Social
-      - Relaxed
-      - Football
-      - Basketball
-      - Tennis
-      - Swimming
-      - Running
-      - Cycling
-      - Badminton
-      - Yoga
-      - GymAndFitness
-      - Music
-      - Dancing
-      - Photography
-      - Painting
-      - Gaming
-      - Reading
-      - Writing
-      - DIYAndCrafting
-      - Cooking
-      - Extrovert
-      - Introvert
-      - NightOwl
-      - EarlyBird
-      - Traveler
-      - Backpacker
-      - NatureLover
-      - Camping
-      - BeachLover
-      - DogLover
-      - CatLover
-      - Freelancer
-      - Entrepreneur
-      - OfficeWorker
-      - RemoteWorker
-      - Student
-      - SelfEmployed
-    domain.Order:
-      properties:
-        createAt:
-          type: string
-        id:
-          type: string
-        leasingHistory:
-          $ref: '#/components/schemas/domain.LeasingHistory'
-        leasingHistoryID:
-          type: string
-        paidTransaction:
-          $ref: '#/components/schemas/domain.Transaction'
-        paidTransactionID:
-          type: string
-        price:
-          type: integer
-        transactions:
-          items:
-            $ref: '#/components/schemas/domain.Transaction'
-          type: array
-          uniqueItems: false
-        type:
-          $ref: '#/components/schemas/domain.OrderType'
-        updateAt:
-          type: string
-      type: object
-    domain.OrderType:
-      type: string
-      x-enum-varnames:
-      - InsuranceOrderType
-      - MonthlyBillOrderType
-    domain.Role:
-      type: string
-      x-enum-varnames:
-      - AdminRole
-      - LesseeRole
-      - LessorRole
-    domain.Transaction:
-      properties:
-        createAt:
-          type: string
-        id:
-          type: string
-        price:
-          type: integer
-        status:
-          $ref: '#/components/schemas/domain.CheckoutStatus'
-        updateAt:
-          type: string
-      type: object
-    domain.User:
-      description: will probably change to some form of dto.UserResponseBody
-      properties:
-        birthDate:
-          type: string
-        createAt:
-          type: string
-        email:
-          type: string
-        filledPersonalInfo:
-          type: boolean
-        firstname:
-          type: string
-        gender:
-          type: string
-        id:
-          type: string
-        isStudentVerified:
-          type: boolean
-        isVerified:
-          type: boolean
-        lastname:
-          type: string
-        lifestyles:
-          items:
-            $ref: '#/components/schemas/domain.Lifestyle'
-          type: array
-          uniqueItems: false
-        nationalID:
-          type: string
-        phoneNumber:
-          type: string
-        role:
-          $ref: '#/components/schemas/domain.Role'
-        studentEvidence:
-          description: studentEvidence
-          type: string
-        updateAt:
-          type: string
-        username:
-          type: string
-      required:
-      - email
-      - username
-      type: object
     dto.Address:
       properties:
         district:
@@ -323,7 +83,7 @@ components:
         name:
           type: string
         owner:
-          $ref: '#/components/schemas/domain.User'
+          $ref: '#/components/schemas/dto.UserResponse'
         price:
           type: number
         rating:
@@ -357,6 +117,26 @@ components:
         error:
           type: string
       type: object
+    dto.LeasingHistory:
+      properties:
+        dorm:
+          $ref: '#/components/schemas/dto.DormResponseBody'
+        end:
+          type: string
+        id:
+          type: string
+        lessee:
+          $ref: '#/components/schemas/dto.UserResponse'
+        orders:
+          items:
+            $ref: '#/components/schemas/dto.OrderResponseBody'
+          type: array
+          uniqueItems: false
+        price:
+          type: number
+        start:
+          type: string
+      type: object
     dto.LoginRequestBody:
       properties:
         email:
@@ -379,15 +159,29 @@ components:
         id:
           type: string
         paidTransaction:
-          $ref: '#/components/schemas/domain.Transaction'
+          $ref: '#/components/schemas/dto.TransactionResponse'
         price:
           type: integer
         type:
           type: string
-          x-enum-varnames:
-          - InsuranceOrderType
-          - MonthlyBillOrderType
       type: object
+    dto.OwnershipProofResponseBody:
+      properties:
+        adminId:
+          type: string
+        dormId:
+          type: string
+        status:
+          $ref: '#/components/schemas/dto.OwnershipProofStatus'
+        url:
+          type: string
+      type: object
+    dto.OwnershipProofStatus:
+      type: string
+      x-enum-varnames:
+      - Pending
+      - Approved
+      - Rejected
     dto.Pagination:
       properties:
         current_page:
@@ -399,21 +193,21 @@ components:
         total:
           type: integer
       type: object
-    dto.PaginationResponse-domain_LeasingHistory:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/domain.LeasingHistory'
-          type: array
-          uniqueItems: false
-        pagination:
-          $ref: '#/components/schemas/dto.Pagination'
-      type: object
     dto.PaginationResponse-dto_DormResponseBody:
       properties:
         data:
           items:
             $ref: '#/components/schemas/dto.DormResponseBody'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
+    dto.PaginationResponse-dto_LeasingHistory:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.LeasingHistory'
           type: array
           uniqueItems: false
         pagination:
@@ -466,16 +260,6 @@ components:
       - password
       - token
       type: object
-    dto.SuccessResponse-domain_LeasingHistory:
-      properties:
-        data:
-          $ref: '#/components/schemas/domain.LeasingHistory'
-      type: object
-    dto.SuccessResponse-domain_User:
-      properties:
-        data:
-          $ref: '#/components/schemas/domain.User'
-      type: object
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
         data:
@@ -491,10 +275,20 @@ components:
         data:
           $ref: '#/components/schemas/dto.DormResponseBody'
       type: object
+    dto.SuccessResponse-dto_LeasingHistory:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.LeasingHistory'
+      type: object
     dto.SuccessResponse-dto_OrderResponseBody:
       properties:
         data:
           $ref: '#/components/schemas/dto.OrderResponseBody'
+      type: object
+    dto.SuccessResponse-dto_OwnershipProofResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
       type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
@@ -505,6 +299,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.TokenWithUserInformationResponseBody'
+      type: object
+    dto.SuccessResponse-dto_UserResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.UserResponse'
       type: object
     dto.TokenResponseBody:
       properties:
@@ -520,11 +319,24 @@ components:
         refreshToken:
           type: string
         userInformation:
-          $ref: '#/components/schemas/domain.User'
+          $ref: '#/components/schemas/dto.UserResponse'
       type: object
     dto.TransactionRequestBody:
       properties:
         orderID:
+          type: string
+      type: object
+    dto.TransactionResponse:
+      properties:
+        createAt:
+          type: string
+        id:
+          type: string
+        price:
+          type: integer
+        status:
+          type: string
+        updateAt:
           type: string
       type: object
     dto.UserInformationRequestBody:
@@ -532,14 +344,16 @@ components:
         birthDate:
           type: string
         firstname:
+          minLength: 2
           type: string
         gender:
           type: string
         lastname:
+          minLength: 2
           type: string
         lifestyles:
           items:
-            $ref: '#/components/schemas/domain.Lifestyle'
+            type: string
           type: array
           uniqueItems: false
         nationalID:
@@ -548,6 +362,42 @@ components:
           minLength: 8
           type: string
         phoneNumber:
+          type: string
+        studentEvidence:
+          type: string
+        username:
+          minLength: 2
+          type: string
+      type: object
+    dto.UserResponse:
+      description: will probably change to some form of dto.UserResponseBody
+      properties:
+        birthDate:
+          type: string
+        email:
+          type: string
+        filledPersonalInfo:
+          type: boolean
+        firstname:
+          type: string
+        gender:
+          type: string
+        id:
+          type: string
+        isStudentVerified:
+          type: boolean
+        isVerified:
+          type: boolean
+        lastname:
+          type: string
+        lifestyles:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+        phoneNumber:
+          type: string
+        role:
           type: string
         studentEvidence:
           type: string
@@ -1083,7 +933,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_LeasingHistory'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_LeasingHistory'
           description: Dorm successfully created
         "400":
           content:
@@ -1139,7 +989,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_LeasingHistory'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
           description: Retrive history successfully
         "400":
           content:
@@ -1190,7 +1040,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_LeasingHistory'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
           description: Retrive history successfully
         "400":
           content:
@@ -1272,11 +1122,6 @@ paths:
         required: true
         schema:
           type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         "200":
           content:
@@ -1326,20 +1171,13 @@ paths:
       - description: Number of history to be retrieved
         in: query
         name: limit
-        required: true
         schema:
-          type: string
+          type: integer
       - description: Page to retrieved
         in: query
         name: page
-        required: true
         schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
+          type: integer
       responses:
         "200":
           content:
@@ -1383,20 +1221,13 @@ paths:
       - description: Number of history to be retrieved
         in: query
         name: limit
-        required: true
         schema:
-          type: string
+          type: integer
       - description: Page to retrieved
         in: query
         name: page
-        required: true
         schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
+          type: integer
       responses:
         "200":
           content:
@@ -1433,6 +1264,208 @@ paths:
       summary: Get my unpaid orders by ID
       tags:
       - order
+  /ownership/{id}:
+    delete:
+      description: Delete an ownership proof file
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Ownership proof successfully deleted
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to delete Ownership file
+      security:
+      - Bearer: []
+      summary: Delete ownership proof
+      tags:
+      - ownership
+    get:
+      description: Retrieve ownership proof for a specific dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Get ownership proof by Dorm ID
+      tags:
+      - ownership
+  /ownership/{id}/approve:
+    post:
+      description: Approve a submitted ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof approved
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Approve ownership proof
+      tags:
+      - ownership
+  /ownership/{id}/reject:
+    post:
+      description: Reject a submitted ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof rejected
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownership file not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Internal server error
+      security:
+      - Bearer: []
+      summary: Reject ownership proof
+      tags:
+      - ownership
+  /ownership/{id}/upload:
+    post:
+      description: Upload a new file as ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: file
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownershop proof not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload new ownership proof
+      tags:
+      - ownership
   /transaction:
     post:
       description: Create a transaction
@@ -1494,7 +1527,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_User'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
           description: user successfully updated account information
         "400":
           content:
@@ -1547,6 +1580,40 @@ paths:
       summary: Delete a user account
       tags:
       - user
+  /user/{id}:
+    get:
+      description: Get User By ID
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
+          description: get user information successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot get user information
+      security:
+      - Bearer: []
+      summary: GetUserByID
+      tags:
+      - user
   /user/me:
     get:
       description: Get user information
@@ -1555,7 +1622,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_User'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
           description: get user information successfully
         "401":
           content:

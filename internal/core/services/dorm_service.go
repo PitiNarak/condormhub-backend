@@ -31,30 +31,6 @@ func checkPermission(ownerID uuid.UUID, userID uuid.UUID, isAdmin bool) error {
 	return nil
 }
 
-func (s *DormService) ConvertToDTO(dorm domain.Dorm) dto.DormResponseBody {
-	images := []string{}
-	for _, image := range dorm.Images {
-		images = append(images, s.storage.GetPublicUrl(image.ImageKey))
-	}
-
-	dto := dto.DormResponseBody{
-		ID:          dorm.ID,
-		CreateAt:    dorm.CreateAt,
-		UpdateAt:    dorm.UpdateAt,
-		Name:        dorm.Name,
-		Owner:       dorm.Owner,
-		Size:        dorm.Size,
-		Bedrooms:    dorm.Bedrooms,
-		Bathrooms:   dorm.Bathrooms,
-		Address:     dto.Address(dorm.Address),
-		Price:       dorm.Price,
-		Rating:      dorm.Rating,
-		Description: dorm.Description,
-		Images:      images,
-	}
-	return dto
-}
-
 func (s *DormService) Create(userRole domain.Role, dorm *domain.Dorm) error {
 	if userRole != domain.AdminRole && userRole != domain.LessorRole {
 		return apperror.ForbiddenError(errors.New("unauthorized action"), "You do not have permission to create a dorm")

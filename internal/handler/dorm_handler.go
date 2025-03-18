@@ -37,7 +37,7 @@ func NewDormHandler(service ports.DormService) ports.DormHandler {
 func (d *DormHandler) Create(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	userRole := user.Role
-	if userRole == nil {
+	if userRole == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
@@ -69,14 +69,14 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		Description: reqBody.Description,
 	}
 
-	if err := d.dormService.Create(*userRole, dorm); err != nil {
+	if err := d.dormService.Create(userRole, dorm); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
 		return apperror.InternalServerError(err, "create dorm error")
 	}
 
-	res, err := d.dormService.GetByID(dorm.ID)
+	data, err := d.dormService.GetByID(dorm.ID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -84,7 +84,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(d.dormService.ConvertToDTO(*res)))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(data.ToDTO()))
 }
 
 // Delete godoc
@@ -105,11 +105,11 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
@@ -161,12 +161,12 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorms error")
 	}
 
-	responseData := make([]dto.DormResponseBody, len(dorms))
-	for i, dorm := range dorms {
-		responseData[i] = d.dormService.ConvertToDTO(dorm)
+	resData := make([]dto.DormResponseBody, len(dorms))
+	for i, v := range dorms {
+		resData[i] = v.ToDTO()
 	}
 
-	res := dto.SuccessPagination(responseData, dto.Pagination{
+	res := dto.SuccessPagination(resData, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPages,
 		Limit:       limit,
@@ -208,7 +208,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(d.dormService.ConvertToDTO(*dorm)))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm.ToDTO()))
 }
 
 // Update godoc
@@ -231,11 +231,11 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
 
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
 
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	id := c.Params("id")
 	updateReqBody := new(dto.DormUpdateRequestBody)
@@ -265,7 +265,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(d.dormService.ConvertToDTO(*updatedDorm)))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm.ToDTO()))
 }
 
 // UploadDormImage godoc
@@ -302,10 +302,10 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	if user.Role == nil {
+	if user.Role == "" {
 		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
 	}
-	isAdmin := *user.Role == domain.AdminRole
+	isAdmin := user.Role == domain.AdminRole
 
 	fileData, err := file.Open()
 	if err != nil {

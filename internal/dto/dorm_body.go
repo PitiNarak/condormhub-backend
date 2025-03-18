@@ -3,7 +3,6 @@ package dto
 import (
 	"time"
 
-	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/google/uuid"
 )
 
@@ -44,17 +43,17 @@ type DormImageUploadResponseBody struct {
 }
 
 type DormResponseBody struct {
-	ID          uuid.UUID   `json:"id"`
-	CreateAt    time.Time   `json:"createAt"`
-	UpdateAt    time.Time   `json:"updateAt"`
-	Name        string      `json:"name"`
-	Owner       domain.User `json:"owner"` // will probably change to some form of dto.UserResponseBody
-	Size        float64     `json:"size"`
-	Bedrooms    int         `json:"bedrooms"`
-	Bathrooms   int         `json:"bathrooms"`
-	Address     Address     `json:"address"`
-	Price       float64     `json:"price"`
-	Rating      float64     `json:"rating"`
-	Description string      `json:"description"`
-	Images      []string    `json:"imagesUrl"`
+	ID          uuid.UUID    `json:"id"`
+	CreateAt    time.Time    `json:"createAt"`
+	UpdateAt    time.Time    `json:"updateAt"`
+	Name        string       `json:"name"`
+	Owner       UserResponse `json:"owner"` // will probably change to some form of dto.UserResponseBody
+	Size        float64      `json:"size"`
+	Bedrooms    int          `json:"bedrooms"`
+	Bathrooms   int          `json:"bathrooms"`
+	Address     Address      `json:"address"`
+	Price       float64      `json:"price"`
+	Rating      float64      `json:"rating"`
+	Description string       `json:"description"`
+	Images      []string     `json:"imagesUrl"`
 }
