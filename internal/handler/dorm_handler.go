@@ -84,7 +84,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(data.ToDTO()))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(data))
 }
 
 // Delete godoc
@@ -161,12 +161,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorms error")
 	}
 
-	resData := make([]dto.DormResponseBody, len(dorms))
-	for i, v := range dorms {
-		resData[i] = v.ToDTO()
-	}
-
-	res := dto.SuccessPagination(resData, dto.Pagination{
+	res := dto.SuccessPagination(dorms, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPages,
 		Limit:       limit,
@@ -208,7 +203,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm))
 }
 
 // Update godoc
@@ -265,7 +260,7 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
 }
 
 // UploadDormImage godoc

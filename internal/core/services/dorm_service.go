@@ -38,19 +38,28 @@ func (s *DormService) Create(userRole domain.Role, dorm *domain.Dorm) error {
 	return s.dormRepo.Create(dorm)
 }
 
-func (s *DormService) GetAll(limit int, page int) ([]domain.Dorm, int, int, error) {
+func (s *DormService) GetAll(limit int, page int) ([]dto.DormResponseBody, int, int, error) {
 	dorms, totalPages, totalRows, err := s.dormRepo.GetAll(limit, page)
 	if err != nil {
 		return nil, totalPages, totalRows, err
 	}
-	return dorms, totalPages, totalRows, nil
+	resData := make([]dto.DormResponseBody, len(dorms))
+	for i, v := range dorms {
+		resData[i] = v.ToDTO()
+	}
+	return resData, totalPages, totalRows, nil
 }
 
-func (s *DormService) GetByID(id uuid.UUID) (*domain.Dorm, error) {
-	return s.dormRepo.GetByID(id)
+func (s *DormService) GetByID(id uuid.UUID) (*dto.DormResponseBody, error) {
+	dorm, err := s.dormRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	resData := dorm.ToDTO()
+	return &resData, nil
 }
 
-func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, updateData *dto.DormUpdateRequestBody) (*domain.Dorm, error) {
+func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, updateData *dto.DormUpdateRequestBody) (*dto.DormResponseBody, error) {
 	dorm, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
 		return nil, err
@@ -64,7 +73,7 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 		return nil, err
 	}
 
-	return s.dormRepo.GetByID(dormID)
+	return s.GetByID(dormID)
 }
 
 func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error {

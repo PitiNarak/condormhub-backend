@@ -21,9 +21,9 @@ type DormRepository interface {
 
 type DormService interface {
 	Create(userRole domain.Role, dorm *domain.Dorm) error
-	GetAll(limit int, page int) ([]domain.Dorm, int, int, error)
-	GetByID(id uuid.UUID) (*domain.Dorm, error)
-	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormUpdateRequestBody) (*domain.Dorm, error)
+	GetAll(limit int, page int) ([]dto.DormResponseBody, int, int, error)
+	GetByID(id uuid.UUID) (*dto.DormResponseBody, error)
+	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormUpdateRequestBody) (*dto.DormResponseBody, error)
 	Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
 	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 }

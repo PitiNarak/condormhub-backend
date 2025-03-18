@@ -47,7 +47,7 @@ type DormResponseBody struct {
 	CreateAt    time.Time    `json:"createAt"`
 	UpdateAt    time.Time    `json:"updateAt"`
 	Name        string       `json:"name"`
-	Owner       UserResponse `json:"owner"` // will probably change to some form of dto.UserResponseBody
+	Owner       UserResponse `json:"owner"`
 	Size        float64      `json:"size"`
 	Bedrooms    int          `json:"bedrooms"`
 	Bathrooms   int          `json:"bathrooms"`
