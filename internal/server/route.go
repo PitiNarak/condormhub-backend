@@ -97,5 +97,6 @@ func (s *Server) initOwnershipProofRoutes() {
 func (s *Server) initContractRoutes() {
 	contractRoutes := s.app.Group("/contract")
 	contractRoutes.Post("/create", s.authMiddleware.Auth, s.handler.contract.Create)
+	contractRoutes.Post("/sign", s.authMiddleware.Auth, s.handler.contract.SignContract)
 
 }
