@@ -99,5 +99,6 @@ func (s *Server) initContractRoutes() {
 	contractRoutes.Post("/create", s.authMiddleware.Auth, s.handler.contract.Create)
 	contractRoutes.Post("/sign", s.authMiddleware.Auth, s.handler.contract.SignContract)
 	contractRoutes.Post("/cancel", s.authMiddleware.Auth, s.handler.contract.CancelContract)
+	contractRoutes.Delete("/:lessor_id/:lessee_id/:dorm_id", s.authMiddleware.Auth, s.handler.contract.Delete)
 
 }

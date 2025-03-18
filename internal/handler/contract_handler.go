@@ -127,3 +127,31 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
 
 }
+
+func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
+	lessorID, err := uuid.Parse(c.Params("lessor_id"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid lessor ID format")
+	}
+	lesseeID, err := uuid.Parse(c.Params("lessee_id"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid lessee ID format")
+	}
+	dormID, err := uuid.Parse(c.Params("dorm_id"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid dorm ID format")
+	}
+
+	reqBody := dto.ContractRequestBody{
+		LessorID: lessorID,
+		LesseeID: lesseeID,
+		DormID:   dormID,
+	}
+
+	if err := ct.contractService.DeleteContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID); err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
+
+}

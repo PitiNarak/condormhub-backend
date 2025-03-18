@@ -60,6 +60,10 @@ func (ct *ContractService) Create(contract *domain.Contract) error {
 	return nil
 }
 
+func (ct *ContractService) DeleteContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) error {
+	return ct.contractRepo.Delete(lessorID, lesseeID, dormID)
+}
+
 func (ct *ContractService) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*domain.Contract, error) {
 	return ct.contractRepo.GetContract(lessorID, lesseeID, dormID)
 }

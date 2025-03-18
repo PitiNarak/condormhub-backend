@@ -19,6 +19,7 @@ type ContractRepository interface {
 type ContractService interface {
 	Create(contract *domain.Contract) error
 	GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*domain.Contract, error)
+	DeleteContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) error
 	UpdateStatus(contractRequestBody dto.ContractRequestBody, lessorStatus domain.ContractStatus, userID uuid.UUID) error
 }
 
@@ -26,4 +27,5 @@ type ContractHandler interface {
 	Create(c *fiber.Ctx) error
 	SignContract(c *fiber.Ctx) error
 	CancelContract(c *fiber.Ctx) error
+	Delete(c *fiber.Ctx) error
 }
