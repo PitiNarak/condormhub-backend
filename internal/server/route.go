@@ -22,6 +22,7 @@ func (s *Server) initRoutes() {
 	s.initOrderRoutes()
 	s.initTransactionRoutes()
 	s.initOwnershipProofRoutes()
+	s.initContractRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -90,5 +91,11 @@ func (s *Server) initOwnershipProofRoutes() {
 	ownershipRoutes.Get("/:id", s.handler.ownershipProof.GetByDormID)
 	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
 	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
+
+}
+
+func (s *Server) initContractRoutes() {
+	contractRoutes := s.app.Group("/contract")
+	contractRoutes.Post("/create", s.authMiddleware.Auth, s.handler.contract.Create)
 
 }

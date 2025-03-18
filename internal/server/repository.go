@@ -12,6 +12,7 @@ type repository struct {
 	order          ports.OrderRepository
 	tsx            ports.TransactionRepository
 	ownershipProof ports.OwnershipProofRepository
+	contract       ports.ContractRepository
 }
 
 func (s *Server) initRepository() {
@@ -21,6 +22,7 @@ func (s *Server) initRepository() {
 	order := repository1.NewOrderRepository(s.db)
 	tsx := repository1.NewTransactionRepository(s.db)
 	ownershipProof := repository1.NewOwnershipProofRepository(s.db)
+	contract := repository1.NewContractRepository(s.db)
 
 	s.repository = &repository{
 		user:           user,
@@ -29,5 +31,6 @@ func (s *Server) initRepository() {
 		order:          order,
 		tsx:            tsx,
 		ownershipProof: ownershipProof,
+		contract:       contract,
 	}
 }
