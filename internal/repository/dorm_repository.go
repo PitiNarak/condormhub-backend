@@ -77,9 +77,10 @@ func (d *DormRepository) SaveDormImage(dormImage *domain.DormImage) error {
 	return nil
 }
 
-func (d *DormRepository) SearchByName(name string, limit int, page int) ([]domain.Dorm, int, int, error) {
+func (d *DormRepository) SearchByQuery(searchTerm string, limit int, page int) ([]domain.Dorm, int, int, error) {
 	var dorms []domain.Dorm
-	query := d.db.Preload("Owner").Preload("Images").Where("name LIKE ?", "%"+name+"%")
+	regex := "%" + searchTerm + "%"
+	query := d.db.Preload("Owner").Preload("Images").Where("name LIKE ? OR province LIKE ? OR district LIKE ? OR subdistrict LIKE ? OR zipcode LIKE ?", regex, regex, regex, regex, regex)
 
 	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
 	if err != nil {

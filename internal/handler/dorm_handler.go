@@ -160,8 +160,8 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	var totalRows int
 	var err error
 
-	name := c.Query("name")
-	if name == "" {
+	searchTerm := c.Query("search")
+	if searchTerm == "" {
 		dorms, totalPages, totalRows, err = d.dormService.GetAll(limit, page)
 		if err != nil {
 			if apperror.IsAppError(err) {
@@ -170,7 +170,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 			return apperror.InternalServerError(err, "get dorms error")
 		}
 	} else {
-		dorms, totalPages, totalRows, err = d.dormService.SearchByName(name, limit, page)
+		dorms, totalPages, totalRows, err = d.dormService.SearchByQuery(searchTerm, limit, page)
 		if err != nil {
 			if apperror.IsAppError(err) {
 				return err

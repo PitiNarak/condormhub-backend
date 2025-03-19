@@ -128,8 +128,8 @@ func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, fil
 	return url, nil
 }
 
-func (s *DormService) SearchByName(name string, limit int, page int) ([]dto.DormResponseBody, int, int, error) {
-	dorms, totalPages, totalRows, err := s.dormRepo.SearchByName(name, limit, page)
+func (s *DormService) SearchByQuery(searchTerm string, limit int, page int) ([]dto.DormResponseBody, int, int, error) {
+	dorms, totalPages, totalRows, err := s.dormRepo.SearchByQuery(searchTerm, limit, page)
 	if err != nil {
 		return nil, totalPages, totalRows, err
 	}
