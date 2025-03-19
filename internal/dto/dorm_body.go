@@ -38,12 +38,16 @@ type Address struct {
 	Zipcode     string `json:"zipcode" validate:"omitempty,numeric,len=5"`
 }
 
+type DormImageUploadResponseBody struct {
+	ImageURL string `json:"url"`
+}
+
 type DormResponseBody struct {
 	ID          uuid.UUID    `json:"id"`
 	CreateAt    time.Time    `json:"createAt"`
 	UpdateAt    time.Time    `json:"updateAt"`
 	Name        string       `json:"name"`
-	Owner       UserResponse `json:"owner"` // will probably change to some form of dto.UserResponseBody
+	Owner       UserResponse `json:"owner"`
 	Size        float64      `json:"size"`
 	Bedrooms    int          `json:"bedrooms"`
 	Bathrooms   int          `json:"bathrooms"`

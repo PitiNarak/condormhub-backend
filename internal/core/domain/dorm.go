@@ -21,6 +21,7 @@ type Dorm struct {
 	Price       float64 `validate:"required,gt=0"`
 	Rating      float64 `gorm:"default:0" validate:"gte=0,lte=5"`
 	Description string  `gorm:"type:text"`
+	Images      []DormImage
 }
 
 type Address struct {
@@ -54,4 +55,11 @@ func (a *Address) ToDTO() dto.Address {
 		Province:    a.Province,
 		Zipcode:     a.Zipcode,
 	}
+}
+
+type DormImage struct {
+	ID       uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt time.Time `json:"createAt" gorm:"autoCreateTime"`
+	DormID   uuid.UUID `gorm:"type:uuid;not null"`
+	ImageKey string    `gorm:"type:text;not null"`
 }

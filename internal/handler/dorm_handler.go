@@ -84,7 +84,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(data.ToDTO()))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(data))
 }
 
 // Delete godoc
@@ -161,12 +161,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorms error")
 	}
 
-	resData := make([]dto.DormResponseBody, len(dorms))
-	for i, v := range dorms {
-		resData[i] = v.ToDTO()
-	}
-
-	res := dto.SuccessPagination(resData, dto.Pagination{
+	res := dto.SuccessPagination(dorms, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPages,
 		Limit:       limit,
@@ -208,7 +203,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm))
 }
 
 // Update godoc
@@ -265,5 +260,59 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
+}
+
+// UploadDormImage godoc
+// @Summary Upload an image for a dorm
+// @Description Upload an image for a specific dorm by its ID, by attaching the image as a value for the key field name "image", as a multipart form-data
+// @Tags dorms
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path string true "DormID"
+// @Param image formData file true "DormImage"
+// @Success 200 {object} dto.SuccessResponse[dto.DormImageUploadResponseBody] "Successful image upload"
+// @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to upload image to dorm"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "Dorm not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload dorm image"
+// @Router /dorms/{id}/images [post]
+func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		return apperror.BadRequestError(err, "file is required")
+	}
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isAdmin := user.Role == domain.AdminRole
+
+	fileData, err := file.Open()
+	if err != nil {
+		return apperror.InternalServerError(err, "error opening file")
+	}
+	defer fileData.Close()
+
+	contentType := file.Header.Get("Content-Type")
+	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData, userID, isAdmin)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: url}))
 }
