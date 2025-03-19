@@ -131,9 +131,10 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 }
 
 // GetAll godoc
-// @Summary Get all dorms
-// @Description Retrieve a list of all dorms
+// @Summary Get all dorms by name
+// @Description Retrieve a list of all dorms filtered by name. If no query are provided, all dorms are returned.
 // @Tags dorms
+// @Param name query string false "Dorm name to search"
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
