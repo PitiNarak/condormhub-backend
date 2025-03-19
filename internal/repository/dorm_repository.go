@@ -76,3 +76,15 @@ func (d *DormRepository) SaveDormImage(dormImage *domain.DormImage) error {
 	}
 	return nil
 }
+
+func (d *DormRepository) SearchByName(name string, limit int, page int) ([]domain.Dorm, int, int, error) {
+	var dorms []domain.Dorm
+	query := d.db.Preload("Owner").Preload("Images").Where("name LIKE ?", "%"+name+"%")
+
+	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
+	if err != nil {
+		return nil, 0, 0, apperror.InternalServerError(err, "Failed to retrieve dorms")
+	}
+
+	return dorms, totalPages, totalRows, nil
+}
