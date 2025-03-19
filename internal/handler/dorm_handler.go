@@ -131,9 +131,10 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 }
 
 // GetAll godoc
-// @Summary Get all dorms
-// @Description Retrieve a list of all dorms
+// @Summary Get all dorms by a search string
+// @Description Retrieve a list of all dorms filtered by a search query. If no query is provided, all dorms are returned.
 // @Tags dorms
+// @Param search query string false "Search qeury"
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
@@ -153,12 +154,29 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	if page <= 0 {
 		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
 	}
-	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page)
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
+
+	var dorms []dto.DormResponseBody
+	var totalPages int
+	var totalRows int
+	var err error
+
+	searchTerm := c.Query("search")
+	if searchTerm == "" {
+		dorms, totalPages, totalRows, err = d.dormService.GetAll(limit, page)
+		if err != nil {
+			if apperror.IsAppError(err) {
+				return err
+			}
+			return apperror.InternalServerError(err, "get dorms error")
 		}
-		return apperror.InternalServerError(err, "get dorms error")
+	} else {
+		dorms, totalPages, totalRows, err = d.dormService.SearchByQuery(searchTerm, limit, page)
+		if err != nil {
+			if apperror.IsAppError(err) {
+				return err
+			}
+			return apperror.InternalServerError(err, "get dorms error")
+		}
 	}
 
 	res := dto.SuccessPagination(dorms, dto.Pagination{

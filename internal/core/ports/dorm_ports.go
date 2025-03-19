@@ -17,6 +17,7 @@ type DormRepository interface {
 	Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error
 	Delete(id uuid.UUID) error
 	SaveDormImage(dormImage *domain.DormImage) error
+	SearchByQuery(searchTerm string, limit int, page int) ([]domain.Dorm, int, int, error)
 }
 
 type DormService interface {
@@ -26,6 +27,7 @@ type DormService interface {
 	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormUpdateRequestBody) (*dto.DormResponseBody, error)
 	Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
 	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
+	SearchByQuery(searchTerm string, limit int, page int) ([]dto.DormResponseBody, int, int, error)
 }
 
 type DormHandler interface {
