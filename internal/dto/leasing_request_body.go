@@ -6,9 +6,18 @@ import (
 	"github.com/google/uuid"
 )
 
+type Status string
+
+const (
+	RequestPending  Status = "PENDING"
+	RequestAccepted Status = "ACCEPT"
+	RequestRejected Status = "REJECT"
+	RequestCanceled Status = "CANCELED"
+)
+
 type LeasingRequest struct {
 	ID     uuid.UUID        `json:"id"`
-	Status string           `json:"status"`
+	Status Status           `json:"status"`
 	Dorm   DormResponseBody `json:"dorm"`
 	Lessee UserResponse     `json:"lessee"`
 	Lessor UserResponse     `json:"lessor"`
