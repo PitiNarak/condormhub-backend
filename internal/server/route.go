@@ -97,6 +97,7 @@ func (s *Server) initOwnershipProofRoutes() {
 func (s *Server) initContractRoutes() {
 	contractRoutes := s.app.Group("/contract")
 	contractRoutes.Post("/create", s.authMiddleware.Auth, s.handler.contract.Create)
+	contractRoutes.Get("/:contractId", s.authMiddleware.Auth, s.handler.contract.GetContractByContractID)
 	contractRoutes.Patch("/sign/:contractId", s.authMiddleware.Auth, s.handler.contract.SignContract)
 	contractRoutes.Patch("/cancel/:contractId", s.authMiddleware.Auth, s.handler.contract.CancelContract)
 	contractRoutes.Delete("/:contractId", s.authMiddleware.Auth, s.handler.contract.Delete)

@@ -132,3 +132,18 @@ func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 
 }
+
+func (ct *ContractHandler) GetContractByContractID(c *fiber.Ctx) error {
+	contractID, parseErr := uuid.Parse(c.Params("contractId"))
+	if parseErr != nil {
+		return apperror.BadRequestError(parseErr, "Invalid contract ID format")
+	}
+
+	contract, err := ct.contractService.GetContractByContractID(contractID)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(contract.ToDTO()))
+
+}
