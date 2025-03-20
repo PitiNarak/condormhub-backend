@@ -550,9 +550,39 @@ paths:
       description: Retrieve a list of all dorms filtered by a search query. If no
         query is provided, all dorms are returned.
       parameters:
-      - description: Search qeury
+      - description: Search query
         in: query
         name: search
+        schema:
+          type: string
+      - description: Filter min price
+        in: query
+        name: minPrice
+        schema:
+          type: integer
+      - description: Filter max price
+        in: query
+        name: maxPrice
+        schema:
+          type: integer
+      - description: Filter district price
+        in: query
+        name: district
+        schema:
+          type: string
+      - description: Filter subdistrict price
+        in: query
+        name: subdistrict
+        schema:
+          type: string
+      - description: Filter province price
+        in: query
+        name: province
+        schema:
+          type: string
+      - description: Filter zipcode price
+        in: query
+        name: zipcode
         schema:
           type: string
       - description: Number of dorms to retrieve (default 10, max 50)
