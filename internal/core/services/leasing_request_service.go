@@ -22,17 +22,17 @@ func NewLeasingRequestService(requestRepo ports.LeasingRequestRepository, dormRe
 func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error) {
 	dorm, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
-		return &domain.LeasingRequest{}, err
+		return nil, err
 	}
 	createTime := time.Now()
 	leasingRequest := &domain.LeasingRequest{Status: domain.RequestPending, DormID: dormID, LesseeID: leeseeID, LessorID: dorm.OwnerID, Start: createTime}
 	err = s.requestRepo.Create(leasingRequest)
 	if err != nil {
-		return &domain.LeasingRequest{}, err
+		return nil, err
 	}
 	leasingRequest, err = s.requestRepo.GetByID(leasingRequest.ID)
 	if err != nil {
-		return &domain.LeasingRequest{}, err
+		return nil, err
 	}
 	return leasingRequest, nil
 }
