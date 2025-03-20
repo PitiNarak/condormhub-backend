@@ -38,7 +38,7 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "create contract error")
 	}
 
-	res, err := ct.contractService.GetContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID)
+	res, err := ct.contractService.GetContractByContractID(contract.ContractID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -46,7 +46,7 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get contract error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(res.ToDTO()))
 
 }
 
@@ -56,20 +56,16 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
-	var reqBody *dto.ContractRequestBody
-	if err := c.BodyParser(&reqBody); err != nil {
-		return apperror.BadRequestError(err, "Failed to parse request body")
+	contractID, parseErr := uuid.Parse(c.Params("contractId"))
+	if parseErr != nil {
+		return apperror.BadRequestError(parseErr, "Invalid contract ID format")
 	}
 
-	if userID != reqBody.LessorID && userID != reqBody.LesseeID {
-		return apperror.BadRequestError(errors.New("user ID does not match anyone in the contract"), "You are not authorized to update this contract")
-	}
-
-	if err := ct.contractService.UpdateStatus(*reqBody, domain.Signed, userID); err != nil {
+	if err := ct.contractService.UpdateStatus(contractID, domain.Signed, userID); err != nil {
 		return err
 	}
 
-	res, getErr := ct.contractService.GetContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID)
+	res, getErr := ct.contractService.GetContractByContractID(contractID)
 	if getErr != nil {
 		if apperror.IsAppError(getErr) {
 			return getErr
@@ -77,7 +73,7 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "get contract error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(res.ToDTO()))
 
 }
 
@@ -87,16 +83,11 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
 	}
 
-	var reqBody *dto.ContractRequestBody
-	if err := c.BodyParser(&reqBody); err != nil {
-		return apperror.BadRequestError(err, "Failed to parse request body")
+	contractID, parseErr := uuid.Parse(c.Params("contractId"))
+	if parseErr != nil {
+		return apperror.BadRequestError(parseErr, "Invalid contract ID format")
 	}
-
-	if userID != reqBody.LessorID && userID != reqBody.LesseeID {
-		return apperror.BadRequestError(errors.New("user ID does not match anyone in the contract"), "You are not authorized to update this contract")
-	}
-
-	contract, getErr := ct.contractService.GetContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID)
+	contract, getErr := ct.contractService.GetContractByContractID(contractID)
 	if getErr != nil {
 		if apperror.IsAppError(getErr) {
 			return getErr
@@ -112,11 +103,11 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 		return apperror.BadRequestError(errors.New("contract is already cancelld"), "You cannot cancel cancelled contract")
 	}
 
-	if err := ct.contractService.UpdateStatus(*reqBody, domain.Cancelled, userID); err != nil {
+	if err := ct.contractService.UpdateStatus(contractID, domain.Cancelled, userID); err != nil {
 		return err
 	}
 
-	res, getErr := ct.contractService.GetContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID)
+	res, getErr := ct.contractService.GetContractByContractID(contractID)
 	if getErr != nil {
 		if apperror.IsAppError(getErr) {
 			return getErr
@@ -124,31 +115,17 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "get contract error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(res.ToDTO()))
 
 }
 
 func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
-	lessorID, err := uuid.Parse(c.Params("lessor_id"))
-	if err != nil {
-		return apperror.BadRequestError(err, "Invalid lessor ID format")
-	}
-	lesseeID, err := uuid.Parse(c.Params("lessee_id"))
-	if err != nil {
-		return apperror.BadRequestError(err, "Invalid lessee ID format")
-	}
-	dormID, err := uuid.Parse(c.Params("dorm_id"))
-	if err != nil {
-		return apperror.BadRequestError(err, "Invalid dorm ID format")
+	contractID, parseErr := uuid.Parse(c.Params("contractId"))
+	if parseErr != nil {
+		return apperror.BadRequestError(parseErr, "Invalid contract ID format")
 	}
 
-	reqBody := dto.ContractRequestBody{
-		LessorID: lessorID,
-		LesseeID: lesseeID,
-		DormID:   dormID,
-	}
-
-	if err := ct.contractService.DeleteContract(reqBody.LessorID, reqBody.LesseeID, reqBody.DormID); err != nil {
+	if err := ct.contractService.DeleteContract(contractID); err != nil {
 		return err
 	}
 

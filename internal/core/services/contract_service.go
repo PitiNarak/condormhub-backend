@@ -5,7 +5,6 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
@@ -60,71 +59,51 @@ func (ct *ContractService) Create(contract *domain.Contract) error {
 	return nil
 }
 
-func (ct *ContractService) DeleteContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) error {
-	return ct.contractRepo.Delete(lessorID, lesseeID, dormID)
+func (ct *ContractService) DeleteContract(contractID uuid.UUID) error {
+	return ct.contractRepo.Delete(contractID)
 }
 
-func (ct *ContractService) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*domain.Contract, error) {
-	return ct.contractRepo.GetContract(lessorID, lesseeID, dormID)
+func (ct *ContractService) GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error) {
+	return ct.contractRepo.GetContractByContractID(contractID)
 }
 
-func (ct *ContractService) UpdateStatus(contractRequestBody dto.ContractRequestBody, status domain.ContractStatus, userID uuid.UUID) error {
+func (ct *ContractService) UpdateStatus(contractID uuid.UUID, status domain.ContractStatus, userID uuid.UUID) error {
 	//check valid lessor ID
 
-	lessor, lessorErr := ct.userRepo.GetUserByID(contractRequestBody.LessorID)
-	if lessorErr != nil {
-		return lessorErr
+	user, userErr := ct.userRepo.GetUserByID(userID)
+	if userErr != nil {
+		return userErr
 	}
-	if lessor == nil || lessor.Role == "" {
-		return apperror.BadRequestError(errors.New("invalid lessor"), "lessor not found or role is missing")
+	if user == nil || user.Role == "" {
+		return apperror.BadRequestError(errors.New("invalid user"), "user not found or role is missing")
 	}
-
-	if lessor.Role != domain.LessorRole {
-		return apperror.BadRequestError(errors.New("role mismatch"), "You are not an lessor")
-	}
-
-	//check valid lessee ID
-	lessee, lesseeErr := ct.userRepo.GetUserByID(contractRequestBody.LesseeID)
-	if lesseeErr != nil {
-		return lesseeErr
-	}
-	if lessee == nil || lessee.Role == "" {
-		return apperror.BadRequestError(errors.New("invalid lessee"), "lessee not found or role is missing")
+	if user.Role == domain.AdminRole {
+		return apperror.BadRequestError(errors.New("invalid user"), "role mismatch")
 	}
 
-	if lessee.Role != domain.LesseeRole {
-		return apperror.BadRequestError(errors.New("role mismatch"), "You are not an lessee")
-	}
-
-	//check valid dorm ID
-	_, dormErr := ct.dormRepo.GetByID(contractRequestBody.DormID)
-	if dormErr != nil {
-		return dormErr
-	}
-
-	if contractRequestBody.LesseeID == userID {
-		if err := ct.contractRepo.UpdateLessorStatus(contractRequestBody, status); err != nil {
+	if user.Role == domain.LessorRole {
+		if err := ct.contractRepo.UpdateLessorStatus(contractID, status); err != nil {
 			return err
 		}
 	} else {
-		if err := ct.contractRepo.UpdateLesseeStatus(contractRequestBody, status); err != nil {
+		if err := ct.contractRepo.UpdateLesseeStatus(contractID, status); err != nil {
 			return err
 		}
 	}
 
-	contract, err := ct.contractRepo.GetContract(contractRequestBody.LessorID, contractRequestBody.LesseeID, contractRequestBody.DormID)
+	contract, err := ct.contractRepo.GetContractByContractID(contractID)
 	if err != nil {
 		return err
 	}
 
 	if contract.LesseeStatus == domain.Signed && contract.LessorStatus == domain.Signed {
-		if err := ct.contractRepo.UpdateContractStatus(contractRequestBody, domain.Signed); err != nil {
+		if err := ct.contractRepo.UpdateContractStatus(contractID, domain.Signed); err != nil {
 			return err
 		}
 	}
 
 	if contract.LesseeStatus == domain.Cancelled || contract.LessorStatus == domain.Cancelled {
-		if err := ct.contractRepo.UpdateContractStatus(contractRequestBody, domain.Cancelled); err != nil {
+		if err := ct.contractRepo.UpdateContractStatus(contractID, domain.Cancelled); err != nil {
 			return err
 		}
 	}

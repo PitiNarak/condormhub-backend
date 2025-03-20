@@ -1,6 +1,9 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
+	"github.com/google/uuid"
+)
 
 type ContractStatus string
 
@@ -18,4 +21,16 @@ type Contract struct {
 	LessorStatus ContractStatus `gorm:"default:Waiting"`
 	LesseeStatus ContractStatus `gorm:"default:Waiting"`
 	Status       ContractStatus `gorm:"default:Waiting"`
+}
+
+func (ct *Contract) ToDTO() dto.ContractResponseBody {
+	return dto.ContractResponseBody{
+		ContractID:     ct.ContractID,
+		LessorID:       ct.LessorID,
+		LesseeID:       ct.LesseeID,
+		DormID:         ct.DormID,
+		LessorStatus:   string(ct.LessorStatus),
+		LesseeStatus:   string(ct.LesseeStatus),
+		ContractStatus: string(ct.Status),
+	}
 }
