@@ -24,7 +24,8 @@ func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*d
 	if err != nil {
 		return nil, err
 	}
-	leasingRequest := &domain.LeasingRequest{Status: domain.RequestPending,
+	leasingRequest := &domain.LeasingRequest{
+		Status:   domain.RequestPending,
 		DormID:   dormID,
 		LesseeID: leeseeID,
 		LessorID: dorm.OwnerID}
