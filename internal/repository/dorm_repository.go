@@ -31,9 +31,46 @@ func (d *DormRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (d *DormRepository) GetAll(limit int, page int) ([]domain.Dorm, int, int, error) {
+func (d *DormRepository) GetAll(
+	limit int, page int,
+	search string,
+	minPrice int, maxPrice int,
+	district string,
+	subdistrict string,
+	province string,
+	zipcode string,
+) ([]domain.Dorm, int, int, error) {
 	var dorms []domain.Dorm
 	query := d.db.Preload("Owner").Preload("Images")
+
+	if search != "" {
+		regex := "%" + search + "%"
+		query.Where("name LIKE ? OR province LIKE ? OR district LIKE ? OR subdistrict LIKE ? OR zipcode LIKE ?", regex, regex, regex, regex, regex)
+	}
+
+	if minPrice != -1 {
+		query.Where("price >= ?", minPrice)
+	}
+
+	if maxPrice != -1 {
+		query.Where("price <= ?", maxPrice)
+	}
+
+	if district != "" {
+		query.Where("district LIKE ?", "%"+district+"%")
+	}
+
+	if subdistrict != "" {
+		query.Where("subdistrict LIKE ?", "%"+subdistrict+"%")
+	}
+
+	if province != "" {
+		query.Where("province LIKE ?", "%"+province+"%")
+	}
+
+	if zipcode != "" {
+		query.Where("zipcode LIKE ?", "%"+zipcode+"%")
+	}
 
 	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
 	if err != nil {
@@ -75,17 +112,4 @@ func (d *DormRepository) SaveDormImage(dormImage *domain.DormImage) error {
 		return apperror.InternalServerError(err, "Failed to save dorm's image to database")
 	}
 	return nil
-}
-
-func (d *DormRepository) SearchByQuery(searchTerm string, limit int, page int) ([]domain.Dorm, int, int, error) {
-	var dorms []domain.Dorm
-	regex := "%" + searchTerm + "%"
-	query := d.db.Preload("Owner").Preload("Images").Where("name LIKE ? OR province LIKE ? OR district LIKE ? OR subdistrict LIKE ? OR zipcode LIKE ?", regex, regex, regex, regex, regex)
-
-	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
-	if err != nil {
-		return nil, 0, 0, apperror.InternalServerError(err, "Failed to retrieve dorms")
-	}
-
-	return dorms, totalPages, totalRows, nil
 }
