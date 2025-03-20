@@ -8,6 +8,7 @@ import (
 
 type ContractRepository interface {
 	Create(contract *domain.Contract) error
+	GetContract(LessorID uuid.UUID, LesseeID uuid.UUID, DormID uuid.UUID) (*[]domain.Contract, error)
 	GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error)
 	GetContractByLessorID(LessorID uuid.UUID) (*[]domain.Contract, error)
 	GetContractByLesseeID(LesseeID uuid.UUID) (*[]domain.Contract, error)

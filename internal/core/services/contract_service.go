@@ -53,6 +53,17 @@ func (ct *ContractService) Create(contract *domain.Contract) error {
 		return dormErr
 	}
 
+	contracts, err := ct.contractRepo.GetContract(contract.LessorID, contract.LesseeID, contract.DormID)
+	if err != nil {
+		return err
+	}
+
+	for _, contract := range *contracts {
+		if contract.Status == domain.Waiting {
+			return apperror.BadRequestError(errors.New("contract already exist"), "Active contract already exist")
+		}
+	}
+
 	if err := ct.contractRepo.Create(contract); err != nil {
 		return err
 	}

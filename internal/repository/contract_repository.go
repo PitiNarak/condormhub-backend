@@ -30,6 +30,14 @@ func (ct *ContractRepository) Delete(contractID uuid.UUID) error {
 	return nil
 }
 
+func (ct *ContractRepository) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*[]domain.Contract, error) {
+	var contracts []domain.Contract
+	if err := ct.db.Where("lessor_id = ? AND lessee_id = ? AND dorm_id = ?", lessorID, lesseeID, dormID).Find(&contracts).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Contracts not found")
+	}
+	return &contracts, nil
+}
+
 func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error) {
 	contract := new(domain.Contract)
 	if err := ct.db.Where("contract_id = ? ", contractID).Find(&contract).Error; err != nil {
