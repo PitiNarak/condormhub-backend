@@ -20,7 +20,6 @@ type LeasingRequest struct {
 	Status Status           `json:"status"`
 	Dorm   DormResponseBody `json:"dorm"`
 	Lessee UserResponse     `json:"lessee"`
-	Lessor UserResponse     `json:"lessor"`
 	Start  time.Time        `json:"start"`
 	End    time.Time        `json:"end"`
 }

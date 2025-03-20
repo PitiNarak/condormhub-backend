@@ -20,16 +20,11 @@ func NewLeasingRequestService(requestRepo ports.LeasingRequestRepository, dormRe
 }
 
 func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error) {
-	dorm, err := s.dormRepo.GetByID(dormID)
-	if err != nil {
-		return nil, err
-	}
 	leasingRequest := &domain.LeasingRequest{
 		Status:   domain.RequestPending,
 		DormID:   dormID,
-		LesseeID: leeseeID,
-		LessorID: dorm.OwnerID}
-	err = s.requestRepo.Create(leasingRequest)
+		LesseeID: leeseeID}
+	err := s.requestRepo.Create(leasingRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +56,7 @@ func (s *LeasingRequestService) Approve(id, userId uuid.UUID) error {
 	if leasingRequest.Status != domain.RequestPending {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
-	if userId != leasingRequest.LessorID {
+	if userId != leasingRequest.Dorm.OwnerID {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
@@ -81,7 +76,7 @@ func (s *LeasingRequestService) Reject(id, userId uuid.UUID) error {
 	if leasingRequest.Status != domain.RequestPending {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
-	if userId != leasingRequest.LessorID {
+	if userId != leasingRequest.Dorm.OwnerID {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()

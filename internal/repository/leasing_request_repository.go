@@ -23,12 +23,13 @@ func (d *LeasingRequestRepository) Create(LeasingRequest *domain.LeasingRequest)
 	if err := d.db.Create(LeasingRequest).Error; err != nil {
 		return apperror.InternalServerError(err, "failed to save leasing request to database")
 	}
+
 	return nil
 }
 
 func (d *LeasingRequestRepository) GetByID(id uuid.UUID) (*domain.LeasingRequest, error) {
 	leasingRequest := new(domain.LeasingRequest)
-	if err := d.db.Preload("Dorm").Preload("Lessee").First(leasingRequest, id).Error; err != nil {
+	if err := d.db.Preload("Dorm").Preload("Lessee").Preload("Dorm.Owner").First(leasingRequest, id).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "leasing request not found")
 	}
 	return leasingRequest, nil
@@ -55,9 +56,16 @@ func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, ro
 	var leasingRequest []domain.LeasingRequest
 	var query *gorm.DB
 	if role == domain.LesseeRole {
-		query = d.db.Preload("Dorm").Preload("Lessee").Preload("Lessor").Where("lessee_id = ?", id)
+		query = d.db.Preload("Dorm").
+			Preload("Lessee").
+			Preload("Dorm.Owner").
+			Where("lessee_id = ?", id)
 	} else {
-		query = d.db.Preload("Dorm").Preload("Lessee").Preload("Lessor").Where("lessor_id = ?", id)
+		query = d.db.Preload("Dorm").
+			Preload("Lessee").
+			Preload("Dorm.Owner").
+			Joins("JOIN dorms ON dorms.id = leasing_requests.dorm_id").
+			Where("owner_id = ?", id)
 	}
 	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start DESC")
 
