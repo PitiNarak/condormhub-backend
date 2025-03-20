@@ -46,8 +46,16 @@ func (s *DormService) Create(userRole domain.Role, dorm *domain.Dorm) error {
 	return s.dormRepo.Create(dorm)
 }
 
-func (s *DormService) GetAll(limit int, page int) ([]dto.DormResponseBody, int, int, error) {
-	dorms, totalPages, totalRows, err := s.dormRepo.GetAll(limit, page)
+func (s *DormService) GetAll(
+	limit int, page int,
+	search string,
+	minPrice int, maxPrice int,
+	district string,
+	subdistrict string,
+	province string,
+	zipcode string,
+) ([]dto.DormResponseBody, int, int, error) {
+	dorms, totalPages, totalRows, err := s.dormRepo.GetAll(limit, page, search, minPrice, maxPrice, district, subdistrict, province, zipcode)
 	if err != nil {
 		return nil, totalPages, totalRows, err
 	}
@@ -126,17 +134,4 @@ func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, fil
 	url := s.storage.GetPublicUrl(fileKey)
 
 	return url, nil
-}
-
-func (s *DormService) SearchByQuery(searchTerm string, limit int, page int) ([]dto.DormResponseBody, int, int, error) {
-	dorms, totalPages, totalRows, err := s.dormRepo.SearchByQuery(searchTerm, limit, page)
-	if err != nil {
-		return nil, totalPages, totalRows, err
-	}
-	resData := make([]dto.DormResponseBody, len(dorms))
-	for i, v := range dorms {
-		resData[i] = v.ToDTO()
-		resData[i].Images = s.getImageUrl(v.Images)
-	}
-	return resData, totalPages, totalRows, nil
 }
