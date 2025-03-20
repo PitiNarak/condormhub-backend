@@ -13,12 +13,8 @@ const (
 )
 
 type ContractRequestBody struct {
-	LessorID uuid.UUID `json:"lessorId"`
-	LesseeID uuid.UUID `json:"lesseeId"`
-	DormID   uuid.UUID `json:"dormId"`
-}
-
-type UpdateContractStatusRequestBody struct {
-	Status  ContractStatus `json:"status"`
-	AdminID uuid.UUID      `json:"adminId"`
+	ContractID uuid.UUID `json:"contractId"`
+	LessorID   uuid.UUID `json:"lessorId"`
+	LesseeID   uuid.UUID `json:"lesseeId"`
+	DormID     uuid.UUID `json:"dormId"`
 }
