@@ -32,7 +32,7 @@ type LeasingRequest struct {
 func (l *LeasingRequest) ToDTO() dto.LeasingRequest {
 	return dto.LeasingRequest{
 		ID:     l.ID,
-		Status: string(l.Status),
+		Status: dto.Status(l.Status),
 		Dorm:   l.Dorm.ToDTO(),
 		Lessee: l.Lessee.ToDTO(),
 		Lessor: l.Lessor.ToDTO(),
