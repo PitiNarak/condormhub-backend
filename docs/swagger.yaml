@@ -147,8 +147,6 @@ components:
           type: string
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
-        lessor:
-          $ref: '#/components/schemas/dto.UserResponse'
         start:
           type: string
         status:
