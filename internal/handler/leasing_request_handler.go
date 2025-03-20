@@ -208,6 +208,11 @@ func (h *LeasingRequestHandler) GetByUserID(c *fiber.Ctx) error {
 func (h *LeasingRequestHandler) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
+	user := c.Locals("user").(*domain.User)
+	if user.Role != domain.AdminRole {
+		return apperror.UnauthorizedError(errors.New("user is not an admin"), "only admin can delete a request")
+	}
+
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
