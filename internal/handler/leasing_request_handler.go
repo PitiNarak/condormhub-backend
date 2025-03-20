@@ -201,7 +201,7 @@ func (h *LeasingRequestHandler) GetByUserID(c *fiber.Ctx) error {
 // @Param id path string true "LeasingRequestId"
 // @Success 204 "No Content"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
-// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only admin can delete a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to delete leasing request"
 // @Router /request/{id} [delete]
