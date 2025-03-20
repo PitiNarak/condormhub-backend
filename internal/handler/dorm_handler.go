@@ -164,6 +164,12 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	search := c.Query("search")
 	minPrice := c.QueryInt("minPrice", -1)
 	maxPrice := c.QueryInt("maxPrice", -1)
+
+	if minPrice > maxPrice {
+		err := errors.New("min price cannot more than max price")
+		return apperror.BadRequestError(err, err.Error())
+	}
+
 	district := c.Query("district")
 	subdistrict := c.Query("subdistrict")
 	province := c.Query("province")
