@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"errors"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -73,14 +71,18 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 // @Router /history/me [get]
 func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
-	limit := max(50, c.QueryInt("limit", 10))
+	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
 	}
+
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
+
 	leasingHistory, totalPage, totalRows, err := h.service.GetByUserID(userID, limit, page)
 	if err != nil {
 		return err
@@ -125,14 +127,19 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	limit := max(50, c.QueryInt("limit", 10))
+
+	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
 	}
+
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
+
 	leasingHistory, totalPage, totalRows, err := h.service.GetByDormID(dormID, limit, page)
 	if err != nil {
 		return err
