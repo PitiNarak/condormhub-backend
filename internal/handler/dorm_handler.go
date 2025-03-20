@@ -158,7 +158,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		limit = 1
+		page = 1
 	}
 
 	search := c.Query("search")
