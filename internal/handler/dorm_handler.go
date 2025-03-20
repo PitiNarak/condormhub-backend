@@ -334,3 +334,44 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: url}))
 }
+
+func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	ownerID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	dorms, totalPages, totalRows, err := d.dormService.GetByOwnerID(ownerID, limit, page)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorms error")
+	}
+
+	res := dto.SuccessPagination(dorms, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}

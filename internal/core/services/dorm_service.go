@@ -140,3 +140,16 @@ func (s *DormService) SearchByQuery(searchTerm string, limit int, page int) ([]d
 	}
 	return resData, totalPages, totalRows, nil
 }
+
+func (s *DormService) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dto.DormResponseBody, int, int, error) {
+	dorms, totalPages, totalRows, err := s.dormRepo.GetByOwnerID(ownerID, limit, page)
+	if err != nil {
+		return nil, totalPages, totalRows, err
+	}
+	resData := make([]dto.DormResponseBody, len(dorms))
+	for i, v := range dorms {
+		resData[i] = v.ToDTO()
+		resData[i].Images = s.getImageUrl(v.Images)
+	}
+	return resData, totalPages, totalRows, nil
+}

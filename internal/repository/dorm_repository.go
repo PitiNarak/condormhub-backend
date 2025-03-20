@@ -89,3 +89,15 @@ func (d *DormRepository) SearchByQuery(searchTerm string, limit int, page int) (
 
 	return dorms, totalPages, totalRows, nil
 }
+
+func (d *DormRepository) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]domain.Dorm, int, int, error) {
+	var dorms []domain.Dorm
+	query := d.db.Preload("Owner").Preload("Images").Where("owner_id = ?", ownerID)
+
+	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
+	if err != nil {
+		return nil, 0, 0, apperror.InternalServerError(err, "Failed to retrieve dorms")
+	}
+
+	return dorms, totalPages, totalRows, nil
+}
