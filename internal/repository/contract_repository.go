@@ -24,19 +24,35 @@ func (ct *ContractRepository) Create(contract *domain.Contract) error {
 	return nil
 }
 
-func (ct *ContractRepository) Delete(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) error {
-	if err := ct.db.Where("lessor_id = ? AND lessee_id = ? AND dorm_id = ?", lessorID, lesseeID, dormID).Delete(&domain.Contract{}).Error; err != nil {
+func (ct *ContractRepository) Delete(contractID uuid.UUID) error {
+	if err := ct.db.Where("contract_id = ?", contractID).Delete(&domain.Contract{}).Error; err != nil {
 		return apperror.InternalServerError(err, "Failed to delete contract")
 	}
 	return nil
 }
 
-func (ct *ContractRepository) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*domain.Contract, error) {
-	contract := new(domain.Contract)
-	if err := ct.db.Where("lessor_id = ? AND lessee_id = ? AND dorm_id = ?", lessorID, lesseeID, dormID).First(&contract).Error; err != nil {
-		return nil, apperror.NotFoundError(err, "Contract not found")
+func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID) (*[]domain.Contract, error) {
+	var contracts []domain.Contract
+	if err := ct.db.Where("lessor_id = ? ", lessorID).Find(&contracts).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Contracts not found")
 	}
-	return contract, nil
+	return &contracts, nil
+}
+
+func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID) (*[]domain.Contract, error) {
+	var contracts []domain.Contract
+	if err := ct.db.Where("lessee_id = ? ", lesseeID).Find(&contracts).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Contracts not found")
+	}
+	return &contracts, nil
+}
+
+func (ct *ContractRepository) GetContractByDormID(DormID uuid.UUID) (*[]domain.Contract, error) {
+	var contracts []domain.Contract
+	if err := ct.db.Where("dorm_id = ? ", DormID).Find(&contracts).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Contracts not found")
+	}
+	return &contracts, nil
 }
 
 func (ct *ContractRepository) UpdateLessorStatus(contractRequestBody dto.ContractRequestBody, LessorStatus domain.ContractStatus) error {
