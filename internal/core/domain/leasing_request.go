@@ -25,7 +25,7 @@ type LeasingRequest struct {
 	Lessee   User      `gorm:"foreignKey:LesseeID;references:ID"`
 	LessorID uuid.UUID `gorm:"type:uuid;not null"`
 	Lessor   User      `gorm:"foreignKey:LessorID;references:ID"`
-	Start    time.Time
+	Start    time.Time `gorm:"autoCreateTime"`
 	End      time.Time `gorm:"default:null"`
 }
 
