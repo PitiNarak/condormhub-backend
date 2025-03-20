@@ -59,6 +59,7 @@ func (s *Server) initDormRoutes() {
 	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.dorm.Update)
 	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.dorm.Delete)
 	dormRoutes.Post("/:id/images", s.authMiddleware.Auth, s.handler.dorm.UploadDormImage)
+	dormRoutes.Get("/owner/:id", s.handler.dorm.GetByOwnerID)
 }
 
 func (s *Server) initLeasingHistoryRoutes() {

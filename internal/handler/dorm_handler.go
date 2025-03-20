@@ -335,3 +335,57 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: url}))
 }
+
+// GetByOwnerID godoc
+// @Summary Get dorms by owner ID
+// @Description Retrieve all dorms of a specific owner ID
+// @Tags dorms
+// @Param id path string true "OwnerID"
+// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Produce json
+// @Success 200 {object} dto.PaginationResponse[dto.DormResponseBody] "All dorms retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Failed to retrieve dorms"
+// @Router /dorms/owner/{id} [get]
+func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	ownerID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	dorms, totalPages, totalRows, err := d.dormService.GetByOwnerID(ownerID, limit, page)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorms error")
+	}
+
+	res := dto.SuccessPagination(dorms, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}

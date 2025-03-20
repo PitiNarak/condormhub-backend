@@ -871,6 +871,54 @@ paths:
       summary: Upload an image for a dorm
       tags:
       - dorms
+  /dorms/owner/{id}:
+    get:
+      description: Retrieve all dorms of a specific owner ID
+      parameters:
+      - description: OwnerID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: Number of dorms to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_DormResponseBody'
+          description: All dorms retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to retrieve dorms
+      summary: Get dorms by owner ID
+      tags:
+      - dorms
   /history/{id}:
     delete:
       description: Delete a leasing history in the database
