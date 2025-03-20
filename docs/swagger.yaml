@@ -56,6 +56,11 @@ components:
       - price
       - size
       type: object
+    dto.DormImageUploadResponseBody:
+      properties:
+        url:
+          type: string
+      type: object
     dto.DormResponseBody:
       properties:
         address:
@@ -287,6 +292,11 @@ components:
         data:
           $ref: '#/components/schemas/dto.CreateTransactionResponseBody'
       type: object
+    dto.SuccessResponse-dto_DormImageUploadResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.DormImageUploadResponseBody'
+      type: object
     dto.SuccessResponse-dto_DormResponseBody:
       properties:
         data:
@@ -392,7 +402,6 @@ components:
           type: string
       type: object
     dto.UserResponse:
-      description: will probably change to some form of dto.UserResponseBody
       properties:
         birthDate:
           type: string
@@ -570,8 +579,14 @@ paths:
       - auth
   /dorms:
     get:
-      description: Retrieve a list of all dorms
+      description: Retrieve a list of all dorms filtered by a search query. If no
+        query is provided, all dorms are returned.
       parameters:
+      - description: Search qeury
+        in: query
+        name: search
+        schema:
+          type: string
       - description: Number of dorms to retrieve (default 10, max 50)
         in: query
         name: limit
@@ -601,7 +616,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: Failed to retrieve dorms
-      summary: Get all dorms
+      summary: Get all dorms by a search string
       tags:
       - dorms
     post:
@@ -796,6 +811,66 @@ paths:
       security:
       - Bearer: []
       summary: Update an existing dorm
+      tags:
+      - dorms
+  /dorms/{id}/images:
+    post:
+      description: Upload an image for a specific dorm by its ID, by attaching the
+        image as a value for the key field name "image", as a multipart form-data
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: DormImage
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_DormImageUploadResponseBody'
+          description: Successful image upload
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized to upload image to dorm
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Dorm not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload dorm image
+      security:
+      - Bearer: []
+      summary: Upload an image for a dorm
       tags:
       - dorms
   /history/{id}:

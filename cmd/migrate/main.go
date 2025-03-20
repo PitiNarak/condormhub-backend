@@ -84,6 +84,7 @@ func main() {
 		&domain.Dorm{},
 		&domain.LeasingHistory{},
 		&domain.Order{},
+		&domain.DormImage{},
 		&domain.OwnershipProof{},
 		&domain.LeasingRequest{},
 	); err != nil {
