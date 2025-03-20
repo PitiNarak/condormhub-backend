@@ -137,6 +137,21 @@ components:
         start:
           type: string
       type: object
+    dto.LeasingRequest:
+      properties:
+        dorm:
+          $ref: '#/components/schemas/dto.DormResponseBody'
+        end:
+          type: string
+        id:
+          type: string
+        lessee:
+          $ref: '#/components/schemas/dto.UserResponse'
+        start:
+          type: string
+        status:
+          $ref: '#/components/schemas/dto.Status'
+      type: object
     dto.LoginRequestBody:
       properties:
         email:
@@ -213,6 +228,16 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_LeasingRequest:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.LeasingRequest'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.PaginationResponse-dto_OrderResponseBody:
       properties:
         data:
@@ -260,6 +285,13 @@ components:
       - password
       - token
       type: object
+    dto.Status:
+      type: string
+      x-enum-varnames:
+      - RequestPending
+      - RequestAccepted
+      - RequestRejected
+      - RequestCanceled
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
         data:
@@ -279,6 +311,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.LeasingHistory'
+      type: object
+    dto.SuccessResponse-dto_LeasingRequest:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.LeasingRequest'
       type: object
     dto.SuccessResponse-dto_OrderResponseBody:
       properties:
@@ -1549,6 +1586,267 @@ paths:
       summary: Upload new ownership proof
       tags:
       - ownership
+  /request/{id}:
+    delete:
+      description: Delete a leasing request in the database
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized or only admin can delete a request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to delete leasing request
+      security:
+      - Bearer: []
+      summary: Delete a leasing request
+      tags:
+      - request
+    post:
+      description: Add a new leasing request to the database
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_LeasingRequest'
+          description: Dorm successfully created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Dorm not found or leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing request to database
+      security:
+      - Bearer: []
+      summary: Create a new leasing request
+      tags:
+      - request
+  /request/{id}/approve:
+    patch:
+      description: Approve a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized or only lessor can approve a request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found or request is not in the pending
+            status
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Approve a leasing request
+      tags:
+      - request
+  /request/{id}/cancel:
+    patch:
+      description: Cancel a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found or request is not in the pending
+            status
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Cancel a leasing request
+      tags:
+      - request
+  /request/{id}/reject:
+    patch:
+      description: Reject a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found or request is not in the pending
+            status
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized or only lessor can reject a request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Reject a leasing request
+      tags:
+      - request
+  /request/me:
+    get:
+      description: Retrieve a list of all leasing request by userid
+      parameters:
+      - description: Number of dorms to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingRequest'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+      security:
+      - Bearer: []
+      summary: Get all leasing request by userid
+      tags:
+      - request
   /transaction:
     post:
       description: Create a transaction

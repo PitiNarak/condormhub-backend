@@ -13,6 +13,7 @@ type service struct {
 	order          ports.OrderService
 	tsx            ports.TransactionService
 	ownershipProof ports.OwnershipProofService
+	leasingRequest ports.LeasingRequestService
 }
 
 func (s *Server) initService() {
@@ -23,6 +24,7 @@ func (s *Server) initService() {
 	order := services.NewOrderService(s.repository.order, s.repository.leasingHistory)
 	tsx := services.NewTransactionService(s.repository.tsx, s.repository.order, s.stripe)
 	ownershipProof := services.NewOwnershipProofService(s.repository.ownershipProof, s.repository.user, s.storage)
+	leasingRequest := services.NewLeasingRequestService(s.repository.leasingRequest, s.repository.dorm)
 
 	s.service = &service{
 		user:           user,
@@ -31,5 +33,6 @@ func (s *Server) initService() {
 		order:          order,
 		tsx:            tsx,
 		ownershipProof: ownershipProof,
+		leasingRequest: leasingRequest,
 	}
 }
