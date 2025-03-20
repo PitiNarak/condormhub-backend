@@ -134,7 +134,13 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms by a search string
 // @Description Retrieve a list of all dorms filtered by a search query. If no query is provided, all dorms are returned.
 // @Tags dorms
-// @Param search query string false "Search qeury"
+// @Param search query string false "Search query"
+// @Param minPrice query int false "Filter min price"
+// @Param maxPrice query int false "Filter max price"
+// @Param district query string false "Filter district price"
+// @Param subdistrict query string false "Filter subdistrict price"
+// @Param province query string false "Filter province price"
+// @Param zipcode query string false "Filter zipcode price"
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
