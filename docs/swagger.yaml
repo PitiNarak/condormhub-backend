@@ -1590,7 +1590,7 @@ paths:
       summary: Create a new leasing request
       tags:
       - request
-  /request/approve/{id}:
+  /request/{id}/approve:
     patch:
       description: Approve a leasing request
       parameters:
@@ -1633,7 +1633,7 @@ paths:
       summary: Approve a leasing request
       tags:
       - request
-  /request/cancel/{id}:
+  /request/{id}/cancel:
     patch:
       description: Cancel a leasing request
       parameters:
@@ -1674,6 +1674,49 @@ paths:
       security:
       - Bearer: []
       summary: Cancel a leasing request
+      tags:
+      - request
+  /request/{id}/reject:
+    patch:
+      description: Reject a leasing request
+      parameters:
+      - description: LeasingRequestId
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found or request is not in the pending
+            status
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized or only lessor can reject a request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing request not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or Failed to update leasing request
+      security:
+      - Bearer: []
+      summary: Reject a leasing request
       tags:
       - request
   /request/me:
@@ -1719,49 +1762,6 @@ paths:
       security:
       - Bearer: []
       summary: Get all leasing request by userid
-      tags:
-      - request
-  /request/reject/{id}:
-    patch:
-      description: Reject a leasing request
-      parameters:
-      - description: LeasingRequestId
-        in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      responses:
-        "204":
-          description: No Content
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: leasing request not found or request is not in the pending
-            status
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized or only lessor can reject a request
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: leasing request not found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Can not parse UUID or Failed to update leasing request
-      security:
-      - Bearer: []
-      summary: Reject a leasing request
       tags:
       - request
   /transaction:
