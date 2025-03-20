@@ -152,7 +152,7 @@ components:
         start:
           type: string
         status:
-          type: string
+          $ref: '#/components/schemas/dto.Status'
       type: object
     dto.LoginRequestBody:
       properties:
@@ -287,6 +287,13 @@ components:
       - password
       - token
       type: object
+    dto.Status:
+      type: string
+      x-enum-varnames:
+      - RequestPending
+      - RequestAccepted
+      - RequestRejected
+      - RequestCanceled
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
         data:
