@@ -75,9 +75,9 @@ func (s *Server) initLeasingRequestRoutes() {
 	historyRoutes := s.app.Group("/request")
 	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Create)
 	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingRequest.GetByUserID)
-	historyRoutes.Patch("/approve/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Approve)
-	historyRoutes.Patch("/reject/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Reject)
-	historyRoutes.Patch("/cancel/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Cancel)
+	historyRoutes.Patch("/:id/approve", s.authMiddleware.Auth, s.handler.leasingRequest.Approve)
+	historyRoutes.Patch("/:id/reject", s.authMiddleware.Auth, s.handler.leasingRequest.Reject)
+	historyRoutes.Patch("/:id/cancel", s.authMiddleware.Auth, s.handler.leasingRequest.Cancel)
 	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Delete)
 }
 
