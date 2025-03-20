@@ -61,7 +61,7 @@ func (s *LeasingRequestService) Approve(id, userId uuid.UUID) error {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
 	if userId != leasingRequest.LessorID {
-		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
+		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
 	leasingRequest.Status = domain.RequestAccepted
@@ -81,7 +81,7 @@ func (s *LeasingRequestService) Reject(id, userId uuid.UUID) error {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
 	if userId != leasingRequest.LessorID {
-		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
+		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
 	leasingRequest.Status = domain.RequestRejected
@@ -101,7 +101,7 @@ func (s *LeasingRequestService) Cancel(id, userId uuid.UUID) error {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
 	if userId != leasingRequest.LesseeID {
-		return apperror.UnauthorizedError(errors.New("id not in the leasing request"), "id not in the leasing request")
+		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
 	leasingRequest.Status = domain.RequestCanceled
