@@ -134,7 +134,13 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 // @Summary Get all dorms by a search string
 // @Description Retrieve a list of all dorms filtered by a search query. If no query is provided, all dorms are returned.
 // @Tags dorms
-// @Param search query string false "Search qeury"
+// @Param search query string false "Search query"
+// @Param minPrice query int false "Filter min price"
+// @Param maxPrice query int false "Filter max price"
+// @Param district query string false "Filter district price"
+// @Param subdistrict query string false "Filter subdistrict price"
+// @Param province query string false "Filter province price"
+// @Param zipcode query string false "Filter zipcode price"
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
@@ -145,38 +151,33 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
-	}
-	if limit > 50 {
+		limit = 10
+	} else if limit > 50 {
 		limit = 50
 	}
+
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
 
-	var dorms []dto.DormResponseBody
-	var totalPages int
-	var totalRows int
-	var err error
+	search := c.Query("search")
+	minPrice := c.QueryInt("minPrice", -1)
+	maxPrice := c.QueryInt("maxPrice", -1)
 
-	searchTerm := c.Query("search")
-	if searchTerm == "" {
-		dorms, totalPages, totalRows, err = d.dormService.GetAll(limit, page)
-		if err != nil {
-			if apperror.IsAppError(err) {
-				return err
-			}
-			return apperror.InternalServerError(err, "get dorms error")
-		}
-	} else {
-		dorms, totalPages, totalRows, err = d.dormService.SearchByQuery(searchTerm, limit, page)
-		if err != nil {
-			if apperror.IsAppError(err) {
-				return err
-			}
-			return apperror.InternalServerError(err, "get dorms error")
-		}
+	if minPrice > maxPrice {
+		err := errors.New("min price cannot more than max price")
+		return apperror.BadRequestError(err, err.Error())
+	}
+
+	district := c.Query("district")
+	subdistrict := c.Query("subdistrict")
+	province := c.Query("province")
+	zipcode := c.Query("zipcode")
+
+	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page, search, minPrice, maxPrice, district, subdistrict, province, zipcode)
+	if err != nil {
+		return err
 	}
 
 	res := dto.SuccessPagination(dorms, dto.Pagination{

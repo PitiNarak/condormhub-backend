@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"errors"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -106,13 +104,16 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Invalid user ID")
 	}
 
-	limit := c.QueryInt("limit", 1)
+	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
 	}
+
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
 
 	orders, totalPage, totalRows, errHandler := o.OrderService.GetUnpaidOrderByUserID(userID, limit, page)
@@ -154,13 +155,16 @@ func (o *OrderHandler) GetUnpaidOrderByUserID(c *fiber.Ctx) error {
 func (o *OrderHandler) GetMyUnpaidOrder(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
-	limit := c.QueryInt("limit", 1)
+	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
 	}
+
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
 
 	orders, totalPage, totalRows, errHandler := o.OrderService.GetUnpaidOrderByUserID(userID, limit, page)
