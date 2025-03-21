@@ -257,6 +257,10 @@ func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID) 
 		return nil, err
 	}
 
+	if user.StudentEvidence == "" {
+		return nil, apperror.NotFoundError(errors.New("student evidence for this user does not exist"), "Student evidence for this user does not exist")
+	}
+
 	url, err := s.storage.GetSignedUrl(ctx, user.StudentEvidence, time.Minute*60)
 	if err != nil {
 		return nil, apperror.InternalServerError(err, "error getting signed url")
