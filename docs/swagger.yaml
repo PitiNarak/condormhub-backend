@@ -1294,7 +1294,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
+          description: Incorrect UUID format or your request is invalid or review
+            not exist
         "401":
           content:
             application/json:
@@ -1339,7 +1340,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
+          description: Incorrect UUID format or your request is invalid
         "401":
           content:
             application/json:
