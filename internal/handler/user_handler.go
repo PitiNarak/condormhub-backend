@@ -387,9 +387,10 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 // @Param image formData file true "Student ID image"
 // @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Evidence uploaded successfully"
 // @Failure 400 {object} dto.ErrorResponse "File is required"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "User not found"
 // @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
-// @Router /student-evidence [post]
+// @Router /user/student-evidence [post]
 func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
@@ -415,6 +416,20 @@ func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.StudentEvidenceUploadResponseBody{ImageUrl: url, Expires: time.Now().Add(time.Hour)}))
 }
 
+// GetStudentEvidenceByID godoc
+// @Summary Get student evidence by user id
+// @Description Get student evidence by user id
+// @Tags user
+// @Security Bearer
+// @Produce json
+// @Param id path string true "userID"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Get student evidence successfully"
+// @Failure 400 {object} dto.ErrorResponse "invalid user id"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to view this evidence"
+// @Failure 404 {object} dto.ErrorResponse "User or evidence not found"
+// @Failure 500 {object} dto.ErrorResponse "system cannot get user's student evidence"
+// @Router /user/{id}/student-evidence [get]
 func (h *UserHandler) GetStudentEvidenceByID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
