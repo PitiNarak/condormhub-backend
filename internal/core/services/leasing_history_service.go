@@ -110,6 +110,9 @@ func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Me
 	if err != nil {
 		return nil, err
 	}
+	if !history.ReviewFlag {
+		return nil, apperror.BadRequestError(errors.New("review not exist"), "review not exist")
+	}
 	if user.Role == domain.LessorRole {
 		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}

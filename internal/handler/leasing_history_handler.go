@@ -243,7 +243,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 // @Produce json
 // @Param user body dto.ReviewCreateRequestBody true "review information"
 // @Success 201 {object} dto.SuccessResponse[dto.Review]
-// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or your request is invalid"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
@@ -277,7 +277,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 // @Produce json
 // @Param user body dto.ReviewUpdateRequestBody true "review information"
 // @Success 201 {object} dto.SuccessResponse[dto.Review]
-// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or your request is invalid or review not exist"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
