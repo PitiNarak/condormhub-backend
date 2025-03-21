@@ -311,12 +311,6 @@ components:
       properties:
         id:
           type: string
-        message:
-          type: string
-        rate:
-          maximum: 5
-          minimum: 0
-          type: integer
       type: object
     dto.ReviewUpdateRequestBody:
       properties:
