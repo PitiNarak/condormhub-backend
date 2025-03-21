@@ -13,7 +13,7 @@ type LeasingHistory struct {
 	Dorm     Dorm      `gorm:"foreignKey:DormID;references:ID"`
 	LesseeID uuid.UUID `gorm:"type:uuid;not null"`
 	Lessee   User      `gorm:"foreignKey:LesseeID;references:ID"`
-	ReviewID uuid.UUID `gorm:"type:uuid;not null"`
+	ReviewID uuid.UUID `gorm:"type:uuid"`
 	Review   Review    `gorm:"foreignKey:ReviewID;references:ID"`
 	Orders   []Order   `gorm:"foreignKey:LeasingHistoryID"`
 	Start    time.Time
