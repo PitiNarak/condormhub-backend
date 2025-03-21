@@ -17,7 +17,7 @@ type LeasingHistory struct {
 	Start      time.Time
 	End        time.Time `gorm:"default:null"`
 	Price      float64
-	ReviewFlag bool   `gorm:"default:false"`
+	ReviewFlag bool
 	Review     Review `gorm:"embedded"`
 }
 

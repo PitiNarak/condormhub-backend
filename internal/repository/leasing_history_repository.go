@@ -55,6 +55,12 @@ func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory)
 		}
 		return apperror.InternalServerError(err, "Failed to update leasing history")
 	}
+	if existingHistory.ReviewFlag != LeasingHistory.ReviewFlag {
+		err = d.db.Model(existingHistory).UpdateColumn("ReviewFlag", LeasingHistory.ReviewFlag).Error
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
