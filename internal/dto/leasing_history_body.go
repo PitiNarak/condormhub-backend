@@ -15,3 +15,9 @@ type LeasingHistory struct {
 	End    time.Time           `json:"end"`
 	Price  float64             `json:"price"`
 }
+
+type Review struct {
+	Message  string    `json:"message"`
+	Rate     int       `json:"rate"`
+	CreateAt time.Time `json:"crateAt"`
+}
