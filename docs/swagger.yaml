@@ -136,6 +136,8 @@ components:
           type: number
         review:
           $ref: '#/components/schemas/dto.Review'
+        reviewFlag:
+          type: boolean
         start:
           type: string
       type: object

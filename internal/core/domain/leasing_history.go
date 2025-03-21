@@ -31,14 +31,15 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 		review = l.Review.ToDTO()
 	}
 	return dto.LeasingHistory{
-		ID:     l.ID,
-		Dorm:   l.Dorm.ToDTO(),
-		Lessee: l.Lessee.ToDTO(),
-		Orders: orders,
-		Start:  l.Start,
-		End:    l.End,
-		Price:  l.Price,
-		Review: review,
+		ID:         l.ID,
+		Dorm:       l.Dorm.ToDTO(),
+		Lessee:     l.Lessee.ToDTO(),
+		Orders:     orders,
+		Start:      l.Start,
+		End:        l.End,
+		Price:      l.Price,
+		Review:     review,
+		ReviewFlag: l.ReviewFlag,
 	}
 }
 

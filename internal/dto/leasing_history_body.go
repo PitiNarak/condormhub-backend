@@ -7,14 +7,15 @@ import (
 )
 
 type LeasingHistory struct {
-	ID     uuid.UUID           `json:"id"`
-	Dorm   DormResponseBody    `json:"dorm"`
-	Lessee UserResponse        `json:"lessee"`
-	Orders []OrderResponseBody `json:"orders"`
-	Start  time.Time           `json:"start"`
-	End    time.Time           `json:"end"`
-	Price  float64             `json:"price"`
-	Review Review              `json:"review"`
+	ID         uuid.UUID           `json:"id"`
+	Dorm       DormResponseBody    `json:"dorm"`
+	Lessee     UserResponse        `json:"lessee"`
+	Orders     []OrderResponseBody `json:"orders"`
+	Start      time.Time           `json:"start"`
+	End        time.Time           `json:"end"`
+	Price      float64             `json:"price"`
+	Review     Review              `json:"review"`
+	ReviewFlag bool                `json:"reviewFlag"`
 }
 
 type Review struct {
