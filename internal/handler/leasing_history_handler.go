@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -243,7 +241,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
-// @Param user body dto.ReviewRequestBody true "review information"
+// @Param user body dto.ReviewCreateRequestBody true "review information"
 // @Success 201 {object} dto.SuccessResponse[dto.Review]
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -252,7 +250,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 // @Router /history/review/ [post]
 func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	body := new(dto.ReviewRequestBody)
+	body := new(dto.ReviewCreateRequestBody)
 	err := c.BodyParser(&body)
 	if err != nil {
 		return apperror.BadRequestError(err, "your request is invalid")
@@ -277,7 +275,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
-// @Param user body dto.ReviewRequestBody true "review information"
+// @Param user body dto.ReviewUpdateRequestBody true "review information"
 // @Success 201 {object} dto.SuccessResponse[dto.Review]
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -286,7 +284,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 // @Router /history/review/ [patch]
 func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	body := new(dto.ReviewRequestBody)
+	body := new(dto.ReviewUpdateRequestBody)
 	err := c.BodyParser(&body)
 	if err != nil {
 		return apperror.BadRequestError(err, "your request is invalid")
@@ -311,7 +309,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
-// @Param id path string true "HistoryID"
+// @Param user body dto.ReviewDeleteRequestBody true "histody id"
 // @Success 204 "No Content"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -319,21 +317,19 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
 // @Router /history/review/ [delete]
 func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
-	id := c.Params("id")
-	fmt.Println(id)
 	user := c.Locals("user").(*domain.User)
-	if err := uuid.Validate(id); err != nil {
-		return apperror.BadRequestError(err, "Incorrect UUID format")
+	body := new(dto.ReviewDeleteRequestBody)
+	err := c.BodyParser(&body)
+	if err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 
-	leasingHistoryID, err := uuid.Parse(id)
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "Can not parse UUID")
+	validate := validator.New()
+
+	if err := validate.Struct(body); err != nil {
+		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
-	err = h.service.DeleteReview(user, leasingHistoryID)
+	err = h.service.DeleteReview(user, body.ID)
 	if err != nil {
 		return err
 	}

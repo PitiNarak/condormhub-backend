@@ -23,7 +23,19 @@ type Review struct {
 	CreateAt time.Time `json:"crateAt"`
 }
 
-type ReviewRequestBody struct {
+type ReviewCreateRequestBody struct {
+	Message string    `json:"message" validate:"omitempty"`
+	Rate    int       `json:"rate" validate:"omitempty,gte=0,lte=5"`
+	ID      uuid.UUID `json:"id" validate:"omitempty"`
+}
+
+type ReviewUpdateRequestBody struct {
+	Message string    `json:"message" validate:"omitempty"`
+	Rate    int       `json:"rate" validate:"omitempty,gte=0,lte=5"`
+	ID      uuid.UUID `json:"id" validate:"omitempty"`
+}
+
+type ReviewDeleteRequestBody struct {
 	Message string    `json:"message" validate:"omitempty"`
 	Rate    int       `json:"rate" validate:"omitempty,gte=0,lte=5"`
 	ID      uuid.UUID `json:"id" validate:"omitempty"`
