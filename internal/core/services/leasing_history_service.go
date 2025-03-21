@@ -1,10 +1,12 @@
 package services
 
 import (
+	"errors"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
 
@@ -66,6 +68,83 @@ func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
 	}
 	leasingHistory.End = time.Now()
 	err = s.historyRepo.Update(leasingHistory)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *LeasingHistoryService) CreateReview(user domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if history.ReviewFlag {
+		return nil, apperror.BadRequestError(errors.New("review already exist"), "review already exist")
+	}
+	if user.Role == domain.LessorRole {
+		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	}
+	if history.LesseeID != user.ID {
+		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	}
+	review := domain.Review{
+		Message: Message,
+		Rate:    Rate,
+	}
+	history.Review = review
+	history.ReviewFlag = true
+	err = s.historyRepo.Update(history)
+	if err != nil {
+		return nil, err
+	}
+	history, err = s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return &history.Review, nil
+}
+
+func (s *LeasingHistoryService) UpdateReview(user domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if user.Role == domain.LessorRole {
+		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	}
+	if history.LesseeID != user.ID {
+		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	}
+	review := domain.Review{
+		Message: Message,
+		Rate:    Rate,
+	}
+	history.Review = review
+	err = s.historyRepo.Update(history)
+	if err != nil {
+		return nil, err
+	}
+	history, err = s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return &history.Review, nil
+}
+
+func (s *LeasingHistoryService) DeleteReview(user domain.User, id uuid.UUID) error {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	if user.Role == domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	}
+	if history.LesseeID != user.ID {
+		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	}
+	history.ReviewFlag = false
+	err = s.historyRepo.Update(history)
 	if err != nil {
 		return err
 	}
