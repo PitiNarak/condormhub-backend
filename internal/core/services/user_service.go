@@ -3,6 +3,10 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"strings"
+	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -10,6 +14,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/email"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,10 +23,11 @@ type UserService struct {
 	userRepo     ports.UserRepository
 	emailService email.Email
 	jwtUtils     *jwt.JWTUtils
+	storage      *storage.Storage
 }
 
-func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwtUtils *jwt.JWTUtils) ports.UserService {
-	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils}
+func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwtUtils *jwt.JWTUtils, storage *storage.Storage) ports.UserService {
+	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils, storage: storage}
 }
 
 func (s *UserService) Create(ctx context.Context, user *domain.User) (string, string, error) {
@@ -210,4 +216,37 @@ func (s *UserService) DeleteAccount(userID uuid.UUID) error {
 		return err
 	}
 	return nil
+}
+
+func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error) {
+	filename = strings.ReplaceAll(filename, " ", "-")
+	uuid := uuid.New().String()
+	fileKey := fmt.Sprintf("student-evidence/%s-%s", uuid, filename)
+
+	if err := s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PrivateBucket); err != nil {
+		return "", apperror.InternalServerError(err, "error uploading file")
+	}
+	url, err := s.storage.GetSignedUrl(ctx, fileKey, time.Minute*60)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "error getting signed url")
+	}
+
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if user.StudentEvidence != "" {
+		if err = s.storage.DeleteFile(ctx, user.StudentEvidence, storage.PrivateBucket); err != nil {
+			return "", apperror.InternalServerError(err, "error deleting file")
+		}
+	}
+
+	user.StudentEvidence = fileKey
+	err = s.userRepo.UpdateUser(user)
+	if err != nil {
+		return "", err
+	}
+
+	return url, nil
 }

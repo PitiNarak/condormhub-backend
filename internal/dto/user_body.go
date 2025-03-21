@@ -48,3 +48,8 @@ type UserResponse struct {
 	StudentEvidence    string    `json:"studentEvidence"`
 	IsStudentVerified  bool      `json:"isStudentVerified"`
 }
+
+type StudentEvidenceUploadResponseBody struct {
+	ImageUrl string    `json:"url"`
+	Expires  time.Time `json:"expires"`
+}
