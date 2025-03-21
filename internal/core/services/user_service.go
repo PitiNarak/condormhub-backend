@@ -251,7 +251,11 @@ func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string
 	return url, nil
 }
 
-func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID) (*dto.StudentEvidenceUploadResponseBody, error) {
+func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error) {
+	if !isSelf && !isAdmin {
+		return nil, apperror.ForbiddenError(errors.New("unauthorized action"), "You do not have permission to view this evidence")
+	}
+
 	user, err := s.GetUserByID(id)
 	if err != nil {
 		return nil, err

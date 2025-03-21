@@ -420,7 +420,15 @@ func (h *UserHandler) GetStudentEvidenceByID(c *fiber.Ctx) error {
 	if err != nil {
 		return apperror.BadRequestError(err, "invalid user id")
 	}
-	evidence, err := h.userService.GetStudentEvidenceByID(c.Context(), userID)
+
+	localUser := c.Locals("user").(*domain.User)
+	if localUser.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isSelf := localUser.ID == userID
+	isAdmin := localUser.Role == domain.AdminRole
+
+	evidence, err := h.userService.GetStudentEvidenceByID(c.Context(), userID, isSelf, isAdmin)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err

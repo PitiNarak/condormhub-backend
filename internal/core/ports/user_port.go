@@ -31,7 +31,7 @@ type UserService interface {
 	ResetPassword(context.Context, string, string) (*domain.User, error)
 	DeleteAccount(userID uuid.UUID) error
 	UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
-	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID) (*dto.StudentEvidenceUploadResponseBody, error)
+	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
 }
 
 type UserHandler interface {
