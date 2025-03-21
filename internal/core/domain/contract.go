@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
@@ -15,6 +17,7 @@ const (
 
 type Contract struct {
 	ContractID   uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt     time.Time      `gorm:"autoCreateTime"`
 	LessorID     uuid.UUID      `gorm:"type:uuid;primaryKey"`
 	LesseeID     uuid.UUID      `gorm:"type:uuid;primaryKey"`
 	DormID       uuid.UUID      `gorm:"type:uuid;primaryKey"`

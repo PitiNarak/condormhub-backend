@@ -78,6 +78,42 @@ func (ct *ContractService) GetContractByContractID(contractID uuid.UUID) (*domai
 	return ct.contractRepo.GetContractByContractID(contractID)
 }
 
+func (ct *ContractService) GetByUserID(userID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
+	user, userErr := ct.userRepo.GetUserByID(userID)
+	if userErr != nil {
+		return nil, 0, 0, userErr
+	}
+	if user == nil || user.Role == "" {
+		return nil, 0, 0, apperror.BadRequestError(errors.New("invalid user"), "user not found or role is missing")
+	}
+	if user.Role == domain.AdminRole {
+		return nil, 0, 0, apperror.BadRequestError(errors.New("invalid user"), "role mismatch")
+	}
+
+	if user.Role == domain.LessorRole {
+		contracts, totalPage, totalRows, err := ct.contractRepo.GetContractByLessorID(userID, limit, page)
+		if err != nil {
+			return nil, totalPage, totalRows, err
+		}
+		return contracts, totalPage, totalRows, err
+	} else {
+		contracts, totalPage, totalRows, err := ct.contractRepo.GetContractByLesseeID(userID, limit, page)
+		if err != nil {
+			return nil, totalPage, totalRows, err
+		}
+		return contracts, totalPage, totalRows, err
+	}
+
+}
+
+func (ct *ContractService) GetByDormID(dormID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
+	contracts, totalPage, totalRows, err := ct.contractRepo.GetContractByLessorID(dormID, limit, page)
+	if err != nil {
+		return nil, totalPage, totalRows, err
+	}
+	return contracts, totalPage, totalRows, nil
+}
+
 func (ct *ContractService) UpdateStatus(contractID uuid.UUID, status domain.ContractStatus, userID uuid.UUID) error {
 	//check valid lessor ID
 

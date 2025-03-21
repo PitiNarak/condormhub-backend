@@ -1,11 +1,14 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ContractRepository struct {
@@ -46,28 +49,61 @@ func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*do
 	return contract, nil
 }
 
-func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID) (*[]domain.Contract, error) {
+func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
-	if err := ct.db.Where("lessor_id = ? ", lessorID).Find(&contracts).Error; err != nil {
-		return nil, apperror.NotFoundError(err, "Contracts not found")
+	query := ct.db.Where("lessor_id = ? ", lessorID).Find(&contracts)
+
+	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
+
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return nil, 0, 0, err
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, 0, apperror.NotFoundError(err, "contract not found")
+		}
+		return nil, 0, 0, apperror.InternalServerError(err, "failed to get contract")
 	}
-	return &contracts, nil
+
+	return &contracts, totalPage, totalRows, nil
 }
 
-func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID) (*[]domain.Contract, error) {
+func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
-	if err := ct.db.Where("lessee_id = ? ", lesseeID).Find(&contracts).Error; err != nil {
-		return nil, apperror.NotFoundError(err, "Contracts not found")
+	query := ct.db.Where("lessee_id = ? ", lesseeID).Find(&contracts)
+
+	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
+
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return nil, 0, 0, err
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, 0, apperror.NotFoundError(err, "contract not found")
+		}
+		return nil, 0, 0, apperror.InternalServerError(err, "failed to get contract")
 	}
-	return &contracts, nil
+
+	return &contracts, totalPage, totalRows, nil
 }
 
-func (ct *ContractRepository) GetContractByDormID(DormID uuid.UUID) (*[]domain.Contract, error) {
+func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
-	if err := ct.db.Where("dorm_id = ? ", DormID).Find(&contracts).Error; err != nil {
-		return nil, apperror.NotFoundError(err, "Contracts not found")
+	query := ct.db.Where("dorm_id = ? ", dormID).Find(&contracts)
+
+	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
+
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return nil, 0, 0, err
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, 0, apperror.NotFoundError(err, "contract not found")
+		}
+		return nil, 0, 0, apperror.InternalServerError(err, "failed to get contract")
 	}
-	return &contracts, nil
+
+	return &contracts, totalPage, totalRows, nil
 }
 
 func (ct *ContractRepository) UpdateLessorStatus(contractID uuid.UUID, LessorStatus domain.ContractStatus) error {
