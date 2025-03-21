@@ -134,6 +134,8 @@ components:
           uniqueItems: false
         price:
           type: number
+        review:
+          $ref: '#/components/schemas/dto.Review'
         start:
           type: string
       type: object
@@ -285,6 +287,28 @@ components:
       - password
       - token
       type: object
+    dto.Review:
+      properties:
+        crateAt:
+          type: string
+        id:
+          type: string
+        message:
+          type: string
+        rate:
+          type: integer
+      type: object
+    dto.ReviewRequestBody:
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        rate:
+          maximum: 5
+          minimum: 0
+          type: integer
+      type: object
     dto.Status:
       type: string
       x-enum-varnames:
@@ -326,6 +350,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
+      type: object
+    dto.SuccessResponse-dto_Review:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.Review'
       type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
@@ -1141,6 +1170,48 @@ paths:
       summary: Get all leasing history by userid
       tags:
       - history
+  /history/delete/:
+    delete:
+      description: Delete a review
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Dorm not found or leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Delete a review
+      tags:
+      - history
   /history/me:
     get:
       description: Retrieve a list of all leasing history by userid
@@ -1184,6 +1255,97 @@ paths:
       security:
       - Bearer: []
       summary: Get all leasing history by userid
+      tags:
+      - history
+  /history/review/:
+    patch:
+      description: Update a review in the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.ReviewRequestBody'
+        description: review information
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_Review'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Update a new review
+      tags:
+      - history
+    post:
+      description: Add a new review to the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.ReviewRequestBody'
+        description: review information
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_Review'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Create a new review
       tags:
       - history
   /order:
