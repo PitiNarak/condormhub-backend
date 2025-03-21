@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -231,4 +233,106 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	res := dto.Success(leasingHistory.ToDTO())
 
 	return c.Status(fiber.StatusCreated).JSON(res)
+}
+
+// CreateReview godoc
+// @Summary Create a new review
+// @Description Add a new review to the database
+// @Tags history
+// @Security Bearer
+// @Produce json
+// @Param user body dto.ReviewRequestBody true "review information"
+// @Success 201 {object} dto.SuccessResponse[dto.Review]
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
+// @Router /history/review/ [post]
+func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
+	user := c.Locals("user").(*domain.User)
+	body := new(dto.ReviewRequestBody)
+	err := c.BodyParser(&body)
+	if err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(user); err != nil {
+		return apperror.BadRequestError(err, "your request body is incorrect")
+	}
+	review, err := h.service.CreateReview(user, body.ID, body.Message, int(body.Rate))
+	if err != nil {
+		return err
+	}
+	res := dto.Success(review.ToDTO())
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// UpdateReview godoc
+// @Summary Update a new review
+// @Description Update a review in the database
+// @Tags history
+// @Security Bearer
+// @Produce json
+// @Param user body dto.ReviewRequestBody true "review information"
+// @Success 201 {object} dto.SuccessResponse[dto.Review]
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
+// @Router /history/review/ [patch]
+func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
+	user := c.Locals("user").(*domain.User)
+	body := new(dto.ReviewRequestBody)
+	err := c.BodyParser(&body)
+	if err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(user); err != nil {
+		return apperror.BadRequestError(err, "your request body is incorrect")
+	}
+	review, err := h.service.UpdateReview(user, body.ID, body.Message, int(body.Rate))
+	if err != nil {
+		return err
+	}
+	res := dto.Success(review.ToDTO())
+	return c.Status(fiber.StatusCreated).JSON(res)
+}
+
+// Create godoc
+// @Summary Create a new leasing history
+// @Description Add a new leasing history to the database
+// @Tags history
+// @Security Bearer
+// @Produce json
+// @Param id path string true "HistoryID"
+// @Success 201 {object} dto.SuccessResponse[dto.LeasingHistory] "Dorm successfully created"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "Dorm not found or leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
+// @Router /history/delete/ [patch]
+func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
+	id := c.Params("id")
+	user := c.Locals("user").(*domain.User)
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	leasingHistoryID, err := uuid.Parse(id)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+	err = h.service.DeleteReview(user, leasingHistoryID)
+	if err != nil {
+		return err
+	}
+	return c.SendStatus(fiber.StatusNoContent)
 }

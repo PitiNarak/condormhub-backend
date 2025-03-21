@@ -17,9 +17,9 @@ type LeasingHistoryRepository interface {
 
 type LeasingHistoryService interface {
 	Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error)
-	CreateReview(user domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
-	UpdateReview(user domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
-	DeleteReview(user domain.User, id uuid.UUID) error
+	CreateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
+	UpdateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
+	DeleteReview(user *domain.User, id uuid.UUID) error
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)

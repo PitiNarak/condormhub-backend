@@ -74,7 +74,7 @@ func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
 	return nil
 }
 
-func (s *LeasingHistoryService) CreateReview(user domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
+func (s *LeasingHistoryService) CreateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
 	history, err := s.historyRepo.GetByID(id)
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func (s *LeasingHistoryService) CreateReview(user domain.User, id uuid.UUID, Mes
 	return &history.Review, nil
 }
 
-func (s *LeasingHistoryService) UpdateReview(user domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
+func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
 	history, err := s.historyRepo.GetByID(id)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (s *LeasingHistoryService) UpdateReview(user domain.User, id uuid.UUID, Mes
 	return &history.Review, nil
 }
 
-func (s *LeasingHistoryService) DeleteReview(user domain.User, id uuid.UUID) error {
+func (s *LeasingHistoryService) DeleteReview(user *domain.User, id uuid.UUID) error {
 	history, err := s.historyRepo.GetByID(id)
 	if err != nil {
 		return err

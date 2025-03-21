@@ -26,7 +26,10 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 	for i, v := range l.Orders {
 		orders[i] = v.ToDTO()
 	}
-
+	var review dto.Review
+	if l.ReviewFlag {
+		review = l.Review.ToDTO()
+	}
 	return dto.LeasingHistory{
 		ID:     l.ID,
 		Dorm:   l.Dorm.ToDTO(),
@@ -35,6 +38,7 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 		Start:  l.Start,
 		End:    l.End,
 		Price:  l.Price,
+		Review: review,
 	}
 }
 
