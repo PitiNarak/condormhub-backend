@@ -38,9 +38,9 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 }
 
 type Review struct {
-	Message  string
-	Rate     int
-	CreateAt *time.Time `gorm:"autoCreateTime"`
+	Message  string     `gorm:"default:null"`
+	Rate     int        `gorm:"default:null"`
+	CreateAt *time.Time `gorm:"autoUpdateTime;default:null"`
 }
 
 func (r *Review) ToDTO() dto.Review {
