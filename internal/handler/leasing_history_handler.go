@@ -303,19 +303,19 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
-// Create godoc
-// @Summary Create a new leasing history
-// @Description Add a new leasing history to the database
+// Delete godoc
+// @Summary Delete a review
+// @Description Delete a review
 // @Tags history
 // @Security Bearer
 // @Produce json
 // @Param id path string true "HistoryID"
-// @Success 201 {object} dto.SuccessResponse[dto.LeasingHistory] "Dorm successfully created"
+// @Success 204 "No Content"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found or leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/delete/ [patch]
+// @Router /history/delete/ [delete]
 func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
