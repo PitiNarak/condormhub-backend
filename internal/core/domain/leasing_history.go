@@ -13,11 +13,12 @@ type LeasingHistory struct {
 	Dorm     Dorm      `gorm:"foreignKey:DormID;references:ID"`
 	LesseeID uuid.UUID `gorm:"type:uuid;not null"`
 	Lessee   User      `gorm:"foreignKey:LesseeID;references:ID"`
+	ReviewID uuid.UUID `gorm:"type:uuid;not null"`
+	Review   Review    `gorm:"foreignKey:ReviewID;references:ID"`
 	Orders   []Order   `gorm:"foreignKey:LeasingHistoryID"`
 	Start    time.Time
 	End      time.Time `gorm:"default:null"`
 	Price    float64
-	Review   Review `gorm:"embedded"`
 }
 
 func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
@@ -34,19 +35,5 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 		Start:  l.Start,
 		End:    l.End,
 		Price:  l.Price,
-	}
-}
-
-type Review struct {
-	Message  string
-	Rate     int
-	CreateAt time.Time `gorm:"autoCreateTime"`
-}
-
-func (r *Review) ToDTO() dto.Review {
-	return dto.Review{
-		Message:  r.Message,
-		Rate:     r.Rate,
-		CreateAt: r.CreateAt,
 	}
 }
