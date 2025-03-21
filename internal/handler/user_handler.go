@@ -414,3 +414,19 @@ func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.StudentEvidenceUploadResponseBody{ImageUrl: url, Expires: time.Now().Add(time.Hour)}))
 }
+
+func (h *UserHandler) GetStudentEvidenceByID(c *fiber.Ctx) error {
+	userID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return apperror.BadRequestError(err, "invalid user id")
+	}
+	evidence, err := h.userService.GetStudentEvidenceByID(c.Context(), userID)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get student evidence by id failed")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(evidence))
+}

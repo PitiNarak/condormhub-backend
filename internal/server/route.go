@@ -44,6 +44,7 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
 
 	userRoutes.Post("/student-evidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
+	userRoutes.Get("/:id/student-evidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
 }
 
 func (s *Server) initAuthRoutes() {

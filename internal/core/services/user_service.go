@@ -250,3 +250,21 @@ func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string
 
 	return url, nil
 }
+
+func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID) (*dto.StudentEvidenceUploadResponseBody, error) {
+	user, err := s.GetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	url, err := s.storage.GetSignedUrl(ctx, user.StudentEvidence, time.Minute*60)
+	if err != nil {
+		return nil, apperror.InternalServerError(err, "error getting signed url")
+	}
+
+	res := new(dto.StudentEvidenceUploadResponseBody)
+	res.ImageUrl = url
+	res.Expires = time.Now().Add(time.Hour)
+
+	return res, nil
+}
