@@ -26,3 +26,9 @@ go.work.sum
 !.env.example
 
 bin/
+
+.DS_Store
+#temp directory for running locally
+tmpDir/
+tmp/
+.commitlint/
