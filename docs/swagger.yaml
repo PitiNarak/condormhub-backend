@@ -291,8 +291,6 @@ components:
       properties:
         crateAt:
           type: string
-        id:
-          type: string
         message:
           type: string
         rate:
@@ -1170,48 +1168,6 @@ paths:
       summary: Get all leasing history by userid
       tags:
       - history
-  /history/delete/:
-    delete:
-      description: Delete a review
-      parameters:
-      - description: HistoryID
-        in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      responses:
-        "204":
-          description: No Content
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Dorm not found or leasing history not found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Can not parse UUID or failed to save leasing history to database
-      security:
-      - Bearer: []
-      summary: Delete a review
-      tags:
-      - history
   /history/me:
     get:
       description: Retrieve a list of all leasing history by userid
@@ -1258,6 +1214,47 @@ paths:
       tags:
       - history
   /history/review/:
+    delete:
+      description: Delete a review
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Dorm not found or leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Delete a review
+      tags:
+      - history
     patch:
       description: Update a review in the database
       requestBody:

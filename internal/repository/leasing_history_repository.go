@@ -68,7 +68,7 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 }
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	query := d.db.Preload("Dorm").Preload("Review").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id)
+	query := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(&leasingHistory, query, limit, page, "start")
 
 	if err != nil {
@@ -85,7 +85,7 @@ func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([
 }
 func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	query := d.db.Preload("Dorm").Preload("Review").Preload("Dorm.Owner").Where("dorm_id = ?", id)
+	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(leasingHistory, query, limit, page, "start")
 
 	if err != nil {

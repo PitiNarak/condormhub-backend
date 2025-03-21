@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -258,7 +260,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 
 	validate := validator.New()
 
-	if err := validate.Struct(user); err != nil {
+	if err := validate.Struct(body); err != nil {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 	review, err := h.service.CreateReview(user, body.ID, body.Message, int(body.Rate))
@@ -292,7 +294,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 
 	validate := validator.New()
 
-	if err := validate.Struct(user); err != nil {
+	if err := validate.Struct(body); err != nil {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 	review, err := h.service.UpdateReview(user, body.ID, body.Message, int(body.Rate))
@@ -315,9 +317,10 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found or leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/delete/ [delete]
+// @Router /history/review/ [delete]
 func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	id := c.Params("id")
+	fmt.Println(id)
 	user := c.Locals("user").(*domain.User)
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
