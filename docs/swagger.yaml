@@ -296,7 +296,29 @@ components:
         rate:
           type: integer
       type: object
-    dto.ReviewRequestBody:
+    dto.ReviewCreateRequestBody:
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        rate:
+          maximum: 5
+          minimum: 0
+          type: integer
+      type: object
+    dto.ReviewDeleteRequestBody:
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        rate:
+          maximum: 5
+          minimum: 0
+          type: integer
+      type: object
+    dto.ReviewUpdateRequestBody:
       properties:
         id:
           type: string
@@ -1216,13 +1238,13 @@ paths:
   /history/review/:
     delete:
       description: Delete a review
-      parameters:
-      - description: HistoryID
-        in: path
-        name: id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.ReviewDeleteRequestBody'
+        description: histody id
         required: true
-        schema:
-          type: string
       responses:
         "204":
           description: No Content
@@ -1261,7 +1283,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dto.ReviewRequestBody'
+              $ref: '#/components/schemas/dto.ReviewUpdateRequestBody'
         description: review information
         required: true
       responses:
@@ -1306,7 +1328,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dto.ReviewRequestBody'
+              $ref: '#/components/schemas/dto.ReviewCreateRequestBody'
         description: review information
         required: true
       responses:
