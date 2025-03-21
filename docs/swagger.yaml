@@ -292,6 +292,13 @@ components:
       - RequestAccepted
       - RequestRejected
       - RequestCanceled
+    dto.StudentEvidenceUploadResponseBody:
+      properties:
+        expires:
+          type: string
+        url:
+          type: string
+      type: object
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
         data:
@@ -326,6 +333,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
+      type: object
+    dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.StudentEvidenceUploadResponseBody'
       type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
@@ -1847,6 +1859,47 @@ paths:
       summary: Get all leasing request by userid
       tags:
       - request
+  /student-evidence:
+    post:
+      description: Upload an image of a student ID card, by attaching the image as
+        a value for the key field name "image", as a multipart form-data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: Student ID image
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody'
+          description: Evidence uploaded successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: File is required
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: User not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload an evidence for student verification
+      tags:
+      - user
   /transaction:
     post:
       description: Create a transaction

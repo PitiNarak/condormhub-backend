@@ -377,6 +377,19 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(user.ToDTO()))
 }
 
+// UploadStudentEvidence godoc
+// @Summary Upload an evidence for student verification
+// @Description Upload an image of a student ID card, by attaching the image as a value for the key field name "image", as a multipart form-data
+// @Tags user
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param image formData file true "Student ID image"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Evidence uploaded successfully"
+// @Failure 400 {object} dto.ErrorResponse "File is required"
+// @Failure 404 {object} dto.ErrorResponse "User not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
+// @Router /student-evidence [post]
 func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
