@@ -294,7 +294,7 @@ components:
       - RequestCanceled
     dto.StudentEvidenceUploadResponseBody:
       properties:
-        expires:
+        expired:
           type: string
         url:
           type: string
