@@ -25,9 +25,9 @@ type UserService interface {
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(context.Context, string, string) (*domain.User, string, string, error)
 	RefreshToken(ctx context.Context, refreshToken string) (string, string, error)
-	VerifyUser(context.Context, string) (string, *domain.User, error)
+	VerifyUser(ctx context.Context, token string) (*domain.User, string, string, error)
 	ResetPasswordCreate(context.Context, string) error
-	ResetPassword(context.Context, string, string) (*domain.User, error)
+	ResetPassword(context.Context, string, string) (*domain.User, string, string, error)
 	DeleteAccount(userID uuid.UUID) error
 }
 

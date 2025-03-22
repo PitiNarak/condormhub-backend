@@ -17,7 +17,7 @@ type UserHandler struct {
 	userService ports.UserService
 }
 
-func NewUserHandler(UserService ports.UserService) ports.UserHandler {
+func NewUserHandler(UserService ports.UserService) *UserHandler {
 	return &UserHandler{userService: UserService}
 }
 
@@ -44,13 +44,14 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
-	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
+	user, accessToken, refreshToken, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}
 
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: user.ToDTO(),
 	}
 
@@ -140,14 +141,14 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return apperror.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	user, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
+	user, accessToken, refreshToken, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
 	if err != nil {
 		return err
 	}
 
 	data := dto.TokenWithUserInformationResponseBody{
-		AccessToken:     tokenString,
-		RefreshToken:    "",
+		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: user.ToDTO(),
 	}
 
