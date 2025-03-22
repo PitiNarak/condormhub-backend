@@ -382,9 +382,9 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 // @Tags user
 // @Security Bearer
 // @Produce json
-// @Success 204 {object} "resend verification email successfully"
+// @Success 204 "resend verification email successfully"
 // @Failure 500 {object} dto.ErrorResponse "system cannot verification email"
-// @Router /user/resend
+// @Router /user/resend [post]
 func (h *UserHandler) ResendVerificationEmailHandler(c *fiber.Ctx) error {
 	user, ok := c.Locals("user").(*domain.User)
 	if !ok {
