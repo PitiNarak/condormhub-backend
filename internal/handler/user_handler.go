@@ -17,7 +17,7 @@ type UserHandler struct {
 	userService ports.UserService
 }
 
-func NewUserHandler(UserService ports.UserService) ports.UserHandler {
+func NewUserHandler(UserService ports.UserService) *UserHandler {
 	return &UserHandler{userService: UserService}
 }
 
