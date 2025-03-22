@@ -29,6 +29,7 @@ type UserService interface {
 	ResetPasswordCreate(context.Context, string) error
 	ResetPassword(context.Context, string, string) (*domain.User, string, string, error)
 	DeleteAccount(userID uuid.UUID) error
+	ResendVerificationEmailService(ctx context.Context, email string) error
 }
 
 type UserHandler interface {
@@ -42,4 +43,5 @@ type UserHandler interface {
 	ResetPassword(c *fiber.Ctx) error
 	DeleteAccount(c *fiber.Ctx) error
 	GetUserByID(c *fiber.Ctx) error
+	ResendVerificationEmailHandler(c *fiber.Ctx) error
 }
