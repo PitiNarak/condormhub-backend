@@ -45,7 +45,7 @@ func (d *DormRepository) GetAll(
 
 	if search != "" {
 		regex := "%" + search + "%"
-		query.Where("name LIKE ? OR province LIKE ? OR district LIKE ? OR subdistrict LIKE ? OR zipcode LIKE ?", regex, regex, regex, regex, regex)
+		query.Where("name ILIKE ? OR province ILIKE ? OR district ILIKE ? OR subdistrict ILIKE ? OR zipcode ILIKE ?", regex, regex, regex, regex, regex)
 	}
 
 	if minPrice != -1 {
@@ -57,19 +57,19 @@ func (d *DormRepository) GetAll(
 	}
 
 	if district != "" {
-		query.Where("district LIKE ?", "%"+district+"%")
+		query.Where("district ILIKE ?", "%"+district+"%")
 	}
 
 	if subdistrict != "" {
-		query.Where("subdistrict LIKE ?", "%"+subdistrict+"%")
+		query.Where("subdistrict ILIKE ?", "%"+subdistrict+"%")
 	}
 
 	if province != "" {
-		query.Where("province LIKE ?", "%"+province+"%")
+		query.Where("province ILIKE ?", "%"+province+"%")
 	}
 
 	if zipcode != "" {
-		query.Where("zipcode LIKE ?", "%"+zipcode+"%")
+		query.Where("zipcode ILIKE ?", "%"+zipcode+"%")
 	}
 
 	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")
