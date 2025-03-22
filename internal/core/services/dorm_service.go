@@ -106,7 +106,6 @@ func (s *DormService) Delete(ctx context.Context, userID uuid.UUID, isAdmin bool
 
 	if len(dorm.Images) > 0 {
 		for _, image := range dorm.Images {
-			fmt.Println(image.ImageKey)
 			err = s.storage.DeleteFile(ctx, image.ImageKey, storage.PublicBucket)
 			if err != nil {
 				return apperror.InternalServerError(err, "Failed to delete images")
