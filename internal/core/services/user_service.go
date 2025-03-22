@@ -221,7 +221,7 @@ func (s *UserService) DeleteAccount(userID uuid.UUID) error {
 func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error) {
 	filename = strings.ReplaceAll(filename, " ", "-")
 	uuid := uuid.New().String()
-	fileKey := fmt.Sprintf("student-evidence/%s-%s", uuid, filename)
+	fileKey := fmt.Sprintf("user/%s/student-evidence/%s-%s", userID, uuid, filename)
 
 	if err := s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PrivateBucket); err != nil {
 		return "", apperror.InternalServerError(err, "error uploading file")
