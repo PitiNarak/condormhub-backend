@@ -140,14 +140,14 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return apperror.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	user, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
+	user, accessToken, refreshToken, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
 	if err != nil {
 		return err
 	}
 
 	data := dto.TokenWithUserInformationResponseBody{
-		AccessToken:     tokenString,
-		RefreshToken:    "",
+		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: user.ToDTO(),
 	}
 

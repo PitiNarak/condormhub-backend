@@ -20,7 +20,7 @@ type UserService struct {
 	jwtUtils     *jwt.JWTUtils
 }
 
-func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwtUtils *jwt.JWTUtils) ports.UserService {
+func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwtUtils *jwt.JWTUtils) *UserService {
 	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils}
 }
 
@@ -170,38 +170,42 @@ func (s *UserService) ResetPasswordCreate(ctx context.Context, email string) err
 	return nil
 }
 
-func (s *UserService) ResetPassword(ctx context.Context, token string, password string) (*domain.User, error) {
+func (s *UserService) ResetPassword(ctx context.Context, token string, password string) (*domain.User, string, string, error) {
 	userID, err := s.jwtUtils.VerifyResetPasswordToken(ctx, token)
 	if err != nil {
-		return new(domain.User), err
+		return nil, "", "", err
 	}
 
 	if userID == uuid.Nil {
-		return new(domain.User), apperror.UnauthorizedError(errors.New("token expired"), "token is expired")
+		return nil, "", "", apperror.UnauthorizedError(errors.New("token expired"), "token is expired")
 	}
 
 	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil {
-		return new(domain.User), err
+		return nil, "", "", err
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return new(domain.User), apperror.BadRequestError(err, "password cannot be hashed")
+		return nil, "", "", apperror.BadRequestError(err, "password cannot be hashed")
 	}
 
 	user.Password = string(hashedPassword)
 
-	err = s.userRepo.UpdateUser(user)
-	if err != nil {
-		return new(domain.User), err
+	if err = s.userRepo.UpdateUser(user); err != nil {
+		return nil, "", "", err
 	}
 
 	if err := s.jwtUtils.DeleteResetPasswordToken(ctx, userID); err != nil {
-		return new(domain.User), err
+		return nil, "", "", err
 	}
 
-	return user, nil
+	accessToken, refreshToken, err := s.jwtUtils.GenerateKeyPair(ctx, userID)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	return user, accessToken, refreshToken, nil
 }
 
 func (s *UserService) DeleteAccount(userID uuid.UUID) error {
