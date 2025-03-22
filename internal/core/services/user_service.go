@@ -212,7 +212,7 @@ func (s *UserService) DeleteAccount(userID uuid.UUID) error {
 	return nil
 }
 
-func (s *UserService) ResendConfirmationEmailService(ctx context.Context, email string) error {
+func (s *UserService) ResendVerificationEmailService(ctx context.Context, email string) error {
 	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
 		return err

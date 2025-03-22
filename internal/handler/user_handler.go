@@ -385,12 +385,12 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 // @Success 204 {object} "get user information successfully"
 // @Failure 500 {object} dto.ErrorResponse "system cannot get user information"
 // @Router /user/resend
-func (h *UserHandler) ResendConfirmationEmailHandler(c *fiber.Ctx) error {
+func (h *UserHandler) ResendVerificationEmailHandler(c *fiber.Ctx) error {
 	user, ok := c.Locals("user").(*domain.User)
 	if !ok {
 		return apperror.InternalServerError(errors.New("can't get user form context"), "get user information error")
 	}
-	if err := h.userService.ResendConfirmationEmailService(c.Context(), user.Email); err != nil {
+	if err := h.userService.ResendVerificationEmailService(c.Context(), user.Email); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
