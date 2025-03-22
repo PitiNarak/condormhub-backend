@@ -8,15 +8,17 @@ import (
 )
 
 type LeasingHistory struct {
-	ID       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	DormID   uuid.UUID `gorm:"type:uuid;not null"`
-	Dorm     Dorm      `gorm:"foreignKey:DormID;references:ID"`
-	LesseeID uuid.UUID `gorm:"type:uuid;not null"`
-	Lessee   User      `gorm:"foreignKey:LesseeID;references:ID"`
-	Orders   []Order   `gorm:"foreignKey:LeasingHistoryID"`
-	Start    time.Time
-	End      time.Time `gorm:"default:null"`
-	Price    float64
+	ID         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	DormID     uuid.UUID `gorm:"type:uuid;not null"`
+	Dorm       Dorm      `gorm:"foreignKey:DormID;references:ID"`
+	LesseeID   uuid.UUID `gorm:"type:uuid;not null"`
+	Lessee     User      `gorm:"foreignKey:LesseeID;references:ID"`
+	Orders     []Order   `gorm:"foreignKey:LeasingHistoryID"`
+	Start      time.Time
+	End        time.Time `gorm:"default:null"`
+	Price      float64
+	ReviewFlag bool
+	Review     Review `gorm:"embedded"`
 }
 
 func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
@@ -24,14 +26,33 @@ func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
 	for i, v := range l.Orders {
 		orders[i] = v.ToDTO()
 	}
-
+	var review dto.Review
+	if l.ReviewFlag {
+		review = l.Review.ToDTO()
+	}
 	return dto.LeasingHistory{
-		ID:     l.ID,
-		Dorm:   l.Dorm.ToDTO(),
-		Lessee: l.Lessee.ToDTO(),
-		Orders: orders,
-		Start:  l.Start,
-		End:    l.End,
-		Price:  l.Price,
+		ID:         l.ID,
+		Dorm:       l.Dorm.ToDTO(),
+		Lessee:     l.Lessee.ToDTO(),
+		Orders:     orders,
+		Start:      l.Start,
+		End:        l.End,
+		Price:      l.Price,
+		Review:     review,
+		ReviewFlag: l.ReviewFlag,
+	}
+}
+
+type Review struct {
+	Message  string     `gorm:"default:null"`
+	Rate     int        `gorm:"default:null"`
+	CreateAt *time.Time `gorm:"autoUpdateTime;default:null"`
+}
+
+func (r *Review) ToDTO() dto.Review {
+	return dto.Review{
+		Message:  r.Message,
+		Rate:     r.Rate,
+		CreateAt: *r.CreateAt,
 	}
 }

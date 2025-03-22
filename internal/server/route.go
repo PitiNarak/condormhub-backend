@@ -65,6 +65,9 @@ func (s *Server) initDormRoutes() {
 
 func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes := s.app.Group("/history")
+	historyRoutes.Post("/review", s.authMiddleware.Auth, s.handler.leasingHistory.CreateReview)
+	historyRoutes.Patch("/review", s.authMiddleware.Auth, s.handler.leasingHistory.UpdateReview)
+	historyRoutes.Delete("/review", s.authMiddleware.Auth, s.handler.leasingHistory.DeleteReview)
 	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Create)
 	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
