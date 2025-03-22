@@ -54,33 +54,38 @@ func (s *UserService) Create(ctx context.Context, user *domain.User) (string, st
 	return accessToken, refreshToken, nil
 }
 
-func (s *UserService) VerifyUser(ctx context.Context, token string) (string, *domain.User, error) {
+func (s *UserService) VerifyUser(ctx context.Context, token string) (*domain.User, string, string, error) {
 	userID, err := s.jwtUtils.VerifyVerificationToken(ctx, token)
 	if err != nil {
-		return "", nil, err
+		return nil, "", "", err
 	}
 
 	if userID == uuid.Nil {
-		return "", nil, apperror.UnauthorizedError(errors.New("token expired"), "token is expired")
+		return nil, "", "", apperror.UnauthorizedError(errors.New("token expired"), "token is expired")
 	}
 
 	user, err := s.userRepo.GetUserByID(userID)
 	if err != nil || user.ID == uuid.Nil {
-		return "", nil, err
+		return nil, "", "", err
 	}
 
 	user.IsVerified = true
 
 	updateErr := s.userRepo.UpdateUser(user)
 	if updateErr != nil {
-		return "", nil, updateErr
+		return nil, "", "", updateErr
 	}
 
 	if err := s.jwtUtils.DeleteVerificationToken(ctx, userID); err != nil {
-		return "", nil, err
+		return nil, "", "", err
 	}
 
-	return token, user, nil
+	accessToken, refreshToken, err := s.jwtUtils.GenerateKeyPair(ctx, userID)
+	if err != nil {
+		return nil, "", "", apperror.InternalServerError(err, "generate key failed")
+	}
+
+	return user, accessToken, refreshToken, nil
 }
 
 func (s *UserService) Login(ctx context.Context, email string, password string) (*domain.User, string, string, error) {

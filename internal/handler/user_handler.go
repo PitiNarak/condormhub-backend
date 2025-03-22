@@ -44,13 +44,14 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
-	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
+	user, accessToken, refreshToken, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}
 
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: user.ToDTO(),
 	}
 
