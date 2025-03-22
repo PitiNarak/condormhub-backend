@@ -43,8 +43,8 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.handler.user.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
 
-	userRoutes.Post("/student-evidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
-	userRoutes.Get("/:id/student-evidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
+	userRoutes.Post("/studentEvidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
+	userRoutes.Get("/:id/studentEvidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
 }
 
 func (s *Server) initAuthRoutes() {
