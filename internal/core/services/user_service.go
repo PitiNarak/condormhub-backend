@@ -211,3 +211,20 @@ func (s *UserService) DeleteAccount(userID uuid.UUID) error {
 	}
 	return nil
 }
+
+func (s *UserService) ResendConfirmationEmailService(ctx context.Context, email string) error {
+	user, err := s.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	verifyToken, err := s.jwtUtils.GenerateVerificationToken(ctx, user.ID)
+	if err != nil {
+		return err
+	}
+
+	if err = s.emailService.SendVerificationEmail(user.Email, user.Username, verifyToken); err != nil {
+		return err
+	}
+	return nil
+}
