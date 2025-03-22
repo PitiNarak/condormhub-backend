@@ -272,7 +272,7 @@ func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, 
 
 	res := new(dto.StudentEvidenceUploadResponseBody)
 	res.ImageUrl = url
-	res.Expires = time.Now().Add(time.Hour)
+	res.Expired = time.Now().Add(time.Hour)
 
 	return res, nil
 }

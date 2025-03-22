@@ -50,5 +50,5 @@ type UserResponse struct {
 
 type StudentEvidenceUploadResponseBody struct {
 	ImageUrl string    `json:"url"`
-	Expires  time.Time `json:"expires"`
+	Expired  time.Time `json:"expired"`
 }

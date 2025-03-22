@@ -413,7 +413,7 @@ func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.StudentEvidenceUploadResponseBody{ImageUrl: url, Expires: time.Now().Add(time.Hour)}))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.StudentEvidenceUploadResponseBody{ImageUrl: url, Expired: time.Now().Add(time.Hour)}))
 }
 
 // GetStudentEvidenceByID godoc
