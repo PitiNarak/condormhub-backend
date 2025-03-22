@@ -390,7 +390,7 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "User not found"
 // @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
-// @Router /user/student-evidence [post]
+// @Router /user/studentEvidence [post]
 func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
@@ -429,7 +429,7 @@ func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 // @Failure 403 {object} dto.ErrorResponse "unauthorized to view this evidence"
 // @Failure 404 {object} dto.ErrorResponse "User or evidence not found"
 // @Failure 500 {object} dto.ErrorResponse "system cannot get user's student evidence"
-// @Router /user/{id}/student-evidence [get]
+// @Router /user/{id}/studentEvidence [get]
 func (h *UserHandler) GetStudentEvidenceByID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {

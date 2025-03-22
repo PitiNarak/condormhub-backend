@@ -2005,7 +2005,7 @@ paths:
       summary: GetUserByID
       tags:
       - user
-  /user/{id}/student-evidence:
+  /user/{id}/studentEvidence:
     get:
       description: Get student evidence by user id
       parameters:
@@ -2144,7 +2144,7 @@ paths:
       summary: Resend verification email
       tags:
       - user
-  /user/student-evidence:
+  /user/studentEvidence:
     post:
       description: Upload an image of a student ID card, by attaching the image as
         a value for the key field name "image", as a multipart form-data
