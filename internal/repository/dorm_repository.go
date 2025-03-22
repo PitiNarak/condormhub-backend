@@ -25,7 +25,7 @@ func (d *DormRepository) Create(dorm *domain.Dorm) error {
 }
 
 func (d *DormRepository) Delete(id uuid.UUID) error {
-	if err := d.db.Delete(&domain.Dorm{}, id).Error; err != nil {
+	if err := d.db.Select("Images").Delete(&domain.Dorm{ID: id}).Error; err != nil {
 		return apperror.InternalServerError(err, "Failed to delete dorm")
 	}
 	return nil
