@@ -47,6 +47,8 @@ func (s *Server) initUserRoutes() {
 
 	userRoutes.Post("/studentEvidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
 	userRoutes.Get("/:id/studentEvidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
+
+	userRoutes.Post("/profilePic", s.authMiddleware.Auth, s.handler.user.UploadProfilePicture)
 }
 
 func (s *Server) initAuthRoutes() {

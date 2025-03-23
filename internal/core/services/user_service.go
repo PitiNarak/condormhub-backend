@@ -30,6 +30,14 @@ func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwt
 	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils, storage: storage}
 }
 
+func (s *UserService) ConvertToDTO(user domain.User) dto.UserResponse {
+	res := user.ToDTO()
+	if user.ProfilePicKey != "" {
+		res.ProfilePicUrl = s.storage.GetPublicUrl(user.ProfilePicKey)
+	}
+	return res
+}
+
 func (s *UserService) Create(ctx context.Context, user *domain.User) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
@@ -301,4 +309,34 @@ func (s *UserService) ResendVerificationEmailService(ctx context.Context, email 
 		return err
 	}
 	return nil
+}
+
+func (s *UserService) UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error) {
+	filename = strings.ReplaceAll(filename, " ", "-")
+	uuid := uuid.New().String()
+	fileKey := fmt.Sprintf("user/%s/profile-pic/%s-%s", userID, uuid, filename)
+
+	if err := s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket); err != nil {
+		return "", apperror.InternalServerError(err, "error uploading file")
+	}
+	url := s.storage.GetPublicUrl(fileKey)
+
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if user.ProfilePicKey != "" {
+		if err = s.storage.DeleteFile(ctx, user.ProfilePicKey, storage.PublicBucket); err != nil {
+			return "", apperror.InternalServerError(err, "error deleting file")
+		}
+	}
+
+	user.ProfilePicKey = fileKey
+	err = s.userRepo.UpdateUser(user)
+	if err != nil {
+		return "", err
+	}
+
+	return url, nil
 }
