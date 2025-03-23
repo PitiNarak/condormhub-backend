@@ -157,3 +157,19 @@ func (s *DormService) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dt
 	}
 	return resData, totalPages, totalRows, nil
 }
+
+func (s *DormService) DeleteImageByURL(ctx context.Context, imageURL string) error {
+	imageKey, err := s.storage.GetFileKeyFromPublicUrl(imageURL)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(imageKey)
+
+	err = s.storage.DeleteFile(ctx, imageKey, storage.PublicBucket)
+	if err != nil {
+		return apperror.InternalServerError(err, "Failed to delete images")
+	}
+
+	return s.dormRepo.DeleteImageByKey(imageKey)
+}
