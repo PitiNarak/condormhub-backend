@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -375,6 +376,83 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(user.ToDTO()))
+}
+
+// UploadStudentEvidence godoc
+// @Summary Upload an evidence for student verification
+// @Description Upload an image of a student ID card, by attaching the image as a value for the key field name "image", as a multipart form-data
+// @Tags user
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param image formData file true "Student ID image"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Evidence uploaded successfully"
+// @Failure 400 {object} dto.ErrorResponse "File is required"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "User not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
+// @Router /user/studentEvidence [post]
+func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		return apperror.BadRequestError(err, "file is required")
+	}
+
+	fileData, err := file.Open()
+	if err != nil {
+		return apperror.InternalServerError(err, "error opening file")
+	}
+	defer fileData.Close()
+
+	contentType := file.Header.Get("Content-Type")
+	url, err := h.userService.UploadStudentEvidence(c.Context(), file.Filename, contentType, fileData, userID)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.StudentEvidenceUploadResponseBody{ImageUrl: url, Expired: time.Now().Add(time.Hour)}))
+}
+
+// GetStudentEvidenceByID godoc
+// @Summary Get student evidence by user id
+// @Description Get student evidence by user id
+// @Tags user
+// @Security Bearer
+// @Produce json
+// @Param id path string true "userID"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Get student evidence successfully"
+// @Failure 400 {object} dto.ErrorResponse "invalid user id"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to view this evidence"
+// @Failure 404 {object} dto.ErrorResponse "User or evidence not found"
+// @Failure 500 {object} dto.ErrorResponse "system cannot get user's student evidence"
+// @Router /user/{id}/studentEvidence [get]
+func (h *UserHandler) GetStudentEvidenceByID(c *fiber.Ctx) error {
+	userID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return apperror.BadRequestError(err, "invalid user id")
+	}
+
+	localUser := c.Locals("user").(*domain.User)
+	if localUser.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isSelf := localUser.ID == userID
+	isAdmin := localUser.Role == domain.AdminRole
+
+	evidence, err := h.userService.GetStudentEvidenceByID(c.Context(), userID, isSelf, isAdmin)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get student evidence by id failed")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(evidence))
 }
 
 // SendConfirmationEmailAgain godoc

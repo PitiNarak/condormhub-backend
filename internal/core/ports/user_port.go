@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+	"io"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -29,6 +30,8 @@ type UserService interface {
 	ResetPasswordCreate(context.Context, string) error
 	ResetPassword(context.Context, string, string) (*domain.User, string, string, error)
 	DeleteAccount(userID uuid.UUID) error
+	UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
+	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
 	ResendVerificationEmailService(ctx context.Context, email string) error
 }
 
@@ -43,5 +46,7 @@ type UserHandler interface {
 	ResetPassword(c *fiber.Ctx) error
 	DeleteAccount(c *fiber.Ctx) error
 	GetUserByID(c *fiber.Ctx) error
+	UploadStudentEvidence(c *fiber.Ctx) error
+	GetStudentEvidenceByID(c *fiber.Ctx) error
 	ResendVerificationEmailHandler(c *fiber.Ctx) error
 }
