@@ -94,7 +94,7 @@ func (s *DormService) Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, u
 	return s.GetByID(dormID)
 }
 
-func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error {
+func (s *DormService) Delete(ctx context.Context, userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error {
 	dorm, err := s.dormRepo.GetByID(dormID)
 	if err != nil {
 		return err
@@ -102,6 +102,15 @@ func (s *DormService) Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) e
 
 	if err := checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
 		return apperror.ForbiddenError(err, "You do not have permission to delete this dorm")
+	}
+
+	if len(dorm.Images) > 0 {
+		for _, image := range dorm.Images {
+			err = s.storage.DeleteFile(ctx, image.ImageKey, storage.PublicBucket)
+			if err != nil {
+				return apperror.InternalServerError(err, "Failed to delete images")
+			}
+		}
 	}
 
 	return s.dormRepo.Delete(dormID)

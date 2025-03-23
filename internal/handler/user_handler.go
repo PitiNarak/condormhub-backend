@@ -18,7 +18,7 @@ type UserHandler struct {
 	userService ports.UserService
 }
 
-func NewUserHandler(UserService ports.UserService) ports.UserHandler {
+func NewUserHandler(UserService ports.UserService) *UserHandler {
 	return &UserHandler{userService: UserService}
 }
 
@@ -45,13 +45,14 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
-	accessToken, user, err := h.userService.VerifyUser(c.Context(), body.Token)
+	user, accessToken, refreshToken, err := h.userService.VerifyUser(c.Context(), body.Token)
 	if err != nil {
 		return err
 	}
 
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: user.ToDTO(),
 	}
 
@@ -141,14 +142,14 @@ func (h *UserHandler) ResetPassword(c *fiber.Ctx) error {
 		return apperror.BadRequestError(errors.New("no token in header"), "your request header is incorrect")
 	}
 
-	user, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
+	user, accessToken, refreshToken, err := h.userService.ResetPassword(c.Context(), tokenString, body.Password)
 	if err != nil {
 		return err
 	}
 
 	data := dto.TokenWithUserInformationResponseBody{
-		AccessToken:     tokenString,
-		RefreshToken:    "",
+		AccessToken:     accessToken,
+		RefreshToken:    refreshToken,
 		UserInformation: user.ToDTO(),
 	}
 
@@ -452,4 +453,27 @@ func (h *UserHandler) GetStudentEvidenceByID(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(evidence))
+}
+
+// SendConfirmationEmailAgain godoc
+// @Summary SendConfirmationEmailAgain
+// @Description Re send the confirmation email
+// @Tags user
+// @Security Bearer
+// @Produce json
+// @Success 204 "resend verification email successfully"
+// @Failure 500 {object} dto.ErrorResponse "system cannot verification email"
+// @Router /user/resend [post]
+func (h *UserHandler) ResendVerificationEmailHandler(c *fiber.Ctx) error {
+	user, ok := c.Locals("user").(*domain.User)
+	if !ok {
+		return apperror.InternalServerError(errors.New("can't get user form context"), "get user information error")
+	}
+	if err := h.userService.ResendVerificationEmailService(c.Context(), user.Email); err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(errors.New("can't send confirmation email"), "resend email error")
+	}
+	return c.SendStatus(fiber.StatusNoContent)
 }

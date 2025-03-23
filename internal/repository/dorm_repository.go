@@ -25,7 +25,8 @@ func (d *DormRepository) Create(dorm *domain.Dorm) error {
 }
 
 func (d *DormRepository) Delete(id uuid.UUID) error {
-	if err := d.db.Delete(&domain.Dorm{}, id).Error; err != nil {
+	// TODO: Cascade delete for all field that reference to dorm
+	if err := d.db.Select("Images").Delete(&domain.Dorm{ID: id}).Error; err != nil {
 		return apperror.InternalServerError(err, "Failed to delete dorm")
 	}
 	return nil
@@ -45,7 +46,7 @@ func (d *DormRepository) GetAll(
 
 	if search != "" {
 		regex := "%" + search + "%"
-		query.Where("name LIKE ? OR province LIKE ? OR district LIKE ? OR subdistrict LIKE ? OR zipcode LIKE ?", regex, regex, regex, regex, regex)
+		query.Where("name ILIKE ? OR province ILIKE ? OR district ILIKE ? OR subdistrict ILIKE ? OR zipcode ILIKE ?", regex, regex, regex, regex, regex)
 	}
 
 	if minPrice != -1 {
@@ -57,19 +58,19 @@ func (d *DormRepository) GetAll(
 	}
 
 	if district != "" {
-		query.Where("district LIKE ?", "%"+district+"%")
+		query.Where("district ILIKE ?", "%"+district+"%")
 	}
 
 	if subdistrict != "" {
-		query.Where("subdistrict LIKE ?", "%"+subdistrict+"%")
+		query.Where("subdistrict ILIKE ?", "%"+subdistrict+"%")
 	}
 
 	if province != "" {
-		query.Where("province LIKE ?", "%"+province+"%")
+		query.Where("province ILIKE ?", "%"+province+"%")
 	}
 
 	if zipcode != "" {
-		query.Where("zipcode LIKE ?", "%"+zipcode+"%")
+		query.Where("zipcode ILIKE ?", "%"+zipcode+"%")
 	}
 
 	totalPages, totalRows, err := d.db.Paginate(&dorms, query, limit, page, "create_at DESC")

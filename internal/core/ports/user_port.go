@@ -26,12 +26,13 @@ type UserService interface {
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(context.Context, string, string) (*domain.User, string, string, error)
 	RefreshToken(ctx context.Context, refreshToken string) (string, string, error)
-	VerifyUser(context.Context, string) (string, *domain.User, error)
+	VerifyUser(ctx context.Context, token string) (*domain.User, string, string, error)
 	ResetPasswordCreate(context.Context, string) error
-	ResetPassword(context.Context, string, string) (*domain.User, error)
+	ResetPassword(context.Context, string, string) (*domain.User, string, string, error)
 	DeleteAccount(userID uuid.UUID) error
 	UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
+	ResendVerificationEmailService(ctx context.Context, email string) error
 }
 
 type UserHandler interface {
@@ -47,4 +48,5 @@ type UserHandler interface {
 	GetUserByID(c *fiber.Ctx) error
 	UploadStudentEvidence(c *fiber.Ctx) error
 	GetStudentEvidenceByID(c *fiber.Ctx) error
+	ResendVerificationEmailHandler(c *fiber.Ctx) error
 }

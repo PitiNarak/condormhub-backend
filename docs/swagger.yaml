@@ -2116,6 +2116,23 @@ paths:
       summary: Reset password
       tags:
       - user
+  /user/resend:
+    post:
+      description: Re send the confirmation email
+      responses:
+        "204":
+          description: resend verification email successfully
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot verification email
+      security:
+      - Bearer: []
+      summary: SendConfirmationEmailAgain
+      tags:
+      - user
   /user/resetpassword:
     post:
       description: Resend verification email
