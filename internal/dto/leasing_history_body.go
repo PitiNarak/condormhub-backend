@@ -25,17 +25,11 @@ type Review struct {
 }
 
 type ReviewCreateRequestBody struct {
-	Message string    `json:"message" validate:"omitempty"`
-	Rate    int       `json:"rate" validate:"omitempty,gte=0,lte=5"`
-	ID      uuid.UUID `json:"id" validate:"omitempty"`
+	Message string `json:"message" validate:"required"`
+	Rate    int    `json:"rate" validate:"required,gte=0,lte=5"`
 }
 
 type ReviewUpdateRequestBody struct {
-	Message string    `json:"message" validate:"omitempty"`
-	Rate    int       `json:"rate" validate:"omitempty,gte=0,lte=5"`
-	ID      uuid.UUID `json:"id" validate:"omitempty"`
-}
-
-type ReviewDeleteRequestBody struct {
-	ID uuid.UUID `json:"id" validate:"omitempty"`
+	Message string `json:"message" validate:"omitempty"`
+	Rate    int    `json:"rate" validate:"omitempty,gte=0,lte=5"`
 }
