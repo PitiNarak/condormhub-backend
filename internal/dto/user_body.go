@@ -34,6 +34,7 @@ type UserInformationRequestBody struct {
 
 type UserResponse struct {
 	ID                 uuid.UUID `json:"id"`
+	CreateAt           time.Time `json:"createAt"`
 	Username           string    `json:"username"`
 	Email              string    `json:"email"`
 	Firstname          string    `json:"firstname"`
@@ -45,6 +46,15 @@ type UserResponse struct {
 	FilledPersonalInfo bool      `json:"filledPersonalInfo"`
 	Lifestyles         []string  `json:"lifestyles"`
 	PhoneNumber        string    `json:"phoneNumber"`
-	StudentEvidence    string    `json:"studentEvidence"`
 	IsStudentVerified  bool      `json:"isStudentVerified"`
+	ProfilePicUrl      string    `json:"profilePicUrl"`
+}
+
+type StudentEvidenceUploadResponseBody struct {
+	ImageUrl string    `json:"url"`
+	Expired  time.Time `json:"expired"`
+}
+
+type ProfilePictureUploadResponseBody struct {
+	ImageURL string `json:"url"`
 }

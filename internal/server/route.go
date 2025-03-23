@@ -40,8 +40,15 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Post("/verify", s.handler.user.VerifyEmail)
 	userRoutes.Post("/resetpassword", s.handler.user.ResetPasswordCreate)
 	userRoutes.Post("/newpassword", s.handler.user.ResetPassword)
+	userRoutes.Post("/resend", s.handler.user.ResendVerificationEmailHandler)
+
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.handler.user.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
+
+	userRoutes.Post("/studentEvidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
+	userRoutes.Get("/:id/studentEvidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
+
+	userRoutes.Post("/profilePic", s.authMiddleware.Auth, s.handler.user.UploadProfilePicture)
 }
 
 func (s *Server) initAuthRoutes() {

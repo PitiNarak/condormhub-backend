@@ -64,6 +64,7 @@ func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory)
 	return nil
 }
 func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
+	// TODO: Cascade delete?
 	if err := d.db.Delete(&domain.LeasingHistory{}, id).Error; err != nil {
 		if apperror.IsAppError(err) {
 			return err

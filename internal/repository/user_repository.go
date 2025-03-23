@@ -49,7 +49,7 @@ func (r *UserRepo) GetUserByID(userID uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	result := r.db.Where("id = ?", userID).First(&user)
 	if result.Error != nil {
-		return nil, apperror.InternalServerError(result.Error, "user not found")
+		return nil, apperror.NotFoundError(result.Error, "user not found")
 	}
 	return &user, result.Error
 }
@@ -91,6 +91,7 @@ func (r *UserRepo) UpdateInformation(userID uuid.UUID, data dto.UserInformationR
 
 func (r *UserRepo) DeleteAccount(userID uuid.UUID) error {
 	var user domain.User
+	// TODO: Cascade delete?
 	result := r.db.Delete(&user, userID)
 	if result.Error != nil {
 		return apperror.InternalServerError(result.Error, "cannot delete user")

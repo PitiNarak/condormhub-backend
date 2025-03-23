@@ -25,7 +25,7 @@ type DormService interface {
 	GetAll(limit int, page int, search string, min_price int, max_price int, district string, subdistrict string, province string, zipcode string) ([]dto.DormResponseBody, int, int, error)
 	GetByID(id uuid.UUID) (*dto.DormResponseBody, error)
 	Update(userID uuid.UUID, isAdmin bool, dormID uuid.UUID, dorm *dto.DormUpdateRequestBody) (*dto.DormResponseBody, error)
-	Delete(userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
+	Delete(ctx context.Context, userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
 	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 	GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dto.DormResponseBody, int, int, error)
 }

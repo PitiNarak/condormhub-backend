@@ -252,6 +252,11 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.ProfilePictureUploadResponseBody:
+      properties:
+        url:
+          type: string
+      type: object
     dto.RefreshTokenRequestBody:
       properties:
         refreshToken:
@@ -332,6 +337,13 @@ components:
       - RequestAccepted
       - RequestRejected
       - RequestCanceled
+    dto.StudentEvidenceUploadResponseBody:
+      properties:
+        expired:
+          type: string
+        url:
+          type: string
+      type: object
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
         data:
@@ -367,10 +379,15 @@ components:
         data:
           $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
       type: object
-    dto.SuccessResponse-dto_Review:
+    dto.SuccessResponse-dto_ProfilePictureUploadResponseBody:
       properties:
         data:
-          $ref: '#/components/schemas/dto.Review'
+          $ref: '#/components/schemas/dto.ProfilePictureUploadResponseBody'
+      type: object
+    dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.StudentEvidenceUploadResponseBody'
       type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
@@ -478,9 +495,9 @@ components:
           uniqueItems: false
         phoneNumber:
           type: string
-        role:
+        profilePicUrl:
           type: string
-        studentEvidence:
+        role:
           type: string
         username:
           type: string
@@ -2173,6 +2190,58 @@ paths:
       summary: GetUserByID
       tags:
       - user
+  /user/{id}/studentEvidence:
+    get:
+      description: Get student evidence by user id
+      parameters:
+      - description: userID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody'
+          description: Get student evidence successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: invalid user id
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized to view this evidence
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: User or evidence not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot get user's student evidence
+      security:
+      - Bearer: []
+      summary: Get student evidence by user id
+      tags:
+      - user
   /user/me:
     get:
       description: Get user information
@@ -2232,6 +2301,70 @@ paths:
       summary: Reset password
       tags:
       - user
+  /user/profilePic:
+    post:
+      description: Upload an profile picture for the current user, by attaching the
+        image as a value for the key field name "image", as a multipart form-data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: Profile picture image
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ProfilePictureUploadResponseBody'
+          description: Profile picture updated
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: File is required
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: User not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload user profile picture
+      tags:
+      - user
+  /user/resend:
+    post:
+      description: Re send the confirmation email
+      responses:
+        "204":
+          description: resend verification email successfully
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot verification email
+      security:
+      - Bearer: []
+      summary: SendConfirmationEmailAgain
+      tags:
+      - user
   /user/resetpassword:
     post:
       description: Resend verification email
@@ -2258,6 +2391,53 @@ paths:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: system cannot resend verification email
       summary: Resend verification email
+      tags:
+      - user
+  /user/studentEvidence:
+    post:
+      description: Upload an image of a student ID card, by attaching the image as
+        a value for the key field name "image", as a multipart form-data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: Student ID image
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody'
+          description: Evidence uploaded successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: File is required
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: User not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload an evidence for student verification
       tags:
       - user
   /user/verify:

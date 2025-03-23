@@ -174,6 +174,7 @@ type User struct {
 	PhoneNumber        string
 	StudentEvidence    string
 	IsStudentVerified  bool `gorm:"default:false"`
+	ProfilePicKey      string
 }
 
 func (u *User) ToDTO() dto.UserResponse {
@@ -183,6 +184,7 @@ func (u *User) ToDTO() dto.UserResponse {
 	}
 	return dto.UserResponse{
 		ID:                 u.ID,
+		CreateAt:           u.CreateAt,
 		Username:           u.Username,
 		Email:              u.Email,
 		Firstname:          u.Firstname,
@@ -194,7 +196,6 @@ func (u *User) ToDTO() dto.UserResponse {
 		FilledPersonalInfo: u.FilledPersonalInfo,
 		Lifestyles:         lifestyles,
 		PhoneNumber:        u.PhoneNumber,
-		StudentEvidence:    u.StudentEvidence,
 		IsStudentVerified:  u.IsStudentVerified,
 	}
 }
