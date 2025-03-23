@@ -34,6 +34,7 @@ type UserInformationRequestBody struct {
 
 type UserResponse struct {
 	ID                 uuid.UUID `json:"id"`
+	CreateAt           time.Time `json:"createAt"`
 	Username           string    `json:"username"`
 	Email              string    `json:"email"`
 	Firstname          string    `json:"firstname"`

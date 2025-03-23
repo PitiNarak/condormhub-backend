@@ -184,6 +184,7 @@ func (u *User) ToDTO() dto.UserResponse {
 	}
 	return dto.UserResponse{
 		ID:                 u.ID,
+		CreateAt:           u.CreateAt,
 		Username:           u.Username,
 		Email:              u.Email,
 		Firstname:          u.Firstname,
