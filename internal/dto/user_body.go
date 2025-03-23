@@ -52,3 +52,7 @@ type StudentEvidenceUploadResponseBody struct {
 	ImageUrl string    `json:"url"`
 	Expired  time.Time `json:"expired"`
 }
+
+type ProfilePictureUploadResponseBody struct {
+	ImageURL string `json:"url"`
+}

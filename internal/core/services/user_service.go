@@ -302,3 +302,33 @@ func (s *UserService) ResendVerificationEmailService(ctx context.Context, email 
 	}
 	return nil
 }
+
+func (s *UserService) UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error) {
+	filename = strings.ReplaceAll(filename, " ", "-")
+	uuid := uuid.New().String()
+	fileKey := fmt.Sprintf("user/%s/profile-pic/%s-%s", userID, uuid, filename)
+
+	if err := s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket); err != nil {
+		return "", apperror.InternalServerError(err, "error uploading file")
+	}
+	url := s.storage.GetPublicUrl(fileKey)
+
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if user.ProfilePicKey != "" {
+		if err = s.storage.DeleteFile(ctx, user.ProfilePicKey, storage.PublicBucket); err != nil {
+			return "", apperror.InternalServerError(err, "error deleting file")
+		}
+	}
+
+	user.ProfilePicKey = fileKey
+	err = s.userRepo.UpdateUser(user)
+	if err != nil {
+		return "", err
+	}
+
+	return url, nil
+}

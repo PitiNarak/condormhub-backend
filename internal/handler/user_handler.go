@@ -477,3 +477,28 @@ func (h *UserHandler) ResendVerificationEmailHandler(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+func (h *UserHandler) UploadProfilePicture(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		return apperror.BadRequestError(err, "file is required")
+	}
+
+	fileData, err := file.Open()
+	if err != nil {
+		return apperror.InternalServerError(err, "error opening file")
+	}
+	defer fileData.Close()
+
+	contentType := file.Header.Get("Content-Type")
+	url, err := h.userService.UploadProfilePicture(c.Context(), file.Filename, contentType, fileData, userID)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.ProfilePictureUploadResponseBody{ImageURL: url}))
+}

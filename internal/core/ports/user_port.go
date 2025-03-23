@@ -33,6 +33,7 @@ type UserService interface {
 	UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
 	ResendVerificationEmailService(ctx context.Context, email string) error
+	UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 }
 
 type UserHandler interface {
@@ -49,4 +50,5 @@ type UserHandler interface {
 	UploadStudentEvidence(c *fiber.Ctx) error
 	GetStudentEvidenceByID(c *fiber.Ctx) error
 	ResendVerificationEmailHandler(c *fiber.Ctx) error
+	UploadProfilePicture(c *fiber.Ctx) error
 }
