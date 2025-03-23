@@ -478,6 +478,20 @@ func (h *UserHandler) ResendVerificationEmailHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// UploadProfilePicture godoc
+// @Summary Upload user profile picture
+// @Description Upload an profile picture for the current user, by attaching the image as a value for the key field name "image", as a multipart form-data
+// @Tags user
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param image formData file true "Profile picture image"
+// @Success 200 {object} dto.SuccessResponse[dto.ProfilePictureUploadResponseBody] "Profile picture updated"
+// @Failure 400 {object} dto.ErrorResponse "File is required"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "User not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
+// @Router /user/profilePic [post]
 func (h *UserHandler) UploadProfilePicture(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
