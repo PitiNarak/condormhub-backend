@@ -30,6 +30,12 @@ func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwt
 	return &UserService{userRepo: UserRepo, emailService: EmailService, jwtUtils: jwtUtils, storage: storage}
 }
 
+func (s *UserService) ConvertToDTO(user domain.User) dto.UserResponse {
+	res := user.ToDTO()
+	res.ProfilePicUrl = s.storage.GetPublicUrl(user.ProfilePicKey)
+	return res
+}
+
 func (s *UserService) Create(ctx context.Context, user *domain.User) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 

@@ -46,6 +46,7 @@ type UserResponse struct {
 	Lifestyles         []string  `json:"lifestyles"`
 	PhoneNumber        string    `json:"phoneNumber"`
 	IsStudentVerified  bool      `json:"isStudentVerified"`
+	ProfilePicUrl      string    `json:"profilePicUrl"`
 }
 
 type StudentEvidenceUploadResponseBody struct {

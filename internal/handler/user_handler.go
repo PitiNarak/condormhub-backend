@@ -53,7 +53,7 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		RefreshToken:    refreshToken,
-		UserInformation: user.ToDTO(),
+		UserInformation: h.userService.ConvertToDTO(*user),
 	}
 
 	res := dto.Success(data)
@@ -108,7 +108,7 @@ func (h *UserHandler) UpdateUserInformation(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "system cannot update your account information")
 	}
 
-	res := dto.Success(userInfo.ToDTO())
+	res := dto.Success(h.userService.ConvertToDTO(*userInfo))
 
 	return c.Status(fiber.StatusOK).JSON(res)
 
@@ -226,7 +226,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		RefreshToken:    refreshToken,
-		UserInformation: gormUser.ToDTO(),
+		UserInformation: h.userService.ConvertToDTO(*gormUser),
 	}
 
 	res := dto.Success(data)
@@ -306,7 +306,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	data := dto.TokenWithUserInformationResponseBody{
 		AccessToken:     accessToken,
 		RefreshToken:    refreshToken,
-		UserInformation: user.ToDTO(),
+		UserInformation: h.userService.ConvertToDTO(*user),
 	}
 
 	res := dto.Success(data)
@@ -326,7 +326,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 // @Router /user/me [get]
 func (h *UserHandler) GetUserInfo(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	res := dto.Success(user.ToDTO())
+	res := dto.Success(h.userService.ConvertToDTO(*user))
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
@@ -375,7 +375,7 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get user by id failed")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(user.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(h.userService.ConvertToDTO(*user)))
 }
 
 // UploadStudentEvidence godoc
