@@ -296,7 +296,7 @@ components:
       type: object
     dto.Review:
       properties:
-        crateAt:
+        createAt:
           type: string
         message:
           type: string
@@ -1062,7 +1062,7 @@ paths:
       tags:
       - history
     patch:
-      description: Delete a leasing history in the database
+      description: Set end date of a leasing history in the database
       parameters:
       - description: LeasingHistoryId
         in: path
@@ -1099,7 +1099,7 @@ paths:
           description: Can not parse UUID or Failed to update leasing history
       security:
       - Bearer: []
-      summary: Delete a leasing history
+      summary: Set end date of a leasing history
       tags:
       - history
     post:

@@ -19,8 +19,8 @@ func NewLeasingHistoryHandler(service ports.LeasingHistoryService) ports.Leasing
 }
 
 // SetEndTimestamp godoc
-// @Summary Delete a leasing history
-// @Description Delete a leasing history in the database
+// @Summary Set end date of a leasing history
+// @Description Set end date of a leasing history in the database
 // @Tags history
 // @Security Bearer
 // @Produce json
