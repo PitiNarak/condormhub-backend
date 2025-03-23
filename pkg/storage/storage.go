@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -152,5 +153,7 @@ func (s *Storage) GetFileKeyFromPublicUrl(imageURL string) (string, error) {
 		return "", apperror.InternalServerError(err, "Failed to parse URL")
 	}
 
-	return parsedURL.Path, nil
+	fileKey := strings.TrimPrefix(parsedURL.Path, "/")
+
+	return fileKey, nil
 }
