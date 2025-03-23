@@ -1,12 +1,11 @@
 package services
 
 import (
-	"errors"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 )
 
@@ -79,14 +78,9 @@ func (s *LeasingHistoryService) CreateReview(user *domain.User, id uuid.UUID, Me
 	if err != nil {
 		return nil, err
 	}
-	if history.ReviewFlag {
-		return nil, apperror.BadRequestError(errors.New("review already exist"), "review already exist")
-	}
-	if user.Role == domain.LessorRole {
-		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
-	}
-	if history.LesseeID != user.ID {
-		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	err = utils.ValidateUserForReview(user, history, true)
+	if err != nil {
+		return nil, err
 	}
 	review := domain.Review{
 		Message: Message,
@@ -110,14 +104,9 @@ func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Me
 	if err != nil {
 		return nil, err
 	}
-	if !history.ReviewFlag {
-		return nil, apperror.BadRequestError(errors.New("review not exist"), "review not exist")
-	}
-	if user.Role == domain.LessorRole {
-		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
-	}
-	if history.LesseeID != user.ID {
-		return nil, apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	err = utils.ValidateUserForReview(user, history, false)
+	if err != nil {
+		return nil, err
 	}
 	review := domain.Review{
 		Message: Message,
@@ -140,11 +129,9 @@ func (s *LeasingHistoryService) DeleteReview(user *domain.User, id uuid.UUID) er
 	if err != nil {
 		return err
 	}
-	if user.Role == domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
-	}
-	if history.LesseeID != user.ID {
-		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
+	err = utils.ValidateUserForReview(user, history, false)
+	if err != nil {
+		return err
 	}
 	history.ReviewFlag = false
 	err = s.historyRepo.Update(history)
