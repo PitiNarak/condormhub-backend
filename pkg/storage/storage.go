@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/url"
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -142,4 +144,13 @@ func (s *Storage) GetSignedUrl(ctx context.Context, key string, expires time.Dur
 
 func (s *Storage) GetPublicUrl(key string) string {
 	return fmt.Sprintf(s.Config.URL_PREFIX, key)
+}
+
+func (s *Storage) GetFileKeyFromPublicUrl(imageURL string) (string, error) {
+	parsedURL, err := url.Parse(imageURL)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "Failed to parse URL")
+	}
+
+	return parsedURL.Path, nil
 }
