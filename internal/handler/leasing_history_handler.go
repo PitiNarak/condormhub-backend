@@ -211,6 +211,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
+// @Param id path string true "HistoryID"
 // @Param user body dto.ReviewCreateRequestBody true "review information"
 // @Success 201 {object} dto.SuccessResponse[dto.Review]
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or your request is invalid"
@@ -249,6 +250,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
+// @Param id path string true "HistoryID"
 // @Param user body dto.ReviewUpdateRequestBody true "review information"
 // @Success 201 {object} dto.SuccessResponse[dto.Review]
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or your request is invalid or review not exist"
@@ -288,7 +290,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Tags history
 // @Security Bearer
 // @Produce json
-// @Param user body dto.ReviewDeleteRequestBody true "histody id"
+// @Param id path string true "HistoryID"
 // @Success 204 "No Content"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"

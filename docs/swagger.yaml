@@ -305,24 +305,18 @@ components:
       type: object
     dto.ReviewCreateRequestBody:
       properties:
-        id:
-          type: string
         message:
           type: string
         rate:
           maximum: 5
           minimum: 0
           type: integer
-      type: object
-    dto.ReviewDeleteRequestBody:
-      properties:
-        id:
-          type: string
+      required:
+      - message
+      - rate
       type: object
     dto.ReviewUpdateRequestBody:
       properties:
-        id:
-          type: string
         message:
           type: string
         rate:
@@ -383,6 +377,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.ProfilePictureUploadResponseBody'
+      type: object
+    dto.SuccessResponse-dto_Review:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.Review'
       type: object
     dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody:
       properties:
@@ -471,6 +470,8 @@ components:
     dto.UserResponse:
       properties:
         birthDate:
+          type: string
+        createAt:
           type: string
         email:
           type: string
@@ -1251,13 +1252,13 @@ paths:
   /history/review/:
     delete:
       description: Delete a review
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/dto.ReviewDeleteRequestBody'
-        description: histody id
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
         required: true
+        schema:
+          type: string
       responses:
         "204":
           description: No Content
@@ -1292,6 +1293,13 @@ paths:
       - history
     patch:
       description: Update a review in the database
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1338,6 +1346,13 @@ paths:
       - history
     post:
       description: Add a new review to the database
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
