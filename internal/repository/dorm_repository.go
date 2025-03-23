@@ -133,3 +133,11 @@ func (d *DormRepository) DeleteImageByKey(imageKey string) error {
 	}
 	return nil
 }
+
+func (d *DormRepository) GetImageByKey(imageKey string) (*domain.DormImage, error) {
+	dormImage := new(domain.DormImage)
+	if err := d.db.Where("image_key = ?", imageKey).First(dormImage).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Image not found")
+	}
+	return dormImage, nil
+}

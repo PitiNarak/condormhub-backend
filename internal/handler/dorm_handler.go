@@ -401,7 +401,15 @@ func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Your request is invalid")
 	}
 
-	if err := d.dormService.DeleteImageByURL(c.Context(), reqBody.ImageURL); err != nil {
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	isAdmin := user.Role == domain.AdminRole
+
+	if err := d.dormService.DeleteImageByURL(c.Context(), reqBody.ImageURL, userID, isAdmin); err != nil {
 		return err
 	}
 
