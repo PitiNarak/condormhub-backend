@@ -21,7 +21,7 @@ type LeasingHistory struct {
 type Review struct {
 	Message  string    `json:"message"`
 	Rate     int       `json:"rate"`
-	CreateAt time.Time `json:"crateAt"`
+	CreateAt time.Time `json:"createAt"`
 }
 
 type ReviewCreateRequestBody struct {

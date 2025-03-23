@@ -5,7 +5,6 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
-	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -33,7 +32,7 @@ func NewLeasingHistoryHandler(service ports.LeasingHistoryService) ports.Leasing
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing history"
 // @Router /history/{id} [patch]
 func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
-	leasingHistoryID, err := utils.ParseIdParam(c)
+	leasingHistoryID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -110,7 +109,7 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID"
 // @Router /history/bydorm/{id} [get]
 func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
-	dormID, err := utils.ParseIdParam(c)
+	dormID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -160,7 +159,7 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to delete leasing history"
 // @Router /history/{id} [delete]
 func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
-	leasingHistoryID, err := utils.ParseIdParam(c)
+	leasingHistoryID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -187,7 +186,7 @@ func (h *LeasingHistoryHandler) Delete(c *fiber.Ctx) error {
 // @Router /history/{id} [post]
 func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
-	dormID, err := utils.ParseIdParam(c)
+	dormID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -232,7 +231,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
-	historyID, err := utils.ParseIdParam(c)
+	historyID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -272,7 +271,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 
-	historyID, err := utils.ParseIdParam(c)
+	historyID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -299,7 +298,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Router /history/review/{id} [delete]
 func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
-	historyID, err := utils.ParseIdParam(c)
+	historyID, err := ParseIdParam(c)
 	if err != nil {
 		return err
 	}
@@ -308,4 +307,20 @@ func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 		return err
 	}
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func ParseIdParam(c *fiber.Ctx) (uuid.UUID, error) {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return uuid.Nil, apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	parsedID, err := uuid.Parse(id)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return uuid.Nil, err
+		}
+		return uuid.Nil, apperror.InternalServerError(err, "Can not parse UUID")
+	}
+	return parsedID, nil
 }
