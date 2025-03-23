@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
@@ -407,6 +408,10 @@ func (h *UserHandler) UploadStudentEvidence(c *fiber.Ctx) error {
 	defer fileData.Close()
 
 	contentType := file.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+	}
+
 	url, err := h.userService.UploadStudentEvidence(c.Context(), file.Filename, contentType, fileData, userID)
 	if err != nil {
 		if apperror.IsAppError(err) {
@@ -507,6 +512,10 @@ func (h *UserHandler) UploadProfilePicture(c *fiber.Ctx) error {
 	defer fileData.Close()
 
 	contentType := file.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+	}
+
 	url, err := h.userService.UploadProfilePicture(c.Context(), file.Filename, contentType, fileData, userID)
 	if err != nil {
 		if apperror.IsAppError(err) {
