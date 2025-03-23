@@ -164,8 +164,6 @@ func (s *DormService) DeleteImageByURL(ctx context.Context, imageURL string) err
 		return err
 	}
 
-	fmt.Println(imageKey)
-
 	err = s.storage.DeleteFile(ctx, imageKey, storage.PublicBucket)
 	if err != nil {
 		return apperror.InternalServerError(err, "Failed to delete images")

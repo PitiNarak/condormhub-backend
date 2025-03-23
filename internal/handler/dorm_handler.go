@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -392,8 +391,6 @@ func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
 }
 
 func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
-	fmt.Println("test")
-
 	reqBody := new(dto.DormImageDeleteRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {
 		return apperror.BadRequestError(err, "Your request is invalid")
