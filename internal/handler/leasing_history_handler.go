@@ -218,7 +218,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/review/ [post]
+// @Router /history/review/{id} [post]
 func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	body := new(dto.ReviewCreateRequestBody)
@@ -257,7 +257,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/review/ [patch]
+// @Router /history/review/{id} [patch]
 func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	body := new(dto.ReviewUpdateRequestBody)
@@ -296,7 +296,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found or leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/review/ [delete]
+// @Router /history/review/{id} [delete]
 func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	historyID, err := utils.ParseIdParam(c)

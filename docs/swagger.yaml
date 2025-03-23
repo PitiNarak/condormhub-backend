@@ -1249,7 +1249,7 @@ paths:
       summary: Get all leasing history by userid
       tags:
       - history
-  /history/review/:
+  /history/review/{id}:
     delete:
       description: Delete a review
       parameters:
