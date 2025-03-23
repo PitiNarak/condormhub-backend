@@ -60,6 +60,10 @@ jobs:
                 cache: true
                 cache-dependency-path: go.sum
 
+            - name: 'Create env file'
+              run: |
+                touch .env
+
             - name: Run golangci-lint
               uses: golangci/golangci-lint-action@v6
               with:
