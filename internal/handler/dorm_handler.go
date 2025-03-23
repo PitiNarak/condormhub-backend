@@ -390,6 +390,21 @@ func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+// DeleteDormImageByURL godoc
+// @Summary Delete a dorm image by its url
+// @Description Deletes a dorm image using its url from bucket storage
+// @Tags dorms
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param request body dto.DormImageDeleteRequestBody true "URL of the dorm image to delete"
+// @Success 204 "Image deleted successfully"
+// @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this dorm image"
+// @Failure 404 {object} dto.ErrorResponse "Image not found"
+// @Failure 500 {object} dto.ErrorResponse "Failed to delete image"
+// @Router /dorms/images [delete]
 func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
 	reqBody := new(dto.DormImageDeleteRequestBody)
 	if err := c.BodyParser(reqBody); err != nil {

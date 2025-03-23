@@ -56,6 +56,13 @@ components:
       - price
       - size
       type: object
+    dto.DormImageDeleteRequestBody:
+      properties:
+        url:
+          type: string
+      required:
+      - url
+      type: object
     dto.DormImageUploadResponseBody:
       properties:
         url:
@@ -916,6 +923,54 @@ paths:
       security:
       - Bearer: []
       summary: Upload an image for a dorm
+      tags:
+      - dorms
+  /dorms/images:
+    delete:
+      description: Deletes a dorm image using its url from bucket storage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.DormImageDeleteRequestBody'
+        description: URL of the dorm image to delete
+        required: true
+      responses:
+        "204":
+          description: Image deleted successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to delete this dorm image
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Image not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to delete image
+      security:
+      - Bearer: []
+      summary: Delete a dorm image by its url
       tags:
       - dorms
   /dorms/owner/{id}:
