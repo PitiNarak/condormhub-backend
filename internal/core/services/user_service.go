@@ -32,7 +32,9 @@ func NewUserService(UserRepo ports.UserRepository, EmailService email.Email, jwt
 
 func (s *UserService) ConvertToDTO(user domain.User) dto.UserResponse {
 	res := user.ToDTO()
-	res.ProfilePicUrl = s.storage.GetPublicUrl(user.ProfilePicKey)
+	if user.ProfilePicKey != "" {
+		res.ProfilePicUrl = s.storage.GetPublicUrl(user.ProfilePicKey)
+	}
 	return res
 }
 
