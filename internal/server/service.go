@@ -24,7 +24,7 @@ func (s *Server) initService() {
 	order := services.NewOrderService(s.repository.order, s.repository.leasingHistory)
 	tsx := services.NewTransactionService(s.repository.tsx, s.repository.order, s.stripe)
 	ownershipProof := services.NewOwnershipProofService(s.repository.ownershipProof, s.repository.user, s.storage)
-	contract := services.NewContractService(s.repository.contract, s.repository.user, s.repository.dorm)
+	contract := services.NewContractService(s.repository.contract, s.repository.user, s.repository.dorm, leasingHistory)
 
 	s.service = &service{
 		user:           user,

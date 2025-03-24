@@ -24,7 +24,6 @@ type LeasingHistoryService interface {
 }
 
 type LeasingHistoryHandler interface {
-	Create(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	GetByUserID(c *fiber.Ctx) error
 	GetByDormID(c *fiber.Ctx) error

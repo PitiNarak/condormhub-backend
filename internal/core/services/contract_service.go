@@ -10,16 +10,18 @@ import (
 )
 
 type ContractService struct {
-	contractRepo ports.ContractRepository
-	userRepo     ports.UserRepository
-	dormRepo     ports.DormRepository
+	contractRepo          ports.ContractRepository
+	userRepo              ports.UserRepository
+	dormRepo              ports.DormRepository
+	leasingHistoryService ports.LeasingHistoryService
 }
 
-func NewContractService(contractRepo ports.ContractRepository, userRepo ports.UserRepository, dormRepo ports.DormRepository) ports.ContractService {
+func NewContractService(contractRepo ports.ContractRepository, userRepo ports.UserRepository, dormRepo ports.DormRepository, leasingHistoryService ports.LeasingHistoryService) ports.ContractService {
 	return &ContractService{
-		contractRepo: contractRepo,
-		userRepo:     userRepo,
-		dormRepo:     dormRepo,
+		contractRepo:          contractRepo,
+		userRepo:              userRepo,
+		dormRepo:              dormRepo,
+		leasingHistoryService: leasingHistoryService,
 	}
 }
 
@@ -143,6 +145,9 @@ func (ct *ContractService) UpdateStatus(contractID uuid.UUID, status domain.Cont
 
 	if contract.LesseeStatus == domain.Signed && contract.LessorStatus == domain.Signed {
 		if err := ct.contractRepo.UpdateStatus(contractID, domain.Signed, nil); err != nil {
+			return err
+		}
+		if _, err := ct.leasingHistoryService.Create(contract.LesseeID, contract.DormID); err != nil {
 			return err
 		}
 	}
