@@ -18,9 +18,9 @@ type LeasingRequestService interface {
 	Create(leeseeID uuid.UUID, dormID uuid.UUID, message string) (*domain.LeasingRequest, error)
 	Delete(id uuid.UUID) error
 	GetByUserID(id uuid.UUID, role domain.Role, limit, page int) ([]domain.LeasingRequest, int, int, error)
-	Approve(id, userId uuid.UUID) error
-	Reject(id, userId uuid.UUID) error
-	Cancel(id, userId uuid.UUID) error
+	Approve(id, userId uuid.UUID, admin bool) error
+	Reject(id, userId uuid.UUID, admin bool) error
+	Cancel(id, userId uuid.UUID, admin bool) error
 }
 
 type LeasingRequestHandler interface {
