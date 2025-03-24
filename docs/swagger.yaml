@@ -324,6 +324,12 @@ components:
           minimum: 0
           type: integer
       type: object
+    dto.Role:
+      type: string
+      x-enum-varnames:
+      - AdminRole
+      - LesseeRole
+      - LessorRole
     dto.Status:
       type: string
       x-enum-varnames:
@@ -435,6 +441,38 @@ components:
         status:
           type: string
         updateAt:
+          type: string
+      type: object
+    dto.UserFirstFillRequestBody:
+      properties:
+        birthDate:
+          type: string
+        firstname:
+          minLength: 2
+          type: string
+        gender:
+          type: string
+        lastname:
+          minLength: 2
+          type: string
+        lifestyles:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+        nationalID:
+          type: string
+        password:
+          minLength: 8
+          type: string
+        phoneNumber:
+          type: string
+        role:
+          $ref: '#/components/schemas/dto.Role'
+        studentEvidence:
+          type: string
+        username:
+          minLength: 2
           type: string
       type: object
     dto.UserInformationRequestBody:
@@ -2255,6 +2293,46 @@ paths:
       security:
       - Bearer: []
       summary: Get student evidence by user id
+      tags:
+      - user
+  /user/firstfill:
+    patch:
+      description: Fill user information first time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.UserFirstFillRequestBody'
+        description: user information
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
+          description: user successfully updated account information
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot update your account information
+      security:
+      - Bearer: []
+      summary: Fill user information first time
       tags:
       - user
   /user/me:

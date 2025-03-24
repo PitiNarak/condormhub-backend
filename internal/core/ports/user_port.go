@@ -13,7 +13,7 @@ import (
 type UserRepository interface {
 	Create(user *domain.User) error
 	GetUserByID(userID uuid.UUID) (*domain.User, error)
-	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) error
+	UpdateInformation(userID uuid.UUID, data domain.User) error
 	UpdateUser(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
 	DeleteAccount(userID uuid.UUID) error
@@ -24,6 +24,7 @@ type UserService interface {
 	Create(ctx context.Context, user *domain.User) (string, string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	GetUserByID(id uuid.UUID) (*domain.User, error)
+	FirstFillInformation(userID uuid.UUID, data dto.UserFirstFillRequestBody) (*domain.User, error)
 	UpdateInformation(userID uuid.UUID, data dto.UserInformationRequestBody) (*domain.User, error)
 	Login(context.Context, string, string) (*domain.User, string, string, error)
 	RefreshToken(ctx context.Context, refreshToken string) (string, string, error)
@@ -41,6 +42,7 @@ type UserHandler interface {
 	Register(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
 	RefreshToken(c *fiber.Ctx) error
+	FirstFillInformation(c *fiber.Ctx) error
 	UpdateUserInformation(c *fiber.Ctx) error
 	VerifyEmail(c *fiber.Ctx) error
 	ResetPasswordCreate(c *fiber.Ctx) error

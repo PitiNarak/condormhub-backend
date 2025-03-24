@@ -137,8 +137,67 @@ func (s *UserService) UpdateInformation(userID uuid.UUID, data dto.UserInformati
 		}
 		data.Password = string(hashedPassword)
 	}
+	lifestyles := make([]domain.Lifestyle, len(data.Lifestyles))
+	for i, v := range data.Lifestyles {
+		lifestyles[i] = domain.Lifestyle(v)
+	}
 
-	err := s.userRepo.UpdateInformation(userID, data)
+	user := domain.User{
+		Username:        data.Username,
+		Password:        data.Password,
+		Firstname:       data.Firstname,
+		Lastname:        data.Lastname,
+		NationalID:      data.NationalID,
+		Gender:          data.Gender,
+		StudentEvidence: data.StudentEvidence,
+		Lifestyles:      lifestyles,
+		BirthDate:       data.BirthDate,
+		PhoneNumber:     data.PhoneNumber,
+	}
+
+	err := s.userRepo.UpdateInformation(userID, user)
+	if err != nil {
+		return nil, err
+	}
+
+	userInfo, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return userInfo, nil
+}
+
+func (s *UserService) FirstFillInformation(userID uuid.UUID, data dto.UserFirstFillRequestBody) (*domain.User, error) {
+	if data.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, apperror.InternalServerError(err, "failed to hash password")
+		}
+		data.Password = string(hashedPassword)
+	}
+
+	lifestyles := make([]domain.Lifestyle, len(data.Lifestyles))
+	for i, v := range data.Lifestyles {
+		lifestyles[i] = domain.Lifestyle(v)
+	}
+
+	user := domain.User{
+		Username:           data.Username,
+		Password:           data.Password,
+		Firstname:          data.Firstname,
+		Lastname:           data.Lastname,
+		NationalID:         data.NationalID,
+		Gender:             data.Gender,
+		StudentEvidence:    data.StudentEvidence,
+		Lifestyles:         lifestyles,
+		BirthDate:          data.BirthDate,
+		PhoneNumber:        data.PhoneNumber,
+		Role:               domain.Role(data.Role),
+		FilledPersonalInfo: true,
+	}
+
+	err := s.userRepo.UpdateInformation(userID, user)
 	if err != nil {
 		return nil, err
 	}
