@@ -60,12 +60,14 @@ func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, ro
 			Preload("Lessee").
 			Preload("Dorm.Owner").
 			Where("lessee_id = ?", id)
-	} else {
+	} else if role == domain.LessorRole {
 		query = d.db.Preload("Dorm").
 			Preload("Lessee").
 			Preload("Dorm.Owner").
 			Joins("JOIN dorms ON dorms.id = leasing_requests.dorm_id").
 			Where("owner_id = ?", id)
+	} else {
+		return nil, 0, 0, apperror.BadRequestError(errors.New("admin dont have requests"), "admin dont have requests")
 	}
 	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start DESC")
 
