@@ -35,8 +35,8 @@ func NewLeasingRequestHandler(service ports.LeasingRequestService) ports.Leasing
 func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessor can approve a request")
+	if user.Role == domain.LesseeRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessee"), "lessee cannot reject a request")
 	}
 	if err := uuid.Validate(id); err != nil {
 		if apperror.IsAppError(err) {
@@ -78,8 +78,8 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessor can reject a request")
+	if user.Role == domain.LesseeRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessee"), "lessee cannot reject a request")
 	}
 	if err := uuid.Validate(id); err != nil {
 		if apperror.IsAppError(err) {
@@ -121,8 +121,8 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LesseeRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessee can cancel a request")
+	if user.Role == domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessor"), "lessor cannot cancel a request")
 	}
 	if err := uuid.Validate(id); err != nil {
 		if apperror.IsAppError(err) {
@@ -251,8 +251,8 @@ func (h *LeasingRequestHandler) Delete(c *fiber.Ctx) error {
 func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LesseeRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessee can cancel a request")
+	if user.Role == domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessor"), "lessor cannot create a request")
 	}
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
