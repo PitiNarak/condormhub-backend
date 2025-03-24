@@ -14,9 +14,7 @@ type ContractRepository interface {
 	GetContractByLesseeID(LessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
 	GetContractByDormID(LessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
 	Delete(contractID uuid.UUID) error
-	UpdateLessorStatus(contractID uuid.UUID, lessorStatus domain.ContractStatus) error
-	UpdateLesseeStatus(contractID uuid.UUID, lesseeStatus domain.ContractStatus) error
-	UpdateContractStatus(contractID uuid.UUID, status domain.ContractStatus) error
+	UpdateStatus(contractID uuid.UUID, status domain.ContractStatus, role *domain.Role) error
 }
 
 type ContractService interface {

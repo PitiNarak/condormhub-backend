@@ -106,29 +106,30 @@ func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page 
 	return &contracts, totalPage, totalRows, nil
 }
 
-func (ct *ContractRepository) UpdateLessorStatus(contractID uuid.UUID, LessorStatus domain.ContractStatus) error {
-	if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
-		contractID).Updates(
-		map[string]interface{}{"lessor_status": LessorStatus}).Error; err != nil {
-		return apperror.InternalServerError(err, "failed to update lessor status")
-	}
-	return nil
-}
+func (ct *ContractRepository) UpdateStatus(contractID uuid.UUID, status domain.ContractStatus, role *domain.Role) error {
+	if role == nil {
+		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
+			contractID).Updates(
+			map[string]interface{}{"status": status}).Error; err != nil {
+			return apperror.InternalServerError(err, "failed to update contract status")
+		}
+	} else if *role == domain.LessorRole {
+		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
+			contractID).Updates(
+			map[string]interface{}{"lessor_status": status}).Error; err != nil {
+			return apperror.InternalServerError(err, "failed to update lessor status")
+		}
+	} else if *role == domain.LesseeRole {
+		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
+			contractID).Updates(
+			map[string]interface{}{"lessee_status": status}).Error; err != nil {
+			return apperror.InternalServerError(err, "failed to update lessee status")
+		} else {
 
-func (ct *ContractRepository) UpdateLesseeStatus(contractID uuid.UUID, LesseeStatus domain.ContractStatus) error {
-	if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
-		contractID).Updates(
-		map[string]interface{}{"lessee_status": LesseeStatus}).Error; err != nil {
-		return apperror.InternalServerError(err, "failed to update lessee status")
+		}
+	} else {
+		return apperror.InternalServerError(errors.New("Invalid role"), "Invalid role")
 	}
-	return nil
-}
 
-func (ct *ContractRepository) UpdateContractStatus(contractID uuid.UUID, status domain.ContractStatus) error {
-	if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
-		contractID).Updates(
-		map[string]interface{}{"status": status}).Error; err != nil {
-		return apperror.InternalServerError(err, "failed to update contract status")
-	}
 	return nil
 }

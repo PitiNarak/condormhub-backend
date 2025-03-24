@@ -75,10 +75,7 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Failed to sign contract"
 // @Router /contract/{contractId}/sign [patch]
 func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
-	userID, err := c.Locals("userID").(uuid.UUID)
-	if err {
-		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
-	}
+	userID := c.Locals("userID").(uuid.UUID)
 
 	contractID, parseErr := uuid.Parse(c.Params("contractID"))
 	if parseErr != nil {
@@ -113,10 +110,7 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 // @Failure 500 {object} dto.ErrorResponse "Failed to cancel contract"
 // @Router /contract/{contractId}/cancel [patch]
 func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
-	userID, err := c.Locals("userID").(uuid.UUID)
-	if err {
-		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
-	}
+	userID := c.Locals("userID").(uuid.UUID)
 
 	contractID, parseErr := uuid.Parse(c.Params("contractID"))
 	if parseErr != nil {

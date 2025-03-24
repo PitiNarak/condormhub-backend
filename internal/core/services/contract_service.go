@@ -132,14 +132,8 @@ func (ct *ContractService) UpdateStatus(contractID uuid.UUID, status domain.Cont
 		return apperror.BadRequestError(errors.New("invalid user"), "role mismatch")
 	}
 
-	if user.Role == domain.LessorRole {
-		if err := ct.contractRepo.UpdateLessorStatus(contractID, status); err != nil {
-			return err
-		}
-	} else {
-		if err := ct.contractRepo.UpdateLesseeStatus(contractID, status); err != nil {
-			return err
-		}
+	if err := ct.contractRepo.UpdateStatus(contractID, status, &user.Role); err != nil {
+		return err
 	}
 
 	contract, err := ct.contractRepo.GetContractByContractID(contractID)
@@ -148,13 +142,13 @@ func (ct *ContractService) UpdateStatus(contractID uuid.UUID, status domain.Cont
 	}
 
 	if contract.LesseeStatus == domain.Signed && contract.LessorStatus == domain.Signed {
-		if err := ct.contractRepo.UpdateContractStatus(contractID, domain.Signed); err != nil {
+		if err := ct.contractRepo.UpdateStatus(contractID, domain.Signed, nil); err != nil {
 			return err
 		}
 	}
 
 	if contract.LesseeStatus == domain.Cancelled || contract.LessorStatus == domain.Cancelled {
-		if err := ct.contractRepo.UpdateContractStatus(contractID, domain.Cancelled); err != nil {
+		if err := ct.contractRepo.UpdateStatus(contractID, domain.Cancelled, nil); err != nil {
 			return err
 		}
 	}
