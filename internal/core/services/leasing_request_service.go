@@ -19,11 +19,13 @@ func NewLeasingRequestService(requestRepo ports.LeasingRequestRepository, dormRe
 	return &LeasingRequestService{requestRepo: requestRepo, dormRepo: dormRepo}
 }
 
-func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID) (*domain.LeasingRequest, error) {
+func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID, message string) (*domain.LeasingRequest, error) {
 	leasingRequest := &domain.LeasingRequest{
 		Status:   domain.RequestPending,
 		DormID:   dormID,
-		LesseeID: leeseeID}
+		LesseeID: leeseeID,
+		Message:  message,
+	}
 	err := s.requestRepo.Create(leasingRequest)
 	if err != nil {
 		return nil, err

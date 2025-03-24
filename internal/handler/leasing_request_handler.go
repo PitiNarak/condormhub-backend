@@ -241,6 +241,7 @@ func (h *LeasingRequestHandler) Delete(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
+// @Param user body dto.LeasingRequestCreateRequestBody true "request information"
 // @Success 201 {object} dto.SuccessResponse[dto.LeasingRequest] "Dorm successfully created"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -258,6 +259,12 @@ func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
 
+	body := new(dto.LeasingRequestCreateRequestBody)
+	err := c.BodyParser(&body)
+	if err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
+	}
+
 	dormID, err := uuid.Parse(id)
 	if err != nil {
 		if apperror.IsAppError(err) {
@@ -265,7 +272,7 @@ func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	leasingRequest, err := h.service.Create(userID, dormID)
+	leasingRequest, err := h.service.Create(userID, dormID, body.Message)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
