@@ -220,11 +220,11 @@ func (ct *ContractHandler) GetContractByUserID(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	limit := min(50, c.QueryInt("limit", 10))
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+		limit = 10
 	}
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
 	contracts, totalPage, totalRows, err := ct.contractService.GetByUserID(userID, limit, page)
 	if err != nil {
@@ -269,11 +269,11 @@ func (ct *ContractHandler) GetContractByDormID(c *fiber.Ctx) error {
 	}
 	limit := min(50, c.QueryInt("limit", 10))
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
+		limit = 10
 	}
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
 	contracts, totalPage, totalRows, err := ct.contractService.GetByDormID(dormID, limit, page)
 	if err != nil {
