@@ -48,11 +48,6 @@ func (ct *ContractService) Create(contract *domain.Contract) error {
 		return apperror.BadRequestError(errors.New("role mismatch"), "You are not an lessee")
 	}
 
-	_, dormErr := ct.dormRepo.GetByID(contract.DormID)
-	if dormErr != nil {
-		return dormErr
-	}
-
 	contracts, err := ct.contractRepo.GetContract(contract.LessorID, contract.LesseeID, contract.DormID)
 	if err != nil {
 		return err
