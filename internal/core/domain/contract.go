@@ -10,9 +10,9 @@ import (
 type ContractStatus string
 
 const (
-	Waiting   ContractStatus = "Waiting"
-	Signed    ContractStatus = "Signed"
-	Cancelled ContractStatus = "Cancelled"
+	Waiting   ContractStatus = "WAITING"
+	Signed    ContractStatus = "SIGNED"
+	Cancelled ContractStatus = "CANCELLED"
 )
 
 type Contract struct {
@@ -21,9 +21,9 @@ type Contract struct {
 	LessorID     uuid.UUID      `gorm:"type:uuid;primaryKey"`
 	LesseeID     uuid.UUID      `gorm:"type:uuid;primaryKey"`
 	DormID       uuid.UUID      `gorm:"type:uuid;primaryKey"`
-	LessorStatus ContractStatus `gorm:"default:Waiting"`
-	LesseeStatus ContractStatus `gorm:"default:Waiting"`
-	Status       ContractStatus `gorm:"default:Waiting"`
+	LessorStatus ContractStatus `gorm:"default:WAITING"`
+	LesseeStatus ContractStatus `gorm:"default:WAITING"`
+	Status       ContractStatus `gorm:"default:WAITING"`
 }
 
 func (ct *Contract) ToDTO() dto.ContractResponseBody {
