@@ -151,10 +151,17 @@ components:
           type: string
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
+        message:
+          type: string
         start:
           type: string
         status:
           $ref: '#/components/schemas/dto.Status'
+      type: object
+    dto.LeasingRequestCreateRequestBody:
+      properties:
+        message:
+          type: string
       type: object
     dto.LoginRequestBody:
       properties:
@@ -1847,6 +1854,13 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.LeasingRequestCreateRequestBody'
+        description: request information
+        required: true
       responses:
         "201":
           content:
