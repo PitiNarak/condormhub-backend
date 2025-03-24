@@ -28,14 +28,14 @@ components:
           type: string
         contractStatus:
           type: string
-        dormId:
-          type: string
-        lesseeId:
-          type: string
+        dorm:
+          $ref: '#/components/schemas/dto.DormResponseBody'
+        lessee:
+          $ref: '#/components/schemas/dto.UserResponse'
         lesseeStatus:
           type: string
-        lessorId:
-          type: string
+        lessor:
+          $ref: '#/components/schemas/dto.UserResponse'
         lessorStatus:
           type: string
       type: object
@@ -308,11 +308,6 @@ components:
         data:
           $ref: '#/components/schemas/dto.DormResponseBody'
       type: object
-    dto.SuccessResponse-dto_LeasingHistory:
-      properties:
-        data:
-          $ref: '#/components/schemas/dto.LeasingHistory'
-      type: object
     dto.SuccessResponse-dto_OrderResponseBody:
       properties:
         data:
@@ -579,7 +574,7 @@ paths:
       summary: Register new user
       tags:
       - auth
-  /contracts:
+  /contract:
     get:
       description: Get all contracts associated with a specific user
       parameters:
@@ -646,7 +641,7 @@ paths:
       summary: Create a new contract
       tags:
       - contracts
-  /contracts/{contractId}:
+  /contract/{contractId}:
     delete:
       description: Permanently delete a contract by ID
       parameters:
@@ -705,7 +700,7 @@ paths:
       summary: Retrieve a contract by contract ID
       tags:
       - contracts
-  /contracts/{contractId}/cancel:
+  /contract/{contractId}/cancel:
     patch:
       description: Cancel a contract if it is not signed
       parameters:
@@ -743,7 +738,7 @@ paths:
       summary: Cancel an existing contract
       tags:
       - contracts
-  /contracts/{contractId}/sign:
+  /contract/{contractId}/sign:
     patch:
       description: Sign a contract by providing contract ID
       parameters:
@@ -781,7 +776,7 @@ paths:
       summary: Sign an existing contract
       tags:
       - contracts
-  /contracts/{dormId}:
+  /contract/{dormId}:
     get:
       description: Get all contracts associated with a specific dorm
       parameters:
@@ -1134,51 +1129,6 @@ paths:
       security:
       - Bearer: []
       summary: Delete a leasing history
-      tags:
-      - history
-    post:
-      description: Add a new leasing history to the database
-      parameters:
-      - description: DormID
-        in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-dto_LeasingHistory'
-          description: Dorm successfully created
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Dorm not found or leasing history not found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Can not parse UUID or failed to save leasing history to database
-      security:
-      - Bearer: []
-      summary: Create a new leasing history
       tags:
       - history
   /history/bydorm/{id}:

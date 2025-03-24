@@ -124,11 +124,9 @@ func (ct *ContractRepository) UpdateStatus(contractID uuid.UUID, status domain.C
 			contractID).Updates(
 			map[string]interface{}{"lessee_status": status}).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update lessee status")
-		} else {
-
 		}
 	} else {
-		return apperror.InternalServerError(errors.New("Invalid role"), "Invalid role")
+		return apperror.InternalServerError(errors.New("invalid role"), "Invalid role")
 	}
 
 	return nil
