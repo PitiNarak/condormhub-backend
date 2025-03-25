@@ -16,10 +16,15 @@ const (
 )
 
 type LeasingRequest struct {
-	ID     uuid.UUID        `json:"id"`
-	Status Status           `json:"status"`
-	Dorm   DormResponseBody `json:"dorm"`
-	Lessee UserResponse     `json:"lessee"`
-	Start  time.Time        `json:"start"`
-	End    time.Time        `json:"end"`
+	ID      uuid.UUID        `json:"id"`
+	Status  Status           `json:"status"`
+	Dorm    DormResponseBody `json:"dorm"`
+	Lessee  UserResponse     `json:"lessee"`
+	Start   time.Time        `json:"start"`
+	End     time.Time        `json:"end"`
+	Message string           `json:"message"`
+}
+
+type LeasingRequestCreateRequestBody struct {
+	Message string `json:"message"`
 }
