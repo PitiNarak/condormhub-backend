@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -150,7 +149,7 @@ func (s *Storage) GetPublicUrl(key string) string {
 func (s *Storage) GetFileKeyFromPublicUrl(imageURL string) (string, error) {
 	parsedURL, err := url.Parse(imageURL)
 	if err != nil {
-		return "", apperror.InternalServerError(err, "Failed to parse URL")
+		return "", err
 	}
 
 	fileKey := strings.TrimPrefix(parsedURL.Path, "/")

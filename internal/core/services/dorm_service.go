@@ -161,7 +161,7 @@ func (s *DormService) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dt
 func (s *DormService) DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error {
 	imageKey, err := s.storage.GetFileKeyFromPublicUrl(imageURL)
 	if err != nil {
-		return err
+		return apperror.InternalServerError(err, "Failed to parse URL")
 	}
 
 	dormImage, err := s.dormRepo.GetImageByKey(imageKey)
