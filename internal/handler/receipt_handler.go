@@ -53,3 +53,37 @@ func (r *ReceiptHandler) Create(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(receipt.ToDTO(url)))
 }
+
+func (r *ReceiptHandler) GetByUserID(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+	limit := min(50, c.QueryInt("limit", 10))
+	if limit <= 0 {
+		limit = 10
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+	receipts, totalPage, totalRows, err := r.receiptService.GetByUserID(userID, limit, page)
+	if err != nil {
+		return err
+	}
+
+	resData := make([]dto.ReceiptResponseBody, len(receipts))
+	for i, v := range receipts {
+		url, err := r.receiptService.GetUrl(c.Context(), v)
+		if err != nil {
+			return err
+		}
+		resData[i] = v.ToDTO(url)
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}

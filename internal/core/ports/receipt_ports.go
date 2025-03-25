@@ -10,12 +10,16 @@ import (
 
 type ReceiptRepository interface {
 	Create(receipt *domain.Receipt) error
+	GetByUserID(userID uuid.UUID, limit int, page int) ([]domain.Receipt, int, int, error)
 }
 
 type ReceiptService interface {
-	Create(ctx context.Context, ownerID uuid.UUID, transactionID uuid.UUID) (*domain.Receipt, string, error)
+	Create(c context.Context, ownerID uuid.UUID, transactionID uuid.UUID) (*domain.Receipt, string, error)
+	GetByUserID(userID uuid.UUID, limit int, page int) ([]domain.Receipt, int, int, error)
+	GetUrl(c context.Context, receipt domain.Receipt) (string, error)
 }
 
 type ReceiptHandler interface {
 	Create(c *fiber.Ctx) error
+	GetByUserID(c *fiber.Ctx) error
 }

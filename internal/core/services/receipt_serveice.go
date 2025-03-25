@@ -77,6 +77,14 @@ func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transactio
 
 }
 
+func (r *ReceiptService) GetUrl(c context.Context, receipt domain.Receipt) (string, error) {
+	url, err := r.storage.GetSignedUrl(c, receipt.FileKey, time.Minute*60)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "Fail to upload file to storage")
+	}
+	return url, nil
+}
+
 func (r *ReceiptService) validateTransaction(transaction domain.Transaction) error {
 	if transaction.SessionStatus != domain.StatusComplete {
 		return apperror.BadRequestError(errors.New("invalid transaction"), "Receive unpaid transcation")
@@ -171,4 +179,18 @@ func (r *ReceiptService) saveFile(c context.Context, pdfBuffer *bytes.Buffer, tr
 
 	return fileKey, nil
 
+}
+
+func (r *ReceiptService) GetByUserID(userID uuid.UUID, limit, page int) ([]domain.Receipt, int, int, error) {
+	user, userErr := r.userRepo.GetUserByID(userID)
+	if userErr != nil {
+		return nil, 0, 0, userErr
+	}
+	if user == nil || user.Role == "" {
+		return nil, 0, 0, apperror.BadRequestError(errors.New("invalid user"), "user not found or role is missing")
+	}
+	if user.Role != domain.LesseeRole {
+		return nil, 0, 0, apperror.BadRequestError(errors.New("invalid user"), "role mismatch")
+	}
+	return r.receiptRepo.GetByUserID(userID, limit, page)
 }

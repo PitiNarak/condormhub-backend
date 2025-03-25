@@ -121,4 +121,6 @@ func (s *Server) initOwnershipProofRoutes() {
 func (s *Server) initReceiptRoutes() {
 	ownershipRoutes := s.app.Group("/receipt")
 	ownershipRoutes.Post("/:transactionId", s.authMiddleware.Auth, s.handler.receipt.Create)
+	ownershipRoutes.Get("/", s.authMiddleware.Auth, s.handler.receipt.GetByUserID)
+
 }
