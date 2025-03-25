@@ -35,7 +35,12 @@ func (ct *ContractRepository) Delete(contractID uuid.UUID) error {
 
 func (ct *ContractRepository) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*[]domain.Contract, error) {
 	var contracts []domain.Contract
-	if err := ct.db.Preload("Lessor").Preload("Lessee").Preload("Dorm").Where("lessor_id = ? AND lessee_id = ? AND dorm_id = ?", lessorID, lesseeID, dormID).Find(&contracts).Error; err != nil {
+	if err := ct.db.
+		Preload("Lessor").
+		Preload("Lessee").
+		Preload("Dorm").
+		Where("lessor_id = ? AND lessee_id = ? AND dorm_id = ?", lessorID, lesseeID, dormID).
+		Find(&contracts).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Contracts not found")
 	}
 	return &contracts, nil
@@ -43,7 +48,12 @@ func (ct *ContractRepository) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID
 
 func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error) {
 	contract := new(domain.Contract)
-	if err := ct.db.Preload("Lessor").Preload("Lessee").Preload("Dorm").Where("contract_id = ? ", contractID).Find(&contract).Error; err != nil {
+	if err := ct.db.
+		Preload("Lessor").
+		Preload("Lessee").
+		Preload("Dorm").
+		Where("contract_id = ? ", contractID).
+		Find(&contract).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Contract not found")
 	}
 	return contract, nil
@@ -51,7 +61,12 @@ func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*do
 
 func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
-	query := ct.db.Preload("Lessor").Preload("Lessee").Preload("Dorm").Where("lessor_id = ? ", lessorID).Find(&contracts)
+	query := ct.db.
+		Preload("Lessor").
+		Preload("Lessee").
+		Preload("Dorm").
+		Where("lessor_id = ? ", lessorID).
+		Find(&contracts)
 
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
 
@@ -67,7 +82,12 @@ func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, p
 
 func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
-	query := ct.db.Preload("Lessor").Preload("Lessee").Preload("Dorm").Where("lessee_id = ? ", lesseeID).Find(&contracts)
+	query := ct.db.
+		Preload("Lessor").
+		Preload("Lessee").
+		Preload("Dorm").
+		Where("lessee_id = ? ", lesseeID).
+		Find(&contracts)
 
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
 
@@ -83,7 +103,12 @@ func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, p
 
 func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
-	query := ct.db.Preload("Lessor").Preload("Lessee").Preload("Dorm").Where("dorm_id = ? ", dormID).Find(&contracts)
+	query := ct.db.
+		Preload("Lessor").
+		Preload("Lessee").
+		Preload("Dorm").
+		Where("dorm_id = ? ", dormID).
+		Find(&contracts)
 
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
 
