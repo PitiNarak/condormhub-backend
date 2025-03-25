@@ -191,9 +191,6 @@ func (ct *ContractHandler) GetContractByContractID(c *fiber.Ctx) error {
 		return err
 	}
 
-	fmt.Println(contract.LesseeID)
-	fmt.Println(contract.Lessee)
-
 	return c.Status(fiber.StatusCreated).JSON(dto.Success(contract.ToDTO()))
 
 }
