@@ -124,21 +124,27 @@ func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page 
 
 func (ct *ContractRepository) UpdateStatus(contractID uuid.UUID, status domain.ContractStatus, role *domain.Role) error {
 	if role == nil {
+		contract := domain.Contract{
+			Status: status,
+		}
 		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
-			contractID).Updates(
-			map[string]interface{}{"status": status}).Error; err != nil {
+			contractID).Updates(contract).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update contract status")
 		}
 	} else if *role == domain.LessorRole {
+		contract := domain.Contract{
+			LessorStatus: status,
+		}
 		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
-			contractID).Updates(
-			map[string]interface{}{"lessor_status": status}).Error; err != nil {
+			contractID).Updates(contract).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update lessor status")
 		}
 	} else if *role == domain.LesseeRole {
+		contract := domain.Contract{
+			LesseeStatus: status,
+		}
 		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
-			contractID).Updates(
-			map[string]interface{}{"lessee_status": status}).Error; err != nil {
+			contractID).Updates(contract).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update lessee status")
 		}
 	} else {
