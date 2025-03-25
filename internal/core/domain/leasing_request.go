@@ -25,6 +25,7 @@ type LeasingRequest struct {
 	Lessee   User      `gorm:"foreignKey:LesseeID;references:ID"`
 	Start    time.Time `gorm:"autoCreateTime"`
 	End      time.Time `gorm:"default:null"`
+	Message  string
 }
 
 func (l *LeasingRequest) ToDTO() dto.LeasingRequest {

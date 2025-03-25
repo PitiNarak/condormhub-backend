@@ -151,10 +151,17 @@ components:
           type: string
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
+        message:
+          type: string
         start:
           type: string
         status:
           $ref: '#/components/schemas/dto.Status'
+      type: object
+    dto.LeasingRequestCreateRequestBody:
+      properties:
+        message:
+          type: string
       type: object
     dto.LoginRequestBody:
       properties:
@@ -1901,6 +1908,13 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.LeasingRequestCreateRequestBody'
+        description: request information
+        required: true
       responses:
         "201":
           content:
@@ -1961,7 +1975,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized or only lessor can approve a request
+          description: your request is unauthorized or lessee cannot approve a request
         "404":
           content:
             application/json:
@@ -2005,7 +2019,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
+          description: your request is unauthorized or lessor cannot cancel a request
         "404":
           content:
             application/json:
@@ -2048,7 +2062,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized or only lessor can reject a request
+          description: your request is unauthorized or lessee cannot reject a request
         "404":
           content:
             application/json:

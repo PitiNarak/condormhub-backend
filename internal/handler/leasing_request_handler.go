@@ -28,15 +28,15 @@ func NewLeasingRequestHandler(service ports.LeasingRequestService) ports.Leasing
 // @Param id path string true "LeasingRequestId"
 // @Success 204
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
-// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only lessor can approve a request"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or lessee cannot approve a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
 // @Router /request/{id}/approve [patch]
 func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessor can approve a request")
+	if user.Role == domain.LesseeRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessee"), "lessee cannot approve a request")
 	}
 	if err := uuid.Validate(id); err != nil {
 		if apperror.IsAppError(err) {
@@ -52,7 +52,11 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Approve(leasingRequestID, user.ID)
+	if user.Role == domain.AdminRole {
+		err = h.service.Approve(leasingRequestID, user.ID, true)
+	} else {
+		err = h.service.Approve(leasingRequestID, user.ID, false)
+	}
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -71,15 +75,15 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 // @Param id path string true "LeasingRequestId"
 // @Success 204
 // @Failure 400 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
-// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or only lessor can reject a request"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or lessee cannot reject a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
 // @Router /request/{id}/reject [patch]
 func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LessorRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessor can reject a request")
+	if user.Role == domain.LesseeRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessee"), "lessee cannot reject a request")
 	}
 	if err := uuid.Validate(id); err != nil {
 		if apperror.IsAppError(err) {
@@ -95,7 +99,11 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Reject(leasingRequestID, user.ID)
+	if user.Role == domain.AdminRole {
+		err = h.service.Reject(leasingRequestID, user.ID, true)
+	} else {
+		err = h.service.Reject(leasingRequestID, user.ID, false)
+	}
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -114,15 +122,15 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 // @Param id path string true "LeasingRequestId"
 // @Success 204
 // @Failure 400 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
-// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or lessor cannot cancel a request"
 // @Failure 404 {object} dto.ErrorResponse "leasing request not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or Failed to update leasing request"
 // @Router /request/{id}/cancel [patch]
 func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LesseeRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessee can cancel a request")
+	if user.Role == domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessor"), "lessor cannot cancel a request")
 	}
 	if err := uuid.Validate(id); err != nil {
 		if apperror.IsAppError(err) {
@@ -138,7 +146,11 @@ func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Cancel(leasingRequestID, user.ID)
+	if user.Role == domain.AdminRole {
+		err = h.service.Cancel(leasingRequestID, user.ID, true)
+	} else {
+		err = h.service.Cancel(leasingRequestID, user.ID, false)
+	}
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -241,6 +253,7 @@ func (h *LeasingRequestHandler) Delete(c *fiber.Ctx) error {
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
+// @Param user body dto.LeasingRequestCreateRequestBody true "request information"
 // @Success 201 {object} dto.SuccessResponse[dto.LeasingRequest] "Dorm successfully created"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -250,12 +263,18 @@ func (h *LeasingRequestHandler) Delete(c *fiber.Ctx) error {
 func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
-	if user.Role != domain.LesseeRole {
-		return apperror.UnauthorizedError(errors.New("user is not a lessor"), "only lessee can cancel a request")
+	if user.Role == domain.LessorRole {
+		return apperror.UnauthorizedError(errors.New("user is a lessor"), "lessor cannot create a request")
 	}
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	body := new(dto.LeasingRequestCreateRequestBody)
+	err := c.BodyParser(&body)
+	if err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
 	}
 
 	dormID, err := uuid.Parse(id)
@@ -265,7 +284,7 @@ func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	leasingRequest, err := h.service.Create(userID, dormID)
+	leasingRequest, err := h.service.Create(userID, dormID, body.Message)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
