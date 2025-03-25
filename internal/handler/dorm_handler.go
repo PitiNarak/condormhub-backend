@@ -393,7 +393,7 @@ func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
 
 // DeleteDormImageByURL godoc
 // @Summary Delete a dorm image by its url
-// @Description Deletes a dorm image using its url from bucket storage
+// @Description Deletes a dorm image using its percent encoded url from bucket storage. Encode URL using the encodeURIComponent() function.
 // @Tags dorms
 // @Security Bearer
 // @Accept json
