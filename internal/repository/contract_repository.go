@@ -56,9 +56,6 @@ func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, p
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
 
 	if err != nil {
-		if apperror.IsAppError(err) {
-			return nil, 0, 0, err
-		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, 0, apperror.NotFoundError(err, "contract not found")
 		}
@@ -75,9 +72,6 @@ func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, p
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
 
 	if err != nil {
-		if apperror.IsAppError(err) {
-			return nil, 0, 0, err
-		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, 0, apperror.NotFoundError(err, "contract not found")
 		}
@@ -94,9 +88,6 @@ func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page 
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
 
 	if err != nil {
-		if apperror.IsAppError(err) {
-			return nil, 0, 0, err
-		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, 0, apperror.NotFoundError(err, "contract not found")
 		}
