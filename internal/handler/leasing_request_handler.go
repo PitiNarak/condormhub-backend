@@ -52,11 +52,7 @@ func (h *LeasingRequestHandler) Approve(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	if user.Role == domain.AdminRole {
-		err = h.service.Approve(leasingRequestID, user.ID, true)
-	} else {
-		err = h.service.Approve(leasingRequestID, user.ID, false)
-	}
+	err = h.service.Approve(leasingRequestID, user.ID, user.Role == domain.AdminRole)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -99,11 +95,7 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	if user.Role == domain.AdminRole {
-		err = h.service.Reject(leasingRequestID, user.ID, true)
-	} else {
-		err = h.service.Reject(leasingRequestID, user.ID, false)
-	}
+	err = h.service.Reject(leasingRequestID, user.ID, user.Role == domain.AdminRole)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -146,11 +138,7 @@ func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	if user.Role == domain.AdminRole {
-		err = h.service.Cancel(leasingRequestID, user.ID, true)
-	} else {
-		err = h.service.Cancel(leasingRequestID, user.ID, false)
-	}
+	err = h.service.Cancel(leasingRequestID, user.ID, user.Role == domain.AdminRole)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
