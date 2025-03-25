@@ -462,18 +462,10 @@ components:
           uniqueItems: false
         nationalID:
           type: string
-        password:
-          minLength: 8
-          type: string
         phoneNumber:
           type: string
         role:
           $ref: '#/components/schemas/dto.Role'
-        studentEvidence:
-          type: string
-        username:
-          minLength: 2
-          type: string
       type: object
     dto.UserInformationRequestBody:
       properties:
