@@ -925,7 +925,7 @@ paths:
       summary: Upload an image for a dorm
       tags:
       - dorms
-  /dorms/images:
+  /dorms/images/{url}:
     delete:
       description: Deletes a dorm image using its url from bucket storage
       requestBody:
