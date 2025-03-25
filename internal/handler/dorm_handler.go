@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"net/url"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -404,16 +405,11 @@ func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
 // @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this dorm image"
 // @Failure 404 {object} dto.ErrorResponse "Image not found"
 // @Failure 500 {object} dto.ErrorResponse "Failed to delete image"
-// @Router /dorms/images [delete]
+// @Router /dorms/images/{url} [delete]
 func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
-	reqBody := new(dto.DormImageDeleteRequestBody)
-	if err := c.BodyParser(reqBody); err != nil {
-		return apperror.BadRequestError(err, "Your request is invalid")
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(reqBody); err != nil {
-		return apperror.BadRequestError(err, "Your request is invalid")
+	decodedURL, err := url.PathUnescape(c.Params("url"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid URL")
 	}
 
 	userID := c.Locals("userID").(uuid.UUID)
@@ -424,7 +420,7 @@ func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
 
 	isAdmin := user.Role == domain.AdminRole
 
-	if err := d.dormService.DeleteImageByURL(c.Context(), reqBody.ImageURL, userID, isAdmin); err != nil {
+	if err := d.dormService.DeleteImageByURL(c.Context(), decodedURL, userID, isAdmin); err != nil {
 		return err
 	}
 
