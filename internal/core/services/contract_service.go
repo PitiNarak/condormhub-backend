@@ -26,6 +26,11 @@ func NewContractService(contractRepo ports.ContractRepository, userRepo ports.Us
 }
 
 func (ct *ContractService) Create(contract *domain.Contract) error {
+	dorm, dormRrr := ct.dormRepo.GetByID(contract.DormID)
+	if dormRrr != nil {
+		return dormRrr
+	}
+	contract.LessorID = dorm.OwnerID
 	// Validate input contract
 	if err := ct.validateContract(contract); err != nil {
 		return err

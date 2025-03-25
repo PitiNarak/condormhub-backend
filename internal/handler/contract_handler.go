@@ -38,7 +38,6 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 	}
 
 	contract := &domain.Contract{
-		LessorID: reqBody.LessorID,
 		LesseeID: reqBody.LesseeID,
 		DormID:   reqBody.DormID,
 	}
@@ -50,7 +49,7 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "create contract error")
 	}
 
-	res, err := ct.contractService.GetContractByContractID(contract.ContractID)
+	res, err := ct.contractService.GetContractByContractID(contract.ID)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err

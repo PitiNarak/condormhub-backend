@@ -16,7 +16,7 @@ const (
 )
 
 type Contract struct {
-	ContractID   uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	ID           uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	CreateAt     time.Time      `gorm:"autoCreateTime"`
 	LessorID     uuid.UUID      `gorm:"type:uuid;not null"`
 	Lessor       User           `gorm:"foreignKey:LessorID;references:ID"`
@@ -31,12 +31,12 @@ type Contract struct {
 
 func (ct *Contract) ToDTO() dto.ContractResponseBody {
 	return dto.ContractResponseBody{
-		ContractID:     ct.ContractID,
+		ID:             ct.ID,
 		Lessor:         ct.Lessor.ToDTO(),
 		Lessee:         ct.Lessee.ToDTO(),
 		Dorm:           ct.Dorm.ToDTO(),
-		LessorStatus:   string(ct.LessorStatus),
-		LesseeStatus:   string(ct.LesseeStatus),
-		ContractStatus: string(ct.Status),
+		LessorStatus:   dto.ContractStatus(ct.LessorStatus),
+		LesseeStatus:   dto.ContractStatus(ct.LesseeStatus),
+		ContractStatus: dto.ContractStatus(ct.Status),
 	}
 }

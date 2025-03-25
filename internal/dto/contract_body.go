@@ -4,19 +4,25 @@ import (
 	"github.com/google/uuid"
 )
 
+type ContractStatus string
+
+const (
+	Waiting   ContractStatus = "WAITING"
+	Signed    ContractStatus = "SIGNED"
+	Cancelled ContractStatus = "CANCELLED"
+)
+
 type ContractRequestBody struct {
-	ContractID uuid.UUID `json:"contractId"`
-	LessorID   uuid.UUID `json:"lessorId"`
-	LesseeID   uuid.UUID `json:"lesseeId"`
-	DormID     uuid.UUID `json:"dormId"`
+	LesseeID uuid.UUID `json:"lesseeId"`
+	DormID   uuid.UUID `json:"dormId"`
 }
 
 type ContractResponseBody struct {
-	ContractID     uuid.UUID        `json:"contractId"`
+	ID             uuid.UUID        `json:"id"`
 	Lessor         UserResponse     `json:"lessor"`
 	Lessee         UserResponse     `json:"lessee"`
 	Dorm           DormResponseBody `json:"dorm"`
-	LessorStatus   string           `json:"lessorStatus"`
-	LesseeStatus   string           `json:"lesseeStatus"`
-	ContractStatus string           `json:"contractStatus"`
+	LessorStatus   ContractStatus   `json:"lessorStatus"`
+	LesseeStatus   ContractStatus   `json:"lesseeStatus"`
+	ContractStatus ContractStatus   `json:"contractStatus"`
 }
