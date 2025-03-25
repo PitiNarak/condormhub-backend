@@ -50,7 +50,7 @@ func (s *LeasingRequestService) GetByUserID(id uuid.UUID, role domain.Role, limi
 	}
 	return leasingRequest, totalPage, totalRows, nil
 }
-func (s *LeasingRequestService) Approve(id, userId uuid.UUID, admin bool) error {
+func (s *LeasingRequestService) Approve(id, userId uuid.UUID, isAdmin bool) error {
 	leasingRequest, err := s.requestRepo.GetByID(id)
 	if err != nil {
 		return err
@@ -58,7 +58,7 @@ func (s *LeasingRequestService) Approve(id, userId uuid.UUID, admin bool) error 
 	if leasingRequest.Status != domain.RequestPending {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
-	if userId != leasingRequest.Dorm.OwnerID && !admin {
+	if userId != leasingRequest.Dorm.OwnerID && !isAdmin {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
@@ -70,7 +70,7 @@ func (s *LeasingRequestService) Approve(id, userId uuid.UUID, admin bool) error 
 	return nil
 }
 
-func (s *LeasingRequestService) Reject(id, userId uuid.UUID, admin bool) error {
+func (s *LeasingRequestService) Reject(id, userId uuid.UUID, isAdmin bool) error {
 	leasingRequest, err := s.requestRepo.GetByID(id)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (s *LeasingRequestService) Reject(id, userId uuid.UUID, admin bool) error {
 	if leasingRequest.Status != domain.RequestPending {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
-	if userId != leasingRequest.Dorm.OwnerID && !admin {
+	if userId != leasingRequest.Dorm.OwnerID && !isAdmin {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
@@ -90,7 +90,7 @@ func (s *LeasingRequestService) Reject(id, userId uuid.UUID, admin bool) error {
 	return nil
 }
 
-func (s *LeasingRequestService) Cancel(id, userId uuid.UUID, admin bool) error {
+func (s *LeasingRequestService) Cancel(id, userId uuid.UUID, isAdmin bool) error {
 	leasingRequest, err := s.requestRepo.GetByID(id)
 	if err != nil {
 		return err
@@ -98,7 +98,7 @@ func (s *LeasingRequestService) Cancel(id, userId uuid.UUID, admin bool) error {
 	if leasingRequest.Status != domain.RequestPending {
 		return apperror.BadRequestError(errors.New("request is not in the pending status"), "request is not in the pending status")
 	}
-	if userId != leasingRequest.LesseeID && !admin {
+	if userId != leasingRequest.LesseeID && !isAdmin {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	leasingRequest.End = time.Now()
