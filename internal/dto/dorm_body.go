@@ -31,10 +31,6 @@ type DormUpdateRequestBody struct {
 	Description string  `json:"description" validate:"omitempty"`
 }
 
-type DormImageDeleteRequestBody struct {
-	ImageURL string `json:"url" validate:"required"`
-}
-
 type Address struct {
 	District    string `json:"district" validate:"omitempty"`
 	Subdistrict string `json:"subdistrict" validate:"omitempty"`
