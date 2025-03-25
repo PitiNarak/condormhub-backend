@@ -157,3 +157,31 @@ func (s *DormService) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dt
 	}
 	return resData, totalPages, totalRows, nil
 }
+
+func (s *DormService) DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error {
+	imageKey, err := s.storage.GetFileKeyFromPublicUrl(imageURL)
+	if err != nil {
+		return apperror.InternalServerError(err, "Failed to parse URL")
+	}
+
+	dormImage, err := s.dormRepo.GetImageByKey(imageKey)
+	if err != nil {
+		return err
+	}
+
+	dorm, err := s.dormRepo.GetByID(dormImage.DormID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPermission(dorm.OwnerID, userID, isAdmin); err != nil {
+		return apperror.ForbiddenError(err, "You do not have permission to delete this dorm image")
+	}
+
+	err = s.storage.DeleteFile(ctx, imageKey, storage.PublicBucket)
+	if err != nil {
+		return apperror.InternalServerError(err, "Failed to delete images")
+	}
+
+	return s.dormRepo.DeleteImageByKey(imageKey)
+}

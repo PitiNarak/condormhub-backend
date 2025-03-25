@@ -126,3 +126,18 @@ func (d *DormRepository) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([
 
 	return dorms, totalPages, totalRows, nil
 }
+
+func (d *DormRepository) DeleteImageByKey(imageKey string) error {
+	if err := d.db.Where("image_key = ?", imageKey).Delete(&domain.DormImage{}).Error; err != nil {
+		return apperror.InternalServerError(err, "Failed to delete image")
+	}
+	return nil
+}
+
+func (d *DormRepository) GetImageByKey(imageKey string) (*domain.DormImage, error) {
+	dormImage := new(domain.DormImage)
+	if err := d.db.Where("image_key = ?", imageKey).First(dormImage).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Image not found")
+	}
+	return dormImage, nil
+}

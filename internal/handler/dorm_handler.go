@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"net/url"
 	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
@@ -393,4 +394,40 @@ func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
 	})
 
 	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// DeleteDormImageByURL godoc
+// @Summary Delete a dorm image by its url
+// @Description Deletes a dorm image using its percent encoded url from bucket storage. Encode URL using the encodeURIComponent() function.
+// @Tags dorms
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param url path string true "Percent encoded URL"
+// @Success 204 "Image deleted successfully"
+// @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this dorm image"
+// @Failure 404 {object} dto.ErrorResponse "Image not found"
+// @Failure 500 {object} dto.ErrorResponse "Failed to delete image"
+// @Router /dorms/images/{url} [delete]
+func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
+	decodedURL, err := url.PathUnescape(c.Params("url"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid URL")
+	}
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	isAdmin := user.Role == domain.AdminRole
+
+	if err := d.dormService.DeleteImageByURL(c.Context(), decodedURL, userID, isAdmin); err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

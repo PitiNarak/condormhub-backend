@@ -971,6 +971,60 @@ paths:
       summary: Upload an image for a dorm
       tags:
       - dorms
+  /dorms/images/{url}:
+    delete:
+      description: Deletes a dorm image using its percent encoded url from bucket
+        storage. Encode URL using the encodeURIComponent() function.
+      parameters:
+      - description: Percent encoded URL
+        in: path
+        name: url
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "204":
+          description: Image deleted successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to delete this dorm image
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Image not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to delete image
+      security:
+      - Bearer: []
+      summary: Delete a dorm image by its url
+      tags:
+      - dorms
   /dorms/owner/{id}:
     get:
       description: Retrieve all dorms of a specific owner ID
