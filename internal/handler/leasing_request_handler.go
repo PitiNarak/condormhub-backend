@@ -260,8 +260,7 @@ func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 	}
 
 	body := new(dto.LeasingRequestCreateRequestBody)
-	err := c.BodyParser(&body)
-	if err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return apperror.BadRequestError(err, "your request is invalid")
 	}
 
