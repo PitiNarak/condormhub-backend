@@ -257,6 +257,17 @@ components:
         url:
           type: string
       type: object
+    dto.ReceiptResponseBody:
+      properties:
+        owner:
+          $ref: '#/components/schemas/dto.UserResponse'
+        receiptId:
+          type: string
+        transaction:
+          $ref: '#/components/schemas/dto.TransactionResponse'
+        url:
+          type: string
+      type: object
     dto.RefreshTokenRequestBody:
       properties:
         refreshToken:
@@ -377,6 +388,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.ProfilePictureUploadResponseBody'
+      type: object
+    dto.SuccessResponse-dto_ReceiptResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.ReceiptResponseBody'
       type: object
     dto.SuccessResponse-dto_Review:
       properties:
@@ -1805,28 +1821,21 @@ paths:
       - ownership
   /ownership/{id}/upload:
     post:
-      description: Upload a new file as ownership proof for a dorm
+      description: create receipt
       parameters:
-      - description: DormID
+      - description: Transaction ID
         in: path
-        name: id
+        name: transactionId
         required: true
         schema:
           type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: file
-        description: file
-        required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
-          description: Ownership proof created
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ReceiptResponseBody'
+          description: OK
         "400":
           content:
             application/json:
@@ -1838,18 +1847,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Ownershop proof not found
+          description: Receipt not found
         "500":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Server failed to upload file
+          description: Failed to upload file
       security:
       - Bearer: []
-      summary: Upload new ownership proof
+      summary: create receipt
       tags:
-      - ownership
+      - receipt
   /request/{id}:
     delete:
       description: Delete a leasing request in the database
