@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/url"
+	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -329,6 +330,10 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 	defer fileData.Close()
 
 	contentType := file.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+	}
+
 	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData, userID, isAdmin)
 	if err != nil {
 		return err
@@ -398,7 +403,7 @@ func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
 // @Security Bearer
 // @Accept json
 // @Produce json
-// @Param request body dto.DormImageDeleteRequestBody true "URL of the dorm image to delete"
+// @Param url path string true "Percent encoded URL"
 // @Success 204 "Image deleted successfully"
 // @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"

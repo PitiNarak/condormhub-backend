@@ -47,6 +47,8 @@ func (s *Server) initUserRoutes() {
 
 	userRoutes.Post("/studentEvidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
 	userRoutes.Get("/:id/studentEvidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
+
+	userRoutes.Post("/profilePic", s.authMiddleware.Auth, s.handler.user.UploadProfilePicture)
 }
 
 func (s *Server) initAuthRoutes() {
@@ -71,6 +73,9 @@ func (s *Server) initDormRoutes() {
 
 func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes := s.app.Group("/history")
+	historyRoutes.Post("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.CreateReview)
+	historyRoutes.Patch("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.UpdateReview)
+	historyRoutes.Delete("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.DeleteReview)
 	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Create)
 	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)

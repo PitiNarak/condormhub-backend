@@ -56,13 +56,6 @@ components:
       - price
       - size
       type: object
-    dto.DormImageDeleteRequestBody:
-      properties:
-        url:
-          type: string
-      required:
-      - url
-      type: object
     dto.DormImageUploadResponseBody:
       properties:
         url:
@@ -141,6 +134,10 @@ components:
           uniqueItems: false
         price:
           type: number
+        review:
+          $ref: '#/components/schemas/dto.Review'
+        reviewFlag:
+          type: boolean
         start:
           type: string
       type: object
@@ -255,6 +252,11 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.ProfilePictureUploadResponseBody:
+      properties:
+        url:
+          type: string
+      type: object
     dto.RefreshTokenRequestBody:
       properties:
         refreshToken:
@@ -291,6 +293,36 @@ components:
       required:
       - password
       - token
+      type: object
+    dto.Review:
+      properties:
+        createAt:
+          type: string
+        message:
+          type: string
+        rate:
+          type: integer
+      type: object
+    dto.ReviewCreateRequestBody:
+      properties:
+        message:
+          type: string
+        rate:
+          maximum: 5
+          minimum: 0
+          type: integer
+      required:
+      - message
+      - rate
+      type: object
+    dto.ReviewUpdateRequestBody:
+      properties:
+        message:
+          type: string
+        rate:
+          maximum: 5
+          minimum: 0
+          type: integer
       type: object
     dto.Status:
       type: string
@@ -340,6 +372,16 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.OwnershipProofResponseBody'
+      type: object
+    dto.SuccessResponse-dto_ProfilePictureUploadResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.ProfilePictureUploadResponseBody'
+      type: object
+    dto.SuccessResponse-dto_Review:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.Review'
       type: object
     dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody:
       properties:
@@ -429,6 +471,8 @@ components:
       properties:
         birthDate:
           type: string
+        createAt:
+          type: string
         email:
           type: string
         filledPersonalInfo:
@@ -451,6 +495,8 @@ components:
           type: array
           uniqueItems: false
         phoneNumber:
+          type: string
+        profilePicUrl:
           type: string
         role:
           type: string
@@ -929,13 +975,18 @@ paths:
     delete:
       description: Deletes a dorm image using its percent encoded url from bucket
         storage. Encode URL using the encodeURIComponent() function.
+      parameters:
+      - description: Percent encoded URL
+        in: path
+        name: url
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dto.DormImageDeleteRequestBody'
-        description: URL of the dorm image to delete
-        required: true
+              type: object
       responses:
         "204":
           description: Image deleted successfully
@@ -1065,7 +1116,7 @@ paths:
       tags:
       - history
     patch:
-      description: Delete a leasing history in the database
+      description: Set end date of a leasing history in the database
       parameters:
       - description: LeasingHistoryId
         in: path
@@ -1102,7 +1153,7 @@ paths:
           description: Can not parse UUID or Failed to update leasing history
       security:
       - Bearer: []
-      summary: Delete a leasing history
+      summary: Set end date of a leasing history
       tags:
       - history
     post:
@@ -1250,6 +1301,153 @@ paths:
       security:
       - Bearer: []
       summary: Get all leasing history by userid
+      tags:
+      - history
+  /history/review/{id}:
+    delete:
+      description: Delete a review
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Dorm not found or leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Delete a review
+      tags:
+      - history
+    patch:
+      description: Update a review in the database
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.ReviewUpdateRequestBody'
+        description: review information
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_Review'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format or your request is invalid or review
+            not exist
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Update a new review
+      tags:
+      - history
+    post:
+      description: Add a new review to the database
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.ReviewCreateRequestBody'
+        description: review information
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_Review'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format or your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID or failed to save leasing history to database
+      security:
+      - Bearer: []
+      summary: Create a new review
       tags:
       - history
   /order:
@@ -2170,6 +2368,53 @@ paths:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: system cannot reset password
       summary: Reset password
+      tags:
+      - user
+  /user/profilePic:
+    post:
+      description: Upload an profile picture for the current user, by attaching the
+        image as a value for the key field name "image", as a multipart form-data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: Profile picture image
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ProfilePictureUploadResponseBody'
+          description: Profile picture updated
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: File is required
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: User not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload user profile picture
       tags:
       - user
   /user/resend:

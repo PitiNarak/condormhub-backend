@@ -20,6 +20,7 @@ type UserRepository interface {
 }
 
 type UserService interface {
+	ConvertToDTO(user domain.User) dto.UserResponse
 	Create(ctx context.Context, user *domain.User) (string, string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	GetUserByID(id uuid.UUID) (*domain.User, error)
@@ -33,6 +34,7 @@ type UserService interface {
 	UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
 	ResendVerificationEmailService(ctx context.Context, email string) error
+	UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 }
 
 type UserHandler interface {
@@ -49,4 +51,5 @@ type UserHandler interface {
 	UploadStudentEvidence(c *fiber.Ctx) error
 	GetStudentEvidenceByID(c *fiber.Ctx) error
 	ResendVerificationEmailHandler(c *fiber.Ctx) error
+	UploadProfilePicture(c *fiber.Ctx) error
 }
