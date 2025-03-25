@@ -29,7 +29,7 @@ func NewReceiptHandler(service ports.ReceiptService) ports.ReceiptHandler {
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
 // @Failure 404 {object} dto.ErrorResponse "Receipt not found"
 // @Failure 500 {object} dto.ErrorResponse "Failed to create file"
-// @Router /ownership/{transactionId} [post]
+// @Router /receipt/{transactionId} [post]
 func (r *ReceiptHandler) Create(c *fiber.Ctx) error {
 	ownerID := c.Locals("userID").(uuid.UUID)
 	id := c.Params("transactionId")
@@ -54,6 +54,17 @@ func (r *ReceiptHandler) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(receipt.ToDTO(url)))
 }
 
+// GetByUserID godoc
+// @Summary Retrieve receipts by user ID
+// @Description Get all receipts associated with a specific user
+// @Tags receipt
+// @Param limit query int false "Number of receipts to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Produce json
+// @Success 200 {object} dto.PaginationResponse[dto.ReceiptResponseBody] "Receipts retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid query parameters"
+// @Failure 500 {object} dto.ErrorResponse "Failed to retrieve receipts"
+// @Router /receipt [get]
 func (r *ReceiptHandler) GetByUserID(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 	limit := min(50, c.QueryInt("limit", 10))

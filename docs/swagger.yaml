@@ -252,6 +252,16 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_ReceiptResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.ReceiptResponseBody'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.ProfilePictureUploadResponseBody:
       properties:
         url:
@@ -1821,6 +1831,89 @@ paths:
       - ownership
   /ownership/{id}/upload:
     post:
+      description: Upload a new file as ownership proof for a dorm
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: file
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_OwnershipProofResponseBody'
+          description: Ownership proof created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Ownershop proof not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload file
+      security:
+      - Bearer: []
+      summary: Upload new ownership proof
+      tags:
+      - ownership
+  /receipt:
+    get:
+      description: Get all receipts associated with a specific user
+      parameters:
+      - description: Number of receipts to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_ReceiptResponseBody'
+          description: Receipts retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid query parameters
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to retrieve receipts
+      summary: Retrieve receipts by user ID
+      tags:
+      - receipt
+  /receipt/{transactionId}:
+    post:
       description: create receipt
       parameters:
       - description: Transaction ID
@@ -1853,7 +1946,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Failed to upload file
+          description: Failed to create file
       security:
       - Bearer: []
       summary: create receipt
