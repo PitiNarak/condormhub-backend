@@ -283,3 +283,55 @@ func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
+
+// GetByDormID godoc
+// @Summary Get all leasing request by dormid
+// @Description Retrieve a list of all leasing request by dormid
+// @Tags request
+// @Security Bearer
+// @Produce json
+// @Param id path string true "DormID"
+// @Param limit query int false "Number of leasing request to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Success 200 {object} dto.PaginationResponse[dto.LeasingRequest] "Retrieve request successfully"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing request not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID"
+// @Router /request/bydorm/{id} [get]
+func (h *LeasingRequestHandler) GetByDormID(c *fiber.Ctx) error {
+	dormID, err := parseIdParam(c)
+	if err != nil {
+		return err
+	}
+
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	leasingRequest, totalPage, totalRows, err := h.service.GetByDormID(dormID, limit, page)
+	if err != nil {
+		return err
+	}
+	resData := make([]dto.LeasingRequest, len(leasingRequest))
+	for i, v := range leasingRequest {
+		resData[i] = v.ToDTO()
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
