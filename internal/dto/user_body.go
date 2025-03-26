@@ -6,6 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type Role string
+
+const (
+	AdminRole  Role = "ADMIN"
+	LesseeRole Role = "LESSEE"
+	LessorRole Role = "LESSOR"
+)
+
 type ResetPasswordCreateRequestBody struct {
 	Email string `json:"email" validate:"required,email"`
 }
@@ -30,6 +38,17 @@ type UserInformationRequestBody struct {
 	StudentEvidence string    `json:"studentEvidence,omitempty"`
 	Lifestyles      []string  `json:"lifestyles,omitempty" validate:"omitempty,lifestyle"`
 	PhoneNumber     string    `json:"phoneNumber,omitempty" validate:"omitempty,phoneNumber"`
+}
+
+type UserFirstFillRequestBody struct {
+	Firstname   string    `json:"firstname,omitempty" validate:"omitempty,min=2"`
+	Lastname    string    `json:"lastname,omitempty" validate:"omitempty,min=2"`
+	NationalID  string    `json:"nationalID,omitempty" validate:"omitempty,len=13"`
+	Gender      string    `json:"gender,omitempty"`
+	BirthDate   time.Time `json:"birthDate,omitempty"`
+	Lifestyles  []string  `json:"lifestyles,omitempty" validate:"omitempty,lifestyle"`
+	PhoneNumber string    `json:"phoneNumber,omitempty" validate:"omitempty,phoneNumber"`
+	Role        Role      `json:"role" validate:"omitempty,role"`
 }
 
 type UserResponse struct {
