@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
@@ -12,16 +13,20 @@ import (
 )
 
 type TransactionService struct {
-	tsxRepo   ports.TransactionRepository
-	orderRepo ports.OrderRepository
-	stripe    *stripePkg.Stripe
+	tsxRepo            ports.TransactionRepository
+	orderRepo          ports.OrderRepository
+	leasingHistoryRepo ports.LeasingHistoryRepository
+	stripe             *stripePkg.Stripe
+	receiptService     ports.ReceiptService
 }
 
-func NewTransactionService(tsxRepo ports.TransactionRepository, orderRepo ports.OrderRepository, stripe *stripePkg.Stripe) ports.TransactionService {
+func NewTransactionService(tsxRepo ports.TransactionRepository, orderRepo ports.OrderRepository, stripe *stripePkg.Stripe, leasingHistoryRepo ports.LeasingHistoryRepository, receiptService ports.ReceiptService) ports.TransactionService {
 	return &TransactionService{
-		tsxRepo:   tsxRepo,
-		orderRepo: orderRepo,
-		stripe:    stripe,
+		tsxRepo:            tsxRepo,
+		orderRepo:          orderRepo,
+		leasingHistoryRepo: leasingHistoryRepo,
+		receiptService:     receiptService,
+		stripe:             stripe,
 	}
 }
 
@@ -56,7 +61,7 @@ func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Trans
 	return &tsx, &session.URL, nil
 }
 
-func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) error {
+func (s *TransactionService) UpdateTransactionStatus(c context.Context, event stripe.Event) error {
 	var tsx domain.Transaction
 	tsx.ID = event.Data.Object["id"].(string)
 	switch event.Type {
@@ -82,6 +87,24 @@ func (s *TransactionService) UpdateTransactionStatus(event stripe.Event) error {
 		PaidTransactionID: tsx.ID,
 	}); err != nil {
 		return err
+	}
+
+	if tsx.SessionStatus == domain.StatusComplete {
+		order, err := s.orderRepo.GetByID(tsx.OrderID)
+		if err != nil {
+			return err
+		}
+		history, err := s.leasingHistoryRepo.GetByID(order.LeasingHistoryID)
+		if err != nil {
+			return err
+		}
+		ownerID := history.LesseeID
+		receiptErr := s.receiptService.Create(c, ownerID, tsx)
+		if receiptErr != nil {
+			return receiptErr
+		}
+
+		return nil
 	}
 
 	return nil

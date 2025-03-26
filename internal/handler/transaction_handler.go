@@ -60,7 +60,7 @@ func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Failed to construct event")
 	}
 
-	updateErr := h.tsxService.UpdateTransactionStatus(event)
+	updateErr := h.tsxService.UpdateTransactionStatus(c.Context(), event)
 	if updateErr != nil {
 		return updateErr
 	}

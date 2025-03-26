@@ -1,6 +1,8 @@
 package ports
 
 import (
+	"context"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -14,7 +16,7 @@ type TransactionHandler interface {
 
 type TransactionService interface {
 	CreateTransaction(orderID uuid.UUID) (*domain.Transaction, *string, error)
-	UpdateTransactionStatus(event stripe.Event) error
+	UpdateTransactionStatus(c context.Context, event stripe.Event) error
 }
 
 type TransactionRepository interface {

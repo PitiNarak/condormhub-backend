@@ -23,6 +23,7 @@ func (s *Server) initRoutes() {
 	s.initOrderRoutes()
 	s.initTransactionRoutes()
 	s.initOwnershipProofRoutes()
+	s.initReceiptRoutes()
 	s.initContractRoutes()
 }
 
@@ -117,6 +118,11 @@ func (s *Server) initOwnershipProofRoutes() {
 	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
 	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
 
+}
+
+func (s *Server) initReceiptRoutes() {
+	ownershipRoutes := s.app.Group("/receipt")
+	ownershipRoutes.Get("/", s.authMiddleware.Auth, s.handler.receipt.GetByUserID)
 }
 
 func (s *Server) initContractRoutes() {
