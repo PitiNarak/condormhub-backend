@@ -283,3 +283,40 @@ func (h *LeasingRequestHandler) Create(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
+
+func (h *LeasingRequestHandler) GetByDormID(c *fiber.Ctx) error {
+	dormID, err := parseIdParam(c)
+	if err != nil {
+		return err
+	}
+
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	leasingRequest, totalPage, totalRows, err := h.service.GetByDormID(dormID, limit, page)
+	if err != nil {
+		return err
+	}
+	resData := make([]dto.LeasingHistory, len(leasingRequest))
+	for i, v := range leasingRequest {
+		resData[i] = v.ToDTO()
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}

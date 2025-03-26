@@ -12,6 +12,7 @@ type LeasingRequestRepository interface {
 	Delete(id uuid.UUID) error
 	GetByID(id uuid.UUID) (*domain.LeasingRequest, error)
 	GetByUserID(id uuid.UUID, limit, page int, role domain.Role) ([]domain.LeasingRequest, int, int, error)
+	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 }
 
 type LeasingRequestService interface {
@@ -21,6 +22,7 @@ type LeasingRequestService interface {
 	Approve(id, userId uuid.UUID, isAdmin bool) error
 	Reject(id, userId uuid.UUID, isAdmin bool) error
 	Cancel(id, userId uuid.UUID, isAdmin bool) error
+	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 }
 
 type LeasingRequestHandler interface {
@@ -30,4 +32,5 @@ type LeasingRequestHandler interface {
 	Approve(c *fiber.Ctx) error
 	Reject(c *fiber.Ctx) error
 	Cancel(c *fiber.Ctx) error
+	GetByDormID(c *fiber.Ctx) error
 }

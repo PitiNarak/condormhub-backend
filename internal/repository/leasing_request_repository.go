@@ -84,3 +84,21 @@ func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, ro
 
 	return leasingRequest, totalPage, totalRows, nil
 }
+
+func (d *LeasingRequestRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
+	var leasingRequest []domain.LeasingHistory
+	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
+	totalPage, totalRows, err := d.db.Paginate(leasingRequest, query, limit, page, "start")
+
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return nil, 0, 0, err
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, 0, apperror.NotFoundError(err, "leasing history not found")
+		}
+		return nil, 0, 0, apperror.InternalServerError(err, "failed to get leasing history")
+	}
+
+	return leasingRequest, totalPage, totalRows, nil
+}
