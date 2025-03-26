@@ -43,10 +43,7 @@ func (ct *ContractService) Create(contract *domain.Contract) error {
 	if _, err := ct.getUserAndValidateRole(contract.LesseeID, domain.LesseeRole); err != nil {
 		return err
 	}
-	// Check if dorm exists
-	if _, err := ct.dormRepo.GetByID(contract.DormID); err != nil {
-		return err
-	}
+
 	// Check for existing active contract
 	if err := ct.checkForExistingActiveContract(contract); err != nil {
 		return err
