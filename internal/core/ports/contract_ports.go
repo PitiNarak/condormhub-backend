@@ -8,11 +8,11 @@ import (
 
 type ContractRepository interface {
 	Create(contract *domain.Contract) error
-	GetContract(LessorID uuid.UUID, LesseeID uuid.UUID, DormID uuid.UUID) (*[]domain.Contract, error)
+	GetContract(LesseeID uuid.UUID, DormID uuid.UUID) (*[]domain.Contract, error)
 	GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error)
 	GetContractByLessorID(LessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
-	GetContractByLesseeID(LessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
-	GetContractByDormID(LessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
+	GetContractByLesseeID(LesseeID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
+	GetContractByDormID(DormID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
 	Delete(contractID uuid.UUID) error
 	UpdateStatus(contractID uuid.UUID, status domain.ContractStatus, role *domain.Role) error
 }

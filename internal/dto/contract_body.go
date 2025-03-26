@@ -19,7 +19,6 @@ type ContractRequestBody struct {
 
 type ContractResponseBody struct {
 	ID             uuid.UUID        `json:"id"`
-	Lessor         UserResponse     `json:"lessor"`
 	Lessee         UserResponse     `json:"lessee"`
 	Dorm           DormResponseBody `json:"dorm"`
 	LessorStatus   ContractStatus   `json:"lessorStatus"`

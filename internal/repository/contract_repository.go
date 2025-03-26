@@ -27,19 +27,18 @@ func (ct *ContractRepository) Create(contract *domain.Contract) error {
 }
 
 func (ct *ContractRepository) Delete(contractID uuid.UUID) error {
-	if err := ct.db.Where("contract_id = ?", contractID).Delete(&domain.Contract{}).Error; err != nil {
+	if err := ct.db.Where("id = ?", contractID).Delete(&domain.Contract{}).Error; err != nil {
 		return apperror.InternalServerError(err, "Failed to delete contract")
 	}
 	return nil
 }
 
-func (ct *ContractRepository) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID, dormID uuid.UUID) (*[]domain.Contract, error) {
+func (ct *ContractRepository) GetContract(lesseeID uuid.UUID, dormID uuid.UUID) (*[]domain.Contract, error) {
 	var contracts []domain.Contract
 	if err := ct.db.
-		Preload("Lessor").
 		Preload("Lessee").
 		Preload("Dorm").
-		Where("lessor_id = ? AND lessee_id = ? AND dorm_id = ?", lessorID, lesseeID, dormID).
+		Where("lessee_id = ? AND dorm_id = ?", lesseeID, dormID).
 		Find(&contracts).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Contracts not found")
 	}
@@ -49,10 +48,9 @@ func (ct *ContractRepository) GetContract(lessorID uuid.UUID, lesseeID uuid.UUID
 func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error) {
 	contract := new(domain.Contract)
 	if err := ct.db.
-		Preload("Lessor").
 		Preload("Lessee").
 		Preload("Dorm").
-		Where("contract_id = ? ", contractID).
+		Where("id = ? ", contractID).
 		Find(&contract).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Contract not found")
 	}
@@ -62,10 +60,10 @@ func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*do
 func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
 	query := ct.db.
-		Preload("Lessor").
+		Joins("JOIN dorms ON dorms.id = contracts.dorm_id").
+		Where("dorms.owner_id = ?", lessorID).
 		Preload("Lessee").
 		Preload("Dorm").
-		Where("lessor_id = ? ", lessorID).
 		Find(&contracts)
 
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
@@ -83,7 +81,6 @@ func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, p
 func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
 	query := ct.db.
-		Preload("Lessor").
 		Preload("Lessee").
 		Preload("Dorm").
 		Where("lessee_id = ? ", lesseeID).
@@ -104,7 +101,6 @@ func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, p
 func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error) {
 	var contracts []domain.Contract
 	query := ct.db.
-		Preload("Lessor").
 		Preload("Lessee").
 		Preload("Dorm").
 		Where("dorm_id = ? ", dormID).
@@ -127,7 +123,7 @@ func (ct *ContractRepository) UpdateStatus(contractID uuid.UUID, status domain.C
 		contract := domain.Contract{
 			Status: status,
 		}
-		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
+		if err := ct.db.Model(&domain.Contract{}).Where("id = ?",
 			contractID).Updates(contract).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update contract status")
 		}
@@ -135,7 +131,7 @@ func (ct *ContractRepository) UpdateStatus(contractID uuid.UUID, status domain.C
 		contract := domain.Contract{
 			LessorStatus: status,
 		}
-		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
+		if err := ct.db.Model(&domain.Contract{}).Where("id = ?",
 			contractID).Updates(contract).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update lessor status")
 		}
@@ -143,7 +139,7 @@ func (ct *ContractRepository) UpdateStatus(contractID uuid.UUID, status domain.C
 		contract := domain.Contract{
 			LesseeStatus: status,
 		}
-		if err := ct.db.Model(&domain.Contract{}).Where("contract_id = ?",
+		if err := ct.db.Model(&domain.Contract{}).Where("id = ?",
 			contractID).Updates(contract).Error; err != nil {
 			return apperror.InternalServerError(err, "failed to update lessee status")
 		}

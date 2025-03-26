@@ -26,20 +26,10 @@ func NewContractService(contractRepo ports.ContractRepository, userRepo ports.Us
 }
 
 func (ct *ContractService) Create(contract *domain.Contract) error {
-	dorm, dormRrr := ct.dormRepo.GetByID(contract.DormID)
-	if dormRrr != nil {
-		return dormRrr
-	}
-	contract.LessorID = dorm.OwnerID
 	// Validate input contract
 	if err := ct.validateContract(contract); err != nil {
 		return err
 	}
-	// Check and validate lessor
-	if _, err := ct.getUserAndValidateRole(contract.LessorID, domain.LessorRole); err != nil {
-		return err
-	}
-	// Check and validate lessee
 	if _, err := ct.getUserAndValidateRole(contract.LesseeID, domain.LesseeRole); err != nil {
 		return err
 	}
@@ -55,7 +45,7 @@ func (ct *ContractService) Create(contract *domain.Contract) error {
 	return nil
 }
 func (ct *ContractService) validateContract(contract *domain.Contract) error {
-	if contract.LessorID == uuid.Nil || contract.LesseeID == uuid.Nil || contract.DormID == uuid.Nil {
+	if contract.LesseeID == uuid.Nil || contract.DormID == uuid.Nil {
 		return apperror.BadRequestError(errors.New("invalid contract"), "missing required fields")
 	}
 	return nil
@@ -74,7 +64,7 @@ func (ct *ContractService) getUserAndValidateRole(userID uuid.UUID, role domain.
 	return user, nil
 }
 func (ct *ContractService) checkForExistingActiveContract(contract *domain.Contract) error {
-	contracts, err := ct.contractRepo.GetContract(contract.LessorID, contract.LesseeID, contract.DormID)
+	contracts, err := ct.contractRepo.GetContract(contract.LesseeID, contract.DormID)
 	if err != nil {
 		return err
 	}
