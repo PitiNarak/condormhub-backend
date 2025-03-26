@@ -85,10 +85,10 @@ func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, ro
 	return leasingRequest, totalPage, totalRows, nil
 }
 
-func (d *LeasingRequestRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
-	var leasingRequest []domain.LeasingHistory
-	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
-	totalPage, totalRows, err := d.db.Paginate(leasingRequest, query, limit, page, "start")
+func (d *LeasingRequestRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error) {
+	var leasingRequest []domain.LeasingRequest
+	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Preload("Lessee").Where("dorm_id = ?", id)
+	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start")
 
 	if err != nil {
 		if apperror.IsAppError(err) {
