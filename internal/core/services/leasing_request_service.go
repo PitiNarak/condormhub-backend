@@ -110,7 +110,7 @@ func (s *LeasingRequestService) Cancel(id, userId uuid.UUID, isAdmin bool) error
 	return nil
 }
 
-func (s *LeasingRequestService) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
+func (s *LeasingRequestService) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error) {
 	leasingRequest, totalPage, totalRows, err := s.requestRepo.GetByDormID(id, limit, page)
 	if err != nil {
 		return nil, totalPage, totalRows, err

@@ -306,7 +306,7 @@ func (h *LeasingRequestHandler) GetByDormID(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	resData := make([]dto.LeasingHistory, len(leasingRequest))
+	resData := make([]dto.LeasingRequest, len(leasingRequest))
 	for i, v := range leasingRequest {
 		resData[i] = v.ToDTO()
 	}
