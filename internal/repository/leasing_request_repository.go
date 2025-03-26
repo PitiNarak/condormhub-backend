@@ -60,12 +60,18 @@ func (d *LeasingRequestRepository) GetByUserID(id uuid.UUID, limit, page int, ro
 			Preload("Lessee").
 			Preload("Dorm.Owner").
 			Where("lessee_id = ?", id)
-	} else {
+	} else if role == domain.LessorRole {
 		query = d.db.Preload("Dorm").
 			Preload("Lessee").
 			Preload("Dorm.Owner").
 			Joins("JOIN dorms ON dorms.id = leasing_requests.dorm_id").
 			Where("owner_id = ?", id)
+	} else {
+		query = d.db.Preload("Dorm").
+			Preload("Lessee").
+			Preload("Dorm.Owner").
+			Joins("LEFT JOIN dorms ON dorms.id = leasing_requests.dorm_id").
+			Where("lessee_id = ? OR owner_id = ?", id, id)
 	}
 	totalPage, totalRows, err := d.db.Paginate(&leasingRequest, query, limit, page, "start DESC")
 

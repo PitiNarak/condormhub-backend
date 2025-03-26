@@ -24,6 +24,7 @@ func (s *Server) initRoutes() {
 	s.initTransactionRoutes()
 	s.initOwnershipProofRoutes()
 	s.initReceiptRoutes()
+	s.initContractRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -43,6 +44,7 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Post("/newpassword", s.handler.user.ResetPassword)
 	userRoutes.Post("/resend", s.handler.user.ResendVerificationEmailHandler)
 
+	userRoutes.Patch("/firstfill", s.authMiddleware.Auth, s.handler.user.FirstFillInformation)
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.handler.user.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
 
@@ -77,7 +79,6 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Post("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.CreateReview)
 	historyRoutes.Patch("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.UpdateReview)
 	historyRoutes.Delete("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.DeleteReview)
-	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Create)
 	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
 	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
@@ -121,5 +122,16 @@ func (s *Server) initOwnershipProofRoutes() {
 func (s *Server) initReceiptRoutes() {
 	ownershipRoutes := s.app.Group("/receipt")
 	ownershipRoutes.Get("/", s.authMiddleware.Auth, s.handler.receipt.GetByUserID)
+}
+
+func (s *Server) initContractRoutes() {
+	contractRoutes := s.app.Group("/contract")
+	contractRoutes.Post("/create", s.authMiddleware.Auth, s.handler.contract.Create)
+	contractRoutes.Get("/:contractID", s.authMiddleware.Auth, s.handler.contract.GetContractByContractID)
+	contractRoutes.Get("/", s.authMiddleware.Auth, s.handler.contract.GetContractByUserID)
+	contractRoutes.Get("/:dormID", s.authMiddleware.Auth, s.handler.contract.GetContractByDormID)
+	contractRoutes.Patch("/:contractID/sign", s.authMiddleware.Auth, s.handler.contract.SignContract)
+	contractRoutes.Patch("/:contractID/cancel", s.authMiddleware.Auth, s.handler.contract.CancelContract)
+	contractRoutes.Delete("/:contractID", s.authMiddleware.Auth, s.handler.contract.Delete)
 
 }

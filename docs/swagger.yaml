@@ -11,6 +11,42 @@ components:
         zipcode:
           type: string
       type: object
+    dto.ContractRequestBody:
+      properties:
+        dormId:
+          type: string
+        lesseeId:
+          type: string
+      type: object
+    dto.ContractResponseBody:
+      properties:
+        contractStatus:
+          type: string
+          x-enum-varnames:
+          - Waiting
+          - Signed
+          - Cancelled
+        dorm:
+          $ref: '#/components/schemas/dto.DormResponseBody'
+        id:
+          type: string
+        lessee:
+          $ref: '#/components/schemas/dto.UserResponse'
+        lesseeStatus:
+          type: string
+          x-enum-varnames:
+          - Waiting
+          - Signed
+          - Cancelled
+        lessorStatus:
+          $ref: '#/components/schemas/dto.ContractStatus'
+      type: object
+    dto.ContractStatus:
+      type: string
+      x-enum-varnames:
+      - Waiting
+      - Signed
+      - Cancelled
     dto.CreateTransactionResponseBody:
       properties:
         checkoutUrl:
@@ -151,10 +187,17 @@ components:
           type: string
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
+        message:
+          type: string
         start:
           type: string
         status:
           $ref: '#/components/schemas/dto.Status'
+      type: object
+    dto.LeasingRequestCreateRequestBody:
+      properties:
+        message:
+          type: string
       type: object
     dto.LoginRequestBody:
       properties:
@@ -211,6 +254,16 @@ components:
           type: integer
         total:
           type: integer
+      type: object
+    dto.PaginationResponse-dto_ContractResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.ContractResponseBody'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
       type: object
     dto.PaginationResponse-dto_DormResponseBody:
       properties:
@@ -345,6 +398,12 @@ components:
           minimum: 0
           type: integer
       type: object
+    dto.Role:
+      type: string
+      x-enum-varnames:
+      - AdminRole
+      - LesseeRole
+      - LessorRole
     dto.Status:
       type: string
       x-enum-varnames:
@@ -358,6 +417,11 @@ components:
           type: string
         url:
           type: string
+      type: object
+    dto.SuccessResponse-dto_ContractResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.ContractResponseBody'
       type: object
     dto.SuccessResponse-dto_CreateTransactionResponseBody:
       properties:
@@ -457,6 +521,30 @@ components:
           type: string
         updateAt:
           type: string
+      type: object
+    dto.UserFirstFillRequestBody:
+      properties:
+        birthDate:
+          type: string
+        firstname:
+          minLength: 2
+          type: string
+        gender:
+          type: string
+        lastname:
+          minLength: 2
+          type: string
+        lifestyles:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+        nationalID:
+          type: string
+        phoneNumber:
+          type: string
+        role:
+          $ref: '#/components/schemas/dto.Role'
       type: object
     dto.UserInformationRequestBody:
       properties:
@@ -666,6 +754,250 @@ paths:
       summary: Register new user
       tags:
       - auth
+  /contract:
+    get:
+      description: Get all contracts associated with a specific user
+      parameters:
+      - description: Number of contracts to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_ContractResponseBody'
+          description: Contracts retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid query parameters
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to retrieve contracts
+      summary: Retrieve contracts by user ID
+      tags:
+      - contracts
+    post:
+      description: Create a contract between a lessor and lessee for a dorm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.ContractRequestBody'
+        description: Contract details
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ContractResponseBody'
+          description: Contract created successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid request body
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to create contract
+      summary: Create a new contract
+      tags:
+      - contracts
+  /contract/{contractId}:
+    delete:
+      description: Permanently delete a contract by ID
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractId
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Contract deleted successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid contract ID format
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to delete contract
+      summary: Delete a contract
+      tags:
+      - contracts
+    get:
+      description: Get details of a specific contract
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ContractResponseBody'
+          description: Contract retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid contract ID format
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to retrieve contract
+      summary: Retrieve a contract by contract ID
+      tags:
+      - contracts
+  /contract/{contractId}/cancel:
+    patch:
+      description: Cancel a contract if it is not signed
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ContractResponseBody'
+          description: Contract cancelled successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid contract ID format or contract cannot be cancelled
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to cancel contract
+      summary: Cancel an existing contract
+      tags:
+      - contracts
+  /contract/{contractId}/sign:
+    patch:
+      description: Sign a contract by providing contract ID
+      parameters:
+      - description: Contract ID
+        in: path
+        name: contractId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ContractResponseBody'
+          description: Contract signed successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid contract ID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to sign contract
+      summary: Sign an existing contract
+      tags:
+      - contracts
+  /contract/{dormId}:
+    get:
+      description: Get all contracts associated with a specific dorm
+      parameters:
+      - description: Dorm ID
+        in: path
+        name: dormId
+        required: true
+        schema:
+          type: string
+      - description: Number of contracts to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_ContractResponseBody'
+          description: Contracts retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid dorm ID format or query parameters
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to retrieve contracts
+      summary: Retrieve contracts by dorm ID
+      tags:
+      - contracts
   /dorms:
     get:
       description: Retrieve a list of all dorms filtered by a search query. If no
@@ -1958,6 +2290,13 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.LeasingRequestCreateRequestBody'
+        description: request information
+        required: true
       responses:
         "201":
           content:
@@ -2018,7 +2357,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized or only lessor can approve a request
+          description: your request is unauthorized or lessee cannot approve a request
         "404":
           content:
             application/json:
@@ -2062,7 +2401,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
+          description: your request is unauthorized or lessor cannot cancel a request
         "404":
           content:
             application/json:
@@ -2105,7 +2444,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized or only lessor can reject a request
+          description: your request is unauthorized or lessee cannot reject a request
         "404":
           content:
             application/json:
@@ -2366,6 +2705,46 @@ paths:
       security:
       - Bearer: []
       summary: Get student evidence by user id
+      tags:
+      - user
+  /user/firstfill:
+    patch:
+      description: Fill user information first time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.UserFirstFillRequestBody'
+        description: user information
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
+          description: user successfully updated account information
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot update your account information
+      security:
+      - Bearer: []
+      summary: Fill user information first time
       tags:
       - user
   /user/me:

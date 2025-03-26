@@ -27,7 +27,6 @@ type LeasingHistoryService interface {
 }
 
 type LeasingHistoryHandler interface {
-	Create(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	CreateReview(c *fiber.Ctx) error
 	UpdateReview(c *fiber.Ctx) error
