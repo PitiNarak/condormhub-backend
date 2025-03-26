@@ -12,7 +12,7 @@ type Receipt struct {
 	CreateAt      time.Time   `gorm:"autoCreateTime"`
 	OwnerID       uuid.UUID   `gorm:"type:uuid;not null"`
 	Owner         User        `gorm:"foreignKey:OwnerID;references:ID"`
-	TransactionID uuid.UUID   `gorm:"type:uuid;not null"`
+	TransactionID string      `gorm:"not null"`
 	Transaction   Transaction `gorm:"foreignKey:TransactionID;references:ID"`
 	FileKey       string
 }

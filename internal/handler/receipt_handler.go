@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -32,16 +30,7 @@ func NewReceiptHandler(service ports.ReceiptService) ports.ReceiptHandler {
 // @Router /receipt/{transactionId} [post]
 func (r *ReceiptHandler) Create(c *fiber.Ctx) error {
 	ownerID := c.Locals("userID").(uuid.UUID)
-	id := c.Params("transactionId")
-
-	if err := uuid.Validate(id); err != nil {
-		return apperror.BadRequestError(err, "Incorrect UUID format")
-	}
-
-	transactionID, err := uuid.Parse(id)
-	if err != nil {
-		return apperror.InternalServerError(err, "Can not parse UUID")
-	}
+	transactionID := c.Params("transactionId")
 
 	receipt, url, err := r.receiptService.Create(c.Context(), ownerID, transactionID)
 	if err != nil {
@@ -49,7 +38,6 @@ func (r *ReceiptHandler) Create(c *fiber.Ctx) error {
 			return err
 		}
 	}
-	fmt.Println(receipt)
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(receipt.ToDTO(url)))
 }

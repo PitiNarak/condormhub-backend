@@ -38,12 +38,11 @@ func NewReceiptService(receiptRepo ports.ReceiptRepository, userRepo ports.UserR
 	}
 }
 
-func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transactionID uuid.UUID) (*domain.Receipt, string, error) {
-	transaction, TransactionErr := r.transactionRepo.GetByID(transactionID.String())
+func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transactionID string) (*domain.Receipt, string, error) {
+	transaction, TransactionErr := r.transactionRepo.GetByID(transactionID)
 	if TransactionErr != nil {
 		return nil, "", TransactionErr
 	}
-
 	if err := r.validateTransaction(transaction); err != nil {
 		return nil, "", err
 	}
@@ -165,7 +164,7 @@ func (r *ReceiptService) generatePDF(ownerID uuid.UUID, transaction domain.Trans
 	return &buf, nil
 }
 
-func (r *ReceiptService) saveFile(c context.Context, pdfBuffer *bytes.Buffer, transactionID uuid.UUID) (string, error) {
+func (r *ReceiptService) saveFile(c context.Context, pdfBuffer *bytes.Buffer, transactionID string) (string, error) {
 	filename := fmt.Sprintf("receipt-%s.pdf", transactionID)
 	filename = strings.ReplaceAll(filename, " ", "-")
 
