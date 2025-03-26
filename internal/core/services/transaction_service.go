@@ -6,7 +6,6 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	stripePkg "github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/google/uuid"
@@ -62,7 +61,7 @@ func (s *TransactionService) CreateTransaction(orderID uuid.UUID) (*domain.Trans
 	return &tsx, &session.URL, nil
 }
 
-func (s *TransactionService) UpdateTransactionStatus(c context.Context, event stripe.Event) (dto.ReceiptResponseBody, error) {
+func (s *TransactionService) UpdateTransactionStatus(c context.Context, event stripe.Event) error {
 	var tsx domain.Transaction
 	tsx.ID = event.Data.Object["id"].(string)
 	switch event.Type {
@@ -71,42 +70,42 @@ func (s *TransactionService) UpdateTransactionStatus(c context.Context, event st
 	case "checkout.session.completed":
 		tsx.SessionStatus = domain.StatusComplete
 	default:
-		return dto.ReceiptResponseBody{}, apperror.BadRequestError(fmt.Errorf("event type %s is not supported", event.Type), "Failed to update order status")
+		return apperror.BadRequestError(fmt.Errorf("event type %s is not supported", event.Type), "Failed to update order status")
 	}
 
 	if err := s.tsxRepo.Update(&tsx); err != nil {
-		return dto.ReceiptResponseBody{}, err
+		return err
 	}
 
 	tsx, err := s.tsxRepo.GetByID(tsx.ID)
 	if err != nil {
-		return dto.ReceiptResponseBody{}, err
+		return err
 	}
 
 	if err := s.orderRepo.Update(&domain.Order{
 		ID:                tsx.OrderID,
 		PaidTransactionID: tsx.ID,
 	}); err != nil {
-		return dto.ReceiptResponseBody{}, err
+		return err
 	}
 
 	if tsx.SessionStatus == domain.StatusComplete {
 		order, err := s.orderRepo.GetByID(tsx.OrderID)
 		if err != nil {
-			return dto.ReceiptResponseBody{}, err
+			return err
 		}
 		history, err := s.leasingHistoryRepo.GetByID(order.LeasingHistoryID)
 		if err != nil {
-			return dto.ReceiptResponseBody{}, err
+			return err
 		}
 		ownerID := history.LesseeID
-		receipt, url, receiptErr := s.receiptService.Create(c, ownerID, tsx)
+		receiptErr := s.receiptService.Create(c, ownerID, tsx)
 		if receiptErr != nil {
-			return dto.ReceiptResponseBody{}, receiptErr
+			return receiptErr
 		}
 
-		return receipt.ToDTO(url), nil
+		return nil
 	}
 
-	return dto.ReceiptResponseBody{}, nil
+	return nil
 }

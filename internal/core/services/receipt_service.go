@@ -38,20 +38,20 @@ func NewReceiptService(receiptRepo ports.ReceiptRepository, userRepo ports.UserR
 	}
 }
 
-func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transaction domain.Transaction) (*domain.Receipt, string, error) {
+func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transaction domain.Transaction) error {
 
 	if err := r.validateTransaction(transaction); err != nil {
-		return nil, "", err
+		return err
 	}
 
 	buff, buffErr := r.generatePDF(ownerID, transaction)
 	if buffErr != nil {
-		return nil, "", buffErr
+		return buffErr
 	}
 
 	fileKey, saveErr := r.saveFile(c, buff, transaction.ID)
 	if saveErr != nil {
-		return nil, "", saveErr
+		return saveErr
 	}
 
 	receipt := &domain.Receipt{
@@ -61,15 +61,10 @@ func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transactio
 	}
 
 	if err := r.receiptRepo.Create(receipt); err != nil {
-		return nil, "", err
+		return err
 	}
 
-	url, err := r.storage.GetSignedUrl(c, fileKey, time.Minute*60)
-	if err != nil {
-		return nil, "", apperror.InternalServerError(err, "Fail to upload file to storage")
-	}
-
-	return receipt, url, nil
+	return nil
 
 }
 

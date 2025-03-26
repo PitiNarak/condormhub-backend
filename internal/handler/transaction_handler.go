@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
@@ -53,7 +51,6 @@ func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 }
 
 func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
-	fmt.Println("webhook")
 	payload := c.Body()
 
 	event, err := webhook.ConstructEventWithOptions(payload, c.Get("Stripe-Signature"), h.stripeConfig.StripeSignatureKey, webhook.ConstructEventOptions{
@@ -63,10 +60,10 @@ func (h *TransactionHandler) Webhook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Failed to construct event")
 	}
 
-	receipt, updateErr := h.tsxService.UpdateTransactionStatus(c.Context(), event)
+	updateErr := h.tsxService.UpdateTransactionStatus(c.Context(), event)
 	if updateErr != nil {
 		return updateErr
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(receipt))
+	return c.SendStatus(fiber.StatusOK)
 }
