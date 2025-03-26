@@ -30,6 +30,15 @@ func ValidatePhone(fl validator.FieldLevel) bool {
 	return phoneRegex.MatchString(fl.Field().String())
 }
 
+func ValidateRole(fl validator.FieldLevel) bool {
+	if fl.Field().IsValid() {
+		role := fl.Field().String()
+		return role == "ADMIN" || role == "LESSOR" || role == "LESSEE"
+	}
+	return false
+
+}
+
 func ValidateUserForReview(user *domain.User, history *domain.LeasingHistory, create bool) error {
 	if create && history.ReviewFlag {
 		return apperror.BadRequestError(errors.New("review already exist"), "review already exist")

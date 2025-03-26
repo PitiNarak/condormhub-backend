@@ -62,6 +62,65 @@ func (h *UserHandler) VerifyEmail(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+// FirstFillInformation godoc
+// @Summary Fill user information first time
+// @Description Fill user information first time
+// @Tags user
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param user body dto.UserFirstFillRequestBody true "user information"
+// @Success 200 {object} dto.SuccessResponse[dto.UserResponse] "user successfully updated account information"
+// @Failure 400 {object} dto.ErrorResponse "your request is invalid
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "system cannot update your account information"
+// @Router /user/firstfill [patch]
+func (h *UserHandler) FirstFillInformation(c *fiber.Ctx) error {
+	var requestBody *dto.UserFirstFillRequestBody
+
+	user := c.Locals("user").(*domain.User)
+	if user == nil {
+		return apperror.UnauthorizedError(errors.New("no user in context"), "your request is unauthorized")
+	}
+
+	err := c.BodyParser(&requestBody)
+	if err != nil {
+		return apperror.BadRequestError(err, "your request is invalid")
+	}
+
+	validate := validator.New()
+	lifeStyleErr := validate.RegisterValidation("lifestyle", utils.ValidateLifestyles)
+	if lifeStyleErr != nil {
+		return apperror.BadRequestError(lifeStyleErr, "your lifestyle-tag is incorrect format")
+	}
+
+	phoneNumberErr := validate.RegisterValidation("phoneNumber", utils.ValidatePhone)
+	if phoneNumberErr != nil {
+		return apperror.BadRequestError(phoneNumberErr, "your phone number is incorrect format")
+	}
+
+	roleErr := validate.RegisterValidation("role", utils.ValidateRole)
+
+	if roleErr != nil {
+		return apperror.BadRequestError(roleErr, "your role is incorrect format")
+	}
+
+	if err := validate.Struct(requestBody); err != nil {
+		return apperror.BadRequestError(err, "your request body is incorrect")
+	}
+
+	userInfo, err := h.userService.FirstFillInformation(user.ID, *requestBody)
+
+	if err != nil {
+		return apperror.InternalServerError(err, "system cannot update your account information")
+	}
+
+	res := dto.Success(h.userService.ConvertToDTO(*userInfo))
+
+	return c.Status(fiber.StatusOK).JSON(res)
+
+}
+
 // UpdateUserInformation godoc
 // @Summary Update user information
 // @Description Update user information
