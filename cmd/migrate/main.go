@@ -84,8 +84,11 @@ func main() {
 		&domain.Dorm{},
 		&domain.LeasingHistory{},
 		&domain.Order{},
+		&domain.DormImage{},
 		&domain.OwnershipProof{},
 		&domain.Contract{},
+		&domain.LeasingRequest{},
+		&domain.Review{},
 	); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

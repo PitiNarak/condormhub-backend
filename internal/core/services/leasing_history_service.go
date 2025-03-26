@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 )
 
@@ -66,6 +67,74 @@ func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
 	}
 	leasingHistory.End = time.Now()
 	err = s.historyRepo.Update(leasingHistory)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *LeasingHistoryService) CreateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	err = utils.ValidateUserForReview(user, history, true)
+	if err != nil {
+		return nil, err
+	}
+	review := domain.Review{
+		Message: Message,
+		Rate:    Rate,
+	}
+	history.Review = review
+	history.ReviewFlag = true
+	err = s.historyRepo.Update(history)
+	if err != nil {
+		return nil, err
+	}
+	history, err = s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return &history.Review, nil
+}
+
+func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	err = utils.ValidateUserForReview(user, history, false)
+	if err != nil {
+		return nil, err
+	}
+	review := domain.Review{
+		Message: Message,
+		Rate:    Rate,
+	}
+	history.Review = review
+	err = s.historyRepo.Update(history)
+	if err != nil {
+		return nil, err
+	}
+	history, err = s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return &history.Review, nil
+}
+
+func (s *LeasingHistoryService) DeleteReview(user *domain.User, id uuid.UUID) error {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	err = utils.ValidateUserForReview(user, history, false)
+	if err != nil {
+		return err
+	}
+	history.ReviewFlag = false
+	err = s.historyRepo.Update(history)
 	if err != nil {
 		return err
 	}

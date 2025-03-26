@@ -2,6 +2,8 @@ package handler
 
 import (
 	"errors"
+	"net/url"
+	"strings"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -84,7 +86,7 @@ func (d *DormHandler) Create(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(data.ToDTO()))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(data))
 }
 
 // Delete godoc
@@ -120,7 +122,7 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	if err := d.dormService.Delete(userID, isAdmin, dormID); err != nil {
+	if err := d.dormService.Delete(c.Context(), userID, isAdmin, dormID); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -131,9 +133,16 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 }
 
 // GetAll godoc
-// @Summary Get all dorms
-// @Description Retrieve a list of all dorms
+// @Summary Get all dorms by a search string
+// @Description Retrieve a list of all dorms filtered by a search query. If no query is provided, all dorms are returned.
 // @Tags dorms
+// @Param search query string false "Search query"
+// @Param minPrice query int false "Filter min price"
+// @Param maxPrice query int false "Filter max price"
+// @Param district query string false "Filter district price"
+// @Param subdistrict query string false "Filter subdistrict price"
+// @Param province query string false "Filter province price"
+// @Param zipcode query string false "Filter zipcode price"
 // @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
@@ -144,29 +153,36 @@ func (d *DormHandler) Delete(c *fiber.Ctx) error {
 func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
-		return apperror.BadRequestError(errors.New("limit parameter is incorrect"), "limit parameter is incorrect")
-	}
-	if limit > 50 {
+		limit = 10
+	} else if limit > 50 {
 		limit = 50
 	}
+
 	page := c.QueryInt("page", 1)
 	if page <= 0 {
-		return apperror.BadRequestError(errors.New("page parameter is incorrect"), "page parameter is incorrect")
+		page = 1
 	}
-	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page)
+
+	search := c.Query("search")
+	minPrice := c.QueryInt("minPrice", -1)
+	maxPrice := c.QueryInt("maxPrice", -1)
+
+	if minPrice > maxPrice {
+		err := errors.New("min price cannot more than max price")
+		return apperror.BadRequestError(err, err.Error())
+	}
+
+	district := c.Query("district")
+	subdistrict := c.Query("subdistrict")
+	province := c.Query("province")
+	zipcode := c.Query("zipcode")
+
+	dorms, totalPages, totalRows, err := d.dormService.GetAll(limit, page, search, minPrice, maxPrice, district, subdistrict, province, zipcode)
 	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "get dorms error")
+		return err
 	}
 
-	resData := make([]dto.DormResponseBody, len(dorms))
-	for i, v := range dorms {
-		resData[i] = v.ToDTO()
-	}
-
-	res := dto.SuccessPagination(resData, dto.Pagination{
+	res := dto.SuccessPagination(dorms, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPages,
 		Limit:       limit,
@@ -208,7 +224,7 @@ func (d *DormHandler) GetByID(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dorm))
 }
 
 // Update godoc
@@ -265,5 +281,153 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update dorm error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedDorm))
+}
+
+// UploadDormImage godoc
+// @Summary Upload an image for a dorm
+// @Description Upload an image for a specific dorm by its ID, by attaching the image as a value for the key field name "image", as a multipart form-data
+// @Tags dorms
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path string true "DormID"
+// @Param image formData file true "DormImage"
+// @Success 200 {object} dto.SuccessResponse[dto.DormImageUploadResponseBody] "Successful image upload"
+// @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to upload image to dorm"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "Dorm not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload dorm image"
+// @Router /dorms/{id}/images [post]
+func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	dormID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		return apperror.BadRequestError(err, "file is required")
+	}
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isAdmin := user.Role == domain.AdminRole
+
+	fileData, err := file.Open()
+	if err != nil {
+		return apperror.InternalServerError(err, "error opening file")
+	}
+	defer fileData.Close()
+
+	contentType := file.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+	}
+
+	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData, userID, isAdmin)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: url}))
+}
+
+// GetByOwnerID godoc
+// @Summary Get dorms by owner ID
+// @Description Retrieve all dorms of a specific owner ID
+// @Tags dorms
+// @Param id path string true "OwnerID"
+// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Produce json
+// @Success 200 {object} dto.PaginationResponse[dto.DormResponseBody] "All dorms retrieved successfully"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Failed to retrieve dorms"
+// @Router /dorms/owner/{id} [get]
+func (d *DormHandler) GetByOwnerID(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	ownerID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	dorms, totalPages, totalRows, err := d.dormService.GetByOwnerID(ownerID, limit, page)
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get dorms error")
+	}
+
+	res := dto.SuccessPagination(dorms, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// DeleteDormImageByURL godoc
+// @Summary Delete a dorm image by its url
+// @Description Deletes a dorm image using its percent encoded url from bucket storage. Encode URL using the encodeURIComponent() function.
+// @Tags dorms
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param url path string true "Percent encoded URL"
+// @Success 204 "Image deleted successfully"
+// @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this dorm image"
+// @Failure 404 {object} dto.ErrorResponse "Image not found"
+// @Failure 500 {object} dto.ErrorResponse "Failed to delete image"
+// @Router /dorms/images/{url} [delete]
+func (d *DormHandler) DeleteDormImageByURL(c *fiber.Ctx) error {
+	decodedURL, err := url.PathUnescape(c.Params("url"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid URL")
+	}
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	isAdmin := user.Role == domain.AdminRole
+
+	if err := d.dormService.DeleteImageByURL(c.Context(), decodedURL, userID, isAdmin); err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

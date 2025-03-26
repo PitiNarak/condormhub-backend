@@ -19,6 +19,7 @@ func (s *Server) initRoutes() {
 	s.initAuthRoutes()
 	s.initDormRoutes()
 	s.initLeasingHistoryRoutes()
+	s.initLeasingRequestRoutes()
 	s.initOrderRoutes()
 	s.initTransactionRoutes()
 	s.initOwnershipProofRoutes()
@@ -40,8 +41,16 @@ func (s *Server) initUserRoutes() {
 	userRoutes.Post("/verify", s.handler.user.VerifyEmail)
 	userRoutes.Post("/resetpassword", s.handler.user.ResetPasswordCreate)
 	userRoutes.Post("/newpassword", s.handler.user.ResetPassword)
+	userRoutes.Post("/resend", s.handler.user.ResendVerificationEmailHandler)
+
+	userRoutes.Patch("/firstfill", s.authMiddleware.Auth, s.handler.user.FirstFillInformation)
 	userRoutes.Patch("/", s.authMiddleware.Auth, s.handler.user.UpdateUserInformation)
 	userRoutes.Delete("/", s.authMiddleware.Auth, s.handler.user.DeleteAccount)
+
+	userRoutes.Post("/studentEvidence", s.authMiddleware.Auth, s.handler.user.UploadStudentEvidence)
+	userRoutes.Get("/:id/studentEvidence", s.authMiddleware.Auth, s.handler.user.GetStudentEvidenceByID)
+
+	userRoutes.Post("/profilePic", s.authMiddleware.Auth, s.handler.user.UploadProfilePicture)
 }
 
 func (s *Server) initAuthRoutes() {
@@ -58,15 +67,31 @@ func (s *Server) initDormRoutes() {
 	dormRoutes.Get("/", s.handler.dorm.GetAll)
 	dormRoutes.Get("/:id", s.handler.dorm.GetByID)
 	dormRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.dorm.Update)
+	dormRoutes.Delete("/images/:url", s.authMiddleware.Auth, s.handler.dorm.DeleteDormImageByURL)
 	dormRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.dorm.Delete)
+	dormRoutes.Post("/:id/images", s.authMiddleware.Auth, s.handler.dorm.UploadDormImage)
+	dormRoutes.Get("/owner/:id", s.handler.dorm.GetByOwnerID)
 }
 
 func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes := s.app.Group("/history")
+	historyRoutes.Post("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.CreateReview)
+	historyRoutes.Patch("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.UpdateReview)
+	historyRoutes.Delete("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.DeleteReview)
 	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
 	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
 	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
+}
+
+func (s *Server) initLeasingRequestRoutes() {
+	historyRoutes := s.app.Group("/request")
+	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Create)
+	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingRequest.GetByUserID)
+	historyRoutes.Patch("/:id/approve", s.authMiddleware.Auth, s.handler.leasingRequest.Approve)
+	historyRoutes.Patch("/:id/reject", s.authMiddleware.Auth, s.handler.leasingRequest.Reject)
+	historyRoutes.Patch("/:id/cancel", s.authMiddleware.Auth, s.handler.leasingRequest.Cancel)
+	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Delete)
 }
 
 func (s *Server) initOrderRoutes() {

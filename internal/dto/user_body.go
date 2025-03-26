@@ -6,6 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type Role string
+
+const (
+	AdminRole  Role = "ADMIN"
+	LesseeRole Role = "LESSEE"
+	LessorRole Role = "LESSOR"
+)
+
 type ResetPasswordCreateRequestBody struct {
 	Email string `json:"email" validate:"required,email"`
 }
@@ -32,8 +40,20 @@ type UserInformationRequestBody struct {
 	PhoneNumber     string    `json:"phoneNumber,omitempty" validate:"omitempty,phoneNumber"`
 }
 
+type UserFirstFillRequestBody struct {
+	Firstname   string    `json:"firstname,omitempty" validate:"omitempty,min=2"`
+	Lastname    string    `json:"lastname,omitempty" validate:"omitempty,min=2"`
+	NationalID  string    `json:"nationalID,omitempty" validate:"omitempty,len=13"`
+	Gender      string    `json:"gender,omitempty"`
+	BirthDate   time.Time `json:"birthDate,omitempty"`
+	Lifestyles  []string  `json:"lifestyles,omitempty" validate:"omitempty,lifestyle"`
+	PhoneNumber string    `json:"phoneNumber,omitempty" validate:"omitempty,phoneNumber"`
+	Role        Role      `json:"role" validate:"omitempty,role"`
+}
+
 type UserResponse struct {
 	ID                 uuid.UUID `json:"id"`
+	CreateAt           time.Time `json:"createAt"`
 	Username           string    `json:"username"`
 	Email              string    `json:"email"`
 	Firstname          string    `json:"firstname"`
@@ -45,6 +65,15 @@ type UserResponse struct {
 	FilledPersonalInfo bool      `json:"filledPersonalInfo"`
 	Lifestyles         []string  `json:"lifestyles"`
 	PhoneNumber        string    `json:"phoneNumber"`
-	StudentEvidence    string    `json:"studentEvidence"`
 	IsStudentVerified  bool      `json:"isStudentVerified"`
+	ProfilePicUrl      string    `json:"profilePicUrl"`
+}
+
+type StudentEvidenceUploadResponseBody struct {
+	ImageUrl string    `json:"url"`
+	Expired  time.Time `json:"expired"`
+}
+
+type ProfilePictureUploadResponseBody struct {
+	ImageURL string `json:"url"`
 }
