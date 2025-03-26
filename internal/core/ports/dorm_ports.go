@@ -18,6 +18,8 @@ type DormRepository interface {
 	Delete(id uuid.UUID) error
 	SaveDormImage(dormImage *domain.DormImage) error
 	GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]domain.Dorm, int, int, error)
+	DeleteImageByKey(imageKey string) error
+	GetImageByKey(imageKey string) (*domain.DormImage, error)
 }
 
 type DormService interface {
@@ -28,6 +30,7 @@ type DormService interface {
 	Delete(ctx context.Context, userID uuid.UUID, isAdmin bool, dormID uuid.UUID) error
 	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 	GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dto.DormResponseBody, int, int, error)
+	DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error
 }
 
 type DormHandler interface {
@@ -38,4 +41,5 @@ type DormHandler interface {
 	Delete(c *fiber.Ctx) error
 	UploadDormImage(c *fiber.Ctx) error
 	GetByOwnerID(c *fiber.Ctx) error
+	DeleteDormImageByURL(c *fiber.Ctx) error
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type LeasingHistory struct {
@@ -55,4 +56,15 @@ func (r *Review) ToDTO() dto.Review {
 		Rate:     r.Rate,
 		CreateAt: *r.CreateAt,
 	}
+}
+
+func (l *LeasingHistory) AfterUpdate(tx *gorm.DB) (err error) {
+	var avgRating float64
+
+	err = tx.Model(&LeasingHistory{}).Select("COALESCE(avg(rate), 0)").Where("dorm_id = ?", l.DormID).Scan(&avgRating).Error
+	if err != nil {
+		return err
+	}
+
+	return tx.Model(Dorm{}).Where("id = ?", l.DormID).Update("rating", avgRating).Error
 }
