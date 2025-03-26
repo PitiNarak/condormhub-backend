@@ -38,11 +38,8 @@ func NewReceiptService(receiptRepo ports.ReceiptRepository, userRepo ports.UserR
 	}
 }
 
-func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transactionID string) (*domain.Receipt, string, error) {
-	transaction, TransactionErr := r.transactionRepo.GetByID(transactionID)
-	if TransactionErr != nil {
-		return nil, "", TransactionErr
-	}
+func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transaction domain.Transaction) (*domain.Receipt, string, error) {
+
 	if err := r.validateTransaction(transaction); err != nil {
 		return nil, "", err
 	}
@@ -52,14 +49,14 @@ func (r *ReceiptService) Create(c context.Context, ownerID uuid.UUID, transactio
 		return nil, "", buffErr
 	}
 
-	fileKey, saveErr := r.saveFile(c, buff, transactionID)
+	fileKey, saveErr := r.saveFile(c, buff, transaction.ID)
 	if saveErr != nil {
 		return nil, "", saveErr
 	}
 
 	receipt := &domain.Receipt{
 		OwnerID:       ownerID,
-		TransactionID: transactionID,
+		TransactionID: transaction.ID,
 		FileKey:       fileKey,
 	}
 

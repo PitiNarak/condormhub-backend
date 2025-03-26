@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -14,32 +13,6 @@ type ReceiptHandler struct {
 
 func NewReceiptHandler(service ports.ReceiptService) ports.ReceiptHandler {
 	return &ReceiptHandler{receiptService: service}
-}
-
-// Create godoc
-// @Summary create receipt
-// @Description create receipt
-// @Tags receipt
-// @Security Bearer
-// @Param transactionId path string true "Transaction ID"
-// @Produce json
-// @Success 200 {object}  dto.SuccessResponse[dto.ReceiptResponseBody]
-// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
-// @Failure 404 {object} dto.ErrorResponse "Receipt not found"
-// @Failure 500 {object} dto.ErrorResponse "Failed to create file"
-// @Router /receipt/{transactionId} [post]
-func (r *ReceiptHandler) Create(c *fiber.Ctx) error {
-	ownerID := c.Locals("userID").(uuid.UUID)
-	transactionID := c.Params("transactionId")
-
-	receipt, url, err := r.receiptService.Create(c.Context(), ownerID, transactionID)
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-	}
-
-	return c.Status(fiber.StatusOK).JSON(dto.Success(receipt.ToDTO(url)))
 }
 
 // GetByUserID godoc
