@@ -14,6 +14,7 @@ type handler struct {
 	order          ports.OrderHandler
 	tsx            ports.TransactionHandler
 	ownershipProof ports.OwnershipProofHandler
+	contract       ports.ContractHandler
 	leasingRequest ports.LeasingRequestHandler
 }
 
@@ -26,6 +27,7 @@ func (s *Server) initHandler() {
 	order := handler1.NewOrderHandler(s.service.order)
 	tsx := handler1.NewTransactionHandler(s.service.tsx, s.stripeConfig)
 	ownershipProof := handler1.NewOwnershipProofHandler(s.service.ownershipProof, s.storage)
+	contract := handler1.NewContractHandler(s.service.contract)
 	leasingRequest := handler1.NewLeasingRequestHandler(s.service.leasingRequest)
 
 	s.handler = &handler{
@@ -37,6 +39,7 @@ func (s *Server) initHandler() {
 		order:          order,
 		tsx:            tsx,
 		ownershipProof: ownershipProof,
+		contract:       contract,
 		leasingRequest: leasingRequest,
 	}
 }
