@@ -93,6 +93,7 @@ func (s *Server) initLeasingRequestRoutes() {
 	historyRoutes.Patch("/:id/reject", s.authMiddleware.Auth, s.handler.leasingRequest.Reject)
 	historyRoutes.Patch("/:id/cancel", s.authMiddleware.Auth, s.handler.leasingRequest.Cancel)
 	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Delete)
+	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingRequest.GetByDormID)
 }
 
 func (s *Server) initOrderRoutes() {
