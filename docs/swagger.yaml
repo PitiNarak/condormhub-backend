@@ -399,11 +399,6 @@ components:
         data:
           $ref: '#/components/schemas/dto.ProfilePictureUploadResponseBody'
       type: object
-    dto.SuccessResponse-dto_ReceiptResponseBody:
-      properties:
-        data:
-          $ref: '#/components/schemas/dto.ReceiptResponseBody'
-      type: object
     dto.SuccessResponse-dto_Review:
       properties:
         data:
@@ -1910,46 +1905,6 @@ paths:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: Failed to retrieve receipts
       summary: Retrieve receipts by user ID
-      tags:
-      - receipt
-  /receipt/{transactionId}:
-    post:
-      description: create receipt
-      parameters:
-      - description: Transaction ID
-        in: path
-        name: transactionId
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-dto_ReceiptResponseBody'
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Receipt not found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Failed to create file
-      security:
-      - Bearer: []
-      summary: create receipt
       tags:
       - receipt
   /request/{id}:
