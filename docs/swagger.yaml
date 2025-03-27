@@ -2323,7 +2323,7 @@ paths:
     patch:
       description: Cancel a leasing request
       parameters:
-      - description: LeasingRequestId
+      - description: DormID
         in: path
         name: id
         required: true
