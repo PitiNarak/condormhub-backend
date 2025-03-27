@@ -305,8 +305,29 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_ReceiptResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.ReceiptResponseBody'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.ProfilePictureUploadResponseBody:
       properties:
+        url:
+          type: string
+      type: object
+    dto.ReceiptResponseBody:
+      properties:
+        owner:
+          $ref: '#/components/schemas/dto.UserResponse'
+        receiptId:
+          type: string
+        transaction:
+          $ref: '#/components/schemas/dto.TransactionResponse'
         url:
           type: string
       type: object
@@ -2182,6 +2203,42 @@ paths:
       summary: Upload new ownership proof
       tags:
       - ownership
+  /receipt:
+    get:
+      description: Get all receipts associated with a specific user
+      parameters:
+      - description: Number of receipts to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_ReceiptResponseBody'
+          description: Receipts retrieved successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid query parameters
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to retrieve receipts
+      summary: Retrieve receipts by user ID
+      tags:
+      - receipt
   /request/{id}:
     delete:
       description: Delete a leasing request in the database
