@@ -95,10 +95,18 @@ func (d *LeasingRequestRepository) GetByDormID(id uuid.UUID, limit, page int) ([
 			return nil, 0, 0, err
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, 0, 0, apperror.NotFoundError(err, "leasing history not found")
+			return nil, 0, 0, apperror.NotFoundError(err, "leasing request not found")
 		}
-		return nil, 0, 0, apperror.InternalServerError(err, "failed to get leasing history")
+		return nil, 0, 0, apperror.InternalServerError(err, "failed to get leasing request")
 	}
 
 	return leasingRequest, totalPage, totalRows, nil
+}
+
+func (d *LeasingRequestRepository) GetID(dormID, userID uuid.UUID) (uuid.UUID, error) {
+	leasingRequest := new(domain.LeasingRequest)
+	if err := d.db.Where("dorm_id = ? and lessee_id = ? and status = ?", dormID, userID, domain.Pending).First(leasingRequest).Error; err != nil {
+		return uuid.Nil, apperror.NotFoundError(err, "leasing request not found")
+	}
+	return leasingRequest.ID, nil
 }

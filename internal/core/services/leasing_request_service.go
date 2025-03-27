@@ -91,7 +91,7 @@ func (s *LeasingRequestService) Reject(id, userId uuid.UUID, isAdmin bool) error
 }
 
 func (s *LeasingRequestService) Cancel(id, userId uuid.UUID, isAdmin bool) error {
-	leasingRequest, err := s.requestRepo.GetByID(id)
+	leasingRequest, err := s.requestRepo.GetID(id, userId)
 	if err != nil {
 		return err
 	}

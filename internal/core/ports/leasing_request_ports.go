@@ -13,6 +13,7 @@ type LeasingRequestRepository interface {
 	GetByID(id uuid.UUID) (*domain.LeasingRequest, error)
 	GetByUserID(id uuid.UUID, limit, page int, role domain.Role) ([]domain.LeasingRequest, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingRequest, int, int, error)
+	GetID(dormID, userID uuid.UUID) (uuid.UUID, error)
 }
 
 type LeasingRequestService interface {

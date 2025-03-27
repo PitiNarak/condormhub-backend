@@ -111,7 +111,7 @@ func (h *LeasingRequestHandler) Reject(c *fiber.Ctx) error {
 // @Tags request
 // @Security Bearer
 // @Produce json
-// @Param id path string true "LeasingRequestId"
+// @Param id path string true "DormID"
 // @Success 204
 // @Failure 400 {object} dto.ErrorResponse "leasing request not found or request is not in the pending status"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized or lessor cannot cancel a request"
