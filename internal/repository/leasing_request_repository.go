@@ -105,7 +105,7 @@ func (d *LeasingRequestRepository) GetByDormID(id uuid.UUID, limit, page int) ([
 
 func (d *LeasingRequestRepository) GetID(dormID, userID uuid.UUID) (uuid.UUID, error) {
 	leasingRequest := new(domain.LeasingRequest)
-	if err := d.db.Where("dorm_id = ? and lessee_id = ? and status = ?", dormID, userID, domain.Pending).First(leasingRequest).Error; err != nil {
+	if err := d.db.Where("dorm_id = ? and lessee_id = ? and status = ?", dormID, userID, domain.RequestPending).First(leasingRequest).Error; err != nil {
 		return uuid.Nil, apperror.NotFoundError(err, "leasing request not found")
 	}
 	return leasingRequest.ID, nil
