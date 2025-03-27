@@ -131,14 +131,14 @@ func (h *LeasingRequestHandler) Cancel(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Incorrect UUID format")
 	}
 
-	leasingRequestID, err := uuid.Parse(id)
+	dormID, err := uuid.Parse(id)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
-	err = h.service.Cancel(leasingRequestID, user.ID, user.Role == domain.AdminRole)
+	err = h.service.Cancel(dormID, user.ID, user.Role == domain.AdminRole)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
