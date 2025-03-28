@@ -285,14 +285,14 @@ func (d *DormHandler) Update(c *fiber.Ctx) error {
 }
 
 // UploadDormImage godoc
-// @Summary Upload an image for a dorm
-// @Description Upload an image for a specific dorm by its ID, by attaching the image as a value for the key field name "image", as a multipart form-data
+// @Summary Upload multiple images for a dorm
+// @Description Upload multiple images for a specific dorm by its ID, by attaching the images as value for the key field name "image", as a multipart form-data
 // @Tags dorms
 // @Security Bearer
 // @Accept multipart/form-data
 // @Produce json
 // @Param id path string true "DormID"
-// @Param image formData file true "DormImage"
+// @Param image formData file true "DormImage" collectionFormat "multi"
 // @Success 200 {object} dto.SuccessResponse[dto.DormImageUploadResponseBody] "Successful image upload"
 // @Failure 400 {object} dto.ErrorResponse "Invalid Request"
 // @Failure 403 {object} dto.ErrorResponse "unauthorized to upload image to dorm"
@@ -311,10 +311,12 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	file, err := c.FormFile("image")
+	form, err := c.MultipartForm()
 	if err != nil {
-		return apperror.BadRequestError(err, "file is required")
+		return apperror.BadRequestError(err, "Invalid multipart form data")
 	}
+
+	files := form.File["image"]
 
 	userID := c.Locals("userID").(uuid.UUID)
 	user := c.Locals("user").(*domain.User)
@@ -323,23 +325,28 @@ func (d *DormHandler) UploadDormImage(c *fiber.Ctx) error {
 	}
 	isAdmin := user.Role == domain.AdminRole
 
-	fileData, err := file.Open()
-	if err != nil {
-		return apperror.InternalServerError(err, "error opening file")
-	}
-	defer fileData.Close()
+	urls := []string{}
+	for _, file := range files {
+		fileData, err := file.Open()
+		if err != nil {
+			return apperror.InternalServerError(err, "error opening file")
+		}
+		defer fileData.Close()
 
-	contentType := file.Header.Get("Content-Type")
-	if !strings.HasPrefix(contentType, "image/") {
-		return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+		contentType := file.Header.Get("Content-Type")
+		if !strings.HasPrefix(contentType, "image/") {
+			return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+		}
+
+		url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData, userID, isAdmin)
+		if err != nil {
+			return err
+		}
+
+		urls = append(urls, url)
 	}
 
-	url, err := d.dormService.UploadDormImage(c.Context(), dormID, file.Filename, contentType, fileData, userID, isAdmin)
-	if err != nil {
-		return err
-	}
-
-	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: url}))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.DormImageUploadResponseBody{ImageURL: urls}))
 }
 
 // GetByOwnerID godoc
