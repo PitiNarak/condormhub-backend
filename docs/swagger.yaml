@@ -95,7 +95,10 @@ components:
     dto.DormImageUploadResponseBody:
       properties:
         url:
-          type: string
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       type: object
     dto.DormResponseBody:
       properties:
@@ -1266,8 +1269,8 @@ paths:
       - dorms
   /dorms/{id}/images:
     post:
-      description: Upload an image for a specific dorm by its ID, by attaching the
-        image as a value for the key field name "image", as a multipart form-data
+      description: Upload multiple images for a specific dorm by its ID, by attaching
+        the images as value for the key field name "image", as a multipart form-data
       parameters:
       - description: DormID
         in: path
@@ -1321,7 +1324,7 @@ paths:
           description: Server failed to upload dorm image
       security:
       - Bearer: []
-      summary: Upload an image for a dorm
+      summary: Upload multiple images for a dorm
       tags:
       - dorms
   /dorms/images/{url}:
