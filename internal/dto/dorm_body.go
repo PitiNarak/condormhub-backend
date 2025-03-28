@@ -39,7 +39,7 @@ type Address struct {
 }
 
 type DormImageUploadResponseBody struct {
-	ImageURL string `json:"url"`
+	ImageURL []string `json:"url"`
 }
 
 type DormResponseBody struct {
