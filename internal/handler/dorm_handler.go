@@ -167,7 +167,7 @@ func (d *DormHandler) GetAll(c *fiber.Ctx) error {
 	minPrice := c.QueryInt("minPrice", -1)
 	maxPrice := c.QueryInt("maxPrice", -1)
 
-	if minPrice > maxPrice {
+	if minPrice > maxPrice && minPrice != -1 && maxPrice != -1 {
 		err := errors.New("min price cannot more than max price")
 		return apperror.BadRequestError(err, err.Error())
 	}
