@@ -587,8 +587,13 @@ func (h *UserHandler) UploadProfilePicture(c *fiber.Ctx) error {
 
 func (h *UserHandler) GetLessorIncome(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	userRole := user.Role
+	if userRole == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
 
-	income, err := h.userService.GetLessorIncome(userID)
+	income, err := h.userService.GetLessorIncome(userID, userRole)
 	if err != nil {
 		return err
 	}

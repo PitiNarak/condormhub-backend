@@ -37,7 +37,7 @@ type UserService interface {
 	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
 	ResendVerificationEmailService(ctx context.Context, email string) error
 	UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
-	GetLessorIncome(lessorID uuid.UUID) (float64, error)
+	GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) (float64, error)
 }
 
 type UserHandler interface {
