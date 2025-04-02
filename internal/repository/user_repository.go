@@ -85,7 +85,7 @@ func (r *UserRepo) GetLessorIncome(lessorID uuid.UUID) (float64, error) {
 	err := r.db.Model(&domain.LeasingHistory{}).Joins("JOIN dorms ON dorms.id = leasing_histories.dorm_id").
 		Where("dorms.owner_id = ?", lessorID).
 		Where("leasing_histories.end IS NULL").
-		Select("SUM(leasing_histories.price)").
+		Select("COALESCE(SUM(leasing_histories.price), 0)").
 		Scan(&income).Error
 	if err != nil {
 		return 0, apperror.InternalServerError(err, "failed to calculate lessor's income")
