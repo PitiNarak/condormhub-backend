@@ -584,3 +584,14 @@ func (h *UserHandler) UploadProfilePicture(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.ProfilePictureUploadResponseBody{ImageURL: url}))
 }
+
+func (h *UserHandler) GetLessorIncome(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+
+	income, err := h.userService.GetLessorIncome(userID)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.LessorIncomeResponseBody{Income: income}))
+}

@@ -389,3 +389,7 @@ func (s *UserService) UploadProfilePicture(ctx context.Context, filename string,
 
 	return url, nil
 }
+
+func (s *UserService) GetLessorIncome(lessorID uuid.UUID) (float64, error) {
+	return s.userRepo.GetLessorIncome(lessorID)
+}
