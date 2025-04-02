@@ -17,6 +17,7 @@ type UserRepository interface {
 	UpdateUser(user *domain.User) error
 	GetUserByEmail(email string) (*domain.User, error)
 	DeleteAccount(userID uuid.UUID) error
+	GetLessorIncome(lessorID uuid.UUID) (float64, error)
 }
 
 type UserService interface {
@@ -36,6 +37,7 @@ type UserService interface {
 	GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, isSelf bool, isAdmin bool) (*dto.StudentEvidenceUploadResponseBody, error)
 	ResendVerificationEmailService(ctx context.Context, email string) error
 	UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
+	GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) (float64, error)
 }
 
 type UserHandler interface {
@@ -54,4 +56,5 @@ type UserHandler interface {
 	GetStudentEvidenceByID(c *fiber.Ctx) error
 	ResendVerificationEmailHandler(c *fiber.Ctx) error
 	UploadProfilePicture(c *fiber.Ctx) error
+	GetLessorIncome(c *fiber.Ctx) error
 }

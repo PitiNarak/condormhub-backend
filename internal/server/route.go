@@ -37,6 +37,7 @@ func (s *Server) initUserRoutes() {
 	userRoutes := s.app.Group("/user")
 
 	userRoutes.Get("/me", s.authMiddleware.Auth, s.handler.user.GetUserInfo)
+	userRoutes.Get("/income", s.authMiddleware.Auth, s.handler.user.GetLessorIncome)
 	userRoutes.Get("/:id", s.authMiddleware.Auth, s.handler.user.GetUserByID)
 
 	userRoutes.Post("/verify", s.handler.user.VerifyEmail)

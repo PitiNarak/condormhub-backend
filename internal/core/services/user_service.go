@@ -389,3 +389,10 @@ func (s *UserService) UploadProfilePicture(ctx context.Context, filename string,
 
 	return url, nil
 }
+
+func (s *UserService) GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) (float64, error) {
+	if userRole != domain.LessorRole {
+		return 0, apperror.ForbiddenError(errors.New("unauthorized action"), "User is not a lessor")
+	}
+	return s.userRepo.GetLessorIncome(lessorID)
+}

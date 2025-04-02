@@ -79,3 +79,16 @@ func (r *UserRepo) DeleteAccount(userID uuid.UUID) error {
 	}
 	return nil
 }
+
+func (r *UserRepo) GetLessorIncome(lessorID uuid.UUID) (float64, error) {
+	var income float64
+	err := r.db.Model(&domain.LeasingHistory{}).Joins("JOIN dorms ON dorms.id = leasing_histories.dorm_id").
+		Where("dorms.owner_id = ?", lessorID).
+		Where("leasing_histories.end IS NULL").
+		Select("COALESCE(SUM(leasing_histories.price), 0)").
+		Scan(&income).Error
+	if err != nil {
+		return 0, apperror.InternalServerError(err, "failed to calculate lessor's income")
+	}
+	return income, nil
+}
