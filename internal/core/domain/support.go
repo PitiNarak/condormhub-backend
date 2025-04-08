@@ -9,8 +9,9 @@ import (
 type SupportStatus string
 
 const (
-	ProblemOpen     SupportStatus = "OPEN"
-	ProblemResolved SupportStatus = "RESOLVED"
+	ProblemOpen       SupportStatus = "OPEN"
+	ProblemInProgress SupportStatus = "IN-PROGRESS"
+	ProblemResolved   SupportStatus = "RESOLVED"
 )
 
 type SupportRequest struct {
