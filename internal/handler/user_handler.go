@@ -584,3 +584,30 @@ func (h *UserHandler) UploadProfilePicture(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.ProfilePictureUploadResponseBody{ImageURL: url}))
 }
+
+// GetLessorIncomes godoc
+// @Summary Get monthly income for a lessor
+// @Description Retrieve the monthly leasing income of a lessor based on leasing history
+// @Tags user
+// @Security Bearer
+// @Produce json
+// @Success 200 {object} dto.SuccessResponse[dto.LessorIncomeResponseBody] "Successfully retrieve income"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "User is not a lessor"
+// @Failure 500 {object} dto.ErrorResponse "system cannot get lessor income"
+// @Router /user/income [get]
+func (h *UserHandler) GetLessorIncome(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	userRole := user.Role
+	if userRole == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	income, err := h.userService.GetLessorIncome(userID, userRole)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.LessorIncomeResponseBody{Income: income}))
+}

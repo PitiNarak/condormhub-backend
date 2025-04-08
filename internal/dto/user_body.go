@@ -77,3 +77,7 @@ type StudentEvidenceUploadResponseBody struct {
 type ProfilePictureUploadResponseBody struct {
 	ImageURL string `json:"url"`
 }
+
+type LessorIncomeResponseBody struct {
+	Income float64 `json:"income"`
+}

@@ -202,6 +202,11 @@ components:
         message:
           type: string
       type: object
+    dto.LessorIncomeResponseBody:
+      properties:
+        income:
+          type: number
+      type: object
     dto.LoginRequestBody:
       properties:
         email:
@@ -450,6 +455,11 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.LeasingRequest'
+      type: object
+    dto.SuccessResponse-dto_LessorIncomeResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.LessorIncomeResponseBody'
       type: object
     dto.SuccessResponse-dto_OrderResponseBody:
       properties:
@@ -2805,6 +2815,40 @@ paths:
       security:
       - Bearer: []
       summary: Fill user information first time
+      tags:
+      - user
+  /user/income:
+    get:
+      description: Retrieve the monthly leasing income of a lessor based on leasing
+        history
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_LessorIncomeResponseBody'
+          description: Successfully retrieve income
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: User is not a lessor
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: system cannot get lessor income
+      security:
+      - Bearer: []
+      summary: Get monthly income for a lessor
       tags:
       - user
   /user/me:
