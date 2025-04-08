@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -21,4 +22,15 @@ type SupportRequest struct {
 	UserID   uuid.UUID
 	Message  string        `gorn:"type:text;not null"`
 	Status   SupportStatus `gorm:"default:'OPEN'"`
+}
+
+func (s *SupportRequest) ToDTO() dto.SupportResponseBody {
+	return dto.SupportResponseBody{
+		ID:       s.ID,
+		CreateAt: s.CreateAt,
+		UpdateAt: s.UpdateAt,
+		UserID:   s.UserID,
+		Message:  s.Message,
+		Status:   string(s.Status),
+	}
 }

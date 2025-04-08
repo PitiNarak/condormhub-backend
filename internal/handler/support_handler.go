@@ -50,5 +50,5 @@ func (h *SupportHandler) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(support))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(support.ToDTO()))
 }
