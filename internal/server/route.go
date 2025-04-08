@@ -25,6 +25,7 @@ func (s *Server) initRoutes() {
 	s.initOwnershipProofRoutes()
 	s.initReceiptRoutes()
 	s.initContractRoutes()
+	s.initSupportRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -136,4 +137,9 @@ func (s *Server) initContractRoutes() {
 	contractRoutes.Patch("/:contractID/cancel", s.authMiddleware.Auth, s.handler.contract.CancelContract)
 	contractRoutes.Delete("/:contractID", s.authMiddleware.Auth, s.handler.contract.Delete)
 
+}
+
+func (s *Server) initSupportRoutes() {
+	supportRoutes := s.app.Group("/support")
+	supportRoutes.Post("/", s.authMiddleware.Auth, s.handler.support.Create)
 }

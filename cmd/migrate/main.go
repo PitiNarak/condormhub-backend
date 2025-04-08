@@ -90,6 +90,7 @@ func main() {
 		&domain.LeasingRequest{},
 		&domain.Review{},
 		&domain.Receipt{},
+		&domain.SupportRequest{},
 	); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

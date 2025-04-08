@@ -9,7 +9,7 @@ type SupportService struct {
 	repo ports.SupportRepository
 }
 
-func NewSupportRepository(repo ports.SupportRepository) ports.SupportService {
+func NewSupportService(repo ports.SupportRepository) ports.SupportService {
 	return &SupportService{repo: repo}
 }
 

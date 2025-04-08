@@ -15,6 +15,7 @@ type repository struct {
 	contract       ports.ContractRepository
 	leasingRequest ports.LeasingRequestRepository
 	receipt        ports.ReceiptRepository
+	support        ports.SupportRepository
 }
 
 func (s *Server) initRepository() {
@@ -27,6 +28,7 @@ func (s *Server) initRepository() {
 	contract := repository1.NewContractRepository(s.db)
 	leasingRequest := repository1.NewLeasingRequestRepository(s.db)
 	receipt := repository1.NewReceiptRepository(s.db)
+	support := repository1.NewSupportRepository(s.db)
 
 	s.repository = &repository{
 		user:           user,
@@ -38,5 +40,6 @@ func (s *Server) initRepository() {
 		contract:       contract,
 		leasingRequest: leasingRequest,
 		receipt:        receipt,
+		support:        support,
 	}
 }
