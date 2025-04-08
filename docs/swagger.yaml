@@ -486,6 +486,11 @@ components:
         data:
           $ref: '#/components/schemas/dto.StudentEvidenceUploadResponseBody'
       type: object
+    dto.SuccessResponse-dto_SupportResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.SupportResponseBody'
+      type: object
     dto.SuccessResponse-dto_TokenResponseBody:
       properties:
         data:
@@ -500,6 +505,28 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.UserResponse'
+      type: object
+    dto.SupportRequestBody:
+      properties:
+        message:
+          type: string
+      required:
+      - message
+      type: object
+    dto.SupportResponseBody:
+      properties:
+        createAt:
+          type: string
+        id:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+        updateAt:
+          type: string
+        userID:
+          type: string
       type: object
     dto.TokenResponseBody:
       properties:
@@ -2577,6 +2604,46 @@ paths:
       summary: Get all leasing request by userid
       tags:
       - request
+  /support:
+    post:
+      description: Let a user send a message to the admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.SupportRequestBody'
+        description: Support Request
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_SupportResponseBody'
+          description: Support request submitted successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Could not submit support request
+      security:
+      - Bearer: []
+      summary: Submit a support request
+      tags:
+      - support
   /transaction:
     post:
       description: Create a transaction
