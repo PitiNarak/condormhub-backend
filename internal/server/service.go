@@ -16,6 +16,7 @@ type service struct {
 	contract       ports.ContractService
 	leasingRequest ports.LeasingRequestService
 	receipt        ports.ReceiptService
+	support        ports.SupportService
 }
 
 func (s *Server) initService() {
@@ -29,6 +30,7 @@ func (s *Server) initService() {
 	leasingRequest := services.NewLeasingRequestService(s.repository.leasingRequest, s.repository.dorm)
 	receipt := services.NewReceiptService(s.repository.receipt, s.repository.user, s.repository.tsx, s.repository.order, s.repository.leasingHistory, s.repository.dorm, s.storage)
 	tsx := services.NewTransactionService(s.repository.tsx, s.repository.order, s.stripe, s.repository.leasingHistory, receipt)
+	support := services.NewSupportService(s.repository.support)
 
 	s.service = &service{
 		user:           user,
@@ -40,5 +42,6 @@ func (s *Server) initService() {
 		contract:       contract,
 		leasingRequest: leasingRequest,
 		receipt:        receipt,
+		support:        support,
 	}
 }

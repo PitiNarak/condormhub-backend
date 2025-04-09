@@ -17,6 +17,7 @@ type handler struct {
 	contract       ports.ContractHandler
 	leasingRequest ports.LeasingRequestHandler
 	receipt        ports.ReceiptHandler
+	support        ports.SupportHandler
 }
 
 func (s *Server) initHandler() {
@@ -31,6 +32,7 @@ func (s *Server) initHandler() {
 	contract := handler1.NewContractHandler(s.service.contract)
 	leasingRequest := handler1.NewLeasingRequestHandler(s.service.leasingRequest)
 	receipt := handler1.NewReceiptHandler(s.service.receipt)
+	support := handler1.NewSupportHandler(s.service.support)
 
 	s.handler = &handler{
 		greeting:       greeting,
@@ -44,5 +46,6 @@ func (s *Server) initHandler() {
 		contract:       contract,
 		leasingRequest: leasingRequest,
 		receipt:        receipt,
+		support:        support,
 	}
 }
