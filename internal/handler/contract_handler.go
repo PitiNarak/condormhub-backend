@@ -60,7 +60,7 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 // @Description Cancel a contract if it is not signed
 // @Tags contracts
 // @Security Bearer
-// @Param contractId path string true "Contract ID"
+// @Param contractID path string true "Contract ID"
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract cancelled successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format or contract cannot be cancelled"
@@ -111,7 +111,7 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 // @Description Permanently delete a contract by ID
 // @Tags contracts
 // @Security Bearer
-// @Param contractId path string true "Contract ID"
+// @Param contractID path string true "Contract ID"
 // @Success 204 "Contract deleted successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
@@ -136,7 +136,7 @@ func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
 // @Description Get details of a specific contract
 // @Tags contracts
 // @Security Bearer
-// @Param contractId path string true "Contract ID"
+// @Param contractID path string true "Contract ID"
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
