@@ -837,7 +837,7 @@ paths:
       parameters:
       - description: Contract ID
         in: path
-        name: contractId
+        name: contractID
         required: true
         schema:
           type: string
@@ -872,7 +872,7 @@ paths:
       parameters:
       - description: Contract ID
         in: path
-        name: contractId
+        name: contractID
         required: true
         schema:
           type: string
@@ -912,7 +912,7 @@ paths:
       parameters:
       - description: Contract ID
         in: path
-        name: contractId
+        name: contractID
         required: true
         schema:
           type: string
