@@ -23,6 +23,11 @@ components:
           $ref: '#/components/schemas/dto.DormResponseBody'
         id:
           type: string
+        imagesUrl:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
         lesseeStatus:
@@ -157,6 +162,11 @@ components:
           type: string
         id:
           type: string
+        imagesUrl:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
         orders:
