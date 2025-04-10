@@ -25,57 +25,6 @@ func NewContractService(contractRepo ports.ContractRepository, userRepo ports.Us
 	}
 }
 
-func (ct *ContractService) Create(contract *domain.Contract) error {
-	// Validate input contract
-	if err := ct.validateContract(contract); err != nil {
-		return err
-	}
-	if _, err := ct.getUserAndValidateRole(contract.LesseeID, domain.LesseeRole); err != nil {
-		return err
-	}
-
-	// Check for existing active contract
-	if err := ct.checkForExistingActiveContract(contract); err != nil {
-		return err
-	}
-	// Create the contract
-	if err := ct.contractRepo.Create(contract); err != nil {
-		return err
-	}
-	return nil
-}
-func (ct *ContractService) validateContract(contract *domain.Contract) error {
-	if contract.LesseeID == uuid.Nil || contract.DormID == uuid.Nil {
-		return apperror.BadRequestError(errors.New("invalid contract"), "missing required fields")
-	}
-	return nil
-}
-func (ct *ContractService) getUserAndValidateRole(userID uuid.UUID, role domain.Role) (*domain.User, error) {
-	user, err := ct.userRepo.GetUserByID(userID)
-	if err != nil {
-		return nil, err
-	}
-	if user == nil || user.Role == "" {
-		return nil, apperror.BadRequestError(errors.New("invalid user"), "user not found or role is missing")
-	}
-	if user.Role != role {
-		return nil, apperror.BadRequestError(errors.New("role mismatch"), "user role mismatch")
-	}
-	return user, nil
-}
-func (ct *ContractService) checkForExistingActiveContract(contract *domain.Contract) error {
-	contracts, err := ct.contractRepo.GetContract(contract.LesseeID, contract.DormID)
-	if err != nil {
-		return err
-	}
-	for _, c := range *contracts {
-		if c.Status == domain.Waiting {
-			return apperror.BadRequestError(errors.New("contract already exists"), "active contract already exists")
-		}
-	}
-	return nil
-}
-
 func (ct *ContractService) DeleteContract(contractID uuid.UUID) error {
 	return ct.contractRepo.Delete(contractID)
 }

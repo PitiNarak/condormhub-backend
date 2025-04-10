@@ -129,7 +129,6 @@ func (s *Server) initReceiptRoutes() {
 
 func (s *Server) initContractRoutes() {
 	contractRoutes := s.app.Group("/contract")
-	contractRoutes.Post("/", s.authMiddleware.Auth, s.handler.contract.Create)
 	contractRoutes.Get("/:contractID", s.authMiddleware.Auth, s.handler.contract.GetContractByContractID)
 	contractRoutes.Get("/", s.authMiddleware.Auth, s.handler.contract.GetContractByUserID)
 	contractRoutes.Get("/:dormID", s.authMiddleware.Auth, s.handler.contract.GetContractByDormID)

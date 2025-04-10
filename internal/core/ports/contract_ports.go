@@ -18,7 +18,6 @@ type ContractRepository interface {
 }
 
 type ContractService interface {
-	Create(contract *domain.Contract) error
 	GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error)
 	GetByUserID(userID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
 	GetByDormID(lesseeID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
@@ -27,7 +26,6 @@ type ContractService interface {
 }
 
 type ContractHandler interface {
-	Create(c *fiber.Ctx) error
 	GetContractByContractID(c *fiber.Ctx) error
 	GetContractByUserID(c *fiber.Ctx) error
 	GetContractByDormID(c *fiber.Ctx) error

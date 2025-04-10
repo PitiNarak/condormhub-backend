@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
@@ -18,50 +17,6 @@ type ContractHandler struct {
 
 func NewContractHandler(contractService ports.ContractService) ports.ContractHandler {
 	return &ContractHandler{contractService: contractService}
-}
-
-// CreateContract godoc
-// @Summary Create a new contract
-// @Description Create a contract between a lessor and lessee for a dorm
-// @Tags contracts
-// @Security Bearer
-// @Accept json
-// @Produce json
-// @Param contract body dto.ContractRequestBody true "Contract details"
-// @Success 201 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract created successfully"
-// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
-// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
-// @Failure 500 {object} dto.ErrorResponse "Failed to create contract"
-// @Router /contract [post]
-func (ct *ContractHandler) Create(c *fiber.Ctx) error {
-	var reqBody *dto.ContractRequestBody
-	if err := c.BodyParser(&reqBody); err != nil {
-		return apperror.BadRequestError(err, "Failed to parse request body")
-	}
-
-	contract := &domain.Contract{
-		LesseeID: reqBody.LesseeID,
-		DormID:   reqBody.DormID,
-	}
-
-	if err := ct.contractService.Create(contract); err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "create contract error")
-	}
-
-	res, err := ct.contractService.GetContractByContractID(contract.ID)
-	if err != nil {
-		if apperror.IsAppError(err) {
-			return err
-		}
-		return apperror.InternalServerError(err, "get contract error")
-	}
-	fmt.Println(res.LesseeID)
-
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(res.ToDTO()))
-
 }
 
 // SignContract godoc
