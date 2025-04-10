@@ -24,11 +24,13 @@ func NewContractHandler(contractService ports.ContractService) ports.ContractHan
 // @Summary Create a new contract
 // @Description Create a contract between a lessor and lessee for a dorm
 // @Tags contracts
+// @Security Bearer
 // @Accept json
 // @Produce json
 // @Param contract body dto.ContractRequestBody true "Contract details"
 // @Success 201 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract created successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid request body"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to create contract"
 // @Router /contract [post]
 func (ct *ContractHandler) Create(c *fiber.Ctx) error {
@@ -66,13 +68,14 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 // @Summary Sign an existing contract
 // @Description Sign a contract by providing contract ID
 // @Tags contracts
+// @Security Bearer
 // @Param contractId path string true "Contract ID"
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract signed successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to sign contract"
-// @Router /contract/{contractId}/sign [patch]
+// @Router /contract/{contractID}/sign [patch]
 func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
@@ -101,13 +104,14 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 // @Summary Cancel an existing contract
 // @Description Cancel a contract if it is not signed
 // @Tags contracts
+// @Security Bearer
 // @Param contractId path string true "Contract ID"
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract cancelled successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format or contract cannot be cancelled"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to cancel contract"
-// @Router /contract/{contractId}/cancel [patch]
+// @Router /contract/{contractID}/cancel [patch]
 func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
@@ -151,11 +155,13 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 // @Summary Delete a contract
 // @Description Permanently delete a contract by ID
 // @Tags contracts
+// @Security Bearer
 // @Param contractId path string true "Contract ID"
 // @Success 204 "Contract deleted successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to delete contract"
-// @Router /contract/{contractId} [delete]
+// @Router /contract/{contractID} [delete]
 func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
 	contractID, parseErr := uuid.Parse(c.Params("contractID"))
 	if parseErr != nil {
@@ -174,12 +180,14 @@ func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
 // @Summary Retrieve a contract by contract ID
 // @Description Get details of a specific contract
 // @Tags contracts
+// @Security Bearer
 // @Param contractId path string true "Contract ID"
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve contract"
-// @Router /contract/{contractId} [get]
+// @Router /contract/{contractID} [get]
 func (ct *ContractHandler) GetContractByContractID(c *fiber.Ctx) error {
 	contractID, parseErr := uuid.Parse(c.Params("contractID"))
 	if parseErr != nil {
@@ -199,11 +207,13 @@ func (ct *ContractHandler) GetContractByContractID(c *fiber.Ctx) error {
 // @Summary Retrieve contracts by user ID
 // @Description Get all contracts associated with a specific user
 // @Tags contracts
+// @Security Bearer
 // @Param limit query int false "Number of contracts to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
 // @Success 200 {object} dto.PaginationResponse[dto.ContractResponseBody] "Contracts retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid query parameters"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve contracts"
 // @Router /contract [get]
 func (ct *ContractHandler) GetContractByUserID(c *fiber.Ctx) error {
@@ -240,14 +250,16 @@ func (ct *ContractHandler) GetContractByUserID(c *fiber.Ctx) error {
 // @Summary Retrieve contracts by dorm ID
 // @Description Get all contracts associated with a specific dorm
 // @Tags contracts
+// @Security Bearer
 // @Param dormId path string true "Dorm ID"
 // @Param limit query int false "Number of contracts to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Produce json
 // @Success 200 {object} dto.PaginationResponse[dto.ContractResponseBody] "Contracts retrieved successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid dorm ID format or query parameters"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve contracts"
-// @Router /contract/{dormId} [get]
+// @Router /contract/{dormID} [get]
 func (ct *ContractHandler) GetContractByDormID(c *fiber.Ctx) error {
 	id := c.Params("dormID")
 	dormID, err := uuid.Parse(id)
