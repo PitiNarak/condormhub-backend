@@ -129,12 +129,11 @@ func (s *Server) initReceiptRoutes() {
 
 func (s *Server) initContractRoutes() {
 	contractRoutes := s.app.Group("/contract")
-	contractRoutes.Post("/", s.authMiddleware.Auth, s.handler.contract.Create)
+	contractRoutes.Patch("/:contractID/sign", s.authMiddleware.Auth, s.handler.contract.SignContract)
+	contractRoutes.Patch("/:contractID/cancel", s.authMiddleware.Auth, s.handler.contract.CancelContract)
 	contractRoutes.Get("/:contractID", s.authMiddleware.Auth, s.handler.contract.GetContractByContractID)
 	contractRoutes.Get("/", s.authMiddleware.Auth, s.handler.contract.GetContractByUserID)
 	contractRoutes.Get("/:dormID", s.authMiddleware.Auth, s.handler.contract.GetContractByDormID)
-	contractRoutes.Patch("/:contractID/sign", s.authMiddleware.Auth, s.handler.contract.SignContract)
-	contractRoutes.Patch("/:contractID/cancel", s.authMiddleware.Auth, s.handler.contract.CancelContract)
 	contractRoutes.Delete("/:contractID", s.authMiddleware.Auth, s.handler.contract.Delete)
 
 }

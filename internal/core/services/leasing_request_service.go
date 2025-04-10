@@ -11,12 +11,13 @@ import (
 )
 
 type LeasingRequestService struct {
-	requestRepo ports.LeasingRequestRepository
-	dormRepo    ports.DormRepository
+	requestRepo  ports.LeasingRequestRepository
+	dormRepo     ports.DormRepository
+	contractRepo ports.ContractRepository
 }
 
-func NewLeasingRequestService(requestRepo ports.LeasingRequestRepository, dormRepo ports.DormRepository) ports.LeasingRequestService {
-	return &LeasingRequestService{requestRepo: requestRepo, dormRepo: dormRepo}
+func NewLeasingRequestService(requestRepo ports.LeasingRequestRepository, dormRepo ports.DormRepository, contractRepo ports.ContractRepository) ports.LeasingRequestService {
+	return &LeasingRequestService{requestRepo: requestRepo, dormRepo: dormRepo, contractRepo: contractRepo}
 }
 
 func (s *LeasingRequestService) Create(leeseeID uuid.UUID, dormID uuid.UUID, message string) (*domain.LeasingRequest, error) {
@@ -64,6 +65,11 @@ func (s *LeasingRequestService) Approve(id, userId uuid.UUID, isAdmin bool) erro
 	leasingRequest.End = time.Now()
 	leasingRequest.Status = domain.RequestAccepted
 	err = s.requestRepo.Update(leasingRequest)
+	if err != nil {
+		return err
+	}
+	contract := &domain.Contract{LesseeID: leasingRequest.LesseeID, DormID: leasingRequest.DormID}
+	err = s.contractRepo.Create(contract)
 	if err != nil {
 		return err
 	}
