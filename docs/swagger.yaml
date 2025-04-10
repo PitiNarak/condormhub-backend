@@ -11,13 +11,6 @@ components:
         zipcode:
           type: string
       type: object
-    dto.ContractRequestBody:
-      properties:
-        dormId:
-          type: string
-        lesseeId:
-          type: string
-      type: object
     dto.ContractResponseBody:
       properties:
         contractStatus:
@@ -838,45 +831,6 @@ paths:
       summary: Retrieve contracts by user ID
       tags:
       - contracts
-    post:
-      description: Create a contract between a lessor and lessee for a dorm
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/dto.ContractRequestBody'
-        description: Contract details
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-dto_ContractResponseBody'
-          description: Contract created successfully
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Invalid request body
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Failed to create contract
-      security:
-      - Bearer: []
-      summary: Create a new contract
-      tags:
-      - contracts
   /contract/{contractID}:
     delete:
       description: Permanently delete a contract by ID
@@ -998,7 +952,7 @@ paths:
       parameters:
       - description: Contract ID
         in: path
-        name: contractId
+        name: contractID
         required: true
         schema:
           type: string

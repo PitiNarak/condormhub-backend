@@ -24,7 +24,7 @@ func NewContractHandler(contractService ports.ContractService) ports.ContractHan
 // @Description Sign a contract by providing contract ID
 // @Tags contracts
 // @Security Bearer
-// @Param contractId path string true "Contract ID"
+// @Param contractID path string true "Contract ID"
 // @Produce json
 // @Success 200 {object} dto.SuccessResponse[dto.ContractResponseBody] "Contract signed successfully"
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
