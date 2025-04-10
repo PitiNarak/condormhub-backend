@@ -75,7 +75,7 @@ func (ct *ContractHandler) Create(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to sign contract"
-// @Router /contract/{contractId}/sign [patch]
+// @Router /contract/{contractID}/sign [patch]
 func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
@@ -111,7 +111,7 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format or contract cannot be cancelled"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to cancel contract"
-// @Router /contract/{contractId}/cancel [patch]
+// @Router /contract/{contractID}/cancel [patch]
 func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uuid.UUID)
 
@@ -161,7 +161,7 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to delete contract"
-// @Router /contract/{contractId} [delete]
+// @Router /contract/{contractID} [delete]
 func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
 	contractID, parseErr := uuid.Parse(c.Params("contractID"))
 	if parseErr != nil {
@@ -187,7 +187,7 @@ func (ct *ContractHandler) Delete(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid contract ID format"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve contract"
-// @Router /contract/{contractId} [get]
+// @Router /contract/{contractID} [get]
 func (ct *ContractHandler) GetContractByContractID(c *fiber.Ctx) error {
 	contractID, parseErr := uuid.Parse(c.Params("contractID"))
 	if parseErr != nil {
@@ -259,7 +259,7 @@ func (ct *ContractHandler) GetContractByUserID(c *fiber.Ctx) error {
 // @Failure 400 {object} dto.ErrorResponse "Invalid dorm ID format or query parameters"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 500 {object} dto.ErrorResponse "Failed to retrieve contracts"
-// @Router /contract/{dormId} [get]
+// @Router /contract/{dormID} [get]
 func (ct *ContractHandler) GetContractByDormID(c *fiber.Ctx) error {
 	id := c.Params("dormID")
 	dormID, err := uuid.Parse(id)

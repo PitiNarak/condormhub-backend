@@ -877,7 +877,7 @@ paths:
       summary: Create a new contract
       tags:
       - contracts
-  /contract/{contractId}:
+  /contract/{contractID}:
     delete:
       description: Permanently delete a contract by ID
       parameters:
@@ -952,7 +952,7 @@ paths:
       summary: Retrieve a contract by contract ID
       tags:
       - contracts
-  /contract/{contractId}/cancel:
+  /contract/{contractID}/cancel:
     patch:
       description: Cancel a contract if it is not signed
       parameters:
@@ -992,7 +992,7 @@ paths:
       summary: Cancel an existing contract
       tags:
       - contracts
-  /contract/{contractId}/sign:
+  /contract/{contractID}/sign:
     patch:
       description: Sign a contract by providing contract ID
       parameters:
@@ -1032,7 +1032,7 @@ paths:
       summary: Sign an existing contract
       tags:
       - contracts
-  /contract/{dormId}:
+  /contract/{dormID}:
     get:
       description: Get all contracts associated with a specific dorm
       parameters:
