@@ -24,4 +24,5 @@ type ContractResponseBody struct {
 	LessorStatus   ContractStatus   `json:"lessorStatus"`
 	LesseeStatus   ContractStatus   `json:"lesseeStatus"`
 	ContractStatus ContractStatus   `json:"contractStatus"`
+	Images         []string         `json:"imagesUrl"`
 }
