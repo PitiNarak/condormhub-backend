@@ -61,7 +61,7 @@ func (r *Review) ToDTO() dto.Review {
 func (l *LeasingHistory) AfterUpdate(tx *gorm.DB) (err error) {
 	// Calculate the new average rating after an update to leasingHistory
 	var avgRating float64
-	err = tx.Model(&LeasingHistory{}).Select("COALESCE(avg(rate), 0)").Where("dorm_id = ?", l.DormID).Scan(&avgRating).Error
+	err = tx.Model(&LeasingHistory{}).Select("COALESCE(avg(rate), 0)").Where("dorm_id = ?", l.DormID).Where("review_flag = ?", true).Scan(&avgRating).Error
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (l *LeasingHistory) AfterUpdate(tx *gorm.DB) (err error) {
 
 	// Count the amount of review a lessor has after an update to leasingHistory
 	var count int64
-	err = tx.Model(&LeasingHistory{}).Joins("JOIN dorms ON dorms.id = leasing_histories.dorm_id").Where("dorms.owner_id = ? AND review_flag = true", dorm.OwnerID).Count(&count).Error
+	err = tx.Model(&LeasingHistory{}).Joins("JOIN dorms ON dorms.id = leasing_histories.dorm_id").Where("dorms.owner_id = ?", dorm.OwnerID).Where("leasing_histories.review_flag = ?", true).Count(&count).Error
 	if err != nil {
 		return err
 	}
