@@ -134,7 +134,7 @@ func (s *LeasingHistoryService) DeleteReview(user *domain.User, id uuid.UUID) er
 		return err
 	}
 	history.ReviewFlag = false
-	err = s.historyRepo.Update(history)
+	err = s.historyRepo.DeleteReview(history)
 	if err != nil {
 		return err
 	}
