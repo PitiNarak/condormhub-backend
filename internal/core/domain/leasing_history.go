@@ -94,3 +94,20 @@ func (l *LeasingHistory) AfterUpdate(tx *gorm.DB) (err error) {
 
 	return nil
 }
+
+func updateDormsLeasedCount(tx *gorm.DB, lesseeID uuid.UUID) error {
+	var count int64
+	if err := tx.Model(&LeasingHistory{}).Where("lessee_id = ?", lesseeID).Count(&count).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Model(&User{}).Where("id = ?", lesseeID).Update("dorms_leased", count).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l *LeasingHistory) AfterCreate(tx *gorm.DB) (err error) {
+	return updateDormsLeasedCount(tx, l.LesseeID)
+}
