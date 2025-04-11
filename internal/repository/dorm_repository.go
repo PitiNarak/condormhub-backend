@@ -24,9 +24,9 @@ func (d *DormRepository) Create(dorm *domain.Dorm) error {
 	return nil
 }
 
-func (d *DormRepository) Delete(id uuid.UUID) error {
+func (d *DormRepository) Delete(dorm domain.Dorm) error {
 	// TODO: Cascade delete for all field that reference to dorm
-	if err := d.db.Select("Images").Delete(&domain.Dorm{ID: id}).Error; err != nil {
+	if err := d.db.Select("Images").Delete(&dorm).Error; err != nil {
 		return apperror.InternalServerError(err, "Failed to delete dorm")
 	}
 	return nil
