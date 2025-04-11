@@ -13,6 +13,7 @@ type LeasingHistoryRepository interface {
 	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
+	DeleteReview(leasingHistory *domain.LeasingHistory) error
 }
 
 type LeasingHistoryService interface {

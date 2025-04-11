@@ -15,7 +15,7 @@ type DormRepository interface {
 	GetAll(limit int, page int, search string, min_price int, max_price int, district string, subdistrict string, province string, zipcode string) ([]domain.Dorm, int, int, error)
 	GetByID(id uuid.UUID) (*domain.Dorm, error)
 	Update(id uuid.UUID, dorm dto.DormUpdateRequestBody) error
-	Delete(id uuid.UUID) error
+	Delete(dorm domain.Dorm) error
 	SaveDormImage(dormImage *domain.DormImage) error
 	GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]domain.Dorm, int, int, error)
 	DeleteImageByKey(imageKey string) error

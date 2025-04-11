@@ -113,7 +113,7 @@ func (s *DormService) Delete(ctx context.Context, userID uuid.UUID, isAdmin bool
 		}
 	}
 
-	return s.dormRepo.Delete(dormID)
+	return s.dormRepo.Delete(*dorm)
 }
 
 func (s *DormService) UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error) {
