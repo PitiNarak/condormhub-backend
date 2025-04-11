@@ -200,5 +200,8 @@ func (u *User) ToDTO() dto.UserResponse {
 		Lifestyles:         lifestyles,
 		PhoneNumber:        u.PhoneNumber,
 		IsStudentVerified:  u.IsStudentVerified,
+		ReviewCount:        u.ReviewCount,
+		DormsOwned:         u.DormsOwned,
+		DormsLeased:        u.DormsLeased,
 	}
 }
