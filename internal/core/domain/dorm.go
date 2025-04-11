@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Dorm struct {
@@ -62,4 +63,25 @@ type DormImage struct {
 	CreateAt time.Time `json:"createAt" gorm:"autoCreateTime"`
 	DormID   uuid.UUID `gorm:"type:uuid;not null"`
 	ImageKey string    `gorm:"type:text;not null"`
+}
+
+func updateDormsOwnedCount(tx *gorm.DB, lessorID uuid.UUID) error {
+	var count int64
+	if err := tx.Model(&Dorm{}).Where("owner_id = ?", lessorID).Count(&count).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Model(&User{}).Where("id = ?", lessorID).Update("dorms_owned", count).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Dorm) AfterCreate(tx *gorm.DB) (err error) {
+	return updateDormsOwnedCount(tx, d.OwnerID)
+}
+
+func (d *Dorm) AfterDelete(tx *gorm.DB) (err error) {
+	return updateDormsOwnedCount(tx, d.OwnerID)
 }
