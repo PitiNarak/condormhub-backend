@@ -25,7 +25,7 @@ func (s *Server) initHandler() {
 	user := handler1.NewUserHandler(s.service.user)
 	exampleUpload := handler1.NewTestUploadHandler(s.storage)
 	dorm := handler1.NewDormHandler(s.service.dorm)
-	leasingHistory := handler1.NewLeasingHistoryHandler(s.service.leasingHistory)
+	leasingHistory := handler1.NewLeasingHistoryHandler(s.service.leasingHistory, s.service.dorm)
 	order := handler1.NewOrderHandler(s.service.order)
 	tsx := handler1.NewTransactionHandler(s.service.tsx, s.stripeConfig)
 	ownershipProof := handler1.NewOwnershipProofHandler(s.service.ownershipProof, s.storage)

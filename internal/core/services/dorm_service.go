@@ -31,7 +31,7 @@ func checkPermission(ownerID uuid.UUID, userID uuid.UUID, isAdmin bool) error {
 	return nil
 }
 
-func (s *DormService) getImageUrl(dormImage []domain.DormImage) []string {
+func (s *DormService) GetImageUrl(dormImage []domain.DormImage) []string {
 	urls := make([]string, len(dormImage))
 	for i, v := range dormImage {
 		urls[i] = s.storage.GetPublicUrl(v.ImageKey)
@@ -62,7 +62,7 @@ func (s *DormService) GetAll(
 	resData := make([]dto.DormResponseBody, len(dorms))
 	for i, v := range dorms {
 		resData[i] = v.ToDTO()
-		resData[i].Images = s.getImageUrl(v.Images)
+		resData[i].Images = s.GetImageUrl(v.Images)
 	}
 	return resData, totalPages, totalRows, nil
 }
@@ -73,7 +73,7 @@ func (s *DormService) GetByID(id uuid.UUID) (*dto.DormResponseBody, error) {
 		return nil, err
 	}
 	resData := dorm.ToDTO()
-	resData.Images = s.getImageUrl(dorm.Images)
+	resData.Images = s.GetImageUrl(dorm.Images)
 	return &resData, nil
 }
 
@@ -153,7 +153,7 @@ func (s *DormService) GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dt
 	resData := make([]dto.DormResponseBody, len(dorms))
 	for i, v := range dorms {
 		resData[i] = v.ToDTO()
-		resData[i].Images = s.getImageUrl(v.Images)
+		resData[i].Images = s.GetImageUrl(v.Images)
 	}
 	return resData, totalPages, totalRows, nil
 }

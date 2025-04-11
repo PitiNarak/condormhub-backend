@@ -16,6 +16,7 @@ type LeasingHistory struct {
 	Price      float64             `json:"price"`
 	Review     Review              `json:"review"`
 	ReviewFlag bool                `json:"reviewFlag"`
+	Images     []string            `json:"imagesUrl"`
 }
 
 type Review struct {

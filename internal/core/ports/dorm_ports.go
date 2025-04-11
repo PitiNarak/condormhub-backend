@@ -31,6 +31,7 @@ type DormService interface {
 	UploadDormImage(ctx context.Context, dormID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 	GetByOwnerID(ownerID uuid.UUID, limit int, page int) ([]dto.DormResponseBody, int, int, error)
 	DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error
+	GetImageUrl(dormImage []domain.DormImage) []string
 }
 
 type DormHandler interface {
