@@ -59,12 +59,38 @@ func (r *Review) ToDTO() dto.Review {
 }
 
 func (l *LeasingHistory) AfterUpdate(tx *gorm.DB) (err error) {
+	// Calculate the new average rating after an update to leasingHistory
 	var avgRating float64
-
 	err = tx.Model(&LeasingHistory{}).Select("COALESCE(avg(rate), 0)").Where("dorm_id = ?", l.DormID).Scan(&avgRating).Error
 	if err != nil {
 		return err
 	}
 
-	return tx.Model(Dorm{}).Where("id = ?", l.DormID).Update("rating", avgRating).Error
+	// Update the rating field in the dorms table
+	err = tx.Model(Dorm{}).Where("id = ?", l.DormID).Update("rating", avgRating).Error
+	if err != nil {
+		return err
+	}
+
+	// Find the dorm the is related to the updated leasingHistory to find the lessor related
+	dorm := new(Dorm)
+	err = tx.First(dorm, l.DormID).Error
+	if err != nil {
+		return err
+	}
+
+	// Count the amount of review a lessor has after an update to leasingHistory
+	var count int64
+	err = tx.Model(&LeasingHistory{}).Joins("JOIN dorms ON dorms.id = leasing_histories.dorm_id").Where("dorms.owner_id = ? AND review_flag = true", dorm.OwnerID).Count(&count).Error
+	if err != nil {
+		return err
+	}
+
+	// Update the review count in the users table
+	err = tx.Model(&User{}).Where("id = ?", dorm.OwnerID).Update("review_count", count).Error
+	if err != nil {
+		return nil
+	}
+
+	return nil
 }
