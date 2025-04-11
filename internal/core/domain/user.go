@@ -175,6 +175,9 @@ type User struct {
 	StudentEvidence    string
 	IsStudentVerified  bool `gorm:"default:false"`
 	ProfilePicKey      string
+	ReviewCount        int64 `gorm:"default:0"`
+	DormsOwned         int64 `gorm:"default:0"`
+	DormsLeased        int64 `gorm:"default:0"`
 }
 
 func (u *User) ToDTO() dto.UserResponse {
