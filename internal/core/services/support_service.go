@@ -1,8 +1,11 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
 )
 
@@ -20,4 +23,19 @@ func (s *SupportService) Create(support *domain.SupportRequest) error {
 
 func (s *SupportService) GetAll(limit int, page int, userID uuid.UUID, isAdmin bool) ([]domain.SupportRequest, int, int, error) {
 	return s.repo.GetAll(limit, page, userID, isAdmin)
+}
+
+func (s *SupportService) UpdateStatus(id uuid.UUID, status domain.SupportStatus) (*domain.SupportRequest, error) {
+	support, err := s.repo.GetByID(id)
+	if err != nil {
+		return nil, apperror.NotFoundError(err, "Support request not found")
+	}
+
+	if status != domain.ProblemOpen && status != domain.ProblemInProgress && status != domain.ProblemResolved {
+		return nil, apperror.UnprocessableEntityError(errors.New("invalid status value"), "Invalid status value")
+	}
+
+	support.Status = status
+
+	return support, s.repo.UpdateStatus(id, status)
 }
