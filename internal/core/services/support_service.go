@@ -25,9 +25,17 @@ func (s *SupportService) GetAll(limit int, page int, userID uuid.UUID, isAdmin b
 	return s.repo.GetAll(limit, page, userID, isAdmin)
 }
 
-func (s *SupportService) UpdateStatus(id uuid.UUID, status domain.SupportStatus) error {
-	if status != domain.ProblemOpen && status != domain.ProblemInProgress && status != domain.ProblemResolved {
-		return apperror.BadRequestError(errors.New("invalid status value"), "Invalid status value")
+func (s *SupportService) UpdateStatus(id uuid.UUID, status domain.SupportStatus) (*domain.SupportRequest, error) {
+	support, err := s.repo.GetByID(id)
+	if err != nil {
+		return nil, apperror.NotFoundError(err, "Support request not found")
 	}
-	return s.repo.UpdateStatus(id, status)
+
+	if status != domain.ProblemOpen && status != domain.ProblemInProgress && status != domain.ProblemResolved {
+		return nil, apperror.BadRequestError(errors.New("invalid status value"), "Invalid status value")
+	}
+
+	support.Status = status
+
+	return support, s.repo.UpdateStatus(id, status)
 }

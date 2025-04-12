@@ -16,7 +16,7 @@ type SupportRepository interface {
 type SupportService interface {
 	Create(support *domain.SupportRequest) error
 	GetAll(limit int, page int, userID uuid.UUID, isAdmin bool) ([]domain.SupportRequest, int, int, error)
-	UpdateStatus(id uuid.UUID, status domain.SupportStatus) error
+	UpdateStatus(id uuid.UUID, status domain.SupportStatus) (*domain.SupportRequest, error)
 }
 
 type SupportHandler interface {

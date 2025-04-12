@@ -128,9 +128,10 @@ func (h *SupportHandler) UpdateStatus(c *fiber.Ctx) error {
 	}
 
 	status := domain.SupportStatus(req.Status)
-	if err = h.service.UpdateStatus(supportID, status); err != nil {
+	updatedSupport, err := h.service.UpdateStatus(supportID, status)
+	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"placeholder": "placeholder"}))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedSupport.ToDTO()))
 }
