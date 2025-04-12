@@ -565,6 +565,13 @@ components:
         updateAt:
           type: string
       type: object
+    dto.UpdateStatusRequestBody:
+      properties:
+        status:
+          type: string
+      required:
+      - status
+      type: object
     dto.UserFirstFillRequestBody:
       properties:
         birthDate:
@@ -2693,6 +2700,72 @@ paths:
       security:
       - Bearer: []
       summary: Submit a support request
+      tags:
+      - support
+  /support/{id}:
+    patch:
+      description: Modifies an existing support request's status based on the given
+        ID. The possible status are OPEN, IN-PROGRESS, and RESOLVED.
+      parameters:
+      - description: SupportRequestID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.UpdateStatusRequestBody'
+        description: Status update
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_SupportResponseBody'
+          description: Status updated
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to update support request status
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Support request not found
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid status value
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to update support request status
+      security:
+      - Bearer: []
+      summary: Update a support request's status
       tags:
       - support
   /transaction:

@@ -107,6 +107,23 @@ func (h *SupportHandler) GetAll(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+// UpdateStatus godoc
+// @Summary Update a support request's status
+// @Description Modifies an existing support request's status based on the given ID. The possible status are OPEN, IN-PROGRESS, and RESOLVED.
+// @Tags support
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param id path string true "SupportRequestID"
+// @Param dorm body dto.UpdateStatusRequestBody true "Status update"
+// @Success 200 {object} dto.SuccessResponse[dto.SupportResponseBody] "Status updated"
+// @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to update support request status"
+// @Failure 404 {object} dto.ErrorResponse "Support request not found"
+// @Failure 422 {object} dto.ErrorResponse "Invalid status value"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to update support request status"
+// @Router /support/{id} [patch]
 func (h *SupportHandler) UpdateStatus(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
