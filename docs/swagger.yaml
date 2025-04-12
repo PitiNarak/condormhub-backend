@@ -316,6 +316,16 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_SupportResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.SupportResponseBody'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.ProfilePictureUploadResponseBody:
       properties:
         url:
@@ -615,6 +625,10 @@ components:
           type: string
         createAt:
           type: string
+        dorms_owned:
+          type: integer
+        dormsLeased:
+          type: integer
         email:
           type: string
         filledPersonalInfo:
@@ -640,6 +654,8 @@ components:
           type: string
         profilePicUrl:
           type: string
+        review_count:
+          type: integer
         role:
           type: string
         username:
@@ -2603,6 +2619,43 @@ paths:
       tags:
       - request
   /support:
+    get:
+      description: Retrieve a list of all support requests.
+      parameters:
+      - description: Number of support requests to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_SupportResponseBody'
+          description: All support requests retrieved successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Could not fetch support requests
+      security:
+      - Bearer: []
+      summary: Get all support requests
+      tags:
+      - support
     post:
       description: Let a user send a message to the admin
       requestBody:

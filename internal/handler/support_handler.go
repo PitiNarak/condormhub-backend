@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -51,4 +53,56 @@ func (h *SupportHandler) Create(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(dto.Success(support.ToDTO()))
+}
+
+// GetAll godoc
+// @Summary Get all support requests
+// @Description Retrieve a list of all support requests.
+// @Tags support
+// @Security Bearer
+// @Param limit query int false "Number of support requests to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Produce json
+// @Success 200 {object} dto.PaginationResponse[dto.SupportResponseBody] "All support requests retrieved successfully"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Could not fetch support requests"
+// @Router /support [get]
+func (h *SupportHandler) GetAll(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isAdmin := user.Role == domain.AdminRole
+
+	supports, totalPages, totalRows, err := h.service.GetAll(limit, page, userID, isAdmin)
+	if err != nil {
+		return err
+	}
+
+	resData := make([]dto.SupportResponseBody, len(supports))
+	for i, support := range supports {
+		resData[i] = support.ToDTO()
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
