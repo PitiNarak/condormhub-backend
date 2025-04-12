@@ -127,6 +127,11 @@ func (h *SupportHandler) UpdateStatus(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "Validation failed")
 	}
 
+	user := c.Locals("user").(*domain.User)
+	if user.Role != domain.AdminRole {
+		return apperror.ForbiddenError(errors.New("unauthorized action"), "You do not have permission to update support request status")
+	}
+
 	status := domain.SupportStatus(req.Status)
 	updatedSupport, err := h.service.UpdateStatus(supportID, status)
 	if err != nil {
