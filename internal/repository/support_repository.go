@@ -21,3 +21,12 @@ func (s *SupportRepository) Create(support *domain.SupportRequest) error {
 	}
 	return nil
 }
+
+func (s *SupportRepository) GetAll(limit int, page int) ([]domain.SupportRequest, int, int, error) {
+	var supports []domain.SupportRequest
+	totalPages, totalRows, err := s.db.Paginate(&supports, s.db.DB, limit, page, "update_at DESC")
+	if err != nil {
+		return nil, 0, 0, apperror.InternalServerError(err, "Could not fetch support requests")
+	}
+	return supports, totalPages, totalRows, nil
+}

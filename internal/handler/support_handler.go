@@ -52,3 +52,36 @@ func (h *SupportHandler) Create(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(dto.Success(support.ToDTO()))
 }
+
+func (h *SupportHandler) GetAll(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	supports, totalPages, totalRows, err := h.service.GetAll(limit, page)
+	if err != nil {
+		return err
+	}
+
+	resData := make([]dto.SupportResponseBody, len(supports))
+	for i, support := range supports {
+		resData[i] = support.ToDTO()
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}

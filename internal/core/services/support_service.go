@@ -16,3 +16,7 @@ func NewSupportService(repo ports.SupportRepository) ports.SupportService {
 func (s *SupportService) Create(support *domain.SupportRequest) error {
 	return s.repo.Create(support)
 }
+
+func (s *SupportService) GetAll(limit int, page int) ([]domain.SupportRequest, int, int, error) {
+	return s.repo.GetAll(limit, page)
+}
