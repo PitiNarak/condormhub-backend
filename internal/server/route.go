@@ -142,4 +142,5 @@ func (s *Server) initSupportRoutes() {
 	supportRoutes := s.app.Group("/support")
 	supportRoutes.Post("/", s.authMiddleware.Auth, s.handler.support.Create)
 	supportRoutes.Get("/", s.authMiddleware.Auth, s.handler.support.GetAll)
+	supportRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.support.UpdateStatus)
 }
