@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -78,7 +80,14 @@ func (h *SupportHandler) GetAll(c *fiber.Ctx) error {
 		page = 1
 	}
 
-	supports, totalPages, totalRows, err := h.service.GetAll(limit, page)
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isAdmin := user.Role == domain.AdminRole
+
+	supports, totalPages, totalRows, err := h.service.GetAll(limit, page, userID, isAdmin)
 	if err != nil {
 		return err
 	}
