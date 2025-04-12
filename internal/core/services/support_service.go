@@ -32,7 +32,7 @@ func (s *SupportService) UpdateStatus(id uuid.UUID, status domain.SupportStatus)
 	}
 
 	if status != domain.ProblemOpen && status != domain.ProblemInProgress && status != domain.ProblemResolved {
-		return nil, apperror.BadRequestError(errors.New("invalid status value"), "Invalid status value")
+		return nil, apperror.UnprocessableEntityError(errors.New("invalid status value"), "Invalid status value")
 	}
 
 	support.Status = status
