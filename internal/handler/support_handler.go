@@ -106,3 +106,31 @@ func (h *SupportHandler) GetAll(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(res)
 }
+
+func (h *SupportHandler) UpdateStatus(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+	supportID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	req := new(dto.UpdateStatusRequestBody)
+	if err = c.BodyParser(req); err != nil {
+		return apperror.BadRequestError(err, "Your request is invalid")
+	}
+
+	validate := validator.New()
+	if err = validate.Struct(req); err != nil {
+		return apperror.BadRequestError(err, "Validation failed")
+	}
+
+	status := domain.SupportStatus(req.Status)
+	if err = h.service.UpdateStatus(supportID, status); err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(fiber.Map{"placeholder": "placeholder"}))
+}

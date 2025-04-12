@@ -38,3 +38,10 @@ func (s *SupportRepository) GetAll(limit int, page int, userID uuid.UUID, isAdmi
 	}
 	return supports, totalPages, totalRows, nil
 }
+
+func (s *SupportRepository) UpdateStatus(id uuid.UUID, status domain.SupportStatus) error {
+	if err := s.db.Model(&domain.SupportRequest{}).Where("id = ?", id).Update("status", status).Error; err != nil {
+		return apperror.InternalServerError(err, "Could not update support request status")
+	}
+	return nil
+}
