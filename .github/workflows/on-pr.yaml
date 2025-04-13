@@ -19,7 +19,7 @@ jobs:
         run: |
           go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc4
           export PATH=$PATH:$(go env GOPATH)/bin
-          swag init -v3.1 -o docs -g cmd/server/main.go --parseDependency --parseInternal
+          swag init -v3.1 -o docs -g main.go --parseDependency --parseInternal
       - name: Upload Swagger Docs
         uses: actions/upload-artifact@v4
         with:
@@ -89,4 +89,4 @@ jobs:
           cache: true
           cache-dependency-path: go.sum
       - name: Build
-        run: go build -o bin/server cmd/server/main.go
+        run: go build -o bin/server main.go
