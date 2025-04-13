@@ -624,7 +624,27 @@ func (h *UserHandler) BanUser(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "Can not parse UUID")
 	}
 
-	updatedUser, err := h.userService.BanUser(userID)
+	updatedUser, err := h.userService.UpdateUserBanStatus(userID, true)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedUser.ToDTO()))
+}
+
+func (h *UserHandler) UnbanUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	userID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	updatedUser, err := h.userService.UpdateUserBanStatus(userID, false)
 	if err != nil {
 		return err
 	}

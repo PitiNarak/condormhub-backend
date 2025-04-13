@@ -149,4 +149,5 @@ func (s *Server) initSupportRoutes() {
 func (s *Server) initAdminRoutes() {
 	adminRoutes := s.app.Group("/admin", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin)
 	adminRoutes.Patch("/user/:id/ban", s.handler.user.BanUser)
+	adminRoutes.Patch("/user/:id/unban", s.handler.user.UnbanUser)
 }
