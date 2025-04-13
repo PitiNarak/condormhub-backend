@@ -38,6 +38,7 @@ type UserService interface {
 	ResendVerificationEmailService(ctx context.Context, email string) error
 	UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 	GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) (float64, error)
+	BanUser(id uuid.UUID) (*domain.User, error)
 }
 
 type UserHandler interface {
@@ -57,4 +58,5 @@ type UserHandler interface {
 	ResendVerificationEmailHandler(c *fiber.Ctx) error
 	UploadProfilePicture(c *fiber.Ctx) error
 	GetLessorIncome(c *fiber.Ctx) error
+	BanUser(c *fiber.Ctx) error
 }

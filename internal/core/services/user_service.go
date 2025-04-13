@@ -396,3 +396,15 @@ func (s *UserService) GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) 
 	}
 	return s.userRepo.GetLessorIncome(lessorID)
 }
+
+func (s *UserService) BanUser(id uuid.UUID) (*domain.User, error) {
+	user, err := s.userRepo.GetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if user.Banned {
+		return nil, apperror.ConflictError(errors.New("user already banned"), "User already banned")
+	}
+	user.Banned = true
+	return user, s.userRepo.UpdateUser(user)
+}

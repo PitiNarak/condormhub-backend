@@ -611,3 +611,23 @@ func (h *UserHandler) GetLessorIncome(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.LessorIncomeResponseBody{Income: income}))
 }
+
+func (h *UserHandler) BanUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	userID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	updatedUser, err := h.userService.BanUser(userID)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedUser.ToDTO()))
+}
