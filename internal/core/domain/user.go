@@ -204,5 +204,6 @@ func (u *User) ToDTO() dto.UserResponse {
 		ReviewCount:        u.ReviewCount,
 		DormsOwned:         u.DormsOwned,
 		DormsLeased:        u.DormsLeased,
+		Banned:             u.Banned,
 	}
 }
