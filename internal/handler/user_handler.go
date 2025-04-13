@@ -612,6 +612,21 @@ func (h *UserHandler) GetLessorIncome(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.LessorIncomeResponseBody{Income: income}))
 }
 
+// BanUser godoc
+// @Summary Ban a user
+// @Description Ban a user by their ID. Only admins are allowed to use this endpoint
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param id path string true "userID"
+// @Success 200 {object} dto.SuccessResponse[dto.UserResponse] "User banned"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "confilct"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/user/{id}/ban [patch]
 func (h *UserHandler) BanUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -632,6 +647,21 @@ func (h *UserHandler) BanUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedUser.ToDTO()))
 }
 
+// UnbanUser godoc
+// @Summary Unban a user
+// @Description Unban a user by their ID. Only admins are allowed to use this endpoint
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param id path string true "userID"
+// @Success 200 {object} dto.SuccessResponse[dto.UserResponse] "User unbanned"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "confilct"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/user/{id}/unban [patch]
 func (h *UserHandler) UnbanUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
