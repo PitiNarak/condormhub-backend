@@ -69,7 +69,8 @@ type UserResponse struct {
 	ProfilePicUrl      string    `json:"profilePicUrl"`
 	ReviewCount        int64     `json:"review_count"`
 	DormsOwned         int64     `json:"dorms_owned"`
-	DormsLeased        int64     `gorm:"dorms_leased"`
+	DormsLeased        int64     `json:"dorms_leased"`
+	Banned             bool      `json:"banned"`
 }
 
 type StudentEvidenceUploadResponseBody struct {

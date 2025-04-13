@@ -178,6 +178,7 @@ type User struct {
 	ReviewCount        int64 `gorm:"default:0"`
 	DormsOwned         int64 `gorm:"default:0"`
 	DormsLeased        int64 `gorm:"default:0"`
+	Banned             bool  `gorm:"default:false"`
 }
 
 func (u *User) ToDTO() dto.UserResponse {
@@ -203,5 +204,6 @@ func (u *User) ToDTO() dto.UserResponse {
 		ReviewCount:        u.ReviewCount,
 		DormsOwned:         u.DormsOwned,
 		DormsLeased:        u.DormsLeased,
+		Banned:             u.Banned,
 	}
 }
