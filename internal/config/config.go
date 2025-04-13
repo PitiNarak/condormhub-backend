@@ -29,7 +29,7 @@ func Load() *AppConfig {
 	config := &AppConfig{}
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Unable to load .env file: %s", err)
+		log.Printf("Unable to load .env file: %s", err)
 	}
 
 	if err := env.Parse(config); err != nil {
