@@ -147,6 +147,6 @@ func (s *Server) initSupportRoutes() {
 }
 
 func (s *Server) initAdminRoutes() {
-	adminRoutes := s.app.Group("/admin")
-	adminRoutes.Patch("/user/:id/ban", s.authMiddleware.Auth, s.handler.user.BanUser)
+	adminRoutes := s.app.Group("/admin", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin)
+	adminRoutes.Patch("/user/:id/ban", s.handler.user.BanUser)
 }

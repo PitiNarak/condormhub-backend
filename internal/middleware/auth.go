@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
@@ -48,4 +49,12 @@ func (a *AuthMiddleware) Auth(ctx *fiber.Ctx) error {
 	ctx.Locals("user", user)
 
 	return ctx.Next()
+}
+
+func (a *AuthMiddleware) RequireAdmin(c *fiber.Ctx) error {
+	user := c.Locals("user").(*domain.User)
+	if user.Role != domain.AdminRole {
+		return apperror.ForbiddenError(errors.New("admin access required"), "Admin access required")
+	}
+	return c.Next()
 }
