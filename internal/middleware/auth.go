@@ -45,6 +45,10 @@ func (a *AuthMiddleware) Auth(ctx *fiber.Ctx) error {
 		return apperror.UnauthorizedError(err, "User not found")
 	}
 
+	if user.Banned {
+		return apperror.ForbiddenError(errors.New("account banned"), "account banned")
+	}
+
 	ctx.Locals("userID", userID)
 	ctx.Locals("user", user)
 
