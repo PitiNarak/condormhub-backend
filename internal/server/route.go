@@ -26,6 +26,7 @@ func (s *Server) initRoutes() {
 	s.initReceiptRoutes()
 	s.initContractRoutes()
 	s.initSupportRoutes()
+	s.initAdminRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -143,4 +144,10 @@ func (s *Server) initSupportRoutes() {
 	supportRoutes.Post("/", s.authMiddleware.Auth, s.handler.support.Create)
 	supportRoutes.Get("/", s.authMiddleware.Auth, s.handler.support.GetAll)
 	supportRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.support.UpdateStatus)
+}
+
+func (s *Server) initAdminRoutes() {
+	adminRoutes := s.app.Group("/admin", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin)
+	adminRoutes.Patch("/user/:id/ban", s.handler.user.BanUser)
+	adminRoutes.Patch("/user/:id/unban", s.handler.user.UnbanUser)
 }
