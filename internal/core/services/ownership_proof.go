@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -96,19 +95,6 @@ func (o *OwnershipProofService) GetByDormID(dormID uuid.UUID) (*domain.Ownership
 }
 
 func (o *OwnershipProofService) UpdateStatus(dormID uuid.UUID, adminID uuid.UUID, status domain.OwnershipProofStatus) error {
-	admin, err := o.userRepo.GetUserByID(adminID)
-	if err != nil {
-		return err
-	}
-
-	if admin == nil || admin.Role == "" {
-		return apperror.BadRequestError(errors.New("invalid admin"), "Admin not found or role is missing")
-	}
-
-	if admin.Role != domain.AdminRole {
-		return apperror.BadRequestError(errors.New("role mismatch"), "You are not an admin")
-	}
-
 	updateStatusRequestBody := new(dto.UpdateOwnerShipProofStatusRequestBody)
 	updateStatusRequestBody.Status = dto.OwnershipProofStatus(status)
 	updateStatusRequestBody.AdminID = adminID

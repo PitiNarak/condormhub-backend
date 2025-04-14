@@ -95,7 +95,7 @@ func (s *Server) initLeasingRequestRoutes() {
 	historyRoutes.Patch("/:id/approve", s.handler.leasingRequest.Approve)
 	historyRoutes.Patch("/:id/reject", s.handler.leasingRequest.Reject)
 	historyRoutes.Patch("/:id/cancel", s.handler.leasingRequest.Cancel)
-	historyRoutes.Delete("/:id", s.handler.leasingRequest.Delete)
+	historyRoutes.Delete("/:id", s.authMiddleware.RequireAdmin, s.handler.leasingRequest.Delete)
 	historyRoutes.Get("/bydorm/:id", s.handler.leasingRequest.GetByDormID)
 }
 
@@ -118,8 +118,8 @@ func (s *Server) initOwnershipProofRoutes() {
 	ownershipRoutes.Post("/:id/upload", s.authMiddleware.Auth, s.handler.ownershipProof.UploadFile)
 	ownershipRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.ownershipProof.Delete)
 	ownershipRoutes.Get("/:id", s.handler.ownershipProof.GetByDormID)
-	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
-	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
+	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin, s.handler.ownershipProof.Approve)
+	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin, s.handler.ownershipProof.Reject)
 
 }
 
@@ -143,7 +143,7 @@ func (s *Server) initSupportRoutes() {
 	supportRoutes := s.app.Group("/support", s.authMiddleware.Auth)
 	supportRoutes.Post("/", s.handler.support.Create)
 	supportRoutes.Get("/", s.handler.support.GetAll)
-	supportRoutes.Patch("/:id", s.handler.support.UpdateStatus)
+	supportRoutes.Patch("/:id", s.authMiddleware.RequireAdmin, s.handler.support.UpdateStatus)
 }
 
 func (s *Server) initAdminRoutes() {
