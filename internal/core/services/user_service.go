@@ -309,6 +309,7 @@ func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string
 	}
 
 	user.StudentEvidence = fileKey
+	user.IsStudentVerified = domain.StatusPending
 	err = s.userRepo.UpdateUser(user)
 	if err != nil {
 		return "", err
