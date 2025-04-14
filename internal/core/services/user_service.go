@@ -418,6 +418,6 @@ func (s *UserService) UpdateUserBanStatus(id uuid.UUID, ban bool) (*domain.User,
 	return user, s.userRepo.UpdateUser(user)
 }
 
-func (s *UserService) GetPending() ([]domain.User, error) {
-	return s.userRepo.GetPending()
+func (s *UserService) GetPending(limit int, page int) ([]domain.User, int, int, error) {
+	return s.userRepo.GetPending(limit, page)
 }

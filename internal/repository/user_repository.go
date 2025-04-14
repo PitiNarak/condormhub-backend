@@ -93,10 +93,13 @@ func (r *UserRepo) GetLessorIncome(lessorID uuid.UUID) (float64, error) {
 	return income, nil
 }
 
-func (r *UserRepo) GetPending() ([]domain.User, error) {
+func (r *UserRepo) GetPending(limit int, page int) ([]domain.User, int, int, error) {
 	var pending []domain.User
-	if err := r.db.Where("is_student_verified = ?", domain.StatusPending).Find(pending).Error; err != nil {
-		return nil, apperror.InternalServerError(err, "Failed to load lessee with pending verification")
+	query := r.db.Where("is_student_verified = ?", domain.StatusPending)
+
+	totalPages, totalRows, err := r.db.Paginate(pending, query, limit, page, "update_at DESC")
+	if err != nil {
+		return nil, 0, 0, apperror.InternalServerError(err, "Failed to load lessee with pending verification")
 	}
-	return pending, nil
+	return pending, totalPages, totalRows, nil
 }

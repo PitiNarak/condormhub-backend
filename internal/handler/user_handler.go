@@ -683,21 +683,40 @@ func (h *UserHandler) UnbanUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) GetPending(c *fiber.Ctx) error {
-	pendings, err := h.userService.GetPending()
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	pendings, totalPages, totalRows, err := h.userService.GetPending(limit, page)
 	if err != nil {
 		return err
 	}
 
-	res := make([]dto.StudentEvidenceResponse, len(pendings))
+	data := make([]dto.StudentEvidenceResponse, len(pendings))
 	for i, pending := range pendings {
-		res[i].User = h.userService.ConvertToDTO(pending)
+		data[i].User = h.userService.ConvertToDTO(pending)
 
 		evidence, err := h.userService.GetStudentEvidenceDTO(c.Context(), pending.StudentEvidence)
 		if err != nil {
 			return err
 		}
-		res[i].Evidence = *evidence
+		data[i].Evidence = *evidence
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
+	res := dto.SuccessPagination(data, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
