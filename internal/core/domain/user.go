@@ -155,6 +155,14 @@ func (l LifestyleArray) Value() (driver.Value, error) {
 	// return string(jsonData), nil
 }
 
+type VerificationStatus string
+
+const (
+	StatusPending  VerificationStatus = "PENDING"
+	StatusVerified VerificationStatus = "VERIFIED"
+	StatusRejected VerificationStatus = "REJECTED"
+)
+
 type User struct {
 	ID                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	CreateAt           time.Time `gorm:"autoCreateTime"`
@@ -173,7 +181,8 @@ type User struct {
 	Lifestyles         LifestyleArray `validate:"lifestyle" gorm:"type:lifestyle_tag[]"`
 	PhoneNumber        string
 	StudentEvidence    string
-	IsStudentVerified  bool `gorm:"default:false"`
+	IsStudentVerified  VerificationStatus
+	ReviewedDate       time.Time `gorm:"type:DATE;default:null"`
 	ProfilePicKey      string
 	ReviewCount        int64 `gorm:"default:0"`
 	DormsOwned         int64 `gorm:"default:0"`
@@ -200,7 +209,7 @@ func (u *User) ToDTO() dto.UserResponse {
 		FilledPersonalInfo: u.FilledPersonalInfo,
 		Lifestyles:         lifestyles,
 		PhoneNumber:        u.PhoneNumber,
-		IsStudentVerified:  u.IsStudentVerified,
+		IsStudentVerified:  string(u.IsStudentVerified),
 		ReviewCount:        u.ReviewCount,
 		DormsOwned:         u.DormsOwned,
 		DormsLeased:        u.DormsLeased,

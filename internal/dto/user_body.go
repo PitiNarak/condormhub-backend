@@ -65,7 +65,8 @@ type UserResponse struct {
 	FilledPersonalInfo bool      `json:"filledPersonalInfo"`
 	Lifestyles         []string  `json:"lifestyles"`
 	PhoneNumber        string    `json:"phoneNumber"`
-	IsStudentVerified  bool      `json:"isStudentVerified"`
+	IsStudentVerified  string    `json:"isStudentVerified"`
+	ReviewedData       time.Time `json:"reviewed_date"`
 	ProfilePicUrl      string    `json:"profilePicUrl"`
 	ReviewCount        int64     `json:"review_count"`
 	DormsOwned         int64     `json:"dorms_owned"`
