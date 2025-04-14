@@ -31,7 +31,13 @@ func (d *LeasingHistoryRepository) Create(LeasingHistory *domain.LeasingHistory)
 
 func (d *LeasingHistoryRepository) GetByID(id uuid.UUID) (*domain.LeasingHistory, error) {
 	leasingHistory := new(domain.LeasingHistory)
-	if err := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").First(leasingHistory, id).Error; err != nil {
+	if err := d.db.
+		Preload("Dorm").
+		Preload("Lessee").
+		Preload("Orders").
+		Preload("Dorm.Owner").
+		Preload("Images").
+		First(leasingHistory, id).Error; err != nil {
 		if apperror.IsAppError(err) {
 			return nil, err
 		}
@@ -58,6 +64,28 @@ func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory)
 	return nil
 }
 
+func (d *LeasingHistoryRepository) SaveReviewImage(reviewImage *domain.ReviewImage) error {
+	if err := d.db.Create(reviewImage).Error; err != nil {
+		return apperror.InternalServerError(err, "Failed to save review's image to database")
+	}
+	return nil
+}
+
+func (d *LeasingHistoryRepository) DeleteImageByKey(imageKey string) error {
+	if err := d.db.Where("image_key = ?", imageKey).Delete(&domain.ReviewImage{}).Error; err != nil {
+		return apperror.InternalServerError(err, "Failed to delete image")
+	}
+	return nil
+}
+
+func (d *LeasingHistoryRepository) GetImageByKey(imageKey string) (*domain.ReviewImage, error) {
+	reviewImage := new(domain.ReviewImage)
+	if err := d.db.Where("image_key = ?", imageKey).First(reviewImage).Error; err != nil {
+		return nil, apperror.NotFoundError(err, "Image not found")
+	}
+	return reviewImage, nil
+}
+
 func (d *LeasingHistoryRepository) DeleteReview(leasingHistory *domain.LeasingHistory) error {
 	err := d.db.Model(leasingHistory).Update("review_flag", false).Error
 	if err != nil {
@@ -78,7 +106,12 @@ func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 }
 func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	query := d.db.Preload("Dorm").Preload("Lessee").Preload("Orders").Preload("Dorm.Owner").Where("lessee_id = ?", id)
+	query := d.db.Preload("Dorm").
+		Preload("Lessee").
+		Preload("Orders").
+		Preload("Dorm.Owner").
+		Preload("Images").
+		Where("lessee_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(&leasingHistory, query, limit, page, "start")
 
 	if err != nil {
@@ -95,8 +128,11 @@ func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([
 }
 func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	var leasingHistory []domain.LeasingHistory
-	query := d.db.Preload("Dorm").Preload("Dorm.Owner").Where("dorm_id = ?", id)
-	totalPage, totalRows, err := d.db.Paginate(leasingHistory, query, limit, page, "start")
+	query := d.db.Preload("Dorm").
+		Preload("Dorm.Owner").
+		Preload("Images").
+		Where("dorm_id = ?", id)
+	totalPage, totalRows, err := d.db.Paginate(&leasingHistory, query, limit, page, "start")
 
 	if err != nil {
 		if apperror.IsAppError(err) {

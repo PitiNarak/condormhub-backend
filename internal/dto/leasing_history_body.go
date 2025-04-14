@@ -16,20 +16,28 @@ type LeasingHistory struct {
 	Price      float64             `json:"price"`
 	Review     Review              `json:"review"`
 	ReviewFlag bool                `json:"reviewFlag"`
+	Images     []string            `json:"reviewImages"`
 }
 
 type Review struct {
 	Message  string    `json:"message"`
 	Rate     int       `json:"rate"`
 	CreateAt time.Time `json:"createAt"`
+	Images   []string  `json:"url"`
 }
 
 type ReviewCreateRequestBody struct {
-	Message string `json:"message" validate:"required"`
-	Rate    int    `json:"rate" validate:"required,gte=0,lte=5"`
+	Message string   `json:"message" validate:"required"`
+	Rate    int      `json:"rate" validate:"required,gte=0,lte=5"`
+	Images  []string `json:"url"`
 }
 
 type ReviewUpdateRequestBody struct {
-	Message string `json:"message" validate:"omitempty"`
-	Rate    int    `json:"rate" validate:"omitempty,gte=0,lte=5"`
+	Message string   `json:"message" validate:"omitempty"`
+	Rate    int      `json:"rate" validate:"omitempty,gte=0,lte=5"`
+	Images  []string `json:"url"`
+}
+
+type ReviewImageUploadResponseBody struct {
+	ImageURL []string `json:"url"`
 }

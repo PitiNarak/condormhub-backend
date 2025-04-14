@@ -89,6 +89,7 @@ func main() {
 		&domain.Contract{},
 		&domain.LeasingRequest{},
 		&domain.Review{},
+		&domain.ReviewImage{},
 		&domain.Receipt{},
 		&domain.SupportRequest{},
 	); err != nil {

@@ -23,7 +23,7 @@ func (s *Server) initService() {
 	email := email.NewEmailService(s.smtpConfig, s.jwtUtils)
 	user := services.NewUserService(s.repository.user, email, s.jwtUtils, s.storage)
 	dorm := services.NewDormService(s.repository.dorm, s.storage)
-	leasingHistory := services.NewLeasingHistoryService(s.repository.leasingHistory, s.repository.dorm)
+	leasingHistory := services.NewLeasingHistoryService(s.repository.leasingHistory, s.repository.dorm, s.storage)
 	order := services.NewOrderService(s.repository.order, s.repository.leasingHistory)
 	ownershipProof := services.NewOwnershipProofService(s.repository.ownershipProof, s.repository.user, s.storage)
 	contract := services.NewContractService(s.repository.contract, s.repository.user, s.repository.dorm, leasingHistory)

@@ -1,6 +1,9 @@
 package ports
 
 import (
+	"context"
+	"io"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -14,6 +17,9 @@ type LeasingHistoryRepository interface {
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	DeleteReview(leasingHistory *domain.LeasingHistory) error
+	SaveReviewImage(reviewImage *domain.ReviewImage) error
+	DeleteImageByKey(imageKey string) error
+	GetImageByKey(imageKey string) (*domain.ReviewImage, error)
 }
 
 type LeasingHistoryService interface {
@@ -22,9 +28,13 @@ type LeasingHistoryService interface {
 	UpdateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
 	DeleteReview(user *domain.User, id uuid.UUID) error
 	Delete(id uuid.UUID) error
+	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	SetEndTimestamp(id uuid.UUID) error
+	UploadReviewImage(ctx context.Context, historyID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
+	DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error
+	GetImageUrl(reviewImage []domain.ReviewImage) []string
 }
 
 type LeasingHistoryHandler interface {
@@ -35,4 +45,6 @@ type LeasingHistoryHandler interface {
 	GetByUserID(c *fiber.Ctx) error
 	GetByDormID(c *fiber.Ctx) error
 	SetEndTimestamp(c *fiber.Ctx) error
+	UploadReviewImage(c *fiber.Ctx) error
+	DeleteReviewImageByURL(c *fiber.Ctx) error
 }
