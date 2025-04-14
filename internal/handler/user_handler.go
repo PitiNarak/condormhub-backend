@@ -681,3 +681,23 @@ func (h *UserHandler) UnbanUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedUser.ToDTO()))
 }
+
+func (h *UserHandler) GetPending(c *fiber.Ctx) error {
+	pendings, err := h.userService.GetPending()
+	if err != nil {
+		return err
+	}
+
+	res := make([]dto.StudentEvidenceResponse, len(pendings))
+	for i, pending := range pendings {
+		res[i].User = h.userService.ConvertToDTO(pending)
+
+		evidence, err := h.userService.GetStudentEvidenceDTO(c.Context(), pending.StudentEvidence)
+		if err != nil {
+			return err
+		}
+		res[i].Evidence = *evidence
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
+}
