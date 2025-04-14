@@ -182,7 +182,6 @@ type User struct {
 	PhoneNumber        string
 	StudentEvidence    string
 	IsStudentVerified  VerificationStatus
-	ReviewedDate       time.Time `gorm:"type:DATE;default:null"`
 	ProfilePicKey      string
 	ReviewCount        int64 `gorm:"default:0"`
 	DormsOwned         int64 `gorm:"default:0"`

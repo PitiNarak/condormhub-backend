@@ -413,3 +413,7 @@ func (s *UserService) UpdateUserBanStatus(id uuid.UUID, ban bool) (*domain.User,
 	user.Banned = ban
 	return user, s.userRepo.UpdateUser(user)
 }
+
+func (s *UserService) GetPending() ([]domain.User, error) {
+	return s.userRepo.GetPending()
+}
