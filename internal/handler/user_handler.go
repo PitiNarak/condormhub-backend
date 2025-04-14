@@ -682,6 +682,20 @@ func (h *UserHandler) UnbanUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedUser.ToDTO()))
 }
 
+// GetPending godoc
+// @Summary Get all pending student verifications
+// @Description Get all pending student verifications
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param limit query int false "Number of pending verification to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Success 200 {object} dto.PaginationResponse[dto.StudentEvidenceResponse] "All pending verification retrieved"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/lessee/pending [get]
 func (h *UserHandler) GetPending(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
