@@ -23,6 +23,7 @@ type UserRepository interface {
 
 type UserService interface {
 	ConvertToDTO(user domain.User) dto.UserResponse
+	GetStudentEvidenceDTO(c context.Context, studentEvidence string) (*dto.StudentEvidenceUploadResponseBody, error)
 	Create(ctx context.Context, user *domain.User) (string, string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	GetUserByID(id uuid.UUID) (*domain.User, error)

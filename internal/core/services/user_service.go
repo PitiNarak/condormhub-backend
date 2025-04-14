@@ -38,6 +38,23 @@ func (s *UserService) ConvertToDTO(user domain.User) dto.UserResponse {
 	return res
 }
 
+func (s *UserService) GetStudentEvidenceDTO(c context.Context, studentEvidence string) (*dto.StudentEvidenceUploadResponseBody, error) {
+	if studentEvidence == "" {
+		return nil, apperror.NotFoundError(errors.New("student evidence for this user does not exist"), "Student evidence for this user does not exist")
+	}
+
+	url, err := s.storage.GetSignedUrl(c, studentEvidence, time.Minute*60)
+	if err != nil {
+		return nil, apperror.InternalServerError(err, "error getting signed url")
+	}
+
+	res := new(dto.StudentEvidenceUploadResponseBody)
+	res.ImageUrl = url
+	res.Expired = time.Now().Add(time.Hour)
+
+	return res, nil
+}
+
 func (s *UserService) Create(ctx context.Context, user *domain.User) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
@@ -328,20 +345,7 @@ func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, 
 		return nil, err
 	}
 
-	if user.StudentEvidence == "" {
-		return nil, apperror.NotFoundError(errors.New("student evidence for this user does not exist"), "Student evidence for this user does not exist")
-	}
-
-	url, err := s.storage.GetSignedUrl(ctx, user.StudentEvidence, time.Minute*60)
-	if err != nil {
-		return nil, apperror.InternalServerError(err, "error getting signed url")
-	}
-
-	res := new(dto.StudentEvidenceUploadResponseBody)
-	res.ImageUrl = url
-	res.Expired = time.Now().Add(time.Hour)
-
-	return res, nil
+	return s.GetStudentEvidenceDTO(ctx, user.StudentEvidence)
 }
 
 func (s *UserService) ResendVerificationEmailService(ctx context.Context, email string) error {
