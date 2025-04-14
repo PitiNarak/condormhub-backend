@@ -89,14 +89,14 @@ func (s *Server) initLeasingHistoryRoutes() {
 }
 
 func (s *Server) initLeasingRequestRoutes() {
-	historyRoutes := s.app.Group("/request", s.authMiddleware.Auth)
-	historyRoutes.Post("/:id", s.handler.leasingRequest.Create)
-	historyRoutes.Get("/me", s.handler.leasingRequest.GetByUserID)
-	historyRoutes.Patch("/:id/approve", s.handler.leasingRequest.Approve)
-	historyRoutes.Patch("/:id/reject", s.handler.leasingRequest.Reject)
-	historyRoutes.Patch("/:id/cancel", s.handler.leasingRequest.Cancel)
-	historyRoutes.Delete("/:id", s.authMiddleware.RequireAdmin, s.handler.leasingRequest.Delete)
-	historyRoutes.Get("/bydorm/:id", s.handler.leasingRequest.GetByDormID)
+	requestRoutes := s.app.Group("/request", s.authMiddleware.Auth)
+	requestRoutes.Post("/:id", s.handler.leasingRequest.Create)
+	requestRoutes.Get("/me", s.handler.leasingRequest.GetByUserID)
+	requestRoutes.Patch("/:id/approve", s.handler.leasingRequest.Approve)
+	requestRoutes.Patch("/:id/reject", s.handler.leasingRequest.Reject)
+	requestRoutes.Patch("/:id/cancel", s.handler.leasingRequest.Cancel)
+	requestRoutes.Delete("/:id", s.authMiddleware.RequireAdmin, s.handler.leasingRequest.Delete)
+	requestRoutes.Get("/bydorm/:id", s.handler.leasingRequest.GetByDormID)
 }
 
 func (s *Server) initOrderRoutes() {
@@ -124,8 +124,8 @@ func (s *Server) initOwnershipProofRoutes() {
 }
 
 func (s *Server) initReceiptRoutes() {
-	ownershipRoutes := s.app.Group("/receipt", s.authMiddleware.Auth)
-	ownershipRoutes.Get("/", s.handler.receipt.GetByUserID)
+	receiptRoutes := s.app.Group("/receipt", s.authMiddleware.Auth)
+	receiptRoutes.Get("/", s.handler.receipt.GetByUserID)
 }
 
 func (s *Server) initContractRoutes() {
