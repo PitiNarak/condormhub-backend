@@ -19,18 +19,20 @@ type LeasingHistory struct {
 	End        time.Time `gorm:"default:null"`
 	Price      float64
 	ReviewFlag bool
-	Review     Review `gorm:"embedded"`
+	Review     Review        `gorm:"embedded"`
+	Images     []ReviewImage `gorm:"foreignKey:HistoryID"` // Link to ReviewImage
 }
 
-func (l *LeasingHistory) ToDTO() dto.LeasingHistory {
+func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
 	orders := make([]dto.OrderResponseBody, len(l.Orders))
 	for i, v := range l.Orders {
 		orders[i] = v.ToDTO()
 	}
 	var review dto.Review
 	if l.ReviewFlag {
-		review = l.Review.ToDTO()
+		review = l.Review.ToDTO(urls)
 	}
+
 	return dto.LeasingHistory{
 		ID:         l.ID,
 		Dorm:       l.Dorm.ToDTO(),
@@ -50,11 +52,20 @@ type Review struct {
 	CreateAt *time.Time `gorm:"autoUpdateTime;default:null"`
 }
 
-func (r *Review) ToDTO() dto.Review {
+type ReviewImage struct {
+	ID        uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt  time.Time `json:"createAt" gorm:"autoCreateTime"`
+	HistoryID uuid.UUID `gorm:"type:uuid;not null"`
+	ImageKey  string    `gorm:"type:text;not null"`
+}
+
+func (r *Review) ToDTO(urls []string) dto.Review {
+
 	return dto.Review{
 		Message:  r.Message,
 		Rate:     r.Rate,
 		CreateAt: *r.CreateAt,
+		Images:   urls,
 	}
 }
 

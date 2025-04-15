@@ -1,10 +1,16 @@
 package services
 
 import (
+	"context"
+	"fmt"
+	"io"
+	"strings"
 	"time"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
+	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/google/uuid"
 )
@@ -12,10 +18,19 @@ import (
 type LeasingHistoryService struct {
 	historyRepo ports.LeasingHistoryRepository
 	dormRepo    ports.DormRepository
+	storage     *storage.Storage
 }
 
-func NewLeasingHistoryService(historyRepo ports.LeasingHistoryRepository, dormRepo ports.DormRepository) ports.LeasingHistoryService {
-	return &LeasingHistoryService{historyRepo: historyRepo, dormRepo: dormRepo}
+func NewLeasingHistoryService(historyRepo ports.LeasingHistoryRepository, dormRepo ports.DormRepository, storage *storage.Storage) ports.LeasingHistoryService {
+	return &LeasingHistoryService{historyRepo: historyRepo, dormRepo: dormRepo, storage: storage}
+}
+
+func (s *LeasingHistoryService) GetImageUrl(reviewImage []domain.ReviewImage) []string {
+	urls := make([]string, len(reviewImage))
+	for i, v := range reviewImage {
+		urls[i] = s.storage.GetPublicUrl(v.ImageKey)
+	}
+	return urls
 }
 
 func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error) {
@@ -39,6 +54,7 @@ func (s *LeasingHistoryService) Create(userID uuid.UUID, dormID uuid.UUID) (*dom
 	}
 	return leasingHistory, nil
 }
+
 func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
 	err := s.historyRepo.Delete(id)
 	if err != nil {
@@ -46,6 +62,15 @@ func (s *LeasingHistoryService) Delete(id uuid.UUID) error {
 	}
 	return nil
 }
+
+func (s *LeasingHistoryService) GetByID(id uuid.UUID) (*domain.LeasingHistory, error) {
+	leasingHistory, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return leasingHistory, nil
+}
+
 func (s *LeasingHistoryService) GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
 	leasingHistory, totalPage, totalRows, err := s.historyRepo.GetByUserID(id, limit, page)
 	if err != nil {
@@ -139,4 +164,60 @@ func (s *LeasingHistoryService) DeleteReview(user *domain.User, id uuid.UUID) er
 		return err
 	}
 	return nil
+}
+
+func (s *LeasingHistoryService) UploadReviewImage(ctx context.Context, historyID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error) {
+	history, err := s.historyRepo.GetByID(historyID)
+	if err != nil {
+		return "", err
+	}
+
+	if err = checkPermission(history.Lessee.ID, userID, isAdmin); err != nil {
+		return "", apperror.ForbiddenError(err, "You do not have permission to upload image to this dorm")
+	}
+
+	filename = strings.ReplaceAll(filename, " ", "-")
+	uuid := uuid.New().String()
+	fileKey := fmt.Sprintf("reviews/%s-%s", uuid, filename)
+
+	err = s.storage.UploadFile(ctx, fileKey, contentType, fileData, storage.PublicBucket)
+	if err != nil {
+		return "", apperror.InternalServerError(err, "error uploading file")
+	}
+	reviewImage := &domain.ReviewImage{HistoryID: historyID, ImageKey: fileKey}
+	if err = s.historyRepo.SaveReviewImage(reviewImage); err != nil {
+		return "", err
+	}
+
+	url := s.storage.GetPublicUrl(fileKey)
+
+	return url, nil
+}
+
+func (s *LeasingHistoryService) DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error {
+	imageKey, err := s.storage.GetFileKeyFromPublicUrl(imageURL)
+	if err != nil {
+		return apperror.InternalServerError(err, "Failed to parse URL")
+	}
+
+	reviewImage, err := s.historyRepo.GetImageByKey(imageKey)
+	if err != nil {
+		return err
+	}
+
+	history, err := s.historyRepo.GetByID(reviewImage.HistoryID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPermission(history.Lessee.ID, userID, isAdmin); err != nil {
+		return apperror.ForbiddenError(err, "You do not have permission to delete this review image")
+	}
+
+	err = s.storage.DeleteFile(ctx, imageKey, storage.PublicBucket)
+	if err != nil {
+		return apperror.InternalServerError(err, "Failed to delete images")
+	}
+
+	return s.historyRepo.DeleteImageByKey(imageKey)
 }

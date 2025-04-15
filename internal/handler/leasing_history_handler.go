@@ -1,6 +1,10 @@
 package handler
 
 import (
+	"errors"
+	"net/url"
+	"strings"
+
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
@@ -81,7 +85,8 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 
 	resData := make([]dto.LeasingHistory, len(leasingHistory))
 	for i, v := range leasingHistory {
-		resData[i] = v.ToDTO()
+		urls := h.service.GetImageUrl(v.Images)
+		resData[i] = v.ToDTO(urls)
 		resData[i].Images = h.dormService.GetImageUrl(v.Dorm.Images)
 	}
 
@@ -134,7 +139,8 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	}
 	resData := make([]dto.LeasingHistory, len(leasingHistory))
 	for i, v := range leasingHistory {
-		resData[i] = v.ToDTO()
+		urls := h.service.GetImageUrl(v.Images)
+		resData[i] = v.ToDTO(urls)
 	}
 
 	res := dto.SuccessPagination(resData, dto.Pagination{
@@ -200,8 +206,9 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 		}
 		return err
 	}
+	urls := h.service.GetImageUrl(leasingHistory.Images)
 
-	res := dto.Success(leasingHistory.ToDTO())
+	res := dto.Success(leasingHistory.ToDTO(urls))
 
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
@@ -219,7 +226,7 @@ func (h *LeasingHistoryHandler) Create(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/review/{id} [post]
+// @Router /history/{id}/review [post]
 func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	body := new(dto.ReviewCreateRequestBody)
@@ -234,6 +241,11 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "your request body is incorrect")
 	}
 	historyID, err := parseIdParam(c)
+
+	if err != nil {
+		return err
+	}
+	history, err := h.service.GetByID(historyID)
 	if err != nil {
 		return err
 	}
@@ -241,8 +253,110 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	res := dto.Success(review.ToDTO())
+	urls := h.service.GetImageUrl(history.Images)
+	res := dto.Success(review.ToDTO(urls))
 	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// UploadReviewImage godoc
+// @Summary Upload multiple images for a review
+// @Description Upload multiple images for a specific review by its historyID, by attaching the images as value for the key field name "image", as a multipart form-data
+// @Tags history
+// @Security Bearer
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path string true "historyID"
+// @Param image formData file true "ReviewImage" collectionFormat "multi"
+// @Success 200 {object} dto.SuccessResponse[dto.ReviewImageUploadResponseBody] "Successful image upload"
+// @Failure 400 {object} dto.ErrorResponse "Invalid Request"
+// @Failure 403 {object} dto.ErrorResponse "unauthorized to upload image to review"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "History not found"
+// @Failure 500 {object} dto.ErrorResponse "Server failed to upload review image"
+// @Router /history/{id}/review/images [post]
+func (h *LeasingHistoryHandler) UploadReviewImage(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	historyID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid multipart form data")
+	}
+
+	files := form.File["image"]
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+	isAdmin := user.Role == domain.AdminRole
+
+	urls := []string{}
+	for _, file := range files {
+		fileData, err := file.Open()
+		if err != nil {
+			return apperror.InternalServerError(err, "error opening file")
+		}
+		defer fileData.Close()
+
+		contentType := file.Header.Get("Content-Type")
+		if !strings.HasPrefix(contentType, "image/") {
+			return apperror.BadRequestError(errors.New("uploaded file is not an image"), "uploaded file is not an image")
+		}
+
+		url, err := h.service.UploadReviewImage(c.Context(), historyID, file.Filename, contentType, fileData, userID, isAdmin)
+		if err != nil {
+			return err
+		}
+
+		urls = append(urls, url)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(dto.ReviewImageUploadResponseBody{ImageURL: urls}))
+}
+
+// DeleteReviewImageByURL godoc
+// @Summary Delete a review image by its url
+// @Description Deletes a review image using its percent encoded url from bucket storage. Encode URL using encodeURIComponent().
+// @Tags history
+// @Security Bearer
+// @Accept json
+// @Produce json
+// @Param url path string true "Percent encoded URL"
+// @Success 204 "Image deleted successfully"
+// @Failure 400 {object} dto.ErrorResponse "Your request is invalid"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "You do not have permission to delete this review image"
+// @Failure 404 {object} dto.ErrorResponse "Image not found"
+// @Failure 500 {object} dto.ErrorResponse "Failed to delete image"
+// @Router /history/review/image/{url} [delete]
+func (h *LeasingHistoryHandler) DeleteReviewImageByURL(c *fiber.Ctx) error {
+	decodedURL, err := url.PathUnescape(c.Params("url"))
+	if err != nil {
+		return apperror.BadRequestError(err, "Invalid URL")
+	}
+
+	userID := c.Locals("userID").(uuid.UUID)
+	user := c.Locals("user").(*domain.User)
+	if user.Role == "" {
+		return apperror.UnauthorizedError(errors.New("unauthorized"), "user role is missing")
+	}
+
+	isAdmin := user.Role == domain.AdminRole
+
+	if err := h.service.DeleteImageByURL(c.Context(), decodedURL, userID, isAdmin); err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 // UpdateReview godoc
@@ -258,7 +372,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/review/{id} [patch]
+// @Router /history/{id}/review [patch]
 func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	body := new(dto.ReviewUpdateRequestBody)
@@ -277,11 +391,16 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	history, err := h.service.GetByID(historyID)
+	if err != nil {
+		return err
+	}
 	review, err := h.service.UpdateReview(user, historyID, body.Message, int(body.Rate))
 	if err != nil {
 		return err
 	}
-	res := dto.Success(review.ToDTO())
+	urls := h.service.GetImageUrl(history.Images)
+	res := dto.Success(review.ToDTO(urls))
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
@@ -297,7 +416,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "Dorm not found or leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID or failed to save leasing history to database"
-// @Router /history/review/{id} [delete]
+// @Router /history/{id}/review [delete]
 func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	user := c.Locals("user").(*domain.User)
 	historyID, err := parseIdParam(c)
