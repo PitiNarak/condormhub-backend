@@ -23,11 +23,6 @@ components:
           $ref: '#/components/schemas/dto.DormResponseBody'
         id:
           type: string
-        imagesUrl:
-          items:
-            type: string
-          type: array
-          uniqueItems: false
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
         lesseeStatus:
@@ -326,6 +321,16 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_SupportResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.SupportResponseBody'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.ProfilePictureUploadResponseBody:
       properties:
         url:
@@ -565,6 +570,13 @@ components:
         updateAt:
           type: string
       type: object
+    dto.UpdateStatusRequestBody:
+      properties:
+        status:
+          type: string
+      required:
+      - status
+      type: object
     dto.UserFirstFillRequestBody:
       properties:
         birthDate:
@@ -621,10 +633,16 @@ components:
       type: object
     dto.UserResponse:
       properties:
+        banned:
+          type: boolean
         birthDate:
           type: string
         createAt:
           type: string
+        dorms_leased:
+          type: integer
+        dorms_owned:
+          type: integer
         email:
           type: string
         filledPersonalInfo:
@@ -650,6 +668,8 @@ components:
           type: string
         profilePicUrl:
           type: string
+        review_count:
+          type: integer
         role:
           type: string
         username:
@@ -677,6 +697,122 @@ info:
   version: "1.0"
 openapi: 3.1.0
 paths:
+  /admin/user/{id}/ban:
+    patch:
+      description: Ban a user by their ID. Only admins are allowed to use this endpoint
+      parameters:
+      - description: userID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
+          description: User banned
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: confilct
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Ban a user
+      tags:
+      - admin
+  /admin/user/{id}/unban:
+    patch:
+      description: Unban a user by their ID. Only admins are allowed to use this endpoint
+      parameters:
+      - description: userID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_UserResponse'
+          description: User unbanned
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: confilct
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Unban a user
+      tags:
+      - admin
   /auth/login:
     post:
       description: Login user
@@ -2613,6 +2749,43 @@ paths:
       tags:
       - request
   /support:
+    get:
+      description: Retrieve a list of all support requests.
+      parameters:
+      - description: Number of support requests to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_SupportResponseBody'
+          description: All support requests retrieved successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Could not fetch support requests
+      security:
+      - Bearer: []
+      summary: Get all support requests
+      tags:
+      - support
     post:
       description: Let a user send a message to the admin
       requestBody:
@@ -2650,6 +2823,72 @@ paths:
       security:
       - Bearer: []
       summary: Submit a support request
+      tags:
+      - support
+  /support/{id}:
+    patch:
+      description: Modifies an existing support request's status based on the given
+        ID. The possible status are OPEN, IN-PROGRESS, and RESOLVED.
+      parameters:
+      - description: SupportRequestID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dto.UpdateStatusRequestBody'
+        description: Status update
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_SupportResponseBody'
+          description: Status updated
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to update support request status
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Support request not found
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid status value
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to update support request status
+      security:
+      - Bearer: []
+      summary: Update a support request's status
       tags:
       - support
   /transaction:
