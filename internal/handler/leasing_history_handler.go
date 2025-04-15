@@ -15,11 +15,12 @@ import (
 )
 
 type LeasingHistoryHandler struct {
-	service ports.LeasingHistoryService
+	service     ports.LeasingHistoryService
+	dormService ports.DormService
 }
 
-func NewLeasingHistoryHandler(service ports.LeasingHistoryService) ports.LeasingHistoryHandler {
-	return &LeasingHistoryHandler{service: service}
+func NewLeasingHistoryHandler(service ports.LeasingHistoryService, dormService ports.DormService) ports.LeasingHistoryHandler {
+	return &LeasingHistoryHandler{service: service, dormService: dormService}
 }
 
 // SetEndTimestamp godoc
@@ -86,6 +87,7 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 	for i, v := range leasingHistory {
 		urls := h.service.GetImageUrl(v.Images)
 		resData[i] = v.ToDTO(urls)
+		resData[i].Images = h.dormService.GetImageUrl(v.Dorm.Images)
 	}
 
 	res := dto.SuccessPagination(resData, dto.Pagination{

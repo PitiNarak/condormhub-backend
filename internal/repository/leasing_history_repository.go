@@ -134,6 +134,7 @@ func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([
 		Where("dorm_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(&leasingHistory, query, limit, page, "start")
 
+
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return nil, 0, 0, err
