@@ -26,6 +26,7 @@ func (s *Server) initRoutes() {
 	s.initReceiptRoutes()
 	s.initContractRoutes()
 	s.initSupportRoutes()
+	s.initAdminRoutes()
 }
 
 func (s *Server) initExampleUploadRoutes() {
@@ -77,33 +78,33 @@ func (s *Server) initDormRoutes() {
 }
 
 func (s *Server) initLeasingHistoryRoutes() {
-	historyRoutes := s.app.Group("/history")
-	historyRoutes.Post("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.CreateReview)
-	historyRoutes.Patch("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.UpdateReview)
-	historyRoutes.Delete("/review/:id", s.authMiddleware.Auth, s.handler.leasingHistory.DeleteReview)
-	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingHistory.GetByUserID)
-	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingHistory.GetByDormID)
-	historyRoutes.Patch("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.SetEndTimestamp)
-	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingHistory.Delete)
+	historyRoutes := s.app.Group("/history", s.authMiddleware.Auth)
+	historyRoutes.Post("/review/:id", s.handler.leasingHistory.CreateReview)
+	historyRoutes.Patch("/review/:id", s.handler.leasingHistory.UpdateReview)
+	historyRoutes.Delete("/review/:id", s.handler.leasingHistory.DeleteReview)
+	historyRoutes.Get("/me", s.handler.leasingHistory.GetByUserID)
+	historyRoutes.Get("/bydorm/:id", s.handler.leasingHistory.GetByDormID)
+	historyRoutes.Patch("/:id", s.handler.leasingHistory.SetEndTimestamp)
+	historyRoutes.Delete("/:id", s.handler.leasingHistory.Delete)
 }
 
 func (s *Server) initLeasingRequestRoutes() {
-	historyRoutes := s.app.Group("/request")
-	historyRoutes.Post("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Create)
-	historyRoutes.Get("/me", s.authMiddleware.Auth, s.handler.leasingRequest.GetByUserID)
-	historyRoutes.Patch("/:id/approve", s.authMiddleware.Auth, s.handler.leasingRequest.Approve)
-	historyRoutes.Patch("/:id/reject", s.authMiddleware.Auth, s.handler.leasingRequest.Reject)
-	historyRoutes.Patch("/:id/cancel", s.authMiddleware.Auth, s.handler.leasingRequest.Cancel)
-	historyRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.leasingRequest.Delete)
-	historyRoutes.Get("/bydorm/:id", s.authMiddleware.Auth, s.handler.leasingRequest.GetByDormID)
+	requestRoutes := s.app.Group("/request", s.authMiddleware.Auth)
+	requestRoutes.Post("/:id", s.handler.leasingRequest.Create)
+	requestRoutes.Get("/me", s.handler.leasingRequest.GetByUserID)
+	requestRoutes.Patch("/:id/approve", s.handler.leasingRequest.Approve)
+	requestRoutes.Patch("/:id/reject", s.handler.leasingRequest.Reject)
+	requestRoutes.Patch("/:id/cancel", s.handler.leasingRequest.Cancel)
+	requestRoutes.Delete("/:id", s.authMiddleware.RequireAdmin, s.handler.leasingRequest.Delete)
+	requestRoutes.Get("/bydorm/:id", s.handler.leasingRequest.GetByDormID)
 }
 
 func (s *Server) initOrderRoutes() {
-	orderRoutes := s.app.Group("/order")
-	orderRoutes.Post("/", s.authMiddleware.Auth, s.handler.order.CreateOrder)
-	orderRoutes.Get("/:id", s.authMiddleware.Auth, s.handler.order.GetOrderByID)
-	orderRoutes.Get("/unpaid/me", s.authMiddleware.Auth, s.handler.order.GetMyUnpaidOrder)
-	orderRoutes.Get("/unpaid/:id", s.authMiddleware.Auth, s.handler.order.GetUnpaidOrderByUserID)
+	orderRoutes := s.app.Group("/order", s.authMiddleware.Auth)
+	orderRoutes.Post("/", s.handler.order.CreateOrder)
+	orderRoutes.Get("/:id", s.handler.order.GetOrderByID)
+	orderRoutes.Get("/unpaid/me", s.handler.order.GetMyUnpaidOrder)
+	orderRoutes.Get("/unpaid/:id", s.handler.order.GetUnpaidOrderByUserID)
 }
 
 func (s *Server) initTransactionRoutes() {
@@ -117,28 +118,36 @@ func (s *Server) initOwnershipProofRoutes() {
 	ownershipRoutes.Post("/:id/upload", s.authMiddleware.Auth, s.handler.ownershipProof.UploadFile)
 	ownershipRoutes.Delete("/:id", s.authMiddleware.Auth, s.handler.ownershipProof.Delete)
 	ownershipRoutes.Get("/:id", s.handler.ownershipProof.GetByDormID)
-	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.handler.ownershipProof.Approve)
-	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.handler.ownershipProof.Reject)
+	ownershipRoutes.Post("/:id/approve", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin, s.handler.ownershipProof.Approve)
+	ownershipRoutes.Post("/:id/reject", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin, s.handler.ownershipProof.Reject)
 
 }
 
 func (s *Server) initReceiptRoutes() {
-	ownershipRoutes := s.app.Group("/receipt")
-	ownershipRoutes.Get("/", s.authMiddleware.Auth, s.handler.receipt.GetByUserID)
+	receiptRoutes := s.app.Group("/receipt", s.authMiddleware.Auth)
+	receiptRoutes.Get("/", s.handler.receipt.GetByUserID)
 }
 
 func (s *Server) initContractRoutes() {
-	contractRoutes := s.app.Group("/contract")
-	contractRoutes.Patch("/:contractID/sign", s.authMiddleware.Auth, s.handler.contract.SignContract)
-	contractRoutes.Patch("/:contractID/cancel", s.authMiddleware.Auth, s.handler.contract.CancelContract)
-	contractRoutes.Get("/:contractID", s.authMiddleware.Auth, s.handler.contract.GetContractByContractID)
-	contractRoutes.Get("/", s.authMiddleware.Auth, s.handler.contract.GetContractByUserID)
-	contractRoutes.Get("/:dormID", s.authMiddleware.Auth, s.handler.contract.GetContractByDormID)
-	contractRoutes.Delete("/:contractID", s.authMiddleware.Auth, s.handler.contract.Delete)
+	contractRoutes := s.app.Group("/contract", s.authMiddleware.Auth)
+	contractRoutes.Patch("/:contractID/sign", s.handler.contract.SignContract)
+	contractRoutes.Patch("/:contractID/cancel", s.handler.contract.CancelContract)
+	contractRoutes.Get("/:contractID", s.handler.contract.GetContractByContractID)
+	contractRoutes.Get("/", s.handler.contract.GetContractByUserID)
+	contractRoutes.Get("/:dormID", s.handler.contract.GetContractByDormID)
+	contractRoutes.Delete("/:contractID", s.handler.contract.Delete)
 
 }
 
 func (s *Server) initSupportRoutes() {
-	supportRoutes := s.app.Group("/support")
-	supportRoutes.Post("/", s.authMiddleware.Auth, s.handler.support.Create)
+	supportRoutes := s.app.Group("/support", s.authMiddleware.Auth)
+	supportRoutes.Post("/", s.handler.support.Create)
+	supportRoutes.Get("/", s.handler.support.GetAll)
+	supportRoutes.Patch("/:id", s.authMiddleware.RequireAdmin, s.handler.support.UpdateStatus)
+}
+
+func (s *Server) initAdminRoutes() {
+	adminRoutes := s.app.Group("/admin", s.authMiddleware.Auth, s.authMiddleware.RequireAdmin)
+	adminRoutes.Patch("/user/:id/ban", s.handler.user.BanUser)
+	adminRoutes.Patch("/user/:id/unban", s.handler.user.UnbanUser)
 }

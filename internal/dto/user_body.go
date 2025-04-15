@@ -67,6 +67,10 @@ type UserResponse struct {
 	PhoneNumber        string    `json:"phoneNumber"`
 	IsStudentVerified  bool      `json:"isStudentVerified"`
 	ProfilePicUrl      string    `json:"profilePicUrl"`
+	ReviewCount        int64     `json:"review_count"`
+	DormsOwned         int64     `json:"dorms_owned"`
+	DormsLeased        int64     `json:"dorms_leased"`
+	Banned             bool      `json:"banned"`
 }
 
 type StudentEvidenceUploadResponseBody struct {

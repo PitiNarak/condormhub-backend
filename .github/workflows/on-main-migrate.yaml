@@ -1,80 +1,212 @@
 name: Migrate
 
 env:
-    DB_HOST: ${{ secrets.DB_HOST }}
-    DB_PORT: ${{ secrets.DB_PORT }}
-    DB_USER: ${{ secrets.DB_USER }}
-    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-    DB_NAME: ${{ secrets.DB_NAME }}
-    DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+  # set env for migration
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
 
-    SERVER_NAME: ${{ secrets.SERVER_NAME }}
-    SERVER_PORT: ${{ secrets.SERVER_PORT }}
-    SERVER_ENV: ${{ secrets.SERVER_ENV }}
-    SERVER_MAX_BODY_LIMIT_MB: ${{ secrets.SERVER_MAX_BODY_LIMIT_MB }}
-    SERVER_CORS_ALLOW_ORIGINS: ${{ secrets.SERVER_CORS_ALLOW_ORIGINS }}
-    SERVER_CORS_ALLOW_METHODS: ${{ secrets.SERVER_CORS_ALLOW_METHODS }}
-    SERVER_CORS_ALLOW_HEADERS: ${{ secrets.SERVER_CORS_ALLOW_HEADERS }}
-    SERVER_CORS_ALLOW_CREDENTIALS: ${{ secrets.SERVER_CORS_ALLOW_CREDENTIALS }}
+  SERVER_NAME: ${{ secrets.SERVER_NAME }}
+  SERVER_PORT: ${{ secrets.SERVER_PORT }}
+  SERVER_ENV: ${{ secrets.SERVER_ENV }}
+  SERVER_MAX_BODY_LIMIT_MB: ${{ secrets.SERVER_MAX_BODY_LIMIT_MB }}
+  SERVER_CORS_ALLOW_ORIGINS: ${{ secrets.SERVER_CORS_ALLOW_ORIGINS }}
+  SERVER_CORS_ALLOW_METHODS: ${{ secrets.SERVER_CORS_ALLOW_METHODS }}
+  SERVER_CORS_ALLOW_HEADERS: ${{ secrets.SERVER_CORS_ALLOW_HEADERS }}
+  SERVER_CORS_ALLOW_CREDENTIALS: ${{ secrets.SERVER_CORS_ALLOW_CREDENTIALS }}
 
-    SMTP_HOST: ${{ secrets.SMTP_HOST }}
-    SMTP_PORT: ${{ secrets.SMTP_PORT }}
-    SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
-    SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-    SMTP_LINK_HOSTNAME: ${{ secrets.SMTP_LINK_HOSTNAME }}
+  SMTP_HOST: ${{ secrets.SMTP_HOST }}
+  SMTP_PORT: ${{ secrets.SMTP_PORT }}
+  SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
+  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+  SMTP_LINK_HOSTNAME: ${{ secrets.SMTP_LINK_HOSTNAME }}
 
-    JWT_SECRET: ${{ secrets.JWT_SECRET }}
-    JWT_EXPIRATION_HOURS: ${{ secrets.JWT_EXPIRATION_HOURS }}
-    JWT_REFRESH_EXPIRATION_HOURS: ${{ secrets.JWT_REFRESH_EXPIRATION_HOURS }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  JWT_EXPIRATION_HOURS: ${{ secrets.JWT_EXPIRATION_HOURS }}
+  JWT_REFRESH_EXPIRATION_HOURS: ${{ secrets.JWT_REFRESH_EXPIRATION_HOURS }}
 
-    STORAGE_BUCKET_NAME: ${{ secrets.STORAGE_BUCKET_NAME }}
-    STORAGE_ACCOUNT_ID: ${{ secrets.STORAGE_ACCOUNT_ID }}
-    STORAGE_ACCESS_KEY_ID: ${{ secrets.STORAGE_ACCESS_KEY_ID }}
-    STORAGE_ACCESS_KEY_SECRET: ${{ secrets.STORAGE_ACCESS_KEY_SECRET }}
-    STORAGE_URL_PREFIX: ${{ secrets.STORAGE_URL_PREFIX }}
-    STORAGE_PRIVATE_BUCKET_NAME: ${{ secrets.STORAGE_PRIVATE_BUCKET_NAME }}
+  STORAGE_BUCKET_NAME: ${{ secrets.STORAGE_BUCKET_NAME }}
+  STORAGE_ACCOUNT_ID: ${{ secrets.STORAGE_ACCOUNT_ID }}
+  STORAGE_ACCESS_KEY_ID: ${{ secrets.STORAGE_ACCESS_KEY_ID }}
+  STORAGE_ACCESS_KEY_SECRET: ${{ secrets.STORAGE_ACCESS_KEY_SECRET }}
+  STORAGE_URL_PREFIX: ${{ secrets.STORAGE_URL_PREFIX }}
+  STORAGE_PRIVATE_BUCKET_NAME: ${{ secrets.STORAGE_PRIVATE_BUCKET_NAME }}
 
-    STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
-    STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-    STRIPE_SIGNATURE_KEY: ${{ secrets.STRIPE_SIGNATURE_KEY }}
-    STRIPE_SUCCESS_URL: ${{ secrets.STRIPE_SUCCESS_URL }}
-    STRIPE_CANCEL_URL: ${{ secrets.STRIPE_CANCEL_URL }}
+  STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
+  STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+  STRIPE_SIGNATURE_KEY: ${{ secrets.STRIPE_SIGNATURE_KEY }}
+  STRIPE_SUCCESS_URL: ${{ secrets.STRIPE_SUCCESS_URL }}
+  STRIPE_CANCEL_URL: ${{ secrets.STRIPE_CANCEL_URL }}
 
-    REDIS_URI: ${{ secrets.REDIS_URI }}
+  REDIS_URI: ${{ secrets.REDIS_URI }}
 
 on:
-    push:
-        branches:
-        - main
+  push:
+    branches:
+      - main
 jobs:
-    migrate:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
+  swagger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.2"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Install and Generate Swagger
+        run: |
+          go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc4
+          export PATH=$PATH:$(go env GOPATH)/bin
+          swag init -v3.1 -o docs -g main.go --parseDependency --parseInternal
+      - name: Upload Swagger Docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-docs
+          path: docs/
 
-            - name: Setup Go
-              uses: actions/setup-go@v5
-              with:
-                go-version: "1.23.2"
-                cache: true
-                cache-dependency-path: go.sum
+  lint:
+    runs-on: ubuntu-latest
+    needs: swagger
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Swagger Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-docs
+          path: docs/
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.2"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.5
+          args: --timeout=10m
 
-            - name: 'Create env file'
-              run: |
-                touch .env
+  test:
+    needs:
+      - swagger
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Swagger Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-docs
+          path: docs/
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.2"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Test
+        run: go test -v ./...
 
-            - name: Run golangci-lint
-              uses: golangci/golangci-lint-action@v6
-              with:
-                version: v1.60
-                args: --timeout=10m
+  build:
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Swagger Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-docs
+          path: docs/
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24.2"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Build
+        run: go build -o bin/server main.go
 
-            - name: Install and Generate Swagger
-              run: |
-                go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc4
-                export PATH=$(go env GOPATH)/bin:$PATH
-                swag init -o docs -g cmd/server/main.go
+  migrate:
+    needs:
+      - build
 
-            - name: migrate
-              run: go run cmd/migrate/main.go
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Download Swagger Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-docs
+          path: docs/
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.2"
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: migrate
+        run: go run cmd/migrate/main.go
+
+  deploy:
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Swagger Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-docs
+          path: docs/
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.2"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+      - name: Convert repo name to lowercase
+        run: echo "REPO_NAME=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Build and push api container
+        id: docker_build_api
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/${{ env.REPO_NAME }}:latest
+          context: .
+          file: ./Dockerfile
+      - name: Deploy api
+        uses: deploys-app/deploys-action@v1
+        with:
+          project: ${{ secrets.DEPLOYS_PROJECT }}
+          location: gke.cluster-rcf2
+          name: ${{ secrets.DEPLOYS_DEPLOY_NAME }}
+          image: ghcr.io/${{ env.REPO_NAME }}@${{ steps.docker_build_api.outputs.digest }}
+        env:
+          DEPLOYS_AUTH_USER: ${{ secrets.DEPLOYS_AUTH_USER }}
+          DEPLOYS_AUTH_PASS: ${{ secrets.DEPLOYS_AUTH_PASS }}

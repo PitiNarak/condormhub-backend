@@ -6,9 +6,13 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
+RUN go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc4
+
 COPY . .
 
-RUN go build -o bin/server ./cmd/server/main.go
+RUN	swag init -v3.1 -o docs -g main.go
+
+RUN go build -o bin/server ./main.go
 
 RUN touch /app/.env
 

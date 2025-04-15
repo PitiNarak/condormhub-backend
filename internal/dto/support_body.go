@@ -10,6 +10,10 @@ type SupportRequestBody struct {
 	Message string `json:"message" validate:"required"`
 }
 
+type UpdateStatusRequestBody struct {
+	Status string `json:"status" validate:"required"`
+}
+
 type SupportResponseBody struct {
 	ID       uuid.UUID `json:"id"`
 	CreateAt time.Time `json:"createAt"`

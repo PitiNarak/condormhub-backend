@@ -54,7 +54,7 @@ func (r *UserRepo) GetUserByID(userID uuid.UUID) (*domain.User, error) {
 }
 
 func (r *UserRepo) UpdateUser(user *domain.User) error {
-	result := r.db.Model(&user).Updates(user)
+	result := r.db.Model(&user).Save(user)
 	if result.Error != nil {
 		return apperror.InternalServerError(result.Error, "failed to update database")
 	}

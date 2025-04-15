@@ -55,14 +55,17 @@ func (d *LeasingHistoryRepository) Update(LeasingHistory *domain.LeasingHistory)
 		}
 		return apperror.InternalServerError(err, "Failed to update leasing history")
 	}
-	if existingHistory.ReviewFlag != LeasingHistory.ReviewFlag {
-		err = d.db.Model(existingHistory).UpdateColumn("ReviewFlag", LeasingHistory.ReviewFlag).Error
-		if err != nil {
-			return err
-		}
+	return nil
+}
+
+func (d *LeasingHistoryRepository) DeleteReview(leasingHistory *domain.LeasingHistory) error {
+	err := d.db.Model(leasingHistory).Update("review_flag", false).Error
+	if err != nil {
+		return apperror.InternalServerError(err, "Failed to delete review")
 	}
 	return nil
 }
+
 func (d *LeasingHistoryRepository) Delete(id uuid.UUID) error {
 	// TODO: Cascade delete?
 	if err := d.db.Delete(&domain.LeasingHistory{}, id).Error; err != nil {
