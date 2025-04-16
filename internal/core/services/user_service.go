@@ -302,6 +302,15 @@ func (s *UserService) DeleteAccount(userID uuid.UUID) error {
 }
 
 func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error) {
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if user.IsStudentVerified == domain.StatusVerified {
+		return "", apperror.ForbiddenError(errors.New("you are already verified"), "you are already verified")
+	}
+
 	filename = strings.ReplaceAll(filename, " ", "-")
 	uuid := uuid.New().String()
 	fileKey := fmt.Sprintf("user/%s/student-evidence/%s-%s", userID, uuid, filename)
@@ -312,11 +321,6 @@ func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string
 	url, err := s.storage.GetSignedUrl(ctx, fileKey, time.Minute*60)
 	if err != nil {
 		return "", apperror.InternalServerError(err, "error getting signed url")
-	}
-
-	user, err := s.userRepo.GetUserByID(userID)
-	if err != nil {
-		return "", err
 	}
 
 	if user.StudentEvidence != "" {
