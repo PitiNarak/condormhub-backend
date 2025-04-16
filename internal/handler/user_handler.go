@@ -449,6 +449,7 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 // @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Evidence uploaded successfully"
 // @Failure 400 {object} dto.ErrorResponse "File is required"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
 // @Failure 404 {object} dto.ErrorResponse "User not found"
 // @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
 // @Router /user/studentEvidence [post]
@@ -680,4 +681,123 @@ func (h *UserHandler) UnbanUser(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(updatedUser.ToDTO()))
+}
+
+// GetPending godoc
+// @Summary Get all pending student verifications
+// @Description Get all pending student verifications
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param limit query int false "Number of pending verification to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Success 200 {object} dto.PaginationResponse[dto.StudentEvidenceResponse] "All pending verification retrieved"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/lessee/pending [get]
+func (h *UserHandler) GetPending(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	pendings, totalPages, totalRows, err := h.userService.GetPending(limit, page)
+	if err != nil {
+		return err
+	}
+
+	data := make([]dto.StudentEvidenceResponse, len(pendings))
+	for i, pending := range pendings {
+		data[i].User = h.userService.ConvertToDTO(pending)
+
+		evidence, err := h.userService.GetStudentEvidenceDTO(c.Context(), pending.StudentEvidence)
+		if err != nil {
+			return err
+		}
+		data[i].Evidence = *evidence
+	}
+
+	res := dto.SuccessPagination(data, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPages,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (h *UserHandler) ReviewStudentVerification(c *fiber.Ctx, status domain.VerificationStatus) error {
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	lesseeID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	lessee, err := h.userService.UpdateVerificationStatus(lesseeID, status)
+	if err != nil {
+		return err
+	}
+
+	data := dto.StudentEvidenceResponse{}
+	data.User = lessee.ToDTO()
+	evidence, err := h.userService.GetStudentEvidenceDTO(c.Context(), lessee.StudentEvidence)
+	if err != nil {
+		return err
+	}
+	data.Evidence = *evidence
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
+}
+
+// VerifyStudentVerification godoc
+// @Summary Verify a lessee student verification
+// @Description Verify a lessee student verification
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param id path string true "lesseeID"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceResponse] "Lessee verified"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "confilct"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/lessee/{id}/verify [patch]
+func (h *UserHandler) VerifyStudentVerification(c *fiber.Ctx) error {
+	return h.ReviewStudentVerification(c, domain.StatusVerified)
+}
+
+// RejectStudentVerification godoc
+// @Summary Reject a lessee student verification
+// @Description Reject a lessee student verification
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param id path string true "lesseeID"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceResponse] "Lessee rejected"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "confilct"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/lessee/{id}/reject [patch]
+func (h *UserHandler) RejectStudentVerification(c *fiber.Ctx) error {
+	return h.ReviewStudentVerification(c, domain.StatusRejected)
 }

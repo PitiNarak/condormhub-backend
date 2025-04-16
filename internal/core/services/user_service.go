@@ -38,6 +38,23 @@ func (s *UserService) ConvertToDTO(user domain.User) dto.UserResponse {
 	return res
 }
 
+func (s *UserService) GetStudentEvidenceDTO(c context.Context, studentEvidence string) (*dto.StudentEvidenceUploadResponseBody, error) {
+	if studentEvidence == "" {
+		return nil, apperror.NotFoundError(errors.New("student evidence for this user does not exist"), "Student evidence for this user does not exist")
+	}
+
+	url, err := s.storage.GetSignedUrl(c, studentEvidence, time.Minute*60)
+	if err != nil {
+		return nil, apperror.InternalServerError(err, "error getting signed url")
+	}
+
+	res := new(dto.StudentEvidenceUploadResponseBody)
+	res.ImageUrl = url
+	res.Expired = time.Now().Add(time.Hour)
+
+	return res, nil
+}
+
 func (s *UserService) Create(ctx context.Context, user *domain.User) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
@@ -285,6 +302,15 @@ func (s *UserService) DeleteAccount(userID uuid.UUID) error {
 }
 
 func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error) {
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if user.IsStudentVerified == domain.StatusVerified {
+		return "", apperror.ForbiddenError(errors.New("you are already verified"), "you are already verified")
+	}
+
 	filename = strings.ReplaceAll(filename, " ", "-")
 	uuid := uuid.New().String()
 	fileKey := fmt.Sprintf("user/%s/student-evidence/%s-%s", userID, uuid, filename)
@@ -297,11 +323,6 @@ func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string
 		return "", apperror.InternalServerError(err, "error getting signed url")
 	}
 
-	user, err := s.userRepo.GetUserByID(userID)
-	if err != nil {
-		return "", err
-	}
-
 	if user.StudentEvidence != "" {
 		if err = s.storage.DeleteFile(ctx, user.StudentEvidence, storage.PrivateBucket); err != nil {
 			return "", apperror.InternalServerError(err, "error deleting file")
@@ -309,6 +330,7 @@ func (s *UserService) UploadStudentEvidence(ctx context.Context, filename string
 	}
 
 	user.StudentEvidence = fileKey
+	user.IsStudentVerified = domain.StatusPending
 	err = s.userRepo.UpdateUser(user)
 	if err != nil {
 		return "", err
@@ -327,20 +349,7 @@ func (s *UserService) GetStudentEvidenceByID(ctx context.Context, id uuid.UUID, 
 		return nil, err
 	}
 
-	if user.StudentEvidence == "" {
-		return nil, apperror.NotFoundError(errors.New("student evidence for this user does not exist"), "Student evidence for this user does not exist")
-	}
-
-	url, err := s.storage.GetSignedUrl(ctx, user.StudentEvidence, time.Minute*60)
-	if err != nil {
-		return nil, apperror.InternalServerError(err, "error getting signed url")
-	}
-
-	res := new(dto.StudentEvidenceUploadResponseBody)
-	res.ImageUrl = url
-	res.Expired = time.Now().Add(time.Hour)
-
-	return res, nil
+	return s.GetStudentEvidenceDTO(ctx, user.StudentEvidence)
 }
 
 func (s *UserService) ResendVerificationEmailService(ctx context.Context, email string) error {
@@ -411,4 +420,22 @@ func (s *UserService) UpdateUserBanStatus(id uuid.UUID, ban bool) (*domain.User,
 	}
 	user.Banned = ban
 	return user, s.userRepo.UpdateUser(user)
+}
+
+func (s *UserService) GetPending(limit int, page int) ([]domain.User, int, int, error) {
+	return s.userRepo.GetPending(limit, page)
+}
+
+func (s *UserService) UpdateVerificationStatus(lesseeID uuid.UUID, status domain.VerificationStatus) (*domain.User, error) {
+	lessee, err := s.userRepo.GetUserByID(lesseeID)
+	if err != nil {
+		return nil, err
+	}
+
+	if lessee.IsStudentVerified != domain.StatusPending {
+		return nil, apperror.ConflictError(errors.New("verification not pending"), "verification not pending")
+	}
+
+	lessee.IsStudentVerified = status
+	return lessee, s.userRepo.UpdateUser(lessee)
 }

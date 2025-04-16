@@ -18,10 +18,12 @@ type UserRepository interface {
 	GetUserByEmail(email string) (*domain.User, error)
 	DeleteAccount(userID uuid.UUID) error
 	GetLessorIncome(lessorID uuid.UUID) (float64, error)
+	GetPending(limit int, page int) ([]domain.User, int, int, error)
 }
 
 type UserService interface {
 	ConvertToDTO(user domain.User) dto.UserResponse
+	GetStudentEvidenceDTO(c context.Context, studentEvidence string) (*dto.StudentEvidenceUploadResponseBody, error)
 	Create(ctx context.Context, user *domain.User) (string, string, error)
 	GetUserByEmail(email string) (*domain.User, error)
 	GetUserByID(id uuid.UUID) (*domain.User, error)
@@ -39,6 +41,8 @@ type UserService interface {
 	UploadProfilePicture(ctx context.Context, filename string, contentType string, fileData io.Reader, userID uuid.UUID) (string, error)
 	GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) (float64, error)
 	UpdateUserBanStatus(id uuid.UUID, ban bool) (*domain.User, error)
+	GetPending(limit int, page int) ([]domain.User, int, int, error)
+	UpdateVerificationStatus(lesseeID uuid.UUID, status domain.VerificationStatus) (*domain.User, error)
 }
 
 type UserHandler interface {
@@ -60,4 +64,7 @@ type UserHandler interface {
 	GetLessorIncome(c *fiber.Ctx) error
 	BanUser(c *fiber.Ctx) error
 	UnbanUser(c *fiber.Ctx) error
+	GetPending(c *fiber.Ctx) error
+	VerifyStudentVerification(c *fiber.Ctx) error
+	RejectStudentVerification(c *fiber.Ctx) error
 }

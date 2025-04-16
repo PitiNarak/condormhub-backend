@@ -65,7 +65,7 @@ type UserResponse struct {
 	FilledPersonalInfo bool      `json:"filledPersonalInfo"`
 	Lifestyles         []string  `json:"lifestyles"`
 	PhoneNumber        string    `json:"phoneNumber"`
-	IsStudentVerified  bool      `json:"isStudentVerified"`
+	IsStudentVerified  string    `json:"isStudentVerified"`
 	ProfilePicUrl      string    `json:"profilePicUrl"`
 	ReviewCount        int64     `json:"review_count"`
 	DormsOwned         int64     `json:"dorms_owned"`
@@ -84,4 +84,9 @@ type ProfilePictureUploadResponseBody struct {
 
 type LessorIncomeResponseBody struct {
 	Income float64 `json:"income"`
+}
+
+type StudentEvidenceResponse struct {
+	User     UserResponse                      `json:"user"`
+	Evidence StudentEvidenceUploadResponseBody `json:"evidence"`
 }
