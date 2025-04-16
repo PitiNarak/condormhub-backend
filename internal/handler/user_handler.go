@@ -764,10 +764,40 @@ func (h *UserHandler) ReviewStudentVerification(c *fiber.Ctx, status domain.Veri
 	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
 }
 
+// VerifyStudentVerification godoc
+// @Summary Verify a lessee student verification
+// @Description Verify a lessee student verification
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param id path string true "lesseeID"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceResponse] "Lessee verified"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "confilct"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/lessee/{id}/verify [patch]
 func (h *UserHandler) VerifyStudentVerification(c *fiber.Ctx) error {
 	return h.ReviewStudentVerification(c, domain.StatusVerified)
 }
 
+// RejectStudentVerification godoc
+// @Summary Reject a lessee student verification
+// @Description Reject a lessee student verification
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param id path string true "lesseeID"
+// @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceResponse] "Lessee rejected"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "confilct"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/lessee/{id}/reject [patch]
 func (h *UserHandler) RejectStudentVerification(c *fiber.Ctx) error {
 	return h.ReviewStudentVerification(c, domain.StatusRejected)
 }
