@@ -421,3 +421,17 @@ func (s *UserService) UpdateUserBanStatus(id uuid.UUID, ban bool) (*domain.User,
 func (s *UserService) GetPending(limit int, page int) ([]domain.User, int, int, error) {
 	return s.userRepo.GetPending(limit, page)
 }
+
+func (s *UserService) UpdateVerificationStatus(lesseeID uuid.UUID, status domain.VerificationStatus) (*domain.User, error) {
+	lessee, err := s.userRepo.GetUserByID(lesseeID)
+	if err != nil {
+		return nil, err
+	}
+
+	if lessee.IsStudentVerified != domain.StatusPending {
+		return nil, apperror.ConflictError(errors.New("verification not pending"), "verification not pending")
+	}
+
+	lessee.IsStudentVerified = status
+	return lessee, s.userRepo.UpdateUser(lessee)
+}

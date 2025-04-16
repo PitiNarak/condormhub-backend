@@ -42,6 +42,7 @@ type UserService interface {
 	GetLessorIncome(lessorID uuid.UUID, userRole domain.Role) (float64, error)
 	UpdateUserBanStatus(id uuid.UUID, ban bool) (*domain.User, error)
 	GetPending(limit int, page int) ([]domain.User, int, int, error)
+	UpdateVerificationStatus(lesseeID uuid.UUID, status domain.VerificationStatus) (*domain.User, error)
 }
 
 type UserHandler interface {
@@ -64,4 +65,6 @@ type UserHandler interface {
 	BanUser(c *fiber.Ctx) error
 	UnbanUser(c *fiber.Ctx) error
 	GetPending(c *fiber.Ctx) error
+	VerifyStudentVerification(c *fiber.Ctx) error
+	RejectStudentVerification(c *fiber.Ctx) error
 }

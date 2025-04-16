@@ -734,3 +734,39 @@ func (h *UserHandler) GetPending(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(res)
 }
+
+func (h *UserHandler) ReviewStudentVerification(c *fiber.Ctx, status domain.VerificationStatus) error {
+	id := c.Params("id")
+
+	if err := uuid.Validate(id); err != nil {
+		return apperror.BadRequestError(err, "Incorrect UUID format")
+	}
+
+	lesseeID, err := uuid.Parse(id)
+	if err != nil {
+		return apperror.InternalServerError(err, "Can not parse UUID")
+	}
+
+	lessee, err := h.userService.UpdateVerificationStatus(lesseeID, status)
+	if err != nil {
+		return err
+	}
+
+	data := dto.StudentEvidenceResponse{}
+	data.User = lessee.ToDTO()
+	evidence, err := h.userService.GetStudentEvidenceDTO(c.Context(), lessee.StudentEvidence)
+	if err != nil {
+		return err
+	}
+	data.Evidence = *evidence
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
+}
+
+func (h *UserHandler) VerifyStudentVerification(c *fiber.Ctx) error {
+	return h.ReviewStudentVerification(c, domain.StatusVerified)
+}
+
+func (h *UserHandler) RejectStudentVerification(c *fiber.Ctx) error {
+	return h.ReviewStudentVerification(c, domain.StatusRejected)
+}

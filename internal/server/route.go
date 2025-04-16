@@ -151,4 +151,6 @@ func (s *Server) initAdminRoutes() {
 	adminRoutes.Patch("/user/:id/ban", s.handler.user.BanUser)
 	adminRoutes.Patch("/user/:id/unban", s.handler.user.UnbanUser)
 	adminRoutes.Get("/lessee/pending", s.handler.user.GetPending)
+	adminRoutes.Patch("/lessee/:id/verify", s.handler.user.VerifyStudentVerification)
+	adminRoutes.Patch("/lessee/:id/reject", s.handler.user.RejectStudentVerification)
 }
