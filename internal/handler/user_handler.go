@@ -449,6 +449,7 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 // @Success 200 {object} dto.SuccessResponse[dto.StudentEvidenceUploadResponseBody] "Evidence uploaded successfully"
 // @Failure 400 {object} dto.ErrorResponse "File is required"
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
 // @Failure 404 {object} dto.ErrorResponse "User not found"
 // @Failure 500 {object} dto.ErrorResponse "Server failed to upload file"
 // @Router /user/studentEvidence [post]
