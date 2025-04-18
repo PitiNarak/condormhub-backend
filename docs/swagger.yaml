@@ -157,11 +157,6 @@ components:
           type: string
         id:
           type: string
-        imagesUrl:
-          items:
-            type: string
-          type: array
-          uniqueItems: false
         lessee:
           $ref: '#/components/schemas/dto.UserResponse'
         orders:
@@ -175,6 +170,11 @@ components:
           $ref: '#/components/schemas/dto.Review'
         reviewFlag:
           type: boolean
+        reviewImages:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
         start:
           type: string
       type: object
@@ -321,6 +321,16 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_StudentEvidenceResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.StudentEvidenceResponse'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.PaginationResponse-dto_SupportResponseBody:
       properties:
         data:
@@ -392,6 +402,11 @@ components:
           type: string
         rate:
           type: integer
+        url:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       type: object
     dto.ReviewCreateRequestBody:
       properties:
@@ -401,9 +416,22 @@ components:
           maximum: 5
           minimum: 0
           type: integer
+        url:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       required:
       - message
       - rate
+      type: object
+    dto.ReviewImageUploadResponseBody:
+      properties:
+        url:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       type: object
     dto.ReviewUpdateRequestBody:
       properties:
@@ -413,6 +441,11 @@ components:
           maximum: 5
           minimum: 0
           type: integer
+        url:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
       type: object
     dto.Role:
       type: string
@@ -427,6 +460,13 @@ components:
       - RequestAccepted
       - RequestRejected
       - RequestCanceled
+    dto.StudentEvidenceResponse:
+      properties:
+        evidence:
+          $ref: '#/components/schemas/dto.StudentEvidenceUploadResponseBody'
+        user:
+          $ref: '#/components/schemas/dto.UserResponse'
+      type: object
     dto.StudentEvidenceUploadResponseBody:
       properties:
         expired:
@@ -488,6 +528,16 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/dto.Review'
+      type: object
+    dto.SuccessResponse-dto_ReviewImageUploadResponseBody:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.ReviewImageUploadResponseBody'
+      type: object
+    dto.SuccessResponse-dto_StudentEvidenceResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/dto.StudentEvidenceResponse'
       type: object
     dto.SuccessResponse-dto_StudentEvidenceUploadResponseBody:
       properties:
@@ -654,7 +704,7 @@ components:
         id:
           type: string
         isStudentVerified:
-          type: boolean
+          type: string
         isVerified:
           type: boolean
         lastname:
@@ -697,6 +747,172 @@ info:
   version: "1.0"
 openapi: 3.1.0
 paths:
+  /admin/lessee/{id}/reject:
+    patch:
+      description: Reject a lessee student verification
+      parameters:
+      - description: lesseeID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_StudentEvidenceResponse'
+          description: Lessee rejected
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: confilct
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Reject a lessee student verification
+      tags:
+      - admin
+  /admin/lessee/{id}/verify:
+    patch:
+      description: Verify a lessee student verification
+      parameters:
+      - description: lesseeID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_StudentEvidenceResponse'
+          description: Lessee verified
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: confilct
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Verify a lessee student verification
+      tags:
+      - admin
+  /admin/lessee/pending:
+    get:
+      description: Get all pending student verifications
+      parameters:
+      - description: Number of pending verification to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_StudentEvidenceResponse'
+          description: All pending verification retrieved
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Get all pending student verifications
+      tags:
+      - admin
   /admin/user/{id}/ban:
     patch:
       description: Ban a user by their ID. Only admins are allowed to use this endpoint
@@ -1652,6 +1868,51 @@ paths:
       summary: Delete a leasing history
       tags:
       - history
+    get:
+      description: Retrieve a leasing history by historyid
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.LeasingHistory'
+          description: Retrive history successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID
+      security:
+      - Bearer: []
+      summary: Get a leasing history by historyid
+      tags:
+      - history
     patch:
       description: Set end date of a leasing history in the database
       parameters:
@@ -1738,109 +1999,7 @@ paths:
       summary: Create a new leasing history
       tags:
       - history
-  /history/bydorm/{id}:
-    get:
-      description: Retrieve a list of all leasing history by userid
-      parameters:
-      - description: DormID
-        in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      - description: Number of dorms to retrieve (default 10, max 50)
-        in: query
-        name: limit
-        schema:
-          type: integer
-      - description: Page number to retrieve (default 1)
-        in: query
-        name: page
-        schema:
-          type: integer
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
-          description: Retrive history successfully
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format or limit parameter is incorrect or page
-            parameter is incorrect or page exceeded
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: leasing history not found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Can not parse UUID
-      security:
-      - Bearer: []
-      summary: Get all leasing history by userid
-      tags:
-      - history
-  /history/me:
-    get:
-      description: Retrieve a list of all leasing history by userid
-      parameters:
-      - description: Number of dorms to retrieve (default 10, max 50)
-        in: query
-        name: limit
-        schema:
-          type: integer
-      - description: Page number to retrieve (default 1)
-        in: query
-        name: page
-        schema:
-          type: integer
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
-          description: Retrive history successfully
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: Incorrect UUID format or limit parameter is incorrect or page
-            parameter is incorrect or page exceeded
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: your request is unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.ErrorResponse'
-          description: leasing history not found
-      security:
-      - Bearer: []
-      summary: Get all leasing history by userid
-      tags:
-      - history
-  /history/review/{id}:
+  /history/{id}/review:
     delete:
       description: Delete a review
       parameters:
@@ -1985,6 +2144,223 @@ paths:
       security:
       - Bearer: []
       summary: Create a new review
+      tags:
+      - history
+  /history/{id}/review/images:
+    post:
+      description: Upload multiple images for a specific review by its historyID,
+        by attaching the images as value for the key field name "image", as a multipart
+        form-data
+      parameters:
+      - description: historyID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        description: ReviewImage
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_ReviewImageUploadResponseBody'
+          description: Successful image upload
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Invalid Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized to upload image to review
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: History not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Server failed to upload review image
+      security:
+      - Bearer: []
+      summary: Upload multiple images for a review
+      tags:
+      - history
+  /history/bydorm/{id}:
+    get:
+      description: Retrieve a list of all leasing history by userid
+      parameters:
+      - description: DormID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: Number of dorms to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
+          description: Retrive history successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect or page exceeded
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Can not parse UUID
+      security:
+      - Bearer: []
+      summary: Get all leasing history by userid
+      tags:
+      - history
+  /history/me:
+    get:
+      description: Retrieve a list of all leasing history by userid
+      parameters:
+      - description: Number of dorms to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_LeasingHistory'
+          description: Retrive history successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Incorrect UUID format or limit parameter is incorrect or page
+            parameter is incorrect or page exceeded
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: leasing history not found
+      security:
+      - Bearer: []
+      summary: Get all leasing history by userid
+      tags:
+      - history
+  /history/review/image/{url}:
+    delete:
+      description: Deletes a review image using its percent encoded url from bucket
+        storage. Encode URL using encodeURIComponent().
+      parameters:
+      - description: Percent encoded URL
+        in: path
+        name: url
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "204":
+          description: Image deleted successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Your request is invalid
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: You do not have permission to delete this review image
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Image not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: Failed to delete image
+      security:
+      - Bearer: []
+      summary: Delete a review image by its url
       tags:
       - history
   /order:
@@ -3346,6 +3722,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: your request is unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
         "404":
           content:
             application/json:

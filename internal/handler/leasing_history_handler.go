@@ -153,6 +153,36 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+// GetByID godoc
+// @Summary Get a leasing history by historyid
+// @Description Retrieve a leasing history by historyid
+// @Tags history
+// @Security Bearer
+// @Produce json
+// @Param id path string true "HistoryID"
+// @Success 200 {object} dto.LeasingHistory "Retrive history successfully"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID"
+// @Router /history/{id} [get]
+func (h *LeasingHistoryHandler) GetByID(c *fiber.Ctx) error {
+	historyID, err := parseIdParam(c)
+	if err != nil {
+		return err
+	}
+	leasingHistory, err := h.service.GetByID(historyID)
+	if err != nil {
+		return err
+	}
+
+	urls := h.service.GetImageUrl(leasingHistory.Images)
+	resData := leasingHistory.ToDTO(urls)
+	resData.Images = h.dormService.GetImageUrl(leasingHistory.Dorm.Images)
+
+	return c.Status(fiber.StatusOK).JSON(resData)
+}
+
 // Delete godoc
 // @Summary Delete a leasing history
 // @Description Delete a leasing history in the database
