@@ -165,7 +165,7 @@ func (h *LeasingHistoryHandler) GetByDormID(c *fiber.Ctx) error {
 // @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
 // @Failure 404 {object} dto.ErrorResponse "leasing history not found"
 // @Failure 500 {object} dto.ErrorResponse "Can not parse UUID"
-// @Router /history/bydorm/{id} [get]
+// @Router /history/{id} [get]
 func (h *LeasingHistoryHandler) GetByID(c *fiber.Ctx) error {
 	historyID, err := parseIdParam(c)
 	if err != nil {
