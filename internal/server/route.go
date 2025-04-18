@@ -86,6 +86,7 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Delete("/review/image/:url", s.handler.leasingHistory.DeleteReviewImageByURL)
 	historyRoutes.Get("/me", s.handler.leasingHistory.GetByUserID)
 	historyRoutes.Get("/bydorm/:id", s.handler.leasingHistory.GetByDormID)
+	historyRoutes.Get("/:id", s.handler.leasingHistory.GetByID)
 	historyRoutes.Patch("/:id", s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.handler.leasingHistory.Delete)
 }

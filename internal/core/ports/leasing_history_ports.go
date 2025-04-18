@@ -44,6 +44,7 @@ type LeasingHistoryHandler interface {
 	DeleteReview(c *fiber.Ctx) error
 	GetByUserID(c *fiber.Ctx) error
 	GetByDormID(c *fiber.Ctx) error
+	GetByID(c *fiber.Ctx) error
 	SetEndTimestamp(c *fiber.Ctx) error
 	UploadReviewImage(c *fiber.Ctx) error
 	DeleteReviewImageByURL(c *fiber.Ctx) error
