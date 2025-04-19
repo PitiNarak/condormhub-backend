@@ -70,6 +70,16 @@ func (r *Review) ToDTO(urls []string) dto.Review {
 	}
 }
 
+func (r *Review) ToReportedReviewDTO(urls []string, reviewer dto.UserResponse) dto.ReportedReview {
+	return dto.ReportedReview{
+		Message:  r.Message,
+		Rate:     r.Rate,
+		Reviewer: reviewer,
+		CreateAt: *r.CreateAt,
+		Images:   urls,
+	}
+}
+
 func (l *LeasingHistory) AfterUpdate(tx *gorm.DB) (err error) {
 	// Calculate the new average rating after an update to leasingHistory
 	var avgRating float64
