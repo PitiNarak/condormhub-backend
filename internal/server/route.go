@@ -156,4 +156,5 @@ func (s *Server) initAdminRoutes() {
 	adminRoutes.Get("/lessee/pending", s.handler.user.GetPending)
 	adminRoutes.Patch("/lessee/:id/verify", s.handler.user.VerifyStudentVerification)
 	adminRoutes.Patch("/lessee/:id/reject", s.handler.user.RejectStudentVerification)
+	adminRoutes.Get("/reviews/reported", s.handler.leasingHistory.GetReportedReviews)
 }
