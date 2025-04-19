@@ -44,9 +44,10 @@ type ReviewImageUploadResponseBody struct {
 }
 
 type ReportedReview struct {
-	Message  string       `json:"message"`
-	Rate     int          `json:"rate"`
-	Reviewer UserResponse `json:"reviewer"`
-	CreateAt time.Time    `json:"createAt"`
-	Images   []string     `json:"url"`
+	HistoryID uuid.UUID    `json:"historyId"`
+	Message   string       `json:"message"`
+	Rate      int          `json:"rate"`
+	Reviewer  UserResponse `json:"reviewer"`
+	CreateAt  time.Time    `json:"createAt"`
+	Images    []string     `json:"url"`
 }
