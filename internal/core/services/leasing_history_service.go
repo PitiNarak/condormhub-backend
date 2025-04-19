@@ -221,3 +221,7 @@ func (s *LeasingHistoryService) DeleteImageByURL(ctx context.Context, imageURL s
 
 	return s.historyRepo.DeleteImageByKey(imageKey)
 }
+
+func (s *LeasingHistoryService) GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error) {
+	return s.historyRepo.GetReportedReviews(limit, page)
+}

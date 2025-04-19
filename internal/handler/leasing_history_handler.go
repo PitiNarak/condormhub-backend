@@ -460,6 +460,40 @@ func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+func (h *LeasingHistoryHandler) GetReportedReviews(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	leasingHistory, totalPage, totalRows, err := h.service.GetReportedReviews(limit, page)
+	if err != nil {
+		return err
+	}
+
+	resData := make([]dto.LeasingHistory, len(leasingHistory))
+	for i, v := range leasingHistory {
+		urls := h.service.GetImageUrl(v.Images)
+		resData[i] = v.ToDTO(urls)
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
 func parseIdParam(c *fiber.Ctx) (uuid.UUID, error) {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {
