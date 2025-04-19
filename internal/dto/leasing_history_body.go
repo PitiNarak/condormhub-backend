@@ -20,10 +20,11 @@ type LeasingHistory struct {
 }
 
 type Review struct {
-	Message  string    `json:"message"`
-	Rate     int       `json:"rate"`
-	CreateAt time.Time `json:"createAt"`
-	Images   []string  `json:"url"`
+	Message    string    `json:"message"`
+	Rate       int       `json:"rate"`
+	CreateAt   time.Time `json:"createAt"`
+	Images     []string  `json:"url"`
+	ReportFlag bool      `json:"reported"`
 }
 
 type ReviewCreateRequestBody struct {

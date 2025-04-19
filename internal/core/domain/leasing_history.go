@@ -63,10 +63,11 @@ type ReviewImage struct {
 func (r *Review) ToDTO(urls []string) dto.Review {
 
 	return dto.Review{
-		Message:  r.Message,
-		Rate:     r.Rate,
-		CreateAt: *r.CreateAt,
-		Images:   urls,
+		Message:    r.Message,
+		Rate:       r.Rate,
+		CreateAt:   *r.CreateAt,
+		Images:     urls,
+		ReportFlag: r.ReportFlag,
 	}
 }
 
