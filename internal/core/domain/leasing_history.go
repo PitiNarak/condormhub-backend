@@ -21,7 +21,6 @@ type LeasingHistory struct {
 	ReviewFlag bool
 	Review     Review        `gorm:"embedded"`
 	Images     []ReviewImage `gorm:"foreignKey:HistoryID"` // Link to ReviewImage
-	ReportFlag bool          `gorm:"default:false"`
 }
 
 func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
@@ -48,9 +47,10 @@ func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
 }
 
 type Review struct {
-	Message  string     `gorm:"default:null"`
-	Rate     int        `gorm:"default:null"`
-	CreateAt *time.Time `gorm:"autoUpdateTime;default:null"`
+	Message    string     `gorm:"default:null"`
+	Rate       int        `gorm:"default:null"`
+	CreateAt   *time.Time `gorm:"autoUpdateTime;default:null"`
+	ReportFlag bool       `gorm:"default:false"`
 }
 
 type ReviewImage struct {
