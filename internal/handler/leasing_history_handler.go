@@ -494,6 +494,23 @@ func (h *LeasingHistoryHandler) GetReportedReviews(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+func (h *LeasingHistoryHandler) ReportReview(c *fiber.Ctx) error {
+	historyID, err := parseIdParam(c)
+	if err != nil {
+		return err
+	}
+
+	history, err := h.service.ReportReview(historyID)
+	if err != nil {
+		return err
+	}
+
+	urls := h.service.GetImageUrl(history.Images)
+	data := history.Review.ToDTO(urls)
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
+}
+
 func parseIdParam(c *fiber.Ctx) (uuid.UUID, error) {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {

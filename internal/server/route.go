@@ -89,6 +89,7 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Get("/:id", s.handler.leasingHistory.GetByID)
 	historyRoutes.Patch("/:id", s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.handler.leasingHistory.Delete)
+	historyRoutes.Post("/:id/review/report", s.handler.leasingHistory.ReportReview)
 }
 
 func (s *Server) initLeasingRequestRoutes() {

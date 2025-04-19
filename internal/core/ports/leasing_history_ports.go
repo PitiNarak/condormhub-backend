@@ -37,6 +37,7 @@ type LeasingHistoryService interface {
 	DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error
 	GetImageUrl(reviewImage []domain.ReviewImage) []string
 	GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error)
+	ReportReview(id uuid.UUID) (*domain.LeasingHistory, error)
 }
 
 type LeasingHistoryHandler interface {
@@ -51,4 +52,5 @@ type LeasingHistoryHandler interface {
 	UploadReviewImage(c *fiber.Ctx) error
 	DeleteReviewImageByURL(c *fiber.Ctx) error
 	GetReportedReviews(c *fiber.Ctx) error
+	ReportReview(c *fiber.Ctx) error
 }
