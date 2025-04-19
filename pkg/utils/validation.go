@@ -48,7 +48,7 @@ func ValidateUserForReview(user *domain.User, history *domain.LeasingHistory, cr
 	if user.Role == domain.LessorRole {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
-	if history.LesseeID != user.ID {
+	if history.LesseeID != user.ID && user.Role != domain.AdminRole {
 		return apperror.UnauthorizedError(errors.New("user is unauthorized"), "user is unauthorized")
 	}
 	return nil
