@@ -158,4 +158,5 @@ func (s *Server) initAdminRoutes() {
 	adminRoutes.Patch("/lessee/:id/verify", s.handler.user.VerifyStudentVerification)
 	adminRoutes.Patch("/lessee/:id/reject", s.handler.user.RejectStudentVerification)
 	adminRoutes.Get("/reviews/reported", s.handler.leasingHistory.GetReportedReviews)
+	adminRoutes.Delete("/reviews/:id", s.handler.leasingHistory.DeleteReview)
 }
