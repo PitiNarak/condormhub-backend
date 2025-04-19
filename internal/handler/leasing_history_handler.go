@@ -460,6 +460,19 @@ func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// GetReportedReview godoc
+// @Summary Get all reported reviews
+// @Description Endpoint for admins to get a list of all reported reviews
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param limit query int false "Number of reviews to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Success 200 {object} dto.PaginationResponse[dto.ReportedReview] "Retrieve reported reviews successfully"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/reviews/reported [get]
 func (h *LeasingHistoryHandler) GetReportedReviews(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	if limit <= 0 {
@@ -494,6 +507,21 @@ func (h *LeasingHistoryHandler) GetReportedReviews(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+// ReportReview godoc
+// @Summary Report a review
+// @Description Mark a review as reported
+// @Tags history
+// @Security Bearer
+// @Produce json
+// @Param id path string true "HistoryID"
+// @Success 200 {object} dto.SuccessResponse[dto.Review] "Review reported successfully"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "conflict"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /history/{id}/review/report [post]
 func (h *LeasingHistoryHandler) ReportReview(c *fiber.Ctx) error {
 	historyID, err := parseIdParam(c)
 	if err != nil {
