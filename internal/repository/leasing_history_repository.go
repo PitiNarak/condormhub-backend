@@ -149,7 +149,7 @@ func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([
 
 func (d *LeasingHistoryRepository) GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error) {
 	var reviews []domain.LeasingHistory
-	query := d.db.Preload("Lessee").Preload("Images").Where("report_flag = ?", true)
+	query := d.db.Preload("Lessee").Preload("Images").Where("report_flag = ?", true).Where("review_flag = ?", true)
 	totalPages, totalRows, err := d.db.Paginate(&reviews, query, limit, page, "id")
 	if err != nil {
 		return nil, 0, 0, apperror.InternalServerError(err, "Failed to retrieve reviews")
