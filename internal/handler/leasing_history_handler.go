@@ -478,10 +478,10 @@ func (h *LeasingHistoryHandler) GetReportedReviews(c *fiber.Ctx) error {
 		return err
 	}
 
-	resData := make([]dto.LeasingHistory, len(leasingHistory))
+	resData := make([]dto.ReportedReview, len(leasingHistory))
 	for i, v := range leasingHistory {
 		urls := h.service.GetImageUrl(v.Images)
-		resData[i] = v.ToDTO(urls)
+		resData[i] = v.Review.ToReportedReviewDTO(urls, v.Lessee.ToDTO())
 	}
 
 	res := dto.SuccessPagination(resData, dto.Pagination{
