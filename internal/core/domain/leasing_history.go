@@ -21,6 +21,7 @@ type LeasingHistory struct {
 	ReviewFlag bool
 	Review     Review        `gorm:"embedded"`
 	Images     []ReviewImage `gorm:"foreignKey:HistoryID"` // Link to ReviewImage
+	ReportFlag bool          `gorm:"default:false"`
 }
 
 func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
