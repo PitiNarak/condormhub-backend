@@ -20,6 +20,7 @@ type LeasingHistoryRepository interface {
 	SaveReviewImage(reviewImage *domain.ReviewImage) error
 	DeleteImageByKey(imageKey string) error
 	GetImageByKey(imageKey string) (*domain.ReviewImage, error)
+	GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error)
 }
 
 type LeasingHistoryService interface {
@@ -35,6 +36,8 @@ type LeasingHistoryService interface {
 	UploadReviewImage(ctx context.Context, historyID uuid.UUID, filename string, contentType string, fileData io.Reader, userID uuid.UUID, isAdmin bool) (string, error)
 	DeleteImageByURL(ctx context.Context, imageURL string, userID uuid.UUID, isAdmin bool) error
 	GetImageUrl(reviewImage []domain.ReviewImage) []string
+	GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error)
+	ReportReview(id uuid.UUID) (*domain.LeasingHistory, error)
 }
 
 type LeasingHistoryHandler interface {
@@ -48,4 +51,6 @@ type LeasingHistoryHandler interface {
 	SetEndTimestamp(c *fiber.Ctx) error
 	UploadReviewImage(c *fiber.Ctx) error
 	DeleteReviewImageByURL(c *fiber.Ctx) error
+	GetReportedReviews(c *fiber.Ctx) error
+	ReportReview(c *fiber.Ctx) error
 }

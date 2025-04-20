@@ -89,6 +89,7 @@ func (s *Server) initLeasingHistoryRoutes() {
 	historyRoutes.Get("/:id", s.handler.leasingHistory.GetByID)
 	historyRoutes.Patch("/:id", s.handler.leasingHistory.SetEndTimestamp)
 	historyRoutes.Delete("/:id", s.handler.leasingHistory.Delete)
+	historyRoutes.Post("/:id/review/report", s.handler.leasingHistory.ReportReview)
 }
 
 func (s *Server) initLeasingRequestRoutes() {
@@ -156,4 +157,6 @@ func (s *Server) initAdminRoutes() {
 	adminRoutes.Get("/lessee/pending", s.handler.user.GetPending)
 	adminRoutes.Patch("/lessee/:id/verify", s.handler.user.VerifyStudentVerification)
 	adminRoutes.Patch("/lessee/:id/reject", s.handler.user.RejectStudentVerification)
+	adminRoutes.Get("/reviews/reported", s.handler.leasingHistory.GetReportedReviews)
+	adminRoutes.Delete("/reviews/:id", s.handler.leasingHistory.DeleteReview)
 }

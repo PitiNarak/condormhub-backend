@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -220,4 +221,27 @@ func (s *LeasingHistoryService) DeleteImageByURL(ctx context.Context, imageURL s
 	}
 
 	return s.historyRepo.DeleteImageByKey(imageKey)
+}
+
+func (s *LeasingHistoryService) GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error) {
+	return s.historyRepo.GetReportedReviews(limit, page)
+}
+
+func (s *LeasingHistoryService) ReportReview(id uuid.UUID) (*domain.LeasingHistory, error) {
+	history, err := s.historyRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if !history.ReviewFlag {
+		return nil, apperror.NotFoundError(errors.New("review not found"), "review not found")
+	}
+	if history.Review.ReportFlag {
+		return nil, apperror.ConflictError(errors.New("review already reported"), "review already reported")
+	}
+	history.Review.ReportFlag = true
+	err = s.historyRepo.Update(history)
+	if err != nil {
+		return nil, err
+	}
+	return history, nil
 }

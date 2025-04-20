@@ -460,6 +460,85 @@ func (h *LeasingHistoryHandler) DeleteReview(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// GetReportedReview godoc
+// @Summary Get all reported reviews
+// @Description Endpoint for admins to get a list of all reported reviews
+// @Tags admin
+// @Security Bearer
+// @Produce json
+// @Param limit query int false "Number of reviews to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Success 200 {object} dto.PaginationResponse[dto.ReportedReview] "Retrieve reported reviews successfully"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /admin/reviews/reported [get]
+func (h *LeasingHistoryHandler) GetReportedReviews(c *fiber.Ctx) error {
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	leasingHistory, totalPage, totalRows, err := h.service.GetReportedReviews(limit, page)
+	if err != nil {
+		return err
+	}
+
+	resData := make([]dto.ReportedReview, len(leasingHistory))
+	for i, v := range leasingHistory {
+		urls := h.service.GetImageUrl(v.Images)
+		resData[i] = v.Review.ToReportedReviewDTO(urls, v.Lessee.ToDTO(), v.ID)
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// ReportReview godoc
+// @Summary Report a review
+// @Description Mark a review as reported
+// @Tags history
+// @Security Bearer
+// @Produce json
+// @Param id path string true "HistoryID"
+// @Success 200 {object} dto.SuccessResponse[dto.Review] "Review reported successfully"
+// @Failure 400 {object} dto.ErrorResponse "bad request"
+// @Failure 401 {object} dto.ErrorResponse "unauthorized"
+// @Failure 403 {object} dto.ErrorResponse "forbidden"
+// @Failure 404 {object} dto.ErrorResponse "not found"
+// @Failure 409 {object} dto.ErrorResponse "conflict"
+// @Failure 500 {object} dto.ErrorResponse "internal server error"
+// @Router /history/{id}/review/report [post]
+func (h *LeasingHistoryHandler) ReportReview(c *fiber.Ctx) error {
+	historyID, err := parseIdParam(c)
+	if err != nil {
+		return err
+	}
+
+	history, err := h.service.ReportReview(historyID)
+	if err != nil {
+		return err
+	}
+
+	urls := h.service.GetImageUrl(history.Images)
+	data := history.Review.ToDTO(urls)
+
+	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
+}
+
 func parseIdParam(c *fiber.Ctx) (uuid.UUID, error) {
 	id := c.Params("id")
 	if err := uuid.Validate(id); err != nil {

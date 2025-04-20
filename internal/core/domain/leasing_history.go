@@ -47,9 +47,10 @@ func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
 }
 
 type Review struct {
-	Message  string     `gorm:"default:null"`
-	Rate     int        `gorm:"default:null"`
-	CreateAt *time.Time `gorm:"autoUpdateTime;default:null"`
+	Message    string     `gorm:"default:null"`
+	Rate       int        `gorm:"default:null"`
+	CreateAt   *time.Time `gorm:"autoUpdateTime;default:null"`
+	ReportFlag bool       `gorm:"default:false"`
 }
 
 type ReviewImage struct {
@@ -62,10 +63,22 @@ type ReviewImage struct {
 func (r *Review) ToDTO(urls []string) dto.Review {
 
 	return dto.Review{
-		Message:  r.Message,
-		Rate:     r.Rate,
-		CreateAt: *r.CreateAt,
-		Images:   urls,
+		Message:    r.Message,
+		Rate:       r.Rate,
+		CreateAt:   *r.CreateAt,
+		Images:     urls,
+		ReportFlag: r.ReportFlag,
+	}
+}
+
+func (r *Review) ToReportedReviewDTO(urls []string, reviewer dto.UserResponse, historyID uuid.UUID) dto.ReportedReview {
+	return dto.ReportedReview{
+		HistoryID: historyID,
+		Message:   r.Message,
+		Rate:      r.Rate,
+		Reviewer:  reviewer,
+		CreateAt:  *r.CreateAt,
+		Images:    urls,
 	}
 }
 
