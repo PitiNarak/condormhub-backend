@@ -179,6 +179,10 @@ github.com/valyala/fasthttp v1.59.0 h1:Qu0qYHfXvPk1mSLNqcFtEk6DpxgA26hy6bmydotDp
 github.com/valyala/fasthttp v1.59.0/go.mod h1:GTxNb9Bc6r2a9D0TWNSPwDz78UxnTGBViY3xZNEqyYU=
 github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
 github.com/xyproto/randomstring v1.0.5/go.mod h1:rgmS5DeNXLivK7YprL0pY+lTuhNQW3iGxZ18UQApw/E=
+github.com/yokeTH/go-pkg/apperror v1.0.2 h1:QIzS5PyUX7sPdAc/lyGZvKWPdwXwqDQzKqeYznmnTS4=
+github.com/yokeTH/go-pkg/apperror v1.0.2/go.mod h1:a3henkb9Gn4Dc7EwfWBHv06Vl+UMW+/MkJBgfEr/1hU=
+github.com/yokeTH/go-pkg/scalar v1.0.0 h1:ngGVpLz8/tQZMf51x7uXb2zfQW9pGPg/KysGFJb9x6Q=
+github.com/yokeTH/go-pkg/scalar v1.0.0/go.mod h1:66sDi25jb1QoZhxlwc+rl4/h3hkGJXIdyEc6rKmr/uM=
 golang.org/x/crypto v0.34.0 h1:+/C6tk6rf/+t5DhUketUbD1aNGqiSX3j15Z6xuIDlBA=
 golang.org/x/crypto v0.34.0/go.mod h1:dy7dXNW32cAb/6/PRuTNsix8T+vJAqvuIy5Bli/x0YQ=
 golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=

@@ -11,11 +11,11 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/email"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 	"github.com/google/uuid"
+	"github.com/yokeTH/go-pkg/apperror"
 	"golang.org/x/crypto/bcrypt"
 )
 

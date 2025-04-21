@@ -8,11 +8,11 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/utils"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type UserHandler struct {

@@ -5,8 +5,8 @@ import (
 	"regexp"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/go-playground/validator/v10"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 // Custom validator for Lifestyles

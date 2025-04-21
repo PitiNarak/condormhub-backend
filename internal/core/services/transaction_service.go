@@ -6,10 +6,10 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	stripePkg "github.com/PitiNarak/condormhub-backend/pkg/stripe"
 	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v81"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type TransactionService struct {

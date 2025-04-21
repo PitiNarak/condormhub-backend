@@ -4,7 +4,7 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
 	"github.com/PitiNarak/condormhub-backend/internal/database"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
+	"github.com/yokeTH/go-pkg/apperror"
 
 	"github.com/google/uuid"
 )

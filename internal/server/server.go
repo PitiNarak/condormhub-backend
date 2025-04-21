@@ -7,7 +7,6 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/database"
 	"github.com/PitiNarak/condormhub-backend/internal/middleware"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/email"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
@@ -18,6 +17,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type Config struct {

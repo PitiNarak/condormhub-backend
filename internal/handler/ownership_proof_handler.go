@@ -8,8 +8,8 @@ import (
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/PitiNarak/condormhub-backend/pkg/storage"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/gofiber/fiber/v2"
+	"github.com/yokeTH/go-pkg/apperror"
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/google/uuid"

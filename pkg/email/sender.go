@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/go-gomail/gomail"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type SMTPConfig struct {

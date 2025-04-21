@@ -5,8 +5,8 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/google/uuid"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type ContractService struct {

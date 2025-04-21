@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/redis"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type JWTConfig struct {

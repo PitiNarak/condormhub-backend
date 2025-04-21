@@ -6,9 +6,9 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
 	"github.com/PitiNarak/condormhub-backend/internal/core/ports"
-	"github.com/PitiNarak/condormhub-backend/pkg/apperror"
 	"github.com/PitiNarak/condormhub-backend/pkg/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/yokeTH/go-pkg/apperror"
 )
 
 type AuthMiddleware struct {
