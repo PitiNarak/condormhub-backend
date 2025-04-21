@@ -328,7 +328,7 @@ func (h *LeasingHistoryHandler) GetReviewByDormID(c *fiber.Ctx) error {
 	for i, v := range reviews {
 		urls := h.service.GetImageUrl(v.Images)
 		if v.Review != nil {
-			resData[i] = v.Review.ToDTO(urls)
+			resData[i] = v.Review.ToDTO(urls, v.Lessee.ToDTO())
 		} else {
 			resData[i] = dto.Review{}
 		}

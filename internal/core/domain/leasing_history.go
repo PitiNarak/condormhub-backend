@@ -31,7 +31,7 @@ func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
 	}
 	var review dto.Review
 	if l.ReviewFlag {
-		review = l.Review.ToDTO(urls)
+		review = l.Review.ToDTO(urls, l.Lessee.ToDTO())
 	}
 
 	return dto.LeasingHistory{
@@ -61,13 +61,14 @@ type ReviewImage struct {
 	ImageKey  string    `gorm:"type:text;not null"`
 }
 
-func (r *Review) ToDTO(urls []string) dto.Review {
+func (r *Review) ToDTO(urls []string, reviewer dto.UserResponse) dto.Review {
 
 	return dto.Review{
 		Message:    r.Message,
 		Rate:       r.Rate,
 		CreateAt:   *r.CreateAt,
 		Images:     urls,
+		Reviewer:   reviewer,
 		ReportFlag: r.ReportFlag,
 	}
 }
