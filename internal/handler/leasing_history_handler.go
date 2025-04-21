@@ -284,7 +284,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 		return err
 	}
 	urls := h.service.GetImageUrl(history.Images)
-	res := dto.Success(review.ToDTO(urls))
+	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO()))
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
@@ -485,7 +485,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 		return err
 	}
 	urls := h.service.GetImageUrl(history.Images)
-	res := dto.Success(review.ToDTO(urls))
+	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO()))
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
@@ -589,7 +589,7 @@ func (h *LeasingHistoryHandler) ReportReview(c *fiber.Ctx) error {
 	}
 
 	urls := h.service.GetImageUrl(history.Images)
-	data := history.Review.ToDTO(urls)
+	data := history.Review.ToDTO(urls, history.Lessee.ToDTO())
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
 }
