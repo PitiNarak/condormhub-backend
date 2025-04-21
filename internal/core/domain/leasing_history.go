@@ -19,8 +19,9 @@ type LeasingHistory struct {
 	End        time.Time `gorm:"default:null"`
 	Price      float64
 	ReviewFlag bool
-	Review     Review        `gorm:"embedded"`
-	Images     []ReviewImage `gorm:"foreignKey:HistoryID"` // Link to ReviewImage
+	Review     Review         `gorm:"embedded"`
+	Images     []ReviewImage  `gorm:"foreignKey:HistoryID"` // Link to ReviewImage
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 func (l *LeasingHistory) ToDTO(urls []string) dto.LeasingHistory {
@@ -134,4 +135,8 @@ func updateDormsLeasedCount(tx *gorm.DB, lesseeID uuid.UUID) error {
 
 func (l *LeasingHistory) AfterCreate(tx *gorm.DB) (err error) {
 	return updateDormsLeasedCount(tx, l.LesseeID)
+}
+
+func (l *LeasingHistory) BeforeDelete(tx *gorm.DB) (err error) {
+	return tx.Model(&Order{}).Where("leasing_history_id = ?", l.ID).Delete(&Order{}).Error
 }

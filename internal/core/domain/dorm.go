@@ -9,11 +9,12 @@ import (
 )
 
 type Dorm struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	CreateAt    time.Time `gorm:"autoCreateTime"`
-	UpdateAt    time.Time `gorm:"autoUpdateTime"`
-	Name        string    `validate:"required"`
-	OwnerID     uuid.UUID `validate:"required"`
+	ID          uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt    time.Time      `gorm:"autoCreateTime"`
+	UpdateAt    time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	Name        string         `validate:"required"`
+	OwnerID     uuid.UUID      `validate:"required"`
 	Owner       User
 	Size        float64 `validate:"required,gt=0"`
 	Bedrooms    int     `validate:"required,gte=0"`
@@ -84,4 +85,26 @@ func (d *Dorm) AfterCreate(tx *gorm.DB) (err error) {
 
 func (d *Dorm) AfterDelete(tx *gorm.DB) (err error) {
 	return updateDormsOwnedCount(tx, d.OwnerID)
+}
+
+func (d *Dorm) BeforeDelete(tx *gorm.DB) (err error) {
+	// Mark Pending leasing request as Rejected if the dorm related is deleted
+	err = tx.Model(&LeasingRequest{}).Where("dorm_id = ? AND status = ?", d.ID, RequestPending).Update("status", RequestRejected).Error
+	if err != nil {
+		return err
+	}
+
+	// Mark Waiting Contract as Canceled if the dorm related is deleted
+	err = tx.Model(&Contract{}).Where("dorm_id = ? AND status = ?", d.ID, Waiting).Update("status", Cancelled).Error
+	if err != nil {
+		return err
+	}
+
+	// Soft delete Ownership proof when deleting dorm
+	err = tx.Model(&OwnershipProof{}).Where("dorm_id = ?", d.ID).Delete(&OwnershipProof{}).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

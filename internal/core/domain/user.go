@@ -9,6 +9,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Role string
@@ -164,12 +165,13 @@ const (
 )
 
 type User struct {
-	ID                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	CreateAt           time.Time `gorm:"autoCreateTime"`
-	UpdateAt           time.Time `gorm:"autoUpdateTime"`
-	Username           string    `gorm:"unique" validate:"required"`
-	Password           string    `validate:"required,min=8"`
-	Email              string    `gorm:"unique" validate:"required,email"`
+	ID                 uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt           time.Time      `gorm:"autoCreateTime"`
+	UpdateAt           time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt          gorm.DeletedAt `gorm:"index"`
+	Username           string         `gorm:"unique" validate:"required"`
+	Password           string         `validate:"required,min=8"`
+	Email              string         `gorm:"unique" validate:"required,email"`
 	Firstname          string
 	Lastname           string
 	NationalID         string
@@ -214,4 +216,26 @@ func (u *User) ToDTO() dto.UserResponse {
 		DormsLeased:        u.DormsLeased,
 		Banned:             u.Banned,
 	}
+}
+
+func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
+	// Soft delete dorm owned by lessor when deleting their account
+	err = tx.Model(&Dorm{}).Where("owner_id = ?", u.ID).Delete(&Dorm{}).Error
+	if err != nil {
+		return err
+	}
+
+	// Mark Pending leasing request as Canceled if a lessee delete their account
+	err = tx.Model(&LeasingRequest{}).Where("lessee_id = ? AND status = ?", u.ID, RequestPending).Update("status", RequestCanceled).Error
+	if err != nil {
+		return err
+	}
+
+	// Mark Waiting Contract as Canceled if a lessee delete their account
+	err = tx.Model(&Contract{}).Where("lessee_id = ? AND status = ?", u.ID, Waiting).Update("status", Cancelled).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

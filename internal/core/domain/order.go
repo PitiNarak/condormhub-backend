@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type OrderType string
@@ -25,6 +26,7 @@ type Order struct {
 	PaidTransactionID string         `gorm:"default:null"`
 	LeasingHistory    LeasingHistory `gorm:"foreignKey:LeasingHistoryID"`
 	LeasingHistoryID  uuid.UUID
+	DeletedAt         gorm.DeletedAt `gorm:"index"`
 }
 
 func (o *Order) ToDTO() dto.OrderResponseBody {
@@ -34,4 +36,8 @@ func (o *Order) ToDTO() dto.OrderResponseBody {
 		Price:           o.Price,
 		PaidTransaction: o.PaidTransaction.ToDTO(),
 	}
+}
+
+func (o *Order) BeforeDelete(tx *gorm.DB) (err error) {
+	return tx.Model(&Transaction{}).Where("order_id = ?", o.ID).Delete(&Transaction{}).Error
 }

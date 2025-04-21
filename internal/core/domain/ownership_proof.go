@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type OwnershipProofStatus string
@@ -13,10 +14,11 @@ const (
 )
 
 type OwnershipProof struct {
-	DormID  uuid.UUID            `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	AdminID uuid.UUID            `gorm:"type:uuid;default:null"`
-	Status  OwnershipProofStatus `gorm:"default:Pending"`
-	FileKey string
+	DormID    uuid.UUID            `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	AdminID   uuid.UUID            `gorm:"type:uuid;default:null"`
+	Status    OwnershipProofStatus `gorm:"default:Pending"`
+	FileKey   string
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // func (o *OwnershipProof) ToDTO(ctx context.Context, storage *storage.Storage) (dto.OwnershipProofResponseBody, error) {
