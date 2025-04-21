@@ -1,7 +1,6 @@
 package server
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"github.com/yokeTH/go-pkg/scalar"
 )
 
@@ -10,9 +9,6 @@ func (s *Server) initRoutes() {
 	s.app.Get("/", s.handler.greeting.Greeting)
 
 	// swagger
-	s.app.Get("/swagger/docs.json", func(c *fiber.Ctx) error {
-		return c.SendFile("docs/swagger.json")
-	})
 	s.app.Get("/swagger/*", scalar.DefaultHandler)
 
 	s.initExampleUploadRoutes()
