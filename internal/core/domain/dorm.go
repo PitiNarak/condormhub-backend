@@ -9,11 +9,12 @@ import (
 )
 
 type Dorm struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	CreateAt    time.Time `gorm:"autoCreateTime"`
-	UpdateAt    time.Time `gorm:"autoUpdateTime"`
-	Name        string    `validate:"required"`
-	OwnerID     uuid.UUID `validate:"required"`
+	ID          uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreateAt    time.Time      `gorm:"autoCreateTime"`
+	UpdateAt    time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	Name        string         `validate:"required"`
+	OwnerID     uuid.UUID      `validate:"required"`
 	Owner       User
 	Size        float64 `validate:"required,gt=0"`
 	Bedrooms    int     `validate:"required,gte=0"`

@@ -71,9 +71,8 @@ func (r *UserRepo) UpdateInformation(userID uuid.UUID, data domain.User) error {
 }
 
 func (r *UserRepo) DeleteAccount(userID uuid.UUID) error {
-	var user domain.User
-	// TODO: Cascade delete?
-	result := r.db.Delete(&user, userID)
+	user := domain.User{ID: userID}
+	result := r.db.Delete(&user)
 	if result.Error != nil {
 		return apperror.InternalServerError(result.Error, "cannot delete user")
 	}
