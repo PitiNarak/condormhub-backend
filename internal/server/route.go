@@ -1,9 +1,8 @@
 package server
 
 import (
-	"github.com/PitiNarak/condormhub-backend/docs"
-	"github.com/gofiber/swagger"
-	"github.com/swaggo/swag"
+	"github.com/PitiNarak/condormhub-backend/pkg/swagger"
+	"github.com/gofiber/fiber/v2"
 )
 
 func (s *Server) initRoutes() {
@@ -11,8 +10,10 @@ func (s *Server) initRoutes() {
 	s.app.Get("/", s.handler.greeting.Greeting)
 
 	// swagger
-	swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
-	s.app.Get("/swagger/*", swagger.HandlerDefault)
+	s.app.Get("/swagger/docs.json", func(c *fiber.Ctx) error {
+		return c.SendFile("docs/swagger.json")
+	})
+	s.app.Get("/swagger/*", swagger.Handler)
 
 	s.initExampleUploadRoutes()
 	s.initUserRoutes()
