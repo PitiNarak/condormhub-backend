@@ -5,6 +5,7 @@ import (
 
 	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type CheckoutStatus string
@@ -23,6 +24,7 @@ type Transaction struct {
 	Price         int64
 	Order         Order `gorm:"foreignKey:OrderID"`
 	OrderID       uuid.UUID
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 func (t *Transaction) ToDTO() dto.TransactionResponse {
