@@ -100,5 +100,11 @@ func (d *Dorm) BeforeDelete(tx *gorm.DB) (err error) {
 		return err
 	}
 
+	// Delete Ownership proof when deleting dorm
+	err = tx.Model(&OwnershipProof{}).Where("dorm_id = ?", d.ID).Delete(&OwnershipProof{}).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
