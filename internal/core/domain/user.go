@@ -231,5 +231,11 @@ func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
 		return err
 	}
 
+	// Mark Waiting Contract as Canceled if a lessee delete their account
+	err = tx.Model(&Contract{}).Where("lessee_id = ? AND status = ?", u.ID, Waiting).Update("status", Cancelled).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

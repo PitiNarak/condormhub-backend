@@ -94,5 +94,11 @@ func (d *Dorm) BeforeDelete(tx *gorm.DB) (err error) {
 		return err
 	}
 
+	// Mark Waiting Contract as Canceled if the dorm related is deleted
+	err = tx.Model(&Contract{}).Where("dorm_id = ? AND status = ?", d.ID, Waiting).Update("status", Cancelled).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
