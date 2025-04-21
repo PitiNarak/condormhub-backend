@@ -225,5 +225,11 @@ func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
 		return err
 	}
 
+	// Mark Pending leasing request as Canceled if a lessee delete their account
+	err = tx.Model(&LeasingRequest{}).Where("lessee_id = ? AND status = ?", u.ID, RequestPending).Update("status", RequestCanceled).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

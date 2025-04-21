@@ -86,3 +86,13 @@ func (d *Dorm) AfterCreate(tx *gorm.DB) (err error) {
 func (d *Dorm) AfterDelete(tx *gorm.DB) (err error) {
 	return updateDormsOwnedCount(tx, d.OwnerID)
 }
+
+func (d *Dorm) BeforeDelete(tx *gorm.DB) (err error) {
+	// Mark Pending leasing request as Rejected if the dorm related is deleted
+	err = tx.Model(&LeasingRequest{}).Where("dorm_id = ? AND status = ?", d.ID, RequestPending).Update("status", RequestRejected).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
