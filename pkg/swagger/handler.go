@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/MarceloPetrucio/go-scalar-api-reference"
+	"github.com/PitiNarak/condormhub-backend/docs"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
@@ -19,7 +20,7 @@ func New() *swagger {
 func (s *swagger) Handler() fiber.Handler {
 	return adaptor.HTTPHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		htmlContent, err := scalar.ApiReferenceHTML(&scalar.Options{
-			SpecURL: "./docs/swagger.json",
+			SpecContent: docs.SwaggerInfo.ReadDoc(),
 		})
 
 		if err != nil {
