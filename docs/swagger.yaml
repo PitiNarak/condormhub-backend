@@ -321,6 +321,16 @@ components:
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
+    dto.PaginationResponse-dto_ReportedReview:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/dto.ReportedReview'
+          type: array
+          uniqueItems: false
+        pagination:
+          $ref: '#/components/schemas/dto.Pagination'
+      type: object
     dto.PaginationResponse-dto_StudentEvidenceResponse:
       properties:
         data:
@@ -377,6 +387,24 @@ components:
       - password
       - username
       type: object
+    dto.ReportedReview:
+      properties:
+        createAt:
+          type: string
+        historyId:
+          type: string
+        message:
+          type: string
+        rate:
+          type: integer
+        reviewer:
+          $ref: '#/components/schemas/dto.UserResponse'
+        url:
+          items:
+            type: string
+          type: array
+          uniqueItems: false
+      type: object
     dto.ResetPasswordCreateRequestBody:
       properties:
         email:
@@ -402,6 +430,8 @@ components:
           type: string
         rate:
           type: integer
+        reported:
+          type: boolean
         url:
           items:
             type: string
@@ -911,6 +941,50 @@ paths:
       security:
       - Bearer: []
       summary: Get all pending student verifications
+      tags:
+      - admin
+  /admin/reviews/reported:
+    get:
+      description: Endpoint for admins to get a list of all reported reviews
+      parameters:
+      - description: Number of reviews to retrieve (default 10, max 50)
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Page number to retrieve (default 1)
+        in: query
+        name: page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_ReportedReview'
+          description: Retrieve reported reviews successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Get all reported reviews
       tags:
       - admin
   /admin/user/{id}/ban:
@@ -2207,9 +2281,67 @@ paths:
       summary: Upload multiple images for a review
       tags:
       - history
+  /history/{id}/review/report:
+    post:
+      description: Mark a review as reported
+      parameters:
+      - description: HistoryID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_Review'
+          description: Review reported successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: conflict
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dto.ErrorResponse'
+          description: internal server error
+      security:
+      - Bearer: []
+      summary: Report a review
+      tags:
+      - history
   /history/bydorm/{id}:
     get:
-      description: Retrieve a list of all leasing history by userid
+      description: Retrieve a list of all leasing history by dormid
       parameters:
       - description: DormID
         in: path
@@ -2217,7 +2349,7 @@ paths:
         required: true
         schema:
           type: string
-      - description: Number of dorms to retrieve (default 10, max 50)
+      - description: Number of leasing histories to retrieve (default 10, max 50)
         in: query
         name: limit
         schema:
@@ -2261,14 +2393,14 @@ paths:
           description: Can not parse UUID
       security:
       - Bearer: []
-      summary: Get all leasing history by userid
+      summary: Get all leasing history by dormid
       tags:
       - history
   /history/me:
     get:
-      description: Retrieve a list of all leasing history by userid
+      description: Retrieve a list of all leasing history of current user
       parameters:
-      - description: Number of dorms to retrieve (default 10, max 50)
+      - description: Number of leasing histories to retrieve (default 10, max 50)
         in: query
         name: limit
         schema:
@@ -2306,7 +2438,7 @@ paths:
           description: leasing history not found
       security:
       - Bearer: []
-      summary: Get all leasing history by userid
+      summary: Get all leasing history of current user
       tags:
       - history
   /history/review/image/{url}:
@@ -2320,11 +2452,6 @@ paths:
         required: true
         schema:
           type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
         "204":
           description: Image deleted successfully

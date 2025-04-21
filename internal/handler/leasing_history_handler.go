@@ -52,12 +52,12 @@ func (h *LeasingHistoryHandler) SetEndTimestamp(c *fiber.Ctx) error {
 }
 
 // GetByUserID godoc
-// @Summary Get all leasing history by userid
-// @Description Retrieve a list of all leasing history by userid
+// @Summary Get all leasing history of current user
+// @Description Retrieve a list of all leasing history of current user
 // @Tags history
 // @Security Bearer
 // @Produce json
-// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param limit query int false "Number of leasing histories to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Success 200 {object} dto.PaginationResponse[dto.LeasingHistory] "Retrive history successfully"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
@@ -101,13 +101,13 @@ func (h *LeasingHistoryHandler) GetByUserID(c *fiber.Ctx) error {
 }
 
 // GetByDormID godoc
-// @Summary Get all leasing history by userid
-// @Description Retrieve a list of all leasing history by userid
+// @Summary Get all leasing history by dormid
+// @Description Retrieve a list of all leasing history by dormid
 // @Tags history
 // @Security Bearer
 // @Produce json
 // @Param id path string true "DormID"
-// @Param limit query int false "Number of dorms to retrieve (default 10, max 50)"
+// @Param limit query int false "Number of leasing histories to retrieve (default 10, max 50)"
 // @Param page query int false "Page number to retrieve (default 1)"
 // @Success 200 {object} dto.PaginationResponse[dto.LeasingHistory] "Retrive history successfully"
 // @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
@@ -358,7 +358,6 @@ func (h *LeasingHistoryHandler) UploadReviewImage(c *fiber.Ctx) error {
 // @Description Deletes a review image using its percent encoded url from bucket storage. Encode URL using encodeURIComponent().
 // @Tags history
 // @Security Bearer
-// @Accept json
 // @Produce json
 // @Param url path string true "Percent encoded URL"
 // @Success 204 "Image deleted successfully"
