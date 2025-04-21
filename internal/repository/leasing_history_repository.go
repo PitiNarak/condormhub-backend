@@ -147,6 +147,28 @@ func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([
 	return leasingHistory, totalPage, totalRows, nil
 }
 
+func (d *LeasingHistoryRepository) GetReviewByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
+	var reviews []domain.LeasingHistory
+	query := d.db.Preload("Lessee").
+		Preload("Dorm").
+		Preload("Images").
+		Where("review_flag = ?", true).
+		Where("dorm_id = ?", id)
+	totalPage, totalRows, err := d.db.Paginate(&reviews, query, limit, page, "start")
+
+	if err != nil {
+		if apperror.IsAppError(err) {
+			return nil, 0, 0, err
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, 0, apperror.NotFoundError(err, "Review not found")
+		}
+		return nil, 0, 0, apperror.InternalServerError(err, "failed to get reviews")
+	}
+
+	return reviews, totalPage, totalRows, nil
+}
+
 func (d *LeasingHistoryRepository) GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error) {
 	var reviews []domain.LeasingHistory
 	query := d.db.Preload("Lessee").Preload("Images").Where("report_flag = ?", true).Where("review_flag = ?", true)

@@ -79,6 +79,7 @@ func (s *Server) initDormRoutes() {
 }
 
 func (s *Server) initLeasingHistoryRoutes() {
+	s.app.Get("/history/bydorm/:id/review", s.handler.leasingHistory.GetReviewByDormID)
 	historyRoutes := s.app.Group("/history", s.authMiddleware.Auth)
 	historyRoutes.Post("/:id/review", s.handler.leasingHistory.CreateReview)
 	historyRoutes.Patch("/:id/review", s.handler.leasingHistory.UpdateReview)

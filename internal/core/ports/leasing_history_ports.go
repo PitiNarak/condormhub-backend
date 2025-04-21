@@ -15,6 +15,7 @@ type LeasingHistoryRepository interface {
 	Delete(id uuid.UUID) error
 	GetByID(id uuid.UUID) (*domain.LeasingHistory, error)
 	GetByUserID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
+	GetReviewByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	GetByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	DeleteReview(leasingHistory *domain.LeasingHistory) error
 	SaveReviewImage(reviewImage *domain.ReviewImage) error
@@ -26,6 +27,7 @@ type LeasingHistoryRepository interface {
 type LeasingHistoryService interface {
 	Create(userID uuid.UUID, dormID uuid.UUID) (*domain.LeasingHistory, error)
 	CreateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
+	GetReviewByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error)
 	UpdateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error)
 	DeleteReview(user *domain.User, id uuid.UUID) error
 	Delete(id uuid.UUID) error
@@ -43,6 +45,7 @@ type LeasingHistoryService interface {
 type LeasingHistoryHandler interface {
 	Delete(c *fiber.Ctx) error
 	CreateReview(c *fiber.Ctx) error
+	GetReviewByDormID(c *fiber.Ctx) error
 	UpdateReview(c *fiber.Ctx) error
 	DeleteReview(c *fiber.Ctx) error
 	GetByUserID(c *fiber.Ctx) error

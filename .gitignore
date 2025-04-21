@@ -32,4 +32,4 @@ bin/
 tmpDir/
 tmp/
 .commitlint/
-docs/
+docs/*

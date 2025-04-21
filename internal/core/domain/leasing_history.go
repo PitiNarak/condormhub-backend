@@ -19,7 +19,7 @@ type LeasingHistory struct {
 	End        time.Time `gorm:"default:null"`
 	Price      float64
 	ReviewFlag bool
-	Review     Review         `gorm:"embedded"`
+	Review     *Review        `gorm:"embedded"`
 	Images     []ReviewImage  `gorm:"foreignKey:HistoryID"` // Link to ReviewImage
 	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }

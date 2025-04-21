@@ -86,6 +86,7 @@ func (s *LeasingHistoryService) GetByDormID(id uuid.UUID, limit, page int) ([]do
 	}
 	return leasingHistory, totalPage, totalRows, nil
 }
+
 func (s *LeasingHistoryService) SetEndTimestamp(id uuid.UUID) error {
 	leasingHistory, err := s.historyRepo.GetByID(id)
 	if err != nil {
@@ -112,7 +113,7 @@ func (s *LeasingHistoryService) CreateReview(user *domain.User, id uuid.UUID, Me
 		Message: Message,
 		Rate:    Rate,
 	}
-	history.Review = review
+	history.Review = &review
 	history.ReviewFlag = true
 	err = s.historyRepo.Update(history)
 	if err != nil {
@@ -122,7 +123,7 @@ func (s *LeasingHistoryService) CreateReview(user *domain.User, id uuid.UUID, Me
 	if err != nil {
 		return nil, err
 	}
-	return &history.Review, nil
+	return history.Review, nil
 }
 
 func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Message string, Rate int) (*domain.Review, error) {
@@ -138,7 +139,7 @@ func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Me
 		Message: Message,
 		Rate:    Rate,
 	}
-	history.Review = review
+	history.Review = &review
 	err = s.historyRepo.Update(history)
 	if err != nil {
 		return nil, err
@@ -147,7 +148,7 @@ func (s *LeasingHistoryService) UpdateReview(user *domain.User, id uuid.UUID, Me
 	if err != nil {
 		return nil, err
 	}
-	return &history.Review, nil
+	return history.Review, nil
 }
 
 func (s *LeasingHistoryService) DeleteReview(user *domain.User, id uuid.UUID) error {
@@ -225,6 +226,10 @@ func (s *LeasingHistoryService) DeleteImageByURL(ctx context.Context, imageURL s
 
 func (s *LeasingHistoryService) GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error) {
 	return s.historyRepo.GetReportedReviews(limit, page)
+}
+
+func (s *LeasingHistoryService) GetReviewByDormID(id uuid.UUID, limit, page int) ([]domain.LeasingHistory, int, int, error) {
+	return s.historyRepo.GetReviewByDormID(id, limit, page)
 }
 
 func (s *LeasingHistoryService) ReportReview(id uuid.UUID) (*domain.LeasingHistory, error) {
