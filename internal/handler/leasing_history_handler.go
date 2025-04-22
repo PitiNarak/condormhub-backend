@@ -284,7 +284,63 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 		return err
 	}
 	urls := h.service.GetImageUrl(history.Images)
-	res := dto.Success(review.ToDTO(urls))
+	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// GetReviewByDormID godoc
+// @Summary Get all reviews by dormid
+// @Description Retrieve a list of all reviews by dormid
+// @Tags history
+// @Produce json
+// @Param id path string true "DormID"
+// @Param limit query int false "Number of reviews to retrieve (default 10, max 50)"
+// @Param page query int false "Page number to retrieve (default 1)"
+// @Success 200 {object} dto.PaginationResponse[dto.Review] "Retrive reviews successfully"
+// @Failure 400 {object} dto.ErrorResponse "Incorrect UUID format or limit parameter is incorrect or page parameter is incorrect or page exceeded"
+// @Failure 401 {object} dto.ErrorResponse "your request is unauthorized"
+// @Failure 404 {object} dto.ErrorResponse "leasing history not found"
+// @Failure 500 {object} dto.ErrorResponse "Can not parse UUID"
+// @Router /history/bydorm/{id}/review [get]
+func (h *LeasingHistoryHandler) GetReviewByDormID(c *fiber.Ctx) error {
+	dormID, err := parseIdParam(c)
+	if err != nil {
+		return err
+	}
+
+	limit := c.QueryInt("limit", 10)
+	if limit <= 0 {
+		limit = 10
+	} else if limit > 50 {
+		limit = 50
+	}
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	reviews, totalPage, totalRows, err := h.service.GetReviewByDormID(dormID, limit, page)
+	if err != nil {
+		return err
+	}
+	resData := make([]dto.Review, len(reviews))
+	for i, v := range reviews {
+		urls := h.service.GetImageUrl(v.Images)
+		if v.Review != nil {
+			resData[i] = v.Review.ToDTO(urls, v.Lessee.ToDTO())
+		} else {
+			resData[i] = dto.Review{}
+		}
+	}
+
+	res := dto.SuccessPagination(resData, dto.Pagination{
+		CurrentPage: page,
+		LastPage:    totalPage,
+		Limit:       limit,
+		Total:       totalRows,
+	})
+
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
@@ -429,7 +485,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 		return err
 	}
 	urls := h.service.GetImageUrl(history.Images)
-	res := dto.Success(review.ToDTO(urls))
+	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO()))
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
@@ -533,7 +589,7 @@ func (h *LeasingHistoryHandler) ReportReview(c *fiber.Ctx) error {
 	}
 
 	urls := h.service.GetImageUrl(history.Images)
-	data := history.Review.ToDTO(urls)
+	data := history.Review.ToDTO(urls, history.Lessee.ToDTO())
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
 }
