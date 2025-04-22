@@ -125,6 +125,10 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 		return nil, "", "", getErr
 	}
 
+	if user.Banned {
+		return nil, "", "", apperror.ForbiddenError(errors.New("account banned"), "account banned")
+	}
+
 	compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if compareErr != nil {
 		return nil, "", "", apperror.UnauthorizedError(compareErr, "invalid email or password.")
