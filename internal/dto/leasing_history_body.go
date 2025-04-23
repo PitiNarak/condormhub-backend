@@ -20,7 +20,7 @@ type LeasingHistory struct {
 }
 
 type Review struct {
-	HistoryID  uuid.UUID    `json:historyId`
+	HistoryID  uuid.UUID    `json:"historyId"`
 	Message    string       `json:"message"`
 	Rate       int          `json:"rate"`
 	CreateAt   time.Time    `json:"createAt"`
