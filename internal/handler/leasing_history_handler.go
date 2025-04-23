@@ -284,7 +284,7 @@ func (h *LeasingHistoryHandler) CreateReview(c *fiber.Ctx) error {
 		return err
 	}
 	urls := h.service.GetImageUrl(history.Images)
-	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO()))
+	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO(), history.ID))
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
@@ -328,7 +328,7 @@ func (h *LeasingHistoryHandler) GetReviewByDormID(c *fiber.Ctx) error {
 	for i, v := range reviews {
 		urls := h.service.GetImageUrl(v.Images)
 		if v.Review != nil {
-			resData[i] = v.Review.ToDTO(urls, v.Lessee.ToDTO())
+			resData[i] = v.Review.ToDTO(urls, v.Lessee.ToDTO(), v.ID)
 		} else {
 			resData[i] = dto.Review{}
 		}
@@ -485,7 +485,7 @@ func (h *LeasingHistoryHandler) UpdateReview(c *fiber.Ctx) error {
 		return err
 	}
 	urls := h.service.GetImageUrl(history.Images)
-	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO()))
+	res := dto.Success(review.ToDTO(urls, history.Lessee.ToDTO(), history.ID))
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
@@ -589,7 +589,7 @@ func (h *LeasingHistoryHandler) ReportReview(c *fiber.Ctx) error {
 	}
 
 	urls := h.service.GetImageUrl(history.Images)
-	data := history.Review.ToDTO(urls, history.Lessee.ToDTO())
+	data := history.Review.ToDTO(urls, history.Lessee.ToDTO(), history.ID)
 
 	return c.Status(fiber.StatusOK).JSON(dto.Success(data))
 }
