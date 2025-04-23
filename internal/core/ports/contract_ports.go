@@ -2,6 +2,7 @@ package ports
 
 import (
 	"github.com/PitiNarak/condormhub-backend/internal/core/domain"
+	"github.com/PitiNarak/condormhub-backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -18,9 +19,9 @@ type ContractRepository interface {
 }
 
 type ContractService interface {
-	GetContractByContractID(contractID uuid.UUID) (*domain.Contract, error)
-	GetByUserID(userID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
-	GetByDormID(lesseeID uuid.UUID, limit, page int) (*[]domain.Contract, int, int, error)
+	GetContractByContractID(contractID uuid.UUID) (*dto.ContractResponseBody, error)
+	GetByUserID(userID uuid.UUID, limit, page int) (*[]dto.ContractResponseBody, int, int, error)
+	GetByDormID(lesseeID uuid.UUID, limit, page int) (*[]dto.ContractResponseBody, int, int, error)
 	DeleteContract(contractID uuid.UUID) error
 	UpdateStatus(contractID uuid.UUID, lessorStatus domain.ContractStatus, userID uuid.UUID) error
 }
