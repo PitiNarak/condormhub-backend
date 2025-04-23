@@ -51,7 +51,7 @@ func (ct *ContractHandler) SignContract(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "get contract error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(res.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
 
 }
 
@@ -82,11 +82,11 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "get contract error")
 	}
 
-	if contract.Status == domain.Signed {
+	if domain.ContractStatus(contract.ContractStatus) == domain.Signed {
 		return apperror.BadRequestError(errors.New("contract is already signed"), "You cannot cancel signed contract")
 	}
 
-	if contract.Status == domain.Cancelled {
+	if domain.ContractStatus(contract.ContractStatus) == domain.Cancelled {
 		return apperror.BadRequestError(errors.New("contract is already cancelld"), "You cannot cancel cancelled contract")
 	}
 
@@ -102,7 +102,7 @@ func (ct *ContractHandler) CancelContract(c *fiber.Ctx) error {
 		return apperror.InternalServerError(getErr, "get contract error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.Success(res.ToDTO()))
+	return c.Status(fiber.StatusOK).JSON(dto.Success(res))
 
 }
 
@@ -154,7 +154,7 @@ func (ct *ContractHandler) GetContractByContractID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(contract.ToDTO()))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(contract))
 
 }
 
@@ -186,12 +186,7 @@ func (ct *ContractHandler) GetContractByUserID(c *fiber.Ctx) error {
 		return err
 	}
 
-	resData := make([]dto.ContractResponseBody, len(*contracts))
-	for i, v := range *contracts {
-		resData[i] = v.ToDTO()
-	}
-
-	res := dto.SuccessPagination(resData, dto.Pagination{
+	res := dto.SuccessPagination(*contracts, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPage,
 		Limit:       limit,
@@ -236,12 +231,8 @@ func (ct *ContractHandler) GetContractByDormID(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	resData := make([]dto.ContractResponseBody, len(*contracts))
-	for i, v := range *contracts {
-		resData[i] = v.ToDTO()
-	}
 
-	res := dto.SuccessPagination(resData, dto.Pagination{
+	res := dto.SuccessPagination(*contracts, dto.Pagination{
 		CurrentPage: page,
 		LastPage:    totalPage,
 		Limit:       limit,

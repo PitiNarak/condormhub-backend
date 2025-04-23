@@ -27,11 +27,13 @@ type Contract struct {
 	Status       ContractStatus `gorm:"default:WAITING"`
 }
 
-func (ct *Contract) ToDTO() dto.ContractResponseBody {
+func (ct *Contract) ToDTO(urls []string) dto.ContractResponseBody {
+	dormResponse := ct.Dorm.ToDTO()
+	dormResponse.Images = urls
 	return dto.ContractResponseBody{
 		ID:             ct.ID,
 		Lessee:         ct.Lessee.ToDTO(),
-		Dorm:           ct.Dorm.ToDTO(),
+		Dorm:           dormResponse,
 		LessorStatus:   dto.ContractStatus(ct.LessorStatus),
 		LesseeStatus:   dto.ContractStatus(ct.LesseeStatus),
 		ContractStatus: dto.ContractStatus(ct.Status),
