@@ -38,6 +38,7 @@ func (ct *ContractRepository) GetContract(lesseeID uuid.UUID, dormID uuid.UUID) 
 	if err := ct.db.
 		Preload("Lessee").
 		Preload("Dorm").
+		Preload("Dorm.Images").
 		Where("lessee_id = ? AND dorm_id = ?", lesseeID, dormID).
 		Find(&contracts).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Contracts not found")
@@ -50,6 +51,7 @@ func (ct *ContractRepository) GetContractByContractID(contractID uuid.UUID) (*do
 	if err := ct.db.
 		Preload("Lessee").
 		Preload("Dorm").
+		Preload("Dorm.Images").
 		Where("id = ? ", contractID).
 		Find(&contract).Error; err != nil {
 		return nil, apperror.NotFoundError(err, "Contract not found")
@@ -64,6 +66,7 @@ func (ct *ContractRepository) GetContractByLessorID(lessorID uuid.UUID, limit, p
 		Where("dorms.owner_id = ?", lessorID).
 		Preload("Lessee").
 		Preload("Dorm").
+		Preload("Dorm.Images").
 		Find(&contracts)
 
 	totalPage, totalRows, err := ct.db.Paginate(&contracts, query, limit, page, "create_at DESC")
@@ -83,6 +86,7 @@ func (ct *ContractRepository) GetContractByLesseeID(lesseeID uuid.UUID, limit, p
 	query := ct.db.
 		Preload("Lessee").
 		Preload("Dorm").
+		Preload("Dorm.Images").
 		Where("lessee_id = ? ", lesseeID).
 		Find(&contracts)
 
@@ -103,6 +107,7 @@ func (ct *ContractRepository) GetContractByDormID(dormID uuid.UUID, limit, page 
 	query := ct.db.
 		Preload("Lessee").
 		Preload("Dorm").
+		Preload("Dorm.Images").
 		Where("dorm_id = ? ", dormID).
 		Find(&contracts)
 
