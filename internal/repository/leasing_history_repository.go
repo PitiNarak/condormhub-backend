@@ -36,7 +36,7 @@ func (d *LeasingHistoryRepository) GetByID(id uuid.UUID) (*domain.LeasingHistory
 		Preload("Lessee").
 		Preload("Orders").
 		Preload("Dorm.Owner").
-		Preload("Dorm.Images").
+		Preload("Images").
 		First(leasingHistory, id).Error; err != nil {
 		if apperror.IsAppError(err) {
 			return nil, err
@@ -110,7 +110,7 @@ func (d *LeasingHistoryRepository) GetByUserID(id uuid.UUID, limit, page int) ([
 		Preload("Lessee").
 		Preload("Orders").
 		Preload("Dorm.Owner").
-		Preload("Dorm.Images").
+		Preload("Images").
 		Where("lessee_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(&leasingHistory, query, limit, page, "start")
 
@@ -130,7 +130,7 @@ func (d *LeasingHistoryRepository) GetByDormID(id uuid.UUID, limit, page int) ([
 	var leasingHistory []domain.LeasingHistory
 	query := d.db.Preload("Dorm").
 		Preload("Dorm.Owner").
-		Preload("Dorm.Images").
+		Preload("Images").
 		Where("dorm_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(&leasingHistory, query, limit, page, "start")
 
@@ -151,7 +151,7 @@ func (d *LeasingHistoryRepository) GetReviewByDormID(id uuid.UUID, limit, page i
 	var reviews []domain.LeasingHistory
 	query := d.db.Preload("Lessee").
 		Preload("Dorm").
-		Preload("Dorm.Images").
+		Preload("Images").
 		Where("review_flag = ?", true).
 		Where("dorm_id = ?", id)
 	totalPage, totalRows, err := d.db.Paginate(&reviews, query, limit, page, "start")
@@ -171,7 +171,7 @@ func (d *LeasingHistoryRepository) GetReviewByDormID(id uuid.UUID, limit, page i
 
 func (d *LeasingHistoryRepository) GetReportedReviews(limit int, page int) ([]domain.LeasingHistory, int, int, error) {
 	var reviews []domain.LeasingHistory
-	query := d.db.Preload("Lessee").Preload("Dorm.Images").Where("report_flag = ?", true).Where("review_flag = ?", true)
+	query := d.db.Preload("Lessee").Preload("Images").Where("report_flag = ?", true).Where("review_flag = ?", true)
 	totalPages, totalRows, err := d.db.Paginate(&reviews, query, limit, page, "id")
 	if err != nil {
 		return nil, 0, 0, apperror.InternalServerError(err, "Failed to retrieve reviews")
